@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Sistema de Escalas</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.svg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+    --primary-color: #2c3e50;
+    --secondary-color: #ec3333;
+    --accent-color: #e74c3c;
+    --light-color: #ecf0f1;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    overflow-x: hidden;
+}
+
+/* Sidebar - Desktop */
+.sidebar {
+    background-color: var(--primary-color);
+    color: white;
+    height: 100vh;
+    position: fixed;
+    padding-top: 20px;
+    width: 250px;
+    transition: all 0.3s;
+    z-index: 1000;
+}
+
+.sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 5px;
+    border-radius: 5px;
+    padding: 10px 15px;
+}
+
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: all 0.3s;
+}
+
+/* Cards */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    border: none;
+}
+
+.card-header {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 10px 10px 0 0 !important;
+    padding: 15px 20px;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-primary:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Tables */
+.table th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Status Card */
+.status-card {
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.status-card.connected {
+    background-color: #28a745;
+}
+
+.status-card.disconnected {
+    background-color: #dc3545;
+}
+
+/* Form Controls */
+.form-control:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+/* Escala Items */
+#escalaItems .escala-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+}
+
+#escalaItems .btn-remove-item {
+    margin-top: 10px;
+}
+
+.action-buttons .btn {
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+/* Loading Animation */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1100;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1.5rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .mobile-menu-toggle {
+        display: block;
+    }
+    
+    .card-header {
+        padding: 12px 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 15px;
+    }
+    
+    .row {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+    
+    .col-md-6, .col-md-4, .col-md-12 {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .table-responsive {
+        border: none;
+    }
+    
+    .btn {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    .status-card {
+        padding: 15px;
+    }
+    
+    h1.h2 {
+        font-size: 1.5rem;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    /* Ajustes para tabelas em mobile */
+    table {
+        font-size: 14px;
+    }
+    
+    th, td {
+        padding: 8px 10px;
+    }
+    
+    /* Ajustes para formulários */
+    .form-control, .form-select {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    
+    /* Ajustes para os itens de escala */
+    #escalaItems .escala-item {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-content {
+        padding: 10px;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+    }
+    
+    .btn-toolbar {
+        margin-top: 10px;
+    }
+    
+    /* Ajustes para cards em colunas */
+    .card {
+        margin-bottom: 15px;
+    }
+    
+    /* Ajustes para modais */
+    .modal-dialog {
+        margin: 10px;
+    }
+    
+    /* Ajustes para abas */
+    .nav-tabs .nav-link {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    /* Ajustes para preview de dados */
+    #alunosDataPreview, #escalasDataPreview {
+        font-size: 12px;
+        height: 200px;
+    }
+}
+
+/* Ajustes específicos para telas muito pequenas */
+@media (max-width: 400px) {
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .action-buttons .btn {
+        width: auto;
+    }
+    
+    /* Ajuste para tabelas com muitas colunas */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Ajuste para os inputs de escala */
+    .escala-item input {
+        font-size: 13px;
+    }
+}
+
+/* Ajustes para quando a sidebar está aberta em mobile */
+.sidebar-open .main-content {
+    transform: translateX(280px);
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+/* Melhorias de acessibilidade para mobile */
+@media (hover: none) {
+    .btn:hover {
+        background-color: initial;
+    }
+    
+    .nav-link:hover {
+        background-color: initial;
+    }
+}
+
+/* Ajuste para evitar zoom em inputs em mobile */
+@media screen and (max-width: 768px) {
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+    .mobile-menu-toggle {
+    display: none; /* Inicialmente escondido */
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1100;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 12px;
+    font-size: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Mostrar apenas quando o modal de login não estiver visível */
+body:not(.modal-open) .mobile-menu-toggle {
+    display: block;
+}
+
+/* Ajuste para quando o modal estiver aberto */
+.modal-open .mobile-menu-toggle {
+    display: none !important;
+}
+}
+/* Estilos para a aba Sobre */
+#sobre .rounded-circle {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border: 5px solid var(--primary-color);
+}
+
+#sobre .list-group-item {
+    border-left: 3px solid var(--secondary-color);
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+#sobre .list-group-item:hover {
+    background-color: rgba(236, 51, 51, 0.1);
+}
+
+#sobre h4 {
+    color: var(--primary-color);
+    border-bottom: 2px solid #eee;
+    padding-bottom: 8px;
+    margin-top: 20px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    #sobre .row > div {
+        margin-bottom: 20px;
+    }
+    
+    #sobre .rounded-circle {
+        width: 120px;
+        height: 120px;
+    }
+}
+/* Para a logo no sidebar */
+.sidebar .text-center img {
+    max-width: 120px;  /* Ajuste este valor conforme necessário */
+    height: auto;
+    transition: all 0.3s ease;
+}
+
+/* Para telas menores (responsivo) */
+@media (max-width: 768px) {
+    .sidebar .text-center img {
+        max-width: 100px;  /* Tamanho menor para mobile */
+    }
+}
+
+/* Se estiver usando uma classe específica (como no exemplo acima) */
+.logo {
+    width: 120px !important;  /* Force o tamanho se necessário */
+    height: auto !important;
+}
+.sidebar img {
+    width: 70%;  /* Reduz para 70% do container */
+}
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="text-center mb-4">
+                    <img src="logu.svg" alt="Logo" class="logo">
+                    <h5>Painel de Administração</h5>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#dashboard">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#alunos">
+                            <i class="bi bi-people-fill"></i> Gerenciar Alunos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#escalas">
+                            <i class="bi bi-calendar-check"></i> Gerenciar Escalas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#turmas">
+                            <i class="bi bi-building"></i> Gerenciar Turmas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#backup">
+                            <i class="bi bi-cloud-arrow-down"></i> Backup
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#sobre">
+                            <i class="bi bi-person-badge"></i> Sobre
+                        </a>
+                    </li>
+                    <li class="nav-item mt-4">
+                        <button class="btn btn-sm btn-danger w-100" id="logoutBtn">
+                            <i class="bi bi-box-arrow-left"></i> Sair
+                        </button>
+                    </li>
+
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="tab-content">
+                    <!-- Dashboard Tab -->
+                    <div class="tab-pane fade show active" id="dashboard">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Dashboard</h1>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <div class="btn-group me-2">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshDashboard">
+                                        <i class="bi bi-arrow-clockwise"></i> Atualizar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="status-card connected">
+                                    <h4><i class="bi bi-check-circle"></i> Conectado</h4>
+                                    <p id="connectionStatus">Conectado à API</p>
+                                    <small id="lastUpdate"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card text-white bg-primary">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total de Turmas</h5>
+                                        <h2 id="totalTurmas">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card text-white bg-success">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total de Alunos</h5>
+                                        <h2 id="totalAlunos">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Últimas Ações</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Data/Hora</th>
+                                                <th>Ação</th>
+                                                <th>Detalhes</th>
+                                                <th>Usuário</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lastActions">
+                                            <!-- Últimas ações serão inseridas aqui via JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="sobre">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Sobre o Desenvolvedor</h1>
+                        </div>
+                    
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Créditos e Informações</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-4">
+                                    <h3>Erick Matheus Leguisamon</h3>
+                                    <p class="text-muted">Desenvolvedor do Sistema</p>
+                                </div>
+                    
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h4><i class="bi bi-info-circle"></i> Sobre o Projeto</h4>
+                                        <p>Este sistema foi desenvolvido para gerenciar as escalas de limpeza do Formare, proporcionando uma solução eficiente e organizada para a divisão de tarefas entre os alunos.</p>
+                                        
+                                        <h4 class="mt-4"><i class="bi bi-code-slash"></i> Tecnologias Utilizadas</h4>
+                                        <ul>
+                                            <li>Frontend: HTML5, CSS3, JavaScript, Bootstrap 5</li>
+                                            <li>Backend: Python, Flask</li>
+                                            <li>Hospedagem: PythonAnywhere</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <h4><i class="bi bi-person-lines-fill"></i> Contato</h4>
+                                        <div class="list-group">
+                                            <a href="mailto:erickleguisamon@gmail.com" class="list-group-item list-group-item-action">
+                                                <i class="bi bi-envelope"></i> erickleguisamon@gmail.com
+                                            </a>
+                                            <a href="https://wa.me/+5541998239031" class="list-group-item list-group-item-action">
+                                                <i class="bi bi-whatsapp"></i> (41) 99823-9031
+                                            </a>
+                                            <a href="https://github.com/erickmth" class="list-group-item list-group-item-action">
+                                                <i class="bi bi-github"></i> github.com/erickmth
+                                            </a>
+                                        </div>
+                    
+                                        <div class="mt-4">
+                                            <h4><i class="bi bi-heart"></i> Agradecimentos</h4>
+                                            <p>Agradeço especialmente aos professores e colegas do Formare pelo apoio e contribuições.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="text-center mt-4">
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-lightbulb"></i> Este projeto foi desenvolvido para o Curso Formare do Instituto Robert Bosch. - Turma 2025
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Alunos Tab -->
+                    <div class="tab-pane fade" id="alunos">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Gerenciar Alunos</h1>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Adicionar Aluno</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="addAlunoForm">
+                                            <div class="mb-3">
+                                                <label for="turmaAluno" class="form-label">Turma</label>
+                                                <select class="form-select" id="turmaAluno" required>
+                                                    <option value="" selected disabled>Selecione a turma</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="edvAluno" class="form-label">EDV</label>
+                                                <input type="text" class="form-control" id="edvAluno" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="nomeAluno" class="form-label">Nome Completo</label>
+                                                <input type="text" class="form-control" id="nomeAluno" required>
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" id="isAdmin">
+                                                <label class="form-check-label" for="isAdmin">
+                                                    É administrador?
+                                                </label>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="bi bi-plus-circle"></i> Adicionar Aluno
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Listar Alunos</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="turmaLista" class="form-label">Filtrar por Turma</label>
+                                            <select class="form-select" id="turmaLista">
+                                                <option value="">Todas as turmas</option>
+                                            </select>
+                                        </div>
+                                        <button class="btn btn-primary mb-3" id="listarAlunosBtn">
+                                            <i class="bi bi-arrow-repeat"></i> Atualizar Lista
+                                        </button>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Turma</th>
+                                                        <th>EDV</th>
+                                                        <th>Nome</th>
+                                                        <th>Ações</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="alunosList">
+                                                    <!-- Lista de alunos será inserida aqui via JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Escalas Tab -->
+                    <div class="tab-pane fade" id="escalas">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Gerenciar Escalas</h1>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Editar Escala</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="turmaEscala" class="form-label">Selecione a Turma</label>
+                                                <select class="form-select" id="turmaEscala">
+                                                    <option value="" selected disabled>Selecione a turma</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button class="btn btn-primary mt-4" id="carregarEscalaBtn">
+                                                    <i class="bi bi-arrow-down-circle"></i> Carregar Escala
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="semanaAtual" class="form-label">Semana Atual</label>
+                                            <input type="text" class="form-control" id="semanaAtual" placeholder="Ex: Semana 02: 28/04 - 30/04">
+                                        </div>
+
+                                        <h5 class="mb-3">Itens da Escala</h5>
+                                        <div id="escalaItems">
+                                            <!-- Itens da escala serão inseridos aqui via JavaScript -->
+                                        </div>
+
+                                        <button class="btn btn-secondary mt-2" id="addItemEscalaBtn">
+                                            <i class="bi bi-plus-circle"></i> Adicionar Item
+                                        </button>
+
+                                        <button class="btn btn-success mt-2 ms-2" id="salvarEscalaBtn">
+                                            <i class="bi bi-save"></i> Salvar Escala
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Turmas Tab -->
+                    <div class="tab-pane fade" id="turmas">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Gerenciar Turmas (ABA EM DESENVOLVIMENTO)</h1>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Adicionar Turma (EM DESENVOLVIMENTO!)</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="addTurmaForm">
+                                            <div class="mb-3">
+                                                <label for="novaTurma" class="form-label">Nome da Turma(EM DESENVOLVIMENTO!)</label>
+                                                <input type="text" class="form-control" id="novaTurma" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="bi bi-plus-circle"></i> Adicionar Turma(EM DESENVOLVIMENTO!)
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Lista de Turmas</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <button class="btn btn-primary mb-3" id="listarTurmasBtn">
+                                            <i class="bi bi-arrow-repeat"></i> Atualizar Lista
+                                        </button>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Turma</th>
+                                                        <th>Quantidade de Alunos</th>
+                                                        <th>Ações</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="turmasList">
+                                                    <!-- Lista de turmas será inserida aqui via JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backup Tab -->
+                    <div class="tab-pane fade" id="backup">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Backup dos Dados</h1>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Exportar/Importar Dados</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="alert alert-info">
+                                            <i class="bi bi-info-circle"></i> Faça backup regularmente para evitar perda de dados.
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="card mb-4">
+                                                    <div class="card-header">
+                                                        <h5 class="mb-0">Exportar Dados</h5>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <button class="btn btn-primary mb-2" id="exportAlunosBtn">
+                                                            <i class="bi bi-download"></i> Exportar Alunos (JSON)
+                                                        </button>
+                                                        <button class="btn btn-primary mb-2" id="exportEscalasBtn">
+                                                            <i class="bi bi-download"></i> Exportar Escalas (JSON)
+                                                        </button>
+                                                        <button class="btn btn-success" id="exportFullBackupBtn">
+                                                            <i class="bi bi-database"></i> Exportar Backup Completo
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <h5 class="mb-0">Importar Dados</h5>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="mb-3">
+                                                            <label for="backupFile" class="form-label">Selecione o arquivo de backup</label>
+                                                            <input class="form-control" type="file" id="backupFile" accept=".json">
+                                                        </div>
+                                                        <button class="btn btn-warning" id="importBackupBtn">
+                                                            <i class="bi bi-upload"></i> Importar Backup
+                                                        </button>
+                                                        <div class="alert alert-danger mt-3">
+                                                            <i class="bi bi-exclamation-triangle"></i> A importação substituirá todos os dados atuais!
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card mt-4">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Visualização dos Dados</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <ul class="nav nav-tabs" id="backupTabs" role="tablist">
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link active" id="alunos-tab" data-bs-toggle="tab" data-bs-target="#alunosData" type="button" role="tab">Alunos</button>
+                                                    </li>
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link" id="escalas-tab" data-bs-toggle="tab" data-bs-target="#escalasData" type="button" role="tab">Escalas</button>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content p-3 border border-top-0" id="backupTabContent">
+                                                    <div class="tab-pane fade show active" id="alunosData" role="tabpanel">
+                                                        <pre id="alunosDataPreview" style="height: 300px; overflow-y: scroll;"></pre>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="escalasData" role="tabpanel">
+                                                        <pre id="escalasDataPreview" style="height: 300px; overflow-y: scroll;"></pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalTitle">Confirmação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="confirmModalBody">
+                    Tem certeza que deseja realizar esta ação?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirmModalBtn">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Mensagem -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalTitle">Mensagem</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="messageModalBody">
+                    Mensagem de exemplo
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Login -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="false" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Acesso ao Painel Admin</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Usuário</label>
+                            <input type="text" class="form-control" id="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Senha</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Lembrar de mim</label>
+                        </div>
+                        <div class="alert alert-danger d-none" id="loginError"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="loginBtn">Entrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="bi bi-list"></i>
+    </button>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Configurações globais
+        const API_URL = 'https://erickmth.pythonanywhere.com/api';
+        let currentTurmaEscala = '';
+        let lastActionId = 0;
+        let turmasList = [];
+
+        // Elementos do DOM
+        const elements = {
+            loginModal: new bootstrap.Modal('#loginModal'),
+            confirmModal: new bootstrap.Modal('#confirmModal'),
+            messageModal: new bootstrap.Modal('#messageModal'),
+            loginForm: document.getElementById('loginForm'),
+            loginBtn: document.getElementById('loginBtn'),
+            loginError: document.getElementById('loginError'),
+            logoutBtn: document.getElementById('logoutBtn'),
+            refreshDashboard: document.getElementById('refreshDashboard'),
+            totalTurmas: document.getElementById('totalTurmas'),
+            totalAlunos: document.getElementById('totalAlunos'),
+            connectionStatus: document.getElementById('connectionStatus'),
+            lastUpdate: document.getElementById('lastUpdate'),
+            lastActions: document.getElementById('lastActions'),
+            addAlunoForm: document.getElementById('addAlunoForm'),
+            turmaAluno: document.getElementById('turmaAluno'),
+            edvAluno: document.getElementById('edvAluno'),
+            nomeAluno: document.getElementById('nomeAluno'),
+            isAdmin: document.getElementById('isAdmin'),
+            turmaLista: document.getElementById('turmaLista'),
+            listarAlunosBtn: document.getElementById('listarAlunosBtn'),
+            alunosList: document.getElementById('alunosList'),
+            turmaEscala: document.getElementById('turmaEscala'),
+            carregarEscalaBtn: document.getElementById('carregarEscalaBtn'),
+            semanaAtual: document.getElementById('semanaAtual'),
+            escalaItems: document.getElementById('escalaItems'),
+            addItemEscalaBtn: document.getElementById('addItemEscalaBtn'),
+            salvarEscalaBtn: document.getElementById('salvarEscalaBtn'),
+            addTurmaForm: document.getElementById('addTurmaForm'),
+            novaTurma: document.getElementById('novaTurma'),
+            listarTurmasBtn: document.getElementById('listarTurmasBtn'),
+            turmasList: document.getElementById('turmasList'),
+            exportAlunosBtn: document.getElementById('exportAlunosBtn'),
+            exportEscalasBtn: document.getElementById('exportEscalasBtn'),
+            exportFullBackupBtn: document.getElementById('exportFullBackupBtn'),
+            backupFile: document.getElementById('backupFile'),
+            importBackupBtn: document.getElementById('importBackupBtn'),
+            alunosDataPreview: document.getElementById('alunosDataPreview'),
+            escalasDataPreview: document.getElementById('escalasDataPreview'),
+            confirmModalTitle: document.getElementById('confirmModalTitle'),
+            confirmModalBody: document.getElementById('confirmModalBody'),
+            confirmModalBtn: document.getElementById('confirmModalBtn'),
+            messageModalTitle: document.getElementById('messageModalTitle'),
+            messageModalBody: document.getElementById('messageModalBody')
+        };
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar modal de login
+            elements.loginModal.show();
+
+            // Carregar credenciais salvas
+            const savedUsername = localStorage.getItem('adminUsername');
+            const savedPassword = localStorage.getItem('adminPassword');
+            if (savedUsername && savedPassword) {
+                document.getElementById('username').value = savedUsername;
+                document.getElementById('password').value = savedPassword;
+                document.getElementById('rememberMe').checked = true;
+            }
+
+            // Configurar eventos
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Login
+            elements.loginBtn.addEventListener('click', handleLogin);
+            elements.logoutBtn.addEventListener('click', handleLogout);
+
+            // Dashboard
+            elements.refreshDashboard.addEventListener('click', loadDashboard);
+
+            // Alunos
+            elements.addAlunoForm.addEventListener('submit', addAluno);
+            elements.listarAlunosBtn.addEventListener('click', listarAlunos);
+            elements.turmaLista.addEventListener('change', listarAlunos);
+
+            // Escalas
+            elements.carregarEscalaBtn.addEventListener('click', carregarEscala);
+            elements.addItemEscalaBtn.addEventListener('click', adicionarItemEscala);
+            elements.salvarEscalaBtn.addEventListener('click', salvarEscala);
+
+            // Turmas
+            elements.addTurmaForm.addEventListener('submit', addTurma);
+            elements.listarTurmasBtn.addEventListener('click', listarTurmas);
+
+            // Backup
+            elements.exportAlunosBtn.addEventListener('click', exportAlunos);
+            elements.exportEscalasBtn.addEventListener('click', exportEscalas);
+            elements.exportFullBackupBtn.addEventListener('click', exportFullBackup);
+            elements.importBackupBtn.addEventListener('click', importBackup);
+        }
+
+        // Funções de autenticação
+        async function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            try {
+                elements.loginBtn.disabled = true;
+                elements.loginBtn.innerHTML = '<span class="loading"></span> Verificando...';
+
+                const response = await fetch(`${API_URL}/admin/status`, {
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(username + ':' + password)
+                    }
+                });
+
+                if (response.ok) {
+                    if (rememberMe) {
+                        localStorage.setItem('adminUsername', username);
+                        localStorage.setItem('adminPassword', password);
+                    } else {
+                        localStorage.removeItem('adminUsername');
+                        localStorage.removeItem('adminPassword');
+                    }
+
+                    // Salvar credenciais para uso futuro
+                    sessionStorage.setItem('adminAuth', btoa(username + ':' + password));
+                    elements.loginModal.hide();
+                    loadDashboard();
+                    loadTurmas();
+                } else {
+                    throw new Error('Credenciais inválidas');
+                }
+            } catch (error) {
+                elements.loginError.textContent = 'Erro ao fazer login: ' + error.message;
+                elements.loginError.classList.remove('d-none');
+            } finally {
+                elements.loginBtn.disabled = false;
+                elements.loginBtn.textContent = 'Entrar';
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('adminAuth');
+            window.location.reload();
+        }
+
+        function getAuthHeader() {
+            return {
+                'Authorization': 'Basic ' + sessionStorage.getItem('adminAuth')
+            };
+        }
+
+        // Funções do Dashboard
+        async function loadDashboard() {
+            try {
+                showLoading(elements.refreshDashboard);
+                
+                // Verificar conexão
+                const statusResponse = await fetch(`${API_URL}/admin/status`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (!statusResponse.ok) {
+                    throw new Error('Erro ao conectar com a API');
+                }
+                
+                const statusData = await statusResponse.json();
+                elements.connectionStatus.textContent = `Conectado como ${statusData.admin}`;
+                
+                // Carregar estatísticas
+                const backupResponse = await fetch(`${API_URL}/admin/backup`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (!backupResponse.ok) {
+                    throw new Error('Erro ao obter dados de backup');
+                }
+                
+                const backupData = await backupResponse.json();
+                
+                // Atualizar totais
+                elements.totalTurmas.textContent = Object.keys(backupData.alunos).length;
+                
+                let totalAlunos = 0;
+                for (const turma in backupData.alunos) {
+                    totalAlunos += Object.keys(backupData.alunos[turma]).length;
+                }
+                elements.totalAlunos.textContent = totalAlunos;
+                
+                // Atualizar última atualização
+                const now = new Date();
+                elements.lastUpdate.textContent = `Última atualização: ${now.toLocaleString()}`;
+                
+                // Adicionar ação ao histórico
+                addAction('Dashboard atualizado', 'Os dados do dashboard foram atualizados com sucesso', statusData.admin);
+                
+            } catch (error) {
+                showMessage('Erro', `Erro ao carregar dashboard: ${error.message}`, 'error');
+            } finally {
+                hideLoading(elements.refreshDashboard, '<i class="bi bi-arrow-clockwise"></i> Atualizar');
+            }
+        }
+
+        function addAction(action, details, user) {
+            const now = new Date();
+            const actionId = ++lastActionId;
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${now.toLocaleString()}</td>
+                <td>${action}</td>
+                <td>${details}</td>
+                <td>${user}</td>
+            `;
+            
+            elements.lastActions.prepend(row);
+            
+            // Manter apenas as últimas 10 ações
+            if (elements.lastActions.children.length > 10) {
+                elements.lastActions.removeChild(elements.lastActions.lastChild);
+            }
+        }
+
+        // Funções de Alunos
+        async function loadTurmas() {
+            try {
+                const response = await fetch(`${API_URL}/admin/status`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar turmas');
+                }
+                
+                const data = await response.json();
+                turmasList = data.turmas;
+                
+                // Preencher selects de turma
+                const selects = [elements.turmaAluno, elements.turmaLista, elements.turmaEscala];
+                selects.forEach(select => {
+                    select.innerHTML = '';
+                    
+                    if (select !== elements.turmaLista) {
+                        const defaultOption = document.createElement('option');
+                        defaultOption.value = '';
+                        defaultOption.textContent = 'Selecione a turma';
+                        defaultOption.disabled = true;
+                        defaultOption.selected = true;
+                        select.appendChild(defaultOption);
+                    } else {
+                        const allOption = document.createElement('option');
+                        allOption.value = '';
+                        allOption.textContent = 'Todas as turmas';
+                        select.appendChild(allOption);
+                    }
+                    
+                    turmasList.forEach(turma => {
+                        const option = document.createElement('option');
+                        option.value = turma;
+                        option.textContent = turma;
+                        select.appendChild(option);
+                    });
+                });
+                
+                return turmasList;
+            } catch (error) {
+                showMessage('Erro', `Erro ao carregar turmas: ${error.message}`, 'error');
+                return [];
+            }
+        }
+
+        async function addAluno(e) {
+            e.preventDefault();
+            
+            const turma = elements.turmaAluno.value;
+            const edv = elements.edvAluno.value;
+            let nome = elements.nomeAluno.value;
+            const admin = elements.isAdmin.checked;
+            
+            if (admin) {
+                if (nome.includes('👩‍🏫') || nome.includes('👨‍🏫')) {
+                    // Já tem emoji de admin
+                } else {
+                    // Adicionar emoji de admin baseado no gênero (simplificado)
+                    const genero = nome.match(/Prof[ªº]/)?.[0] || 'Profº';
+                    nome += genero.includes('ª') ? '👩‍🏫' : '👨‍🏫';
+                }
+            }
+            
+            try {
+                showLoading(elements.addAlunoForm.querySelector('button[type="submit"]'));
+                
+                const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeader()
+                    },
+                    body: JSON.stringify({ edv, nome })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Erro ao adicionar aluno');
+                }
+                
+                showMessage('Sucesso', 'Aluno adicionado com sucesso', 'success');
+                addAction('Aluno adicionado', `EDV: ${edv}, Turma: ${turma}`, 'Admin');
+                
+                // Limpar formulário e atualizar lista
+                elements.edvAluno.value = '';
+                elements.nomeAluno.value = '';
+                elements.isAdmin.checked = false;
+                listarAlunos();
+                
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            } finally {
+                hideLoading(elements.addAlunoForm.querySelector('button[type="submit"]'), 
+                    '<i class="bi bi-plus-circle"></i> Adicionar Aluno');
+            }
+        }
+
+        async function listarAlunos() {
+            try {
+                showLoading(elements.listarAlunosBtn);
+                
+                const turma = elements.turmaLista.value;
+                let alunos = {};
+                
+                if (turma) {
+                    // Carregar alunos de uma turma específica
+                    const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
+                        headers: getAuthHeader()
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Erro ao carregar alunos');
+                    }
+                    
+                    alunos[turma] = await response.json();
+                } else {
+                    // Carregar todos os alunos de todas as turmas
+                    for (const t of turmasList) {
+                        const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(t)}/alunos`, {
+                            headers: getAuthHeader()
+                        });
+                        
+                        if (response.ok) {
+                            alunos[t] = await response.json();
+                        }
+                    }
+                }
+                
+                // Exibir alunos na tabela
+                elements.alunosList.innerHTML = '';
+                
+                for (const [turma, alunosTurma] of Object.entries(alunos)) {
+                    for (const [edv, nome] of Object.entries(alunosTurma)) {
+                        const row = document.createElement('tr');
+                        
+                        const isAdmin = nome.includes('👩‍🏫') || nome.includes('👨‍🏫');
+                        const nomeDisplay = isAdmin ? nome.replace(/👩‍🏫|👨‍🏫/g, '') : nome;
+                        
+                        row.innerHTML = `
+                            <td>${turma}</td>
+                            <td>${edv}</td>
+                            <td>${nomeDisplay} ${isAdmin ? '<span class="badge bg-warning text-dark">Admin</span>' : ''}</td>
+                            <td class="action-buttons">
+                                <button class="btn btn-sm btn-danger btn-remove-aluno" data-turma="${turma}" data-edv="${edv}">
+                                    <i class="bi bi-trash"></i> Remover
+                                </button>
+                            </td>
+                        `;
+                        
+                        elements.alunosList.appendChild(row);
+                    }
+                }
+                
+                // Adicionar eventos aos botões de remover
+                document.querySelectorAll('.btn-remove-aluno').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const turma = this.getAttribute('data-turma');
+                        const edv = this.getAttribute('data-edv');
+                        confirmAction(
+                            'Remover Aluno',
+                            `Tem certeza que deseja remover o aluno ${edv} da turma ${turma}?`,
+                            () => removerAluno(turma, edv)
+                        );
+                    });
+                });
+                
+                addAction('Alunos listados', turma ? `Filtro: ${turma}` : 'Todas as turmas', 'Admin');
+                
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            } finally {
+                hideLoading(elements.listarAlunosBtn, '<i class="bi bi-arrow-repeat"></i> Atualizar Lista');
+            }
+        }
+
+        async function removerAluno(turma, edv) {
+            try {
+                const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos?edv=${edv}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeader()
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Erro ao remover aluno');
+                }
+                
+                showMessage('Sucesso', 'Aluno removido com sucesso', 'success');
+                addAction('Aluno removido', `EDV: ${edv}, Turma: ${turma}`, 'Admin');
+                listarAlunos();
+                
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            }
+        }
+
+        // Funções de Escalas
+        async function carregarEscala() {
+            const turma = elements.turmaEscala.value;
+            currentTurmaEscala = turma;
+            
+            if (!turma) {
+                showMessage('Aviso', 'Selecione uma turma primeiro', 'warning');
+                return;
+            }
+            
+            try {
+                showLoading(elements.carregarEscalaBtn);
+                
+                const response = await fetch(`${API_URL}/admin/escalas/${encodeURIComponent(turma)}`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar escala');
+                }
+                
+                const escala = await response.json();
+                elements.semanaAtual.value = escala.semana_atual || '';
+                
+                // Limpar itens existentes
+                elements.escalaItems.innerHTML = '';
+                
+                // Adicionar itens da escala
+                if (escala.duplas && escala.duplas.length > 0) {
+                    escala.duplas.forEach(item => {
+                        addEscalaItem(item.semana, item.dupla);
+                    });
+                } else {
+                    showMessage('Info', 'Nenhum item de escala encontrado para esta turma', 'info');
+                }
+                
+                addAction('Escala carregada', `Turma: ${turma}`, 'Admin');
+                
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            } finally {
+                hideLoading(elements.carregarEscalaBtn, '<i class="bi bi-arrow-down-circle"></i> Carregar Escala');
+            }
+        }
+
+        function addEscalaItem(semana = '', dupla = '') {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'escala-item';
+            
+            itemDiv.innerHTML = `
+                <div class="mb-3">
+                    <label class="form-label">Semana</label>
+                    <input type="text" class="form-control semana-input" value="${semana}" placeholder="Ex: Semana 01: 22/04 - 25/04">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Dupla</label>
+                    <input type="text" class="form-control dupla-input" value="${dupla}" placeholder="Ex: Aluno 1 e Aluno 2">
+                </div>
+                <button type="button" class="btn btn-sm btn-danger btn-remove-item">
+                    <i class="bi bi-trash"></i> Remover Item
+                </button>
+            `;
+            
+            // Adicionar evento ao botão de remover
+            itemDiv.querySelector('.btn-remove-item').addEventListener('click', function() {
+                itemDiv.remove();
+            });
+            
+            elements.escalaItems.appendChild(itemDiv);
+        }
+
+        function adicionarItemEscala() {
+            addEscalaItem();
+        }
+
+        async function salvarEscala() {
+            const turma = currentTurmaEscala;
+            
+            if (!turma) {
+                showMessage('Aviso', 'Selecione uma turma primeiro', 'warning');
+                return;
+            }
+            
+            try {
+                showLoading(elements.salvarEscalaBtn);
+                
+                const semanaAtual = elements.semanaAtual.value;
+                const items = elements.escalaItems.querySelectorAll('.escala-item');
+                const duplas = [];
+                
+                items.forEach(item => {
+                    const semana = item.querySelector('.semana-input').value;
+                    const dupla = item.querySelector('.dupla-input').value;
+                    
+                    if (semana && dupla) {
+                        duplas.push({ semana, dupla });
+                    }
+                });
+                
+                const response = await fetch(`${API_URL}/admin/escalas/${encodeURIComponent(turma)}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeader()
+                    },
+                    body: JSON.stringify({
+                        semana_atual: semanaAtual,
+                        duplas: duplas
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Erro ao salvar escala');
+                }
+                
+                showMessage('Sucesso', 'Escala salva com sucesso', 'success');
+                addAction('Escala salva', `Turma: ${turma}`, 'Admin');
+                
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            } finally {
+                hideLoading(elements.salvarEscalaBtn, '<i class="bi bi-save"></i> Salvar Escala');
+            }
+        }
+
+        // Funções de Turmas
+        async function addTurma(e) {
+            e.preventDefault();
+            
+            const nomeTurma = elements.novaTurma.value.trim();
+            
+            if (!nomeTurma) {
+                showMessage('Aviso', 'Digite o nome da turma', 'warning');
+                return;
+            }
+            
+            try {
+                showLoading(elements.addTurmaForm.querySelector('button[type="submit"]'));
+                
+                const response = await fetch(`${API_URL}/admin/turmas`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeader()
+                    },
+                    body: JSON.stringify({ turma: nomeTurma })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Erro ao adicionar turma');
+                }
+                
+                showMessage('Sucesso', 'Turma adicionada com sucesso', 'success');
+                addAction('Turma adicionada', `Nome: ${nomeTurma}`, 'Admin');
+                
+                // Limpar formulário e atualizar listas
+                elements.novaTurma.value = '';
+                loadTurmas();
+                listarTurmas();
+                
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            } finally {
+                hideLoading(elements.addTurmaForm.querySelector('button[type="submit"]'), 
+                    '<i class="bi bi-plus-circle"></i> Adicionar Turma');
+            }
+        }
+
+        async function listarTurmas() {
+            try {
+                showLoading(elements.listarTurmasBtn);
+                
+                const response = await fetch(`${API_URL}/admin/status`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar turmas');
+                }
+                
+                const data = await response.json();
+                turmasList = data.turmas;
+                
+                // Limpar tabela
+                elements.turmasList.innerHTML = '';
+                
+                // Carregar quantidade de alunos por turma
+                for (const turma of turmasList) {
+                    const alunosResponse = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
+                        headers: getAuthHeader()
+                    });
+                    
+                    let qtdAlunos = 0;
+                    if (alunosResponse.ok) {
+                        const alunos = await alunosResponse.json();
+                        qtdAlunos = Object.keys(alunos).length;
+                    }
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${turma}</td>
+                        <td>${qtdAlunos}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-sm btn-danger btn-remove-turma" data-turma="${turma}">
+                                <i class="bi bi-trash"></i> Remover
+                            </button>
+                        </td>
+                    `;
+                    
+                    elements.turmasList.appendChild(row);
+                }
+                
+                // Adicionar eventos aos botões de remover
+                document.querySelectorAll('.btn-remove-turma').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const turma = this.getAttribute('data-turma');
+                        confirmAction(
+                            'Remover Turma',
+                            `Tem certeza que deseja remover a turma ${turma} e todos os seus alunos?`,
+                            () => removerTurma(turma)
+                        );
+                    });
+                });
+                
+                addAction('Turmas listadas', 'Todas as turmas', 'Admin');
+                
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            } finally {
+                hideLoading(elements.listarTurmasBtn, '<i class="bi bi-arrow-repeat"></i> Atualizar Lista');
+            }
+        }
+
+        async function removerTurma(turma) {
+            try {
+                const response = await fetch(`${API_URL}/admin/turmas?turma=${encodeURIComponent(turma)}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeader()
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Erro ao remover turma');
+                }
+                
+                showMessage('Sucesso', 'Turma removida com sucesso', 'success');
+                addAction('Turma removida', `Nome: ${turma}`, 'Admin');
+                
+                // Atualizar listas
+                loadTurmas();
+                listarTurmas();
+                listarAlunos();
+                
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            }
+        }
+
+        // Funções de Backup
+        async function exportAlunos() {
+            try {
+                showLoading(elements.exportAlunosBtn);
+                
+                const response = await fetch(`${API_URL}/admin/backup`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao exportar alunos');
+                }
+                
+                const data = await response.json();
+                const alunosData = JSON.stringify(data.alunos, null, 2);
+                
+                // Atualizar preview
+                elements.alunosDataPreview.textContent = alunosData;
+                
+                // Criar arquivo para download
+                downloadFile(`alunos_${new Date().toISOString().slice(0,10)}.json`, alunosData);
+                
+                showMessage('Sucesso', 'Alunos exportados com sucesso', 'success');
+                addAction('Alunos exportados', 'Backup dos alunos realizado', 'Admin');
+                
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            } finally {
+                hideLoading(elements.exportAlunosBtn, '<i class="bi bi-download"></i> Exportar Alunos (JSON)');
+            }
+        }
+
+        async function exportEscalas() {
+            try {
+                showLoading(elements.exportEscalasBtn);
+                
+                const response = await fetch(`${API_URL}/admin/backup`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao exportar escalas');
+                }
+                
+                const data = await response.json();
+                const escalasData = JSON.stringify(data.escalas, null, 2);
+                
+                // Atualizar preview
+                elements.escalasDataPreview.textContent = escalasData;
+                
+                // Criar arquivo para download
+                downloadFile(`escalas_${new Date().toISOString().slice(0,10)}.json`, escalasData);
+                
+                showMessage('Sucesso', 'Escalas exportadas com sucesso', 'success');
+                addAction('Escalas exportadas', 'Backup das escalas realizado', 'Admin');
+                
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            } finally {
+                hideLoading(elements.exportEscalasBtn, '<i class="bi bi-download"></i> Exportar Escalas (JSON)');
+            }
+        }
+
+        async function exportFullBackup() {
+            try {
+                showLoading(elements.exportFullBackupBtn);
+                
+                const response = await fetch(`${API_URL}/admin/backup`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao exportar backup completo');
+                }
+                
+                const data = await response.json();
+                const backupData = JSON.stringify(data, null, 2);
+                
+                // Atualizar previews
+                elements.alunosDataPreview.textContent = JSON.stringify(data.alunos, null, 2);
+                elements.escalasDataPreview.textContent = JSON.stringify(data.escalas, null, 2);
+                
+                // Criar arquivo para download
+                downloadFile(`backup_completo_${new Date().toISOString().slice(0,10)}.json`, backupData);
+                
+                showMessage('Sucesso', 'Backup completo exportado com sucesso', 'success');
+                addAction('Backup completo', 'Backup completo do sistema realizado', 'Admin');
+                
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            } finally {
+                hideLoading(elements.exportFullBackupBtn, '<i class="bi bi-database"></i> Exportar Backup Completo');
+            }
+        }
+
+        async function importBackup() {
+            const fileInput = elements.backupFile;
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showMessage('Aviso', 'Selecione um arquivo de backup primeiro', 'warning');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = async function(e) {
+                try {
+                    showLoading(elements.importBackupBtn);
+                    
+                    const backupData = JSON.parse(e.target.result);
+                    
+                    // Verificar estrutura do backup
+                    if (!backupData.alunos || !backupData.escalas) {
+                        throw new Error('Arquivo de backup inválido');
+                    }
+                    
+                    // Confirmar importação
+                    confirmAction(
+                        'Importar Backup',
+                        'Tem certeza que deseja importar este backup? Todos os dados atuais serão substituídos!',
+                        async () => {
+                            try {
+                                // Enviar dados para a API
+                                const response = await fetch(`${API_URL}/admin/backup`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        ...getAuthHeader()
+                                    },
+                                    body: JSON.stringify(backupData)
+                                });
+                                
+                                if (!response.ok) {
+                                    const error = await response.json();
+                                    throw new Error(error.error || 'Erro ao importar backup');
+                                }
+                                
+                                showMessage('Sucesso', 'Backup importado com sucesso', 'success');
+                                addAction('Backup importado', 'Dados restaurados a partir de backup', 'Admin');
+                                
+                                // Atualizar todas as listas
+                                loadDashboard();
+                                loadTurmas();
+                                listarTurmas();
+                                listarAlunos();
+                                
+                            } catch (error) {
+                                showMessage('Erro', error.message, 'error');
+                            } finally {
+                                hideLoading(elements.importBackupBtn, '<i class="bi bi-upload"></i> Importar Backup');
+                            }
+                        }
+                    );
+                    
+                } catch (error) {
+                    showMessage('Erro', error.message, 'error');
+                    hideLoading(elements.importBackupBtn, '<i class="bi bi-upload"></i> Importar Backup');
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // Funções auxiliares
+        function downloadFile(filename, content) {
+            const blob = new Blob([content], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function confirmAction(title, message, callback) {
+            elements.confirmModalTitle.textContent = title;
+            elements.confirmModalBody.textContent = message;
+            elements.confirmModalBtn.onclick = function() {
+                elements.confirmModal.hide();
+                callback();
+            };
+            elements.confirmModal.show();
+        }
+
+        function showMessage(title, message, type = 'info') {
+            elements.messageModalTitle.textContent = title;
+            elements.messageModalBody.textContent = message;
+            
+            // Alterar cor do cabeçalho baseado no tipo
+            const header = elements.messageModal._element.querySelector('.modal-header');
+            header.className = 'modal-header';
+            
+            switch (type) {
+                case 'success':
+                    header.classList.add('bg-success', 'text-white');
+                    break;
+                case 'error':
+                    header.classList.add('bg-danger', 'text-white');
+                    break;
+                case 'warning':
+                    header.classList.add('bg-warning', 'text-dark');
+                    break;
+                default:
+                    header.classList.add('bg-primary', 'text-white');
+            }
+            
+            elements.messageModal.show();
+        }
+
+        function showLoading(element) {
+            element.disabled = true;
+            const originalContent = element.innerHTML;
+            element.setAttribute('data-original-content', originalContent);
+            element.innerHTML = '<span class="loading"></span>';
+        }
+
+        function hideLoading(element, content = null) {
+            element.disabled = false;
+            if (content) {
+                element.innerHTML = content;
+            } else {
+                const originalContent = element.getAttribute('data-original-content');
+                if (originalContent) {
+                    element.innerHTML = originalContent;
+                }
+            }
+        }
+        // Mobile menu toggle
+const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+const sidebar = document.querySelector('.sidebar');
+const mainContent = document.querySelector('.main-content');
+
+mobileMenuToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('show');
+    mainContent.classList.toggle('sidebar-open');
+});
+    </script>
+
+
+
+<!-- VLibras -->
+<div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+  </script>
+
+  
+</body>
+</html>
