@@ -9,409 +9,334 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         :root {
-    --primary-color: #2c3e50;
-    --secondary-color: #ec3333;
-    --accent-color: #e74c3c;
-    --light-color: #ecf0f1;
-}
+            --primary-color: #2c3e50;
+            --secondary-color: #ec3333;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+        }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
-    overflow-x: hidden;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
 
-/* Sidebar - Desktop */
-.sidebar {
-    background-color: var(--primary-color);
-    color: white;
-    height: 100vh;
-    position: fixed;
-    padding-top: 20px;
-    width: 250px;
-    transition: all 0.3s;
-    z-index: 1000;
-}
+        .sidebar {
+            background-color: var(--primary-color);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding-top: 20px;
+            width: 250px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
 
-.sidebar .nav-link {
-    color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 5px;
-    border-radius: 5px;
-    padding: 10px 15px;
-}
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 5px;
+            border-radius: 5px;
+            padding: 10px 15px;
+        }
 
-.sidebar .nav-link:hover, .sidebar .nav-link.active {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-}
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
 
-.sidebar .nav-link i {
-    margin-right: 10px;
-}
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
 
-/* Main Content */
-.main-content {
-    margin-left: 250px;
-    padding: 20px;
-    transition: all 0.3s;
-}
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
 
-/* Cards */
-.card {
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    border: none;
-}
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border: none;
+        }
 
-.card-header {
-    background-color: var(--primary-color);
-    color: white;
-    border-radius: 10px 10px 0 0 !important;
-    padding: 15px 20px;
-}
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            padding: 15px 20px;
+        }
 
-/* Buttons */
-.btn-primary {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
-}
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
 
-.btn-primary:hover {
-    background-color: #c82333;
-    border-color: #bd2130;
-}
+        .btn-primary:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
 
-/* Tables */
-.table th {
-    background-color: var(--primary-color);
-    color: white;
-}
+        .table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
 
-/* Status Card */
-.status-card {
-    text-align: center;
-    padding: 20px;
-    border-radius: 10px;
-    color: white;
-    margin-bottom: 20px;
-}
+        .status-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 20px;
+        }
 
-.status-card.connected {
-    background-color: #28a745;
-}
+        .status-card.connected {
+            background-color: #28a745;
+        }
 
-.status-card.disconnected {
-    background-color: #dc3545;
-}
+        .status-card.disconnected {
+            background-color: #dc3545;
+        }
 
-/* Form Controls */
-.form-control:focus {
-    border-color: var(--secondary-color);
-    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
-}
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+        }
 
-/* Escala Items */
-#escalaItems .escala-item {
-    margin-bottom: 15px;
-    padding: 15px;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    background-color: #f8f9fa;
-}
+        #escalaItems .escala-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
 
-#escalaItems .btn-remove-item {
-    margin-top: 10px;
-}
+        #escalaItems .btn-remove-item {
+            margin-top: 10px;
+        }
 
-.action-buttons .btn {
-    margin-right: 5px;
-    margin-bottom: 5px;
-}
+        .action-buttons .btn {
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
 
-/* Loading Animation */
-.loading {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255,255,255,.3);
-    border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 1s ease-in-out infinite;
-}
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
-/* Mobile Menu Toggle */
-.mobile-menu-toggle {
-    display: none;
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1100;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    font-size: 1.5rem;
-}
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1100;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1.5rem;
+        }
 
-/* Responsive Styles */
-@media (max-width: 992px) {
-    .sidebar {
-        transform: translateX(-100%);
-        width: 280px;
-    }
-    
-    .sidebar.show {
-        transform: translateX(0);
-    }
-    
-    .main-content {
-        margin-left: 0;
-    }
-    
-    .mobile-menu-toggle {
-        display: block;
-    }
-    
-    .card-header {
-        padding: 12px 15px;
-    }
-}
+        #sobre .rounded-circle {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 5px solid var(--primary-color);
+        }
 
-@media (max-width: 768px) {
-    .main-content {
-        padding: 15px;
-    }
-    
-    .row {
-        margin-left: -10px;
-        margin-right: -10px;
-    }
-    
-    .col-md-6, .col-md-4, .col-md-12 {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-    
-    .table-responsive {
-        border: none;
-    }
-    
-    .btn {
-        padding: 8px 12px;
-        font-size: 14px;
-    }
-    
-    .status-card {
-        padding: 15px;
-    }
-    
-    h1.h2 {
-        font-size: 1.5rem;
-    }
-    
-    .card-body {
-        padding: 15px;
-    }
-    
-    /* Ajustes para tabelas em mobile */
-    table {
-        font-size: 14px;
-    }
-    
-    th, td {
-        padding: 8px 10px;
-    }
-    
-    /* Ajustes para formulários */
-    .form-control, .form-select {
-        font-size: 14px;
-        padding: 8px 12px;
-    }
-    
-    /* Ajustes para os itens de escala */
-    #escalaItems .escala-item {
-        padding: 10px;
-    }
-}
+        #sobre .list-group-item {
+            border-left: 3px solid var(--secondary-color);
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
 
-@media (max-width: 576px) {
-    .main-content {
-        padding: 10px;
-    }
-    
-    .d-flex.justify-content-between {
-        flex-direction: column;
-    }
-    
-    .btn-toolbar {
-        margin-top: 10px;
-    }
-    
-    /* Ajustes para cards em colunas */
-    .card {
-        margin-bottom: 15px;
-    }
-    
-    /* Ajustes para modais */
-    .modal-dialog {
-        margin: 10px;
-    }
-    
-    /* Ajustes para abas */
-    .nav-tabs .nav-link {
-        padding: 8px 12px;
-        font-size: 14px;
-    }
-    
-    /* Ajustes para preview de dados */
-    #alunosDataPreview, #escalasDataPreview {
-        font-size: 12px;
-        height: 200px;
-    }
-}
+        #sobre .list-group-item:hover {
+            background-color: rgba(236, 51, 51, 0.1);
+        }
 
-/* Ajustes específicos para telas muito pequenas */
-@media (max-width: 400px) {
-    .btn {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-    
-    .action-buttons .btn {
-        width: auto;
-    }
-    
-    /* Ajuste para tabelas com muitas colunas */
-    .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    /* Ajuste para os inputs de escala */
-    .escala-item input {
-        font-size: 13px;
-    }
-}
+        #sobre h4 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+            margin-top: 20px;
+        }
 
-/* Ajustes para quando a sidebar está aberta em mobile */
-.sidebar-open .main-content {
-    transform: translateX(280px);
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-}
+        .sidebar .text-center img {
+            max-width: 120px;
+            height: auto;
+            transition: all 0.3s ease;
+        }
 
-/* Melhorias de acessibilidade para mobile */
-@media (hover: none) {
-    .btn:hover {
-        background-color: initial;
-    }
-    
-    .nav-link:hover {
-        background-color: initial;
-    }
-}
+        .sidebar img {
+            width: 70%;
+        }
 
-/* Ajuste para evitar zoom em inputs em mobile */
-@media screen and (max-width: 768px) {
-    input, select, textarea {
-        font-size: 16px !important;
-    }
-    .mobile-menu-toggle {
-    display: none; /* Inicialmente escondido */
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1100;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 12px;
-    font-size: 1.5rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .card-header {
+                padding: 12px 15px;
+            }
 
-/* Mostrar apenas quando o modal de login não estiver visível */
-body:not(.modal-open) .mobile-menu-toggle {
-    display: block;
-}
+            #sobre .rounded-circle {
+                width: 120px;
+                height: 120px;
+            }
+        }
 
-/* Ajuste para quando o modal estiver aberto */
-.modal-open .mobile-menu-toggle {
-    display: none !important;
-}
-}
-/* Estilos para a aba Sobre */
-#sobre .rounded-circle {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border: 5px solid var(--primary-color);
-}
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+            
+            .row {
+                margin-left: -10px;
+                margin-right: -10px;
+            }
+            
+            .col-md-6, .col-md-4, .col-md-12 {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            .table-responsive {
+                border: none;
+            }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            
+            .status-card {
+                padding: 15px;
+            }
+            
+            h1.h2 {
+                font-size: 1.5rem;
+            }
+            
+            .card-body {
+                padding: 15px;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+            
+            .form-control, .form-select {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+            
+            #escalaItems .escala-item {
+                padding: 10px;
+            }
+        }
 
-#sobre .list-group-item {
-    border-left: 3px solid var(--secondary-color);
-    margin-bottom: 5px;
-    border-radius: 5px;
-}
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 10px;
+            }
+            
+            .d-flex.justify-content-between {
+                flex-direction: column;
+            }
+            
+            .btn-toolbar {
+                margin-top: 10px;
+            }
+            
+            .card {
+                margin-bottom: 15px;
+            }
+            
+            .modal-dialog {
+                margin: 10px;
+            }
+            
+            .nav-tabs .nav-link {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            
+            #alunosDataPreview, #escalasDataPreview {
+                font-size: 12px;
+                height: 200px;
+            }
+        }
 
-#sobre .list-group-item:hover {
-    background-color: rgba(236, 51, 51, 0.1);
-}
+        @media (max-width: 400px) {
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .action-buttons .btn {
+                width: auto;
+            }
+            
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .escala-item input {
+                font-size: 13px;
+            }
+        }
 
-#sobre h4 {
-    color: var(--primary-color);
-    border-bottom: 2px solid #eee;
-    padding-bottom: 8px;
-    margin-top: 20px;
-}
+        @media (hover: none) {
+            .btn:hover {
+                background-color: initial;
+            }
+            
+            .nav-link:hover {
+                background-color: initial;
+            }
+        }
 
-/* Responsivo */
-@media (max-width: 768px) {
-    #sobre .row > div {
-        margin-bottom: 20px;
-    }
-    
-    #sobre .rounded-circle {
-        width: 120px;
-        height: 120px;
-    }
-}
-/* Para a logo no sidebar */
-.sidebar .text-center img {
-    max-width: 120px;  /* Ajuste este valor conforme necessário */
-    height: auto;
-    transition: all 0.3s ease;
-}
-
-/* Para telas menores (responsivo) */
-@media (max-width: 768px) {
-    .sidebar .text-center img {
-        max-width: 100px;  /* Tamanho menor para mobile */
-    }
-}
-
-/* Se estiver usando uma classe específica (como no exemplo acima) */
-.logo {
-    width: 120px !important;  /* Force o tamanho se necessário */
-    height: auto !important;
-}
-.sidebar img {
-    width: 70%;  /* Reduz para 70% do container */
-}
+        @media screen and (max-width: 768px) {
+            input, select, textarea {
+                font-size: 16px !important;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
             <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="text-center mb-4">
                     <img src="logu.svg" alt="Logo" class="logo">
@@ -453,14 +378,11 @@ body:not(.modal-open) .mobile-menu-toggle {
                             <i class="bi bi-box-arrow-left"></i> Sair
                         </button>
                     </li>
-
                 </ul>
             </div>
 
-            <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
                 <div class="tab-content">
-                    <!-- Dashboard Tab -->
                     <div class="tab-pane fade show active" id="dashboard">
                         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Dashboard</h1>
@@ -515,7 +437,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                                             </tr>
                                         </thead>
                                         <tbody id="lastActions">
-                                            <!-- Últimas ações serão inseridas aqui via JavaScript -->
                                         </tbody>
                                     </table>
                                 </div>
@@ -579,7 +500,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                             </div>
                         </div>
                     </div>
-                    <!-- Alunos Tab -->
                     <div class="tab-pane fade" id="alunos">
                         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Gerenciar Alunos</h1>
@@ -646,7 +566,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                                                     </tr>
                                                 </thead>
                                                 <tbody id="alunosList">
-                                                    <!-- Lista de alunos será inserida aqui via JavaScript -->
                                                 </tbody>
                                             </table>
                                         </div>
@@ -656,7 +575,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                         </div>
                     </div>
 
-                    <!-- Escalas Tab -->
                     <div class="tab-pane fade" id="escalas">
                         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Gerenciar Escalas</h1>
@@ -690,7 +608,6 @@ body:not(.modal-open) .mobile-menu-toggle {
 
                                         <h5 class="mb-3">Itens da Escala</h5>
                                         <div id="escalaItems">
-                                            <!-- Itens da escala serão inseridos aqui via JavaScript -->
                                         </div>
 
                                         <button class="btn btn-secondary mt-2" id="addItemEscalaBtn">
@@ -706,7 +623,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                         </div>
                     </div>
 
-                    <!-- Turmas Tab -->
                     <div class="tab-pane fade" id="turmas">
                         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Gerenciar Turmas (ABA EM DESENVOLVIMENTO)</h1>
@@ -750,7 +666,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                                                     </tr>
                                                 </thead>
                                                 <tbody id="turmasList">
-                                                    <!-- Lista de turmas será inserida aqui via JavaScript -->
                                                 </tbody>
                                             </table>
                                         </div>
@@ -760,7 +675,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                         </div>
                     </div>
 
-                    <!-- Backup Tab -->
                     <div class="tab-pane fade" id="backup">
                         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Backup dos Dados</h1>
@@ -850,7 +764,6 @@ body:not(.modal-open) .mobile-menu-toggle {
         </div>
     </div>
 
-    <!-- Modal de Confirmação -->
     <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -869,7 +782,6 @@ body:not(.modal-open) .mobile-menu-toggle {
         </div>
     </div>
 
-    <!-- Modal de Mensagem -->
     <div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -887,7 +799,6 @@ body:not(.modal-open) .mobile-menu-toggle {
         </div>
     </div>
 
-    <!-- Modal de Login -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="false" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -923,13 +834,11 @@ body:not(.modal-open) .mobile-menu-toggle {
     </button>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Configurações globais
         const API_URL = 'https://erickmth.pythonanywhere.com/api';
         let currentTurmaEscala = '';
         let lastActionId = 0;
         let turmasList = [];
 
-        // Elementos do DOM
         const elements = {
             loginModal: new bootstrap.Modal('#loginModal'),
             confirmModal: new bootstrap.Modal('#confirmModal'),
@@ -976,12 +885,9 @@ body:not(.modal-open) .mobile-menu-toggle {
             messageModalBody: document.getElementById('messageModalBody')
         };
 
-        // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            // Mostrar modal de login
             elements.loginModal.show();
 
-            // Carregar credenciais salvas
             const savedUsername = localStorage.getItem('adminUsername');
             const savedPassword = localStorage.getItem('adminPassword');
             if (savedUsername && savedPassword) {
@@ -990,40 +896,27 @@ body:not(.modal-open) .mobile-menu-toggle {
                 document.getElementById('rememberMe').checked = true;
             }
 
-            // Configurar eventos
             setupEventListeners();
         });
 
         function setupEventListeners() {
-            // Login
             elements.loginBtn.addEventListener('click', handleLogin);
             elements.logoutBtn.addEventListener('click', handleLogout);
-
-            // Dashboard
             elements.refreshDashboard.addEventListener('click', loadDashboard);
-
-            // Alunos
             elements.addAlunoForm.addEventListener('submit', addAluno);
             elements.listarAlunosBtn.addEventListener('click', listarAlunos);
             elements.turmaLista.addEventListener('change', listarAlunos);
-
-            // Escalas
             elements.carregarEscalaBtn.addEventListener('click', carregarEscala);
             elements.addItemEscalaBtn.addEventListener('click', adicionarItemEscala);
             elements.salvarEscalaBtn.addEventListener('click', salvarEscala);
-
-            // Turmas
             elements.addTurmaForm.addEventListener('submit', addTurma);
             elements.listarTurmasBtn.addEventListener('click', listarTurmas);
-
-            // Backup
             elements.exportAlunosBtn.addEventListener('click', exportAlunos);
             elements.exportEscalasBtn.addEventListener('click', exportEscalas);
             elements.exportFullBackupBtn.addEventListener('click', exportFullBackup);
             elements.importBackupBtn.addEventListener('click', importBackup);
         }
 
-        // Funções de autenticação
         async function handleLogin() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
@@ -1048,7 +941,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                         localStorage.removeItem('adminPassword');
                     }
 
-                    // Salvar credenciais para uso futuro
                     sessionStorage.setItem('adminAuth', btoa(username + ':' + password));
                     elements.loginModal.hide();
                     loadDashboard();
@@ -1076,12 +968,10 @@ body:not(.modal-open) .mobile-menu-toggle {
             };
         }
 
-        // Funções do Dashboard
         async function loadDashboard() {
             try {
                 showLoading(elements.refreshDashboard);
                 
-                // Verificar conexão
                 const statusResponse = await fetch(`${API_URL}/admin/status`, {
                     headers: getAuthHeader()
                 });
@@ -1093,7 +983,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                 const statusData = await statusResponse.json();
                 elements.connectionStatus.textContent = `Conectado como ${statusData.admin}`;
                 
-                // Carregar estatísticas
                 const backupResponse = await fetch(`${API_URL}/admin/backup`, {
                     headers: getAuthHeader()
                 });
@@ -1104,7 +993,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                 
                 const backupData = await backupResponse.json();
                 
-                // Atualizar totais
                 elements.totalTurmas.textContent = Object.keys(backupData.alunos).length;
                 
                 let totalAlunos = 0;
@@ -1113,11 +1001,9 @@ body:not(.modal-open) .mobile-menu-toggle {
                 }
                 elements.totalAlunos.textContent = totalAlunos;
                 
-                // Atualizar última atualização
                 const now = new Date();
                 elements.lastUpdate.textContent = `Última atualização: ${now.toLocaleString()}`;
                 
-                // Adicionar ação ao histórico
                 addAction('Dashboard atualizado', 'Os dados do dashboard foram atualizados com sucesso', statusData.admin);
                 
             } catch (error) {
@@ -1141,13 +1027,11 @@ body:not(.modal-open) .mobile-menu-toggle {
             
             elements.lastActions.prepend(row);
             
-            // Manter apenas as últimas 10 ações
             if (elements.lastActions.children.length > 10) {
                 elements.lastActions.removeChild(elements.lastActions.lastChild);
             }
         }
 
-        // Funções de Alunos
         async function loadTurmas() {
             try {
                 const response = await fetch(`${API_URL}/admin/status`, {
@@ -1161,7 +1045,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                 const data = await response.json();
                 turmasList = data.turmas;
                 
-                // Preencher selects de turma
                 const selects = [elements.turmaAluno, elements.turmaLista, elements.turmaEscala];
                 selects.forEach(select => {
                     select.innerHTML = '';
@@ -1205,9 +1088,7 @@ body:not(.modal-open) .mobile-menu-toggle {
             
             if (admin) {
                 if (nome.includes('👩‍🏫') || nome.includes('👨‍🏫')) {
-                    // Já tem emoji de admin
                 } else {
-                    // Adicionar emoji de admin baseado no gênero (simplificado)
                     const genero = nome.match(/Prof[ªº]/)?.[0] || 'Profº';
                     nome += genero.includes('ª') ? '👩‍🏫' : '👨‍🏫';
                 }
@@ -1233,7 +1114,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                 showMessage('Sucesso', 'Aluno adicionado com sucesso', 'success');
                 addAction('Aluno adicionado', `EDV: ${edv}, Turma: ${turma}`, 'Admin');
                 
-                // Limpar formulário e atualizar lista
                 elements.edvAluno.value = '';
                 elements.nomeAluno.value = '';
                 elements.isAdmin.checked = false;
@@ -1255,7 +1135,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                 let alunos = {};
                 
                 if (turma) {
-                    // Carregar alunos de uma turma específica
                     const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
                         headers: getAuthHeader()
                     });
@@ -1266,7 +1145,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                     
                     alunos[turma] = await response.json();
                 } else {
-                    // Carregar todos os alunos de todas as turmas
                     for (const t of turmasList) {
                         const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(t)}/alunos`, {
                             headers: getAuthHeader()
@@ -1278,7 +1156,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                     }
                 }
                 
-                // Exibir alunos na tabela
                 elements.alunosList.innerHTML = '';
                 
                 for (const [turma, alunosTurma] of Object.entries(alunos)) {
@@ -1303,7 +1180,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                     }
                 }
                 
-                // Adicionar eventos aos botões de remover
                 document.querySelectorAll('.btn-remove-aluno').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const turma = this.getAttribute('data-turma');
@@ -1346,7 +1222,6 @@ body:not(.modal-open) .mobile-menu-toggle {
             }
         }
 
-        // Funções de Escalas
         async function carregarEscala() {
             const turma = elements.turmaEscala.value;
             currentTurmaEscala = turma;
@@ -1370,10 +1245,8 @@ body:not(.modal-open) .mobile-menu-toggle {
                 const escala = await response.json();
                 elements.semanaAtual.value = escala.semana_atual || '';
                 
-                // Limpar itens existentes
                 elements.escalaItems.innerHTML = '';
                 
-                // Adicionar itens da escala
                 if (escala.duplas && escala.duplas.length > 0) {
                     escala.duplas.forEach(item => {
                         addEscalaItem(item.semana, item.dupla);
@@ -1409,7 +1282,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                 </button>
             `;
             
-            // Adicionar evento ao botão de remover
             itemDiv.querySelector('.btn-remove-item').addEventListener('click', function() {
                 itemDiv.remove();
             });
@@ -1472,7 +1344,6 @@ body:not(.modal-open) .mobile-menu-toggle {
             }
         }
 
-        // Funções de Turmas
         async function addTurma(e) {
             e.preventDefault();
             
@@ -1503,7 +1374,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                 showMessage('Sucesso', 'Turma adicionada com sucesso', 'success');
                 addAction('Turma adicionada', `Nome: ${nomeTurma}`, 'Admin');
                 
-                // Limpar formulário e atualizar listas
                 elements.novaTurma.value = '';
                 loadTurmas();
                 listarTurmas();
@@ -1531,10 +1401,8 @@ body:not(.modal-open) .mobile-menu-toggle {
                 const data = await response.json();
                 turmasList = data.turmas;
                 
-                // Limpar tabela
                 elements.turmasList.innerHTML = '';
                 
-                // Carregar quantidade de alunos por turma
                 for (const turma of turmasList) {
                     const alunosResponse = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
                         headers: getAuthHeader()
@@ -1560,7 +1428,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                     elements.turmasList.appendChild(row);
                 }
                 
-                // Adicionar eventos aos botões de remover
                 document.querySelectorAll('.btn-remove-turma').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const turma = this.getAttribute('data-turma');
@@ -1596,7 +1463,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                 showMessage('Sucesso', 'Turma removida com sucesso', 'success');
                 addAction('Turma removida', `Nome: ${turma}`, 'Admin');
                 
-                // Atualizar listas
                 loadTurmas();
                 listarTurmas();
                 listarAlunos();
@@ -1606,7 +1472,6 @@ body:not(.modal-open) .mobile-menu-toggle {
             }
         }
 
-        // Funções de Backup
         async function exportAlunos() {
             try {
                 showLoading(elements.exportAlunosBtn);
@@ -1622,10 +1487,8 @@ body:not(.modal-open) .mobile-menu-toggle {
                 const data = await response.json();
                 const alunosData = JSON.stringify(data.alunos, null, 2);
                 
-                // Atualizar preview
                 elements.alunosDataPreview.textContent = alunosData;
                 
-                // Criar arquivo para download
                 downloadFile(`alunos_${new Date().toISOString().slice(0,10)}.json`, alunosData);
                 
                 showMessage('Sucesso', 'Alunos exportados com sucesso', 'success');
@@ -1653,10 +1516,8 @@ body:not(.modal-open) .mobile-menu-toggle {
                 const data = await response.json();
                 const escalasData = JSON.stringify(data.escalas, null, 2);
                 
-                // Atualizar preview
                 elements.escalasDataPreview.textContent = escalasData;
                 
-                // Criar arquivo para download
                 downloadFile(`escalas_${new Date().toISOString().slice(0,10)}.json`, escalasData);
                 
                 showMessage('Sucesso', 'Escalas exportadas com sucesso', 'success');
@@ -1684,11 +1545,9 @@ body:not(.modal-open) .mobile-menu-toggle {
                 const data = await response.json();
                 const backupData = JSON.stringify(data, null, 2);
                 
-                // Atualizar previews
                 elements.alunosDataPreview.textContent = JSON.stringify(data.alunos, null, 2);
                 elements.escalasDataPreview.textContent = JSON.stringify(data.escalas, null, 2);
                 
-                // Criar arquivo para download
                 downloadFile(`backup_completo_${new Date().toISOString().slice(0,10)}.json`, backupData);
                 
                 showMessage('Sucesso', 'Backup completo exportado com sucesso', 'success');
@@ -1718,18 +1577,15 @@ body:not(.modal-open) .mobile-menu-toggle {
                     
                     const backupData = JSON.parse(e.target.result);
                     
-                    // Verificar estrutura do backup
                     if (!backupData.alunos || !backupData.escalas) {
                         throw new Error('Arquivo de backup inválido');
                     }
                     
-                    // Confirmar importação
                     confirmAction(
                         'Importar Backup',
                         'Tem certeza que deseja importar este backup? Todos os dados atuais serão substituídos!',
                         async () => {
                             try {
-                                // Enviar dados para a API
                                 const response = await fetch(`${API_URL}/admin/backup`, {
                                     method: 'POST',
                                     headers: {
@@ -1747,7 +1603,6 @@ body:not(.modal-open) .mobile-menu-toggle {
                                 showMessage('Sucesso', 'Backup importado com sucesso', 'success');
                                 addAction('Backup importado', 'Dados restaurados a partir de backup', 'Admin');
                                 
-                                // Atualizar todas as listas
                                 loadDashboard();
                                 loadTurmas();
                                 listarTurmas();
@@ -1770,7 +1625,6 @@ body:not(.modal-open) .mobile-menu-toggle {
             reader.readAsText(file);
         }
 
-        // Funções auxiliares
         function downloadFile(filename, content) {
             const blob = new Blob([content], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -1797,7 +1651,6 @@ body:not(.modal-open) .mobile-menu-toggle {
             elements.messageModalTitle.textContent = title;
             elements.messageModalBody.textContent = message;
             
-            // Alterar cor do cabeçalho baseado no tipo
             const header = elements.messageModal._element.querySelector('.modal-header');
             header.className = 'modal-header';
             
@@ -1836,31 +1689,26 @@ body:not(.modal-open) .mobile-menu-toggle {
                 }
             }
         }
-        // Mobile menu toggle
-const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-const sidebar = document.querySelector('.sidebar');
-const mainContent = document.querySelector('.main-content');
 
-mobileMenuToggle.addEventListener('click', function() {
-    sidebar.classList.toggle('show');
-    mainContent.classList.toggle('sidebar-open');
-});
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+
+        mobileMenuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('show');
+            mainContent.classList.toggle('sidebar-open');
+        });
     </script>
 
-
-
-<!-- VLibras -->
-<div vw class="enabled">
-    <div vw-access-button class="active"></div>
-    <div vw-plugin-wrapper>
-      <div class="vw-plugin-top-wrapper"></div>
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
     </div>
-  </div>
-  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-  <script>
-    new window.VLibras.Widget('https://vlibras.gov.br/app');
-  </script>
-
-  
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
 </body>
 </html>
