@@ -27,9 +27,10 @@
             height: 100vh;
             position: fixed;
             padding-top: 20px;
-            width: 250px;
+            width: 220px;
             transition: all 0.3s;
             z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar .nav-link {
@@ -37,28 +38,42 @@
             margin-bottom: 5px;
             border-radius: 5px;
             padding: 10px 15px;
+            transition: all 0.2s;
         }
 
         .sidebar .nav-link:hover, .sidebar .nav-link.active {
             background-color: rgba(255, 255, 255, 0.1);
             color: white;
+            transform: translateX(5px);
         }
 
         .sidebar .nav-link i {
             margin-right: 10px;
+            transition: all 0.2s;
+        }
+
+        .sidebar .nav-link:hover i {
+            color: var(--secondary-color);
         }
 
         .main-content {
             margin-left: 250px;
             padding: 20px;
             transition: all 0.3s;
+            min-height: 100vh;
         }
 
         .card {
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             margin-bottom: 20px;
             border: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
         }
 
         .card-header {
@@ -66,21 +81,26 @@
             color: white;
             border-radius: 10px 10px 0 0 !important;
             padding: 15px 20px;
+            border-bottom: none;
         }
 
         .btn-primary {
             background-color: var(--secondary-color);
             border-color: var(--secondary-color);
+            transition: all 0.2s;
         }
 
         .btn-primary:hover {
             background-color: #c82333;
             border-color: #bd2130;
+            transform: translateY(-2px);
         }
 
         .table th {
             background-color: var(--primary-color);
             color: white;
+            position: sticky;
+            top: 0;
         }
 
         .status-card {
@@ -89,17 +109,23 @@
             border-radius: 10px;
             color: white;
             margin-bottom: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-card:hover {
+            transform: scale(1.02);
         }
 
         .status-card.connected {
-            background-color: #28a745;
+            background: linear-gradient(135deg, #28a745, #218838);
         }
 
         .status-card.disconnected {
-            background-color: #dc3545;
+            background: linear-gradient(135deg, #dc3545, #c82333);
         }
 
-        .form-control:focus {
+        .form-control:focus, .form-select:focus {
             border-color: var(--secondary-color);
             box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
         }
@@ -110,15 +136,27 @@
             border: 1px solid #dee2e6;
             border-radius: 5px;
             background-color: #f8f9fa;
+            transition: all 0.2s;
+        }
+
+        #escalaItems .escala-item:hover {
+            background-color: #e9ecef;
+            border-color: #ced4da;
         }
 
         #escalaItems .btn-remove-item {
             margin-top: 10px;
+            transition: all 0.2s;
         }
 
         .action-buttons .btn {
             margin-right: 5px;
             margin-bottom: 5px;
+            transition: all 0.2s;
+        }
+
+        .action-buttons .btn:hover {
+            transform: translateY(-2px);
         }
 
         .loading {
@@ -147,6 +185,12 @@
             border-radius: 5px;
             padding: 10px;
             font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: var(--secondary-color);
+            transform: scale(1.1);
         }
 
         #sobre .rounded-circle {
@@ -154,16 +198,24 @@
             height: 150px;
             object-fit: cover;
             border: 5px solid var(--primary-color);
+            transition: all 0.3s;
+        }
+
+        #sobre .rounded-circle:hover {
+            transform: scale(1.05);
+            border-color: var(--secondary-color);
         }
 
         #sobre .list-group-item {
             border-left: 3px solid var(--secondary-color);
             margin-bottom: 5px;
             border-radius: 5px;
+            transition: all 0.2s;
         }
 
         #sobre .list-group-item:hover {
             background-color: rgba(236, 51, 51, 0.1);
+            transform: translateX(5px);
         }
 
         #sobre h4 {
@@ -179,8 +231,112 @@
             transition: all 0.3s ease;
         }
 
+        .sidebar .text-center img:hover {
+            transform: rotate(5deg) scale(1.05);
+        }
+
         .sidebar img {
             width: 70%;
+        }
+
+        /* Animações para as tabelas */
+        table tr {
+            transition: all 0.2s;
+        }
+
+        table tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        /* Efeito de fade para as abas */
+        .tab-pane {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Badge animado para novas ações */
+        .badge-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+        }
+
+        /* Barra de rolagem personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c82333;
+        }
+
+        /* Efeito de zoom para cards de status */
+        .zoom-effect {
+            transition: transform 0.3s;
+        }
+
+        .zoom-effect:hover {
+            transform: scale(1.03);
+        }
+
+        /* Efeito de hover para botões de ação */
+        .btn-action {
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-action:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%, -50%);
+            transform-origin: 50% 50%;
+        }
+
+        .btn-action:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
         }
 
         @media (max-width: 992px) {
@@ -191,6 +347,7 @@
             
             .sidebar.show {
                 transform: translateX(0);
+                box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
             }
             
             .main-content {
@@ -208,6 +365,10 @@
             #sobre .rounded-circle {
                 width: 120px;
                 height: 120px;
+            }
+
+            .status-card {
+                padding: 15px;
             }
         }
 
@@ -295,6 +456,10 @@
                 font-size: 12px;
                 height: 200px;
             }
+
+            .sidebar {
+                width: 260px;
+            }
         }
 
         @media (max-width: 400px) {
@@ -315,15 +480,21 @@
             .escala-item input {
                 font-size: 13px;
             }
+
+            .sidebar {
+                width: 240px;
+            }
         }
 
         @media (hover: none) {
             .btn:hover {
                 background-color: initial;
+                transform: none;
             }
             
             .nav-link:hover {
                 background-color: initial;
+                transform: none;
             }
         }
 
@@ -369,7 +540,7 @@
                         </a>
                     </li>
                     <li class="nav-item mt-4">
-                        <button class="btn btn-sm btn-danger w-100" id="logoutBtn">
+                        <button class="btn btn-sm btn-danger w-100 btn-action" id="logoutBtn">
                             <i class="bi bi-box-arrow-left"></i> Sair
                         </button>
                     </li>
@@ -383,7 +554,7 @@
                             <h1 class="h2">Dashboard</h1>
                             <div class="btn-toolbar mb-2 mb-md-0">
                                 <div class="btn-group me-2">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshDashboard">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-action" id="refreshDashboard">
                                         <i class="bi bi-arrow-clockwise"></i> Atualizar
                                     </button>
                                 </div>
@@ -392,14 +563,14 @@
 
                         <div class="row mb-4">
                             <div class="col-md-4">
-                                <div class="status-card connected">
+                                <div class="status-card connected zoom-effect">
                                     <h4><i class="bi bi-check-circle"></i> Conectado</h4>
                                     <p id="connectionStatus">Conectado à API</p>
                                     <small id="lastUpdate"></small>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card text-white bg-primary">
+                                <div class="card text-white bg-primary zoom-effect">
                                     <div class="card-body">
                                         <h5 class="card-title">Total de Turmas</h5>
                                         <h2 id="totalTurmas">0</h2>
@@ -407,7 +578,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card text-white bg-success">
+                                <div class="card text-white bg-success zoom-effect">
                                     <div class="card-body">
                                         <h5 class="card-title">Total de Alunos</h5>
                                         <h2 id="totalAlunos">0</h2>
@@ -418,7 +589,10 @@
 
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="mb-0">Últimas Ações</h5>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Últimas Ações</h5>
+                                    <span class="badge bg-danger badge-pulse" id="newActionsBadge" style="display: none;">Novo</span>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -449,6 +623,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="text-center mb-4">
+                                    <img src="https://via.placeholder.com/150" alt="Foto do Desenvolvedor" class="rounded-circle mb-3">
                                     <h3>Erick Matheus Leguisamon</h3>
                                     <p class="text-muted">Desenvolvedor do Sistema</p>
                                 </div>
@@ -462,6 +637,7 @@
                                         <ul>
                                             <li>Frontend: HTML5, CSS3, JavaScript, Bootstrap 5</li>
                                             <li>Backend: Python, Flask</li>
+                                            <li>Banco de Dados: SQLite</li>
                                             <li>Hospedagem: PythonAnywhere</li>
                                         </ul>
                                     </div>
@@ -498,6 +674,11 @@
                     <div class="tab-pane fade" id="alunos">
                         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Gerenciar Alunos</h1>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <button class="btn btn-sm btn-outline-secondary btn-action" id="refreshAlunosBtn">
+                                    <i class="bi bi-arrow-repeat"></i> Atualizar Tudo
+                                </button>
+                            </div>
                         </div>
 
                         <div class="row">
@@ -528,7 +709,7 @@
                                                     É administrador?
                                                 </label>
                                             </div>
-                                            <button type="submit" class="btn btn-primary">
+                                            <button type="submit" class="btn btn-primary btn-action">
                                                 <i class="bi bi-plus-circle"></i> Adicionar Aluno
                                             </button>
                                         </form>
@@ -547,7 +728,7 @@
                                                 <option value="">Todas as turmas</option>
                                             </select>
                                         </div>
-                                        <button class="btn btn-primary mb-3" id="listarAlunosBtn">
+                                        <button class="btn btn-primary mb-3 btn-action" id="listarAlunosBtn">
                                             <i class="bi bi-arrow-repeat"></i> Atualizar Lista
                                         </button>
                                         <div class="table-responsive">
@@ -590,7 +771,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-6">
-                                                <button class="btn btn-primary mt-4" id="carregarEscalaBtn">
+                                                <button class="btn btn-primary mt-4 btn-action" id="carregarEscalaBtn">
                                                     <i class="bi bi-arrow-down-circle"></i> Carregar Escala
                                                 </button>
                                             </div>
@@ -605,11 +786,11 @@
                                         <div id="escalaItems">
                                         </div>
 
-                                        <button class="btn btn-secondary mt-2" id="addItemEscalaBtn">
+                                        <button class="btn btn-secondary mt-2 btn-action" id="addItemEscalaBtn">
                                             <i class="bi bi-plus-circle"></i> Adicionar Item
                                         </button>
 
-                                        <button class="btn btn-success mt-2 ms-2" id="salvarEscalaBtn">
+                                        <button class="btn btn-success mt-2 ms-2 btn-action" id="salvarEscalaBtn">
                                             <i class="bi bi-save"></i> Salvar Escala
                                         </button>
                                     </div>
@@ -641,13 +822,13 @@
                                                         <h5 class="mb-0">Exportar Dados</h5>
                                                     </div>
                                                     <div class="card-body">
-                                                        <button class="btn btn-primary mb-2" id="exportAlunosBtn">
+                                                        <button class="btn btn-primary mb-2 btn-action" id="exportAlunosBtn">
                                                             <i class="bi bi-download"></i> Exportar Alunos (JSON)
                                                         </button>
-                                                        <button class="btn btn-primary mb-2" id="exportEscalasBtn">
+                                                        <button class="btn btn-primary mb-2 btn-action" id="exportEscalasBtn">
                                                             <i class="bi bi-download"></i> Exportar Escalas (JSON)
                                                         </button>
-                                                        <button class="btn btn-success" id="exportFullBackupBtn">
+                                                        <button class="btn btn-success btn-action" id="exportFullBackupBtn">
                                                             <i class="bi bi-database"></i> Exportar Backup Completo
                                                         </button>
                                                     </div>
@@ -663,7 +844,7 @@
                                                             <label for="backupFile" class="form-label">Selecione o arquivo de backup</label>
                                                             <input class="form-control" type="file" id="backupFile" accept=".json">
                                                         </div>
-                                                        <button class="btn btn-warning" id="importBackupBtn">
+                                                        <button class="btn btn-warning btn-action" id="importBackupBtn">
                                                             <i class="bi bi-upload"></i> Importar Backup
                                                         </button>
                                                         <div class="alert alert-danger mt-3">
@@ -710,16 +891,16 @@
     <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="confirmModalTitle">Confirmação</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="confirmModalBody">
                     Tem certeza que deseja realizar esta ação?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="confirmModalBtn">Confirmar</button>
+                    <button type="button" class="btn btn-secondary btn-action" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary btn-action" id="confirmModalBtn">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -728,15 +909,15 @@
     <div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="messageModalTitle">Mensagem</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="messageModalBody">
                     Mensagem de exemplo
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-primary btn-action" data-bs-dismiss="modal">OK</button>
                 </div>
             </div>
         </div>
@@ -745,7 +926,7 @@
     <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="false" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">Acesso ao Painel Admin</h5>
                 </div>
                 <div class="modal-body">
@@ -766,7 +947,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="loginBtn">Entrar</button>
+                    <button type="button" class="btn btn-primary btn-action" id="loginBtn">Entrar</button>
                 </div>
             </div>
         </div>
@@ -781,6 +962,8 @@
         let currentTurmaEscala = '';
         let lastActionId = 0;
         let turmasList = [];
+        let lastUpdateTime = null;
+        let eventSource = null;
 
         const elements = {
             loginModal: new bootstrap.Modal('#loginModal'),
@@ -791,11 +974,13 @@
             loginError: document.getElementById('loginError'),
             logoutBtn: document.getElementById('logoutBtn'),
             refreshDashboard: document.getElementById('refreshDashboard'),
+            refreshAlunosBtn: document.getElementById('refreshAlunosBtn'),
             totalTurmas: document.getElementById('totalTurmas'),
             totalAlunos: document.getElementById('totalAlunos'),
             connectionStatus: document.getElementById('connectionStatus'),
             lastUpdate: document.getElementById('lastUpdate'),
             lastActions: document.getElementById('lastActions'),
+            newActionsBadge: document.getElementById('newActionsBadge'),
             addAlunoForm: document.getElementById('addAlunoForm'),
             turmaAluno: document.getElementById('turmaAluno'),
             edvAluno: document.getElementById('edvAluno'),
@@ -810,10 +995,6 @@
             escalaItems: document.getElementById('escalaItems'),
             addItemEscalaBtn: document.getElementById('addItemEscalaBtn'),
             salvarEscalaBtn: document.getElementById('salvarEscalaBtn'),
-            addTurmaForm: document.getElementById('addTurmaForm'),
-            novaTurma: document.getElementById('novaTurma'),
-            listarTurmasBtn: document.getElementById('listarTurmasBtn'),
-            turmasList: document.getElementById('turmasList'),
             exportAlunosBtn: document.getElementById('exportAlunosBtn'),
             exportEscalasBtn: document.getElementById('exportEscalasBtn'),
             exportFullBackupBtn: document.getElementById('exportFullBackupBtn'),
@@ -825,7 +1006,8 @@
             confirmModalBody: document.getElementById('confirmModalBody'),
             confirmModalBtn: document.getElementById('confirmModalBtn'),
             messageModalTitle: document.getElementById('messageModalTitle'),
-            messageModalBody: document.getElementById('messageModalBody')
+            messageModalBody: document.getElementById('messageModalBody'),
+            mobileMenuToggle: document.getElementById('mobileMenuToggle')
         };
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -846,18 +1028,26 @@
             elements.loginBtn.addEventListener('click', handleLogin);
             elements.logoutBtn.addEventListener('click', handleLogout);
             elements.refreshDashboard.addEventListener('click', loadDashboard);
+            elements.refreshAlunosBtn.addEventListener('click', function() {
+                loadTurmas().then(() => {
+                    listarAlunos();
+                });
+            });
             elements.addAlunoForm.addEventListener('submit', addAluno);
             elements.listarAlunosBtn.addEventListener('click', listarAlunos);
             elements.turmaLista.addEventListener('change', listarAlunos);
             elements.carregarEscalaBtn.addEventListener('click', carregarEscala);
             elements.addItemEscalaBtn.addEventListener('click', adicionarItemEscala);
             elements.salvarEscalaBtn.addEventListener('click', salvarEscala);
-            elements.addTurmaForm.addEventListener('submit', addTurma);
-            elements.listarTurmasBtn.addEventListener('click', listarTurmas);
             elements.exportAlunosBtn.addEventListener('click', exportAlunos);
             elements.exportEscalasBtn.addEventListener('click', exportEscalas);
             elements.exportFullBackupBtn.addEventListener('click', exportFullBackup);
             elements.importBackupBtn.addEventListener('click', importBackup);
+            elements.mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        }
+
+        function toggleMobileMenu() {
+            document.querySelector('.sidebar').classList.toggle('show');
         }
 
         async function handleLogin() {
@@ -888,6 +1078,7 @@
                     elements.loginModal.hide();
                     loadDashboard();
                     loadTurmas();
+                    setupSSEConnection();
                 } else {
                     throw new Error('Credenciais inválidas');
                 }
@@ -900,8 +1091,33 @@
             }
         }
 
+        function setupSSEConnection() {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            eventSource = new EventSource(`${API_URL}/api/admin/historico/stream`);
+
+            eventSource.onmessage = function(event) {
+                const newAction = JSON.parse(event.data);
+                addActionToUI(newAction, true);
+                
+                // Mostrar badge de novas ações
+                elements.newActionsBadge.style.display = 'inline-block';
+            };
+
+            eventSource.onerror = function() {
+                console.error("Erro na conexão SSE. Tentando reconectar...");
+                setTimeout(setupSSEConnection, 5000);
+            };
+        }
+
         function handleLogout() {
             sessionStorage.removeItem('adminAuth');
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
             window.location.reload();
         }
 
@@ -926,6 +1142,14 @@
                 const statusData = await statusResponse.json();
                 elements.connectionStatus.textContent = `Conectado como ${statusData.admin}`;
                 
+                // Carregar histórico completo
+                const historico = await carregarHistorico();
+                elements.lastActions.innerHTML = '';
+                
+                historico.forEach(acao => {
+                    addActionToUI(acao, false);
+                });
+                
                 const backupResponse = await fetch(`${API_URL}/admin/backup`, {
                     headers: getAuthHeader()
                 });
@@ -946,8 +1170,10 @@
                 
                 const now = new Date();
                 elements.lastUpdate.textContent = `Última atualização: ${now.toLocaleString()}`;
+                lastUpdateTime = now;
                 
-                addAction('Dashboard atualizado', 'Os dados do dashboard foram atualizados com sucesso', statusData.admin);
+                // Esconder badge de novas ações após atualização
+                elements.newActionsBadge.style.display = 'none';
                 
             } catch (error) {
                 showMessage('Erro', `Erro ao carregar dashboard: ${error.message}`, 'error');
@@ -956,22 +1182,48 @@
             }
         }
 
-        function addAction(action, details, user) {
-            const now = new Date();
-            const actionId = ++lastActionId;
-            
+        function addActionToUI(acao, isNew = false) {
             const row = document.createElement('tr');
+            
+            if (isNew) {
+                row.classList.add('table-info');
+                setTimeout(() => {
+                    row.classList.remove('table-info');
+                }, 3000);
+            }
+            
             row.innerHTML = `
-                <td>${now.toLocaleString()}</td>
-                <td>${action}</td>
-                <td>${details}</td>
-                <td>${user}</td>
+                <td>${new Date(acao.data_hora).toLocaleString()}</td>
+                <td>${acao.acao}</td>
+                <td>${acao.detalhes}</td>
+                <td>${acao.usuario}</td>
             `;
             
-            elements.lastActions.prepend(row);
+            if (isNew) {
+                elements.lastActions.prepend(row);
+            } else {
+                elements.lastActions.appendChild(row);
+            }
             
-            if (elements.lastActions.children.length > 10) {
+            if (elements.lastActions.children.length > 50) {
                 elements.lastActions.removeChild(elements.lastActions.lastChild);
+            }
+        }
+
+        async function carregarHistorico() {
+            try {
+                const response = await fetch(`${API_URL}/api/admin/historico`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar histórico');
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error("Erro ao carregar histórico:", error);
+                return [];
             }
         }
 
@@ -1055,7 +1307,14 @@
                 }
                 
                 showMessage('Sucesso', 'Aluno adicionado com sucesso', 'success');
-                addAction('Aluno adicionado', `EDV: ${edv}, Turma: ${turma}`, 'Admin');
+                
+                // Registrar ação no histórico
+                await registrarAcao(
+                    'Adicionar Aluno',
+                    `Adicionado aluno ${nome} (EDV: ${edv})`,
+                    turma,
+                    edv
+                );
                 
                 elements.edvAluno.value = '';
                 elements.nomeAluno.value = '';
@@ -1067,6 +1326,31 @@
             } finally {
                 hideLoading(elements.addAlunoForm.querySelector('button[type="submit"]'), 
                     '<i class="bi bi-plus-circle"></i> Adicionar Aluno');
+            }
+        }
+
+        async function registrarAcao(acao, detalhes, turma = null, itemAfetado = null) {
+            try {
+                const usuario = (await fetch(`${API_URL}/admin/status`, {
+                    headers: getAuthHeader()
+                }).then(res => res.json())).admin;
+                
+                await fetch(`${API_URL}/api/admin/historico`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeader()
+                    },
+                    body: JSON.stringify({
+                        usuario,
+                        acao,
+                        detalhes,
+                        turma,
+                        item_afetado: itemAfetado
+                    })
+                });
+            } catch (error) {
+                console.error("Erro ao registrar ação:", error);
             }
         }
 
@@ -1113,7 +1397,7 @@
                             <td>${edv}</td>
                             <td>${nomeDisplay} ${isAdmin ? '<span class="badge bg-warning text-dark">Admin</span>' : ''}</td>
                             <td class="action-buttons">
-                                <button class="btn btn-sm btn-danger btn-remove-aluno" data-turma="${turma}" data-edv="${edv}">
+                                <button class="btn btn-sm btn-danger btn-remove-aluno btn-action" data-turma="${turma}" data-edv="${edv}">
                                     <i class="bi bi-trash"></i> Remover
                                 </button>
                             </td>
@@ -1135,7 +1419,10 @@
                     });
                 });
                 
-                addAction('Alunos listados', turma ? `Filtro: ${turma}` : 'Todas as turmas', 'Admin');
+                await registrarAcao(
+                    'Alunos listados', 
+                    turma ? `Filtro: ${turma}` : 'Todas as turmas'
+                );
                 
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
@@ -1157,7 +1444,15 @@
                 }
                 
                 showMessage('Sucesso', 'Aluno removido com sucesso', 'success');
-                addAction('Aluno removido', `EDV: ${edv}, Turma: ${turma}`, 'Admin');
+                
+                // Registrar ação no histórico
+                await registrarAcao(
+                    'Remover Aluno',
+                    `Removido aluno com EDV: ${edv}`,
+                    turma,
+                    edv
+                );
+                
                 listarAlunos();
                 
             } catch (error) {
@@ -1198,7 +1493,11 @@
                     showMessage('Info', 'Nenhum item de escala encontrado para esta turma', 'info');
                 }
                 
-                addAction('Escala carregada', `Turma: ${turma}`, 'Admin');
+                await registrarAcao(
+                    'Escala carregada',
+                    `Turma: ${turma}`,
+                    turma
+                );
                 
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
@@ -1220,7 +1519,7 @@
                     <label class="form-label">Dupla</label>
                     <input type="text" class="form-control dupla-input" value="${dupla}" placeholder="Ex: Aluno 1 e Aluno 2">
                 </div>
-                <button type="button" class="btn btn-sm btn-danger btn-remove-item">
+                <button type="button" class="btn btn-sm btn-danger btn-remove-item btn-action">
                     <i class="bi bi-trash"></i> Remover Item
                 </button>
             `;
@@ -1278,140 +1577,18 @@
                 }
                 
                 showMessage('Sucesso', 'Escala salva com sucesso', 'success');
-                addAction('Escala salva', `Turma: ${turma}`, 'Admin');
+                
+                // Registrar ação no histórico
+                await registrarAcao(
+                    'Escala salva',
+                    `Turma: ${turma} - ${duplas.length} itens`,
+                    turma
+                );
                 
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
             } finally {
                 hideLoading(elements.salvarEscalaBtn, '<i class="bi bi-save"></i> Salvar Escala');
-            }
-        }
-
-        async function addTurma(e) {
-            e.preventDefault();
-            
-            const nomeTurma = elements.novaTurma.value.trim();
-            
-            if (!nomeTurma) {
-                showMessage('Aviso', 'Digite o nome da turma', 'warning');
-                return;
-            }
-            
-            try {
-                showLoading(elements.addTurmaForm.querySelector('button[type="submit"]'));
-                
-                const response = await fetch(`${API_URL}/admin/turmas`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...getAuthHeader()
-                    },
-                    body: JSON.stringify({ turma: nomeTurma })
-                });
-                
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Erro ao adicionar turma');
-                }
-                
-                showMessage('Sucesso', 'Turma adicionada com sucesso', 'success');
-                addAction('Turma adicionada', `Nome: ${nomeTurma}`, 'Admin');
-                
-                elements.novaTurma.value = '';
-                loadTurmas();
-                listarTurmas();
-                
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.addTurmaForm.querySelector('button[type="submit"]'), 
-                    '<i class="bi bi-plus-circle"></i> Adicionar Turma');
-            }
-        }
-
-        async function listarTurmas() {
-            try {
-                showLoading(elements.listarTurmasBtn);
-                
-                const response = await fetch(`${API_URL}/admin/status`, {
-                    headers: getAuthHeader()
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Erro ao carregar turmas');
-                }
-                
-                const data = await response.json();
-                turmasList = data.turmas;
-                
-                elements.turmasList.innerHTML = '';
-                
-                for (const turma of turmasList) {
-                    const alunosResponse = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
-                        headers: getAuthHeader()
-                    });
-                    
-                    let qtdAlunos = 0;
-                    if (alunosResponse.ok) {
-                        const alunos = await alunosResponse.json();
-                        qtdAlunos = Object.keys(alunos).length;
-                    }
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${turma}</td>
-                        <td>${qtdAlunos}</td>
-                        <td class="action-buttons">
-                            <button class="btn btn-sm btn-danger btn-remove-turma" data-turma="${turma}">
-                                <i class="bi bi-trash"></i> Remover
-                            </button>
-                        </td>
-                    `;
-                    
-                    elements.turmasList.appendChild(row);
-                }
-                
-                document.querySelectorAll('.btn-remove-turma').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const turma = this.getAttribute('data-turma');
-                        confirmAction(
-                            'Remover Turma',
-                            `Tem certeza que deseja remover a turma ${turma} e todos os seus alunos?`,
-                            () => removerTurma(turma)
-                        );
-                    });
-                });
-                
-                addAction('Turmas listadas', 'Todas as turmas', 'Admin');
-                
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.listarTurmasBtn, '<i class="bi bi-arrow-repeat"></i> Atualizar Lista');
-            }
-        }
-
-        async function removerTurma(turma) {
-            try {
-                const response = await fetch(`${API_URL}/admin/turmas?turma=${encodeURIComponent(turma)}`, {
-                    method: 'DELETE',
-                    headers: getAuthHeader()
-                });
-                
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Erro ao remover turma');
-                }
-                
-                showMessage('Sucesso', 'Turma removida com sucesso', 'success');
-                addAction('Turma removida', `Nome: ${turma}`, 'Admin');
-                
-                loadTurmas();
-                listarTurmas();
-                listarAlunos();
-                
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
             }
         }
 
@@ -1435,7 +1612,12 @@
                 downloadFile(`alunos_${new Date().toISOString().slice(0,10)}.json`, alunosData);
                 
                 showMessage('Sucesso', 'Alunos exportados com sucesso', 'success');
-                addAction('Alunos exportados', 'Backup dos alunos realizado', 'Admin');
+                
+                // Registrar ação no histórico
+                await registrarAcao(
+                    'Alunos exportados',
+                    'Backup dos alunos realizado'
+                );
                 
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
@@ -1464,7 +1646,12 @@
                 downloadFile(`escalas_${new Date().toISOString().slice(0,10)}.json`, escalasData);
                 
                 showMessage('Sucesso', 'Escalas exportadas com sucesso', 'success');
-                addAction('Escalas exportadas', 'Backup das escalas realizado', 'Admin');
+                
+                // Registrar ação no histórico
+                await registrarAcao(
+                    'Escalas exportadas',
+                    'Backup das escalas realizado'
+                );
                 
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
@@ -1494,7 +1681,12 @@
                 downloadFile(`backup_completo_${new Date().toISOString().slice(0,10)}.json`, backupData);
                 
                 showMessage('Sucesso', 'Backup completo exportado com sucesso', 'success');
-                addAction('Backup completo', 'Backup completo do sistema realizado', 'Admin');
+                
+                // Registrar ação no histórico
+                await registrarAcao(
+                    'Backup completo',
+                    'Backup completo do sistema realizado'
+                );
                 
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
@@ -1544,11 +1736,15 @@
                                 }
                                 
                                 showMessage('Sucesso', 'Backup importado com sucesso', 'success');
-                                addAction('Backup importado', 'Dados restaurados a partir de backup', 'Admin');
+                                
+                                // Registrar ação no histórico
+                                await registrarAcao(
+                                    'Backup importado',
+                                    'Dados restaurados a partir de backup'
+                                );
                                 
                                 loadDashboard();
                                 loadTurmas();
-                                listarTurmas();
                                 listarAlunos();
                                 
                             } catch (error) {
@@ -1632,15 +1828,6 @@
                 }
             }
         }
-
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const sidebar = document.querySelector('.sidebar');
-        const mainContent = document.querySelector('.main-content');
-
-        mobileMenuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('show');
-            mainContent.classList.toggle('sidebar-open');
-        });
     </script>
 
     <div vw class="enabled">
@@ -1652,6 +1839,25 @@
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script>
         new window.VLibras.Widget('https://vlibras.gov.br/app');
+        // Adiciona evento de clique à logo
+document.querySelector('.sidebar .logo').addEventListener('click', function() {
+    // Remove a classe active de todas as abas
+    document.querySelectorAll('.tab-pane').forEach(tab => {
+        tab.classList.remove('show', 'active');
+    });
+    
+    // Remove a classe active de todos os links
+    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // Adiciona active ao dashboard
+    document.querySelector('#dashboard').classList.add('show', 'active');
+    document.querySelector('[data-bs-target="#dashboard"]').classList.add('active');
+});
     </script>
+
+
+
 </body>
 </html>
