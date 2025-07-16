@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,7 +42,8 @@
             transition: all 0.2s;
         }
 
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
             background-color: rgba(255, 255, 255, 0.1);
             color: white;
             transform: translateX(5px);
@@ -125,7 +127,8 @@
             background: linear-gradient(135deg, #dc3545, #c82333);
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus,
+        .form-select:focus {
             border-color: var(--secondary-color);
             box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
         }
@@ -163,14 +166,16 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            border: 3px solid rgba(255, 255, 255, .3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .mobile-menu-toggle {
@@ -254,8 +259,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         /* Badge animado para novas ações */
@@ -264,9 +274,17 @@
         }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+            }
         }
 
         /* Barra de rolagem personalizada */
@@ -333,6 +351,7 @@
                 transform: scale(0, 0);
                 opacity: 0.5;
             }
+
             100% {
                 transform: scale(20, 20);
                 opacity: 0;
@@ -344,20 +363,20 @@
                 transform: translateX(-100%);
                 width: 280px;
             }
-            
+
             .sidebar.show {
                 transform: translateX(0);
                 box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
             }
-            
+
             .main-content {
                 margin-left: 0;
             }
-            
+
             .mobile-menu-toggle {
                 display: block;
             }
-            
+
             .card-header {
                 padding: 12px 15px;
             }
@@ -376,51 +395,55 @@
             .main-content {
                 padding: 15px;
             }
-            
+
             .row {
                 margin-left: -10px;
                 margin-right: -10px;
             }
-            
-            .col-md-6, .col-md-4, .col-md-12 {
+
+            .col-md-6,
+            .col-md-4,
+            .col-md-12 {
                 padding-left: 10px;
                 padding-right: 10px;
             }
-            
+
             .table-responsive {
                 border: none;
             }
-            
+
             .btn {
                 padding: 8px 12px;
                 font-size: 14px;
             }
-            
+
             .status-card {
                 padding: 15px;
             }
-            
+
             h1.h2 {
                 font-size: 1.5rem;
             }
-            
+
             .card-body {
                 padding: 15px;
             }
-            
+
             table {
                 font-size: 14px;
             }
-            
-            th, td {
+
+            th,
+            td {
                 padding: 8px 10px;
             }
-            
-            .form-control, .form-select {
+
+            .form-control,
+            .form-select {
                 font-size: 14px;
                 padding: 8px 12px;
             }
-            
+
             #escalaItems .escala-item {
                 padding: 10px;
             }
@@ -430,29 +453,30 @@
             .main-content {
                 padding: 10px;
             }
-            
+
             .d-flex.justify-content-between {
                 flex-direction: column;
             }
-            
+
             .btn-toolbar {
                 margin-top: 10px;
             }
-            
+
             .card {
                 margin-bottom: 15px;
             }
-            
+
             .modal-dialog {
                 margin: 10px;
             }
-            
+
             .nav-tabs .nav-link {
                 padding: 8px 12px;
                 font-size: 14px;
             }
-            
-            #alunosDataPreview, #escalasDataPreview {
+
+            #alunosDataPreview,
+            #escalasDataPreview {
                 font-size: 12px;
                 height: 200px;
             }
@@ -467,16 +491,16 @@
                 width: 100%;
                 margin-bottom: 10px;
             }
-            
+
             .action-buttons .btn {
                 width: auto;
             }
-            
+
             .table-responsive {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
-            
+
             .escala-item input {
                 font-size: 13px;
             }
@@ -491,7 +515,7 @@
                 background-color: initial;
                 transform: none;
             }
-            
+
             .nav-link:hover {
                 background-color: initial;
                 transform: none;
@@ -499,20 +523,27 @@
         }
 
         @media screen and (max-width: 768px) {
-            input, select, textarea {
+
+            input,
+            select,
+            textarea {
                 font-size: 16px !important;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="text-center mb-4">
+                    <a href="index.html">
                     <img src="logu.svg" alt="Logo" class="logo">
+                    </a>
                     <h5>Painel de Administração</h5>
                 </div>
+                
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#dashboard">
@@ -535,6 +566,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="presenca.html">
+                            <i class="bi bi-brush"></i> Lista de Presença
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#sobre">
                             <i class="bi bi-person-badge"></i> Sobre
                         </a>
@@ -550,11 +586,13 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="dashboard">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <div
+                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Dashboard</h1>
                             <div class="btn-toolbar mb-2 mb-md-0">
                                 <div class="btn-group me-2">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-action" id="refreshDashboard">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-action"
+                                        id="refreshDashboard">
                                         <i class="bi bi-arrow-clockwise"></i> Atualizar
                                     </button>
                                 </div>
@@ -591,7 +629,8 @@
                             <div class="card-header">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="mb-0">Últimas Ações</h5>
-                                    <span class="badge bg-danger badge-pulse" id="newActionsBadge" style="display: none;">Novo</span>
+                                    <span class="badge bg-danger badge-pulse" id="newActionsBadge"
+                                        style="display: none;">Novo</span>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -613,10 +652,11 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="sobre">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <div
+                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Sobre o Desenvolvedor</h1>
                         </div>
-                    
+
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="mb-0">Créditos e Informações</h5>
@@ -627,12 +667,14 @@
                                     <h3>Erick Matheus Leguisamon</h3>
                                     <p class="text-muted">Desenvolvedor do Sistema</p>
                                 </div>
-                    
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <h4><i class="bi bi-info-circle"></i> Sobre o Projeto</h4>
-                                        <p>Este sistema foi desenvolvido para gerenciar as escalas de limpeza do Formare, proporcionando uma solução eficiente e organizada para a divisão de tarefas entre os alunos.</p>
-                                        
+                                        <p>Este sistema foi desenvolvido para gerenciar as escalas de limpeza do
+                                            Formare, proporcionando uma solução eficiente e organizada para a divisão de
+                                            tarefas entre os alunos.</p>
+
                                         <h4 class="mt-4"><i class="bi bi-code-slash"></i> Tecnologias Utilizadas</h4>
                                         <ul>
                                             <li>Frontend: HTML5, CSS3, JavaScript, Bootstrap 5</li>
@@ -641,38 +683,45 @@
                                             <li>Hospedagem: PythonAnywhere</li>
                                         </ul>
                                     </div>
-                                    
+
                                     <div class="col-md-6">
                                         <h4><i class="bi bi-person-lines-fill"></i> Contato</h4>
                                         <div class="list-group">
-                                            <a href="mailto:erickleguisamon@gmail.com" class="list-group-item list-group-item-action">
+                                            <a href="mailto:erickleguisamon@gmail.com"
+                                                class="list-group-item list-group-item-action">
                                                 <i class="bi bi-envelope"></i> erickleguisamon@gmail.com
                                             </a>
-                                            <a href="https://wa.me/+5541998239031" class="list-group-item list-group-item-action">
+                                            <a href="https://wa.me/+5541998239031"
+                                                class="list-group-item list-group-item-action">
                                                 <i class="bi bi-whatsapp"></i> (41) 99823-9031
                                             </a>
-                                            <a href="https://www.linkedin.com/in/erickleguisamon/" class="list-group-item list-group-item-action">
-                                                <i class="bi bi-linkedin"></i> https://www.linkedin.com/in/erickleguisamon/
+                                            <a href="https://www.linkedin.com/in/erickleguisamon/"
+                                                class="list-group-item list-group-item-action">
+                                                <i class="bi bi-linkedin"></i>
+                                                https://www.linkedin.com/in/erickleguisamon/
                                             </a>
                                         </div>
-                    
+
                                         <div class="mt-4">
                                             <h4><i class="bi bi-heart"></i> Agradecimentos</h4>
-                                            <p>Agradeço especialmente aos professores e colegas do Formare pelo apoio e contribuições.</p>
+                                            <p>Agradeço especialmente aos professores e colegas do Formare pelo apoio e
+                                                contribuições.</p>
                                         </div>
                                     </div>
                                 </div>
-                    
+
                                 <div class="text-center mt-4">
                                     <div class="alert alert-info">
-                                        <i class="bi bi-lightbulb"></i> Este projeto foi desenvolvido para o Curso Formare do Instituto Robert Bosch. - Turma 2025
+                                        <i class="bi bi-lightbulb"></i> Este projeto foi desenvolvido para o Curso
+                                        Formare do Instituto Robert Bosch. - Turma 2025
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="alunos">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <div
+                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Gerenciar Alunos</h1>
                             <div class="btn-toolbar mb-2 mb-md-0">
                                 <button class="btn btn-sm btn-outline-secondary btn-action" id="refreshAlunosBtn">
@@ -752,7 +801,8 @@
                     </div>
 
                     <div class="tab-pane fade" id="escalas">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <div
+                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Gerenciar Escalas</h1>
                         </div>
 
@@ -779,7 +829,8 @@
 
                                         <div class="mb-3">
                                             <label for="semanaAtual" class="form-label">Semana Atual</label>
-                                            <input type="text" class="form-control" id="semanaAtual" placeholder="Ex: Semana 02: 28/04 - 30/04">
+                                            <input type="text" class="form-control" id="semanaAtual"
+                                                placeholder="Ex: Semana 02: 28/04 - 30/04">
                                         </div>
 
                                         <h5 class="mb-3">Itens da Escala</h5>
@@ -800,7 +851,8 @@
                     </div>
 
                     <div class="tab-pane fade" id="backup">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <div
+                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Backup dos Dados</h1>
                         </div>
 
@@ -812,7 +864,8 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="alert alert-info">
-                                            <i class="bi bi-info-circle"></i> Faça backup regularmente para evitar perda de dados.
+                                            <i class="bi bi-info-circle"></i> Faça backup regularmente para evitar perda
+                                            de dados.
                                         </div>
 
                                         <div class="row">
@@ -822,13 +875,16 @@
                                                         <h5 class="mb-0">Exportar Dados</h5>
                                                     </div>
                                                     <div class="card-body">
-                                                        <button class="btn btn-primary mb-2 btn-action" id="exportAlunosBtn">
+                                                        <button class="btn btn-primary mb-2 btn-action"
+                                                            id="exportAlunosBtn">
                                                             <i class="bi bi-download"></i> Exportar Alunos (JSON)
                                                         </button>
-                                                        <button class="btn btn-primary mb-2 btn-action" id="exportEscalasBtn">
+                                                        <button class="btn btn-primary mb-2 btn-action"
+                                                            id="exportEscalasBtn">
                                                             <i class="bi bi-download"></i> Exportar Escalas (JSON)
                                                         </button>
-                                                        <button class="btn btn-success btn-action" id="exportFullBackupBtn">
+                                                        <button class="btn btn-success btn-action"
+                                                            id="exportFullBackupBtn">
                                                             <i class="bi bi-database"></i> Exportar Backup Completo
                                                         </button>
                                                     </div>
@@ -841,14 +897,17 @@
                                                     </div>
                                                     <div class="card-body">
                                                         <div class="mb-3">
-                                                            <label for="backupFile" class="form-label">Selecione o arquivo de backup</label>
-                                                            <input class="form-control" type="file" id="backupFile" accept=".json">
+                                                            <label for="backupFile" class="form-label">Selecione o
+                                                                arquivo de backup</label>
+                                                            <input class="form-control" type="file" id="backupFile"
+                                                                accept=".json">
                                                         </div>
                                                         <button class="btn btn-warning btn-action" id="importBackupBtn">
                                                             <i class="bi bi-upload"></i> Importar Backup
                                                         </button>
                                                         <div class="alert alert-danger mt-3">
-                                                            <i class="bi bi-exclamation-triangle"></i> A importação substituirá todos os dados atuais!
+                                                            <i class="bi bi-exclamation-triangle"></i> A importação
+                                                            substituirá todos os dados atuais!
                                                         </div>
                                                     </div>
                                                 </div>
@@ -862,18 +921,25 @@
                                             <div class="card-body">
                                                 <ul class="nav nav-tabs" id="backupTabs" role="tablist">
                                                     <li class="nav-item" role="presentation">
-                                                        <button class="nav-link active" id="alunos-tab" data-bs-toggle="tab" data-bs-target="#alunosData" type="button" role="tab">Alunos</button>
+                                                        <button class="nav-link active" id="alunos-tab"
+                                                            data-bs-toggle="tab" data-bs-target="#alunosData"
+                                                            type="button" role="tab">Alunos</button>
                                                     </li>
                                                     <li class="nav-item" role="presentation">
-                                                        <button class="nav-link" id="escalas-tab" data-bs-toggle="tab" data-bs-target="#escalasData" type="button" role="tab">Escalas</button>
+                                                        <button class="nav-link" id="escalas-tab" data-bs-toggle="tab"
+                                                            data-bs-target="#escalasData" type="button"
+                                                            role="tab">Escalas</button>
                                                     </li>
                                                 </ul>
                                                 <div class="tab-content p-3 border border-top-0" id="backupTabContent">
-                                                    <div class="tab-pane fade show active" id="alunosData" role="tabpanel">
-                                                        <pre id="alunosDataPreview" style="height: 300px; overflow-y: scroll;"></pre>
+                                                    <div class="tab-pane fade show active" id="alunosData"
+                                                        role="tabpanel">
+                                                        <pre id="alunosDataPreview"
+                                                            style="height: 300px; overflow-y: scroll;"></pre>
                                                     </div>
                                                     <div class="tab-pane fade" id="escalasData" role="tabpanel">
-                                                        <pre id="escalasDataPreview" style="height: 300px; overflow-y: scroll;"></pre>
+                                                        <pre id="escalasDataPreview"
+                                                            style="height: 300px; overflow-y: scroll;"></pre>
                                                     </div>
                                                 </div>
                                             </div>
@@ -893,7 +959,8 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="confirmModalTitle">Confirmação</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="confirmModalBody">
                     Tem certeza que deseja realizar esta ação?
@@ -911,7 +978,8 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="messageModalTitle">Mensagem</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="messageModalBody">
                     Mensagem de exemplo
@@ -923,7 +991,8 @@
         </div>
     </div>
 
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="false" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="false" data-bs-backdrop="static"
+        data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
@@ -952,7 +1021,7 @@
             </div>
         </div>
     </div>
-    
+
     <button class="mobile-menu-toggle" id="mobileMenuToggle">
         <i class="bi bi-list"></i>
     </button>
@@ -1010,7 +1079,7 @@
             mobileMenuToggle: document.getElementById('mobileMenuToggle')
         };
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             elements.loginModal.show();
 
             const savedUsername = localStorage.getItem('adminUsername');
@@ -1028,7 +1097,7 @@
             elements.loginBtn.addEventListener('click', handleLogin);
             elements.logoutBtn.addEventListener('click', handleLogout);
             elements.refreshDashboard.addEventListener('click', loadDashboard);
-            elements.refreshAlunosBtn.addEventListener('click', function() {
+            elements.refreshAlunosBtn.addEventListener('click', function () {
                 loadTurmas().then(() => {
                     listarAlunos();
                 });
@@ -1098,15 +1167,15 @@
 
             eventSource = new EventSource(`${API_URL}/api/admin/historico/stream`);
 
-            eventSource.onmessage = function(event) {
+            eventSource.onmessage = function (event) {
                 const newAction = JSON.parse(event.data);
                 addActionToUI(newAction, true);
-                
+
                 // Mostrar badge de novas ações
                 elements.newActionsBadge.style.display = 'inline-block';
             };
 
-            eventSource.onerror = function() {
+            eventSource.onerror = function () {
                 console.error("Erro na conexão SSE. Tentando reconectar...");
                 setTimeout(setupSSEConnection, 5000);
             };
@@ -1130,51 +1199,51 @@
         async function loadDashboard() {
             try {
                 showLoading(elements.refreshDashboard);
-                
+
                 const statusResponse = await fetch(`${API_URL}/admin/status`, {
                     headers: getAuthHeader()
                 });
-                
+
                 if (!statusResponse.ok) {
                     throw new Error('Erro ao conectar com a API');
                 }
-                
+
                 const statusData = await statusResponse.json();
                 elements.connectionStatus.textContent = `Conectado como ${statusData.admin}`;
-                
+
                 // Carregar histórico completo
                 const historico = await carregarHistorico();
                 elements.lastActions.innerHTML = '';
-                
+
                 historico.forEach(acao => {
                     addActionToUI(acao, false);
                 });
-                
+
                 const backupResponse = await fetch(`${API_URL}/admin/backup`, {
                     headers: getAuthHeader()
                 });
-                
+
                 if (!backupResponse.ok) {
                     throw new Error('Erro ao obter dados de backup');
                 }
-                
+
                 const backupData = await backupResponse.json();
-                
+
                 elements.totalTurmas.textContent = Object.keys(backupData.alunos).length;
-                
+
                 let totalAlunos = 0;
                 for (const turma in backupData.alunos) {
                     totalAlunos += Object.keys(backupData.alunos[turma]).length;
                 }
                 elements.totalAlunos.textContent = totalAlunos;
-                
+
                 const now = new Date();
                 elements.lastUpdate.textContent = `Última atualização: ${now.toLocaleString()}`;
                 lastUpdateTime = now;
-                
+
                 // Esconder badge de novas ações após atualização
                 elements.newActionsBadge.style.display = 'none';
-                
+
             } catch (error) {
                 showMessage('Erro', `Erro ao carregar dashboard: ${error.message}`, 'error');
             } finally {
@@ -1184,27 +1253,27 @@
 
         function addActionToUI(acao, isNew = false) {
             const row = document.createElement('tr');
-            
+
             if (isNew) {
                 row.classList.add('table-info');
                 setTimeout(() => {
                     row.classList.remove('table-info');
                 }, 3000);
             }
-            
+
             row.innerHTML = `
                 <td>${new Date(acao.data_hora).toLocaleString()}</td>
                 <td>${acao.acao}</td>
                 <td>${acao.detalhes}</td>
                 <td>${acao.usuario}</td>
             `;
-            
+
             if (isNew) {
                 elements.lastActions.prepend(row);
             } else {
                 elements.lastActions.appendChild(row);
             }
-            
+
             if (elements.lastActions.children.length > 50) {
                 elements.lastActions.removeChild(elements.lastActions.lastChild);
             }
@@ -1215,11 +1284,11 @@
                 const response = await fetch(`${API_URL}/api/admin/historico`, {
                     headers: getAuthHeader()
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Erro ao carregar histórico');
                 }
-                
+
                 return await response.json();
             } catch (error) {
                 console.error("Erro ao carregar histórico:", error);
@@ -1232,18 +1301,18 @@
                 const response = await fetch(`${API_URL}/admin/status`, {
                     headers: getAuthHeader()
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Erro ao carregar turmas');
                 }
-                
+
                 const data = await response.json();
                 turmasList = data.turmas;
-                
+
                 const selects = [elements.turmaAluno, elements.turmaLista, elements.turmaEscala];
                 selects.forEach(select => {
                     select.innerHTML = '';
-                    
+
                     if (select !== elements.turmaLista) {
                         const defaultOption = document.createElement('option');
                         defaultOption.value = '';
@@ -1257,7 +1326,7 @@
                         allOption.textContent = 'Todas as turmas';
                         select.appendChild(allOption);
                     }
-                    
+
                     turmasList.forEach(turma => {
                         const option = document.createElement('option');
                         option.value = turma;
@@ -1265,7 +1334,7 @@
                         select.appendChild(option);
                     });
                 });
-                
+
                 return turmasList;
             } catch (error) {
                 showMessage('Erro', `Erro ao carregar turmas: ${error.message}`, 'error');
@@ -1275,12 +1344,12 @@
 
         async function addAluno(e) {
             e.preventDefault();
-            
+
             const turma = elements.turmaAluno.value;
             const edv = elements.edvAluno.value;
             let nome = elements.nomeAluno.value;
             const admin = elements.isAdmin.checked;
-            
+
             if (admin) {
                 if (nome.includes('👩‍🏫') || nome.includes('👨‍🏫')) {
                 } else {
@@ -1288,10 +1357,10 @@
                     nome += genero.includes('ª') ? '👩‍🏫' : '👨‍🏫';
                 }
             }
-            
+
             try {
                 showLoading(elements.addAlunoForm.querySelector('button[type="submit"]'));
-                
+
                 const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
                     method: 'POST',
                     headers: {
@@ -1300,14 +1369,14 @@
                     },
                     body: JSON.stringify({ edv, nome })
                 });
-                
+
                 if (!response.ok) {
                     const error = await response.json();
                     throw new Error(error.error || 'Erro ao adicionar aluno');
                 }
-                
+
                 showMessage('Sucesso', 'Aluno adicionado com sucesso', 'success');
-                
+
                 // Registrar ação no histórico
                 await registrarAcao(
                     'Adicionar Aluno',
@@ -1315,16 +1384,16 @@
                     turma,
                     edv
                 );
-                
+
                 elements.edvAluno.value = '';
                 elements.nomeAluno.value = '';
                 elements.isAdmin.checked = false;
                 listarAlunos();
-                
+
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
             } finally {
-                hideLoading(elements.addAlunoForm.querySelector('button[type="submit"]'), 
+                hideLoading(elements.addAlunoForm.querySelector('button[type="submit"]'),
                     '<i class="bi bi-plus-circle"></i> Adicionar Aluno');
             }
         }
@@ -1334,7 +1403,7 @@
                 const usuario = (await fetch(`${API_URL}/admin/status`, {
                     headers: getAuthHeader()
                 }).then(res => res.json())).admin;
-                
+
                 await fetch(`${API_URL}/api/admin/historico`, {
                     method: 'POST',
                     headers: {
@@ -1357,41 +1426,41 @@
         async function listarAlunos() {
             try {
                 showLoading(elements.listarAlunosBtn);
-                
+
                 const turma = elements.turmaLista.value;
                 let alunos = {};
-                
+
                 if (turma) {
                     const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
                         headers: getAuthHeader()
                     });
-                    
+
                     if (!response.ok) {
                         throw new Error('Erro ao carregar alunos');
                     }
-                    
+
                     alunos[turma] = await response.json();
                 } else {
                     for (const t of turmasList) {
                         const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(t)}/alunos`, {
                             headers: getAuthHeader()
                         });
-                        
+
                         if (response.ok) {
                             alunos[t] = await response.json();
                         }
                     }
                 }
-                
+
                 elements.alunosList.innerHTML = '';
-                
+
                 for (const [turma, alunosTurma] of Object.entries(alunos)) {
                     for (const [edv, nome] of Object.entries(alunosTurma)) {
                         const row = document.createElement('tr');
-                        
+
                         const isAdmin = nome.includes('👩‍🏫') || nome.includes('👨‍🏫');
                         const nomeDisplay = isAdmin ? nome.replace(/👩‍🏫|👨‍🏫/g, '') : nome;
-                        
+
                         row.innerHTML = `
                             <td>${turma}</td>
                             <td>${edv}</td>
@@ -1402,13 +1471,13 @@
                                 </button>
                             </td>
                         `;
-                        
+
                         elements.alunosList.appendChild(row);
                     }
                 }
-                
+
                 document.querySelectorAll('.btn-remove-aluno').forEach(btn => {
-                    btn.addEventListener('click', function() {
+                    btn.addEventListener('click', function () {
                         const turma = this.getAttribute('data-turma');
                         const edv = this.getAttribute('data-edv');
                         confirmAction(
@@ -1418,12 +1487,12 @@
                         );
                     });
                 });
-                
+
                 await registrarAcao(
-                    'Alunos listados', 
+                    'Alunos listados',
                     turma ? `Filtro: ${turma}` : 'Todas as turmas'
                 );
-                
+
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
             } finally {
@@ -1437,14 +1506,14 @@
                     method: 'DELETE',
                     headers: getAuthHeader()
                 });
-                
+
                 if (!response.ok) {
                     const error = await response.json();
                     throw new Error(error.error || 'Erro ao remover aluno');
                 }
-                
+
                 showMessage('Sucesso', 'Aluno removido com sucesso', 'success');
-                
+
                 // Registrar ação no histórico
                 await registrarAcao(
                     'Remover Aluno',
@@ -1452,9 +1521,9 @@
                     turma,
                     edv
                 );
-                
+
                 listarAlunos();
-                
+
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
             }
@@ -1463,28 +1532,28 @@
         async function carregarEscala() {
             const turma = elements.turmaEscala.value;
             currentTurmaEscala = turma;
-            
+
             if (!turma) {
                 showMessage('Aviso', 'Selecione uma turma primeiro', 'warning');
                 return;
             }
-            
+
             try {
                 showLoading(elements.carregarEscalaBtn);
-                
+
                 const response = await fetch(`${API_URL}/admin/escalas/${encodeURIComponent(turma)}`, {
                     headers: getAuthHeader()
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Erro ao carregar escala');
                 }
-                
+
                 const escala = await response.json();
                 elements.semanaAtual.value = escala.semana_atual || '';
-                
+
                 elements.escalaItems.innerHTML = '';
-                
+
                 if (escala.duplas && escala.duplas.length > 0) {
                     escala.duplas.forEach(item => {
                         addEscalaItem(item.semana, item.dupla);
@@ -1492,13 +1561,13 @@
                 } else {
                     showMessage('Info', 'Nenhum item de escala encontrado para esta turma', 'info');
                 }
-                
+
                 await registrarAcao(
                     'Escala carregada',
                     `Turma: ${turma}`,
                     turma
                 );
-                
+
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
             } finally {
@@ -1509,7 +1578,7 @@
         function addEscalaItem(semana = '', dupla = '') {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'escala-item';
-            
+
             itemDiv.innerHTML = `
                 <div class="mb-3">
                     <label class="form-label">Semana</label>
@@ -1523,11 +1592,11 @@
                     <i class="bi bi-trash"></i> Remover Item
                 </button>
             `;
-            
-            itemDiv.querySelector('.btn-remove-item').addEventListener('click', function() {
+
+            itemDiv.querySelector('.btn-remove-item').addEventListener('click', function () {
                 itemDiv.remove();
             });
-            
+
             elements.escalaItems.appendChild(itemDiv);
         }
 
@@ -1537,28 +1606,28 @@
 
         async function salvarEscala() {
             const turma = currentTurmaEscala;
-            
+
             if (!turma) {
                 showMessage('Aviso', 'Selecione uma turma primeiro', 'warning');
                 return;
             }
-            
+
             try {
                 showLoading(elements.salvarEscalaBtn);
-                
+
                 const semanaAtual = elements.semanaAtual.value;
                 const items = elements.escalaItems.querySelectorAll('.escala-item');
                 const duplas = [];
-                
+
                 items.forEach(item => {
                     const semana = item.querySelector('.semana-input').value;
                     const dupla = item.querySelector('.dupla-input').value;
-                    
+
                     if (semana && dupla) {
                         duplas.push({ semana, dupla });
                     }
                 });
-                
+
                 const response = await fetch(`${API_URL}/admin/escalas/${encodeURIComponent(turma)}`, {
                     method: 'PUT',
                     headers: {
@@ -1570,21 +1639,21 @@
                         duplas: duplas
                     })
                 });
-                
+
                 if (!response.ok) {
                     const error = await response.json();
                     throw new Error(error.error || 'Erro ao salvar escala');
                 }
-                
+
                 showMessage('Sucesso', 'Escala salva com sucesso', 'success');
-                
+
                 // Registrar ação no histórico
                 await registrarAcao(
                     'Escala salva',
                     `Turma: ${turma} - ${duplas.length} itens`,
                     turma
                 );
-                
+
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
             } finally {
@@ -1595,30 +1664,30 @@
         async function exportAlunos() {
             try {
                 showLoading(elements.exportAlunosBtn);
-                
+
                 const response = await fetch(`${API_URL}/admin/backup`, {
                     headers: getAuthHeader()
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Erro ao exportar alunos');
                 }
-                
+
                 const data = await response.json();
                 const alunosData = JSON.stringify(data.alunos, null, 2);
-                
+
                 elements.alunosDataPreview.textContent = alunosData;
-                
-                downloadFile(`alunos_${new Date().toISOString().slice(0,10)}.json`, alunosData);
-                
+
+                downloadFile(`alunos_${new Date().toISOString().slice(0, 10)}.json`, alunosData);
+
                 showMessage('Sucesso', 'Alunos exportados com sucesso', 'success');
-                
+
                 // Registrar ação no histórico
                 await registrarAcao(
                     'Alunos exportados',
                     'Backup dos alunos realizado'
                 );
-                
+
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
             } finally {
@@ -1629,30 +1698,30 @@
         async function exportEscalas() {
             try {
                 showLoading(elements.exportEscalasBtn);
-                
+
                 const response = await fetch(`${API_URL}/admin/backup`, {
                     headers: getAuthHeader()
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Erro ao exportar escalas');
                 }
-                
+
                 const data = await response.json();
                 const escalasData = JSON.stringify(data.escalas, null, 2);
-                
+
                 elements.escalasDataPreview.textContent = escalasData;
-                
-                downloadFile(`escalas_${new Date().toISOString().slice(0,10)}.json`, escalasData);
-                
+
+                downloadFile(`escalas_${new Date().toISOString().slice(0, 10)}.json`, escalasData);
+
                 showMessage('Sucesso', 'Escalas exportadas com sucesso', 'success');
-                
+
                 // Registrar ação no histórico
                 await registrarAcao(
                     'Escalas exportadas',
                     'Backup das escalas realizado'
                 );
-                
+
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
             } finally {
@@ -1663,31 +1732,31 @@
         async function exportFullBackup() {
             try {
                 showLoading(elements.exportFullBackupBtn);
-                
+
                 const response = await fetch(`${API_URL}/admin/backup`, {
                     headers: getAuthHeader()
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Erro ao exportar backup completo');
                 }
-                
+
                 const data = await response.json();
                 const backupData = JSON.stringify(data, null, 2);
-                
+
                 elements.alunosDataPreview.textContent = JSON.stringify(data.alunos, null, 2);
                 elements.escalasDataPreview.textContent = JSON.stringify(data.escalas, null, 2);
-                
-                downloadFile(`backup_completo_${new Date().toISOString().slice(0,10)}.json`, backupData);
-                
+
+                downloadFile(`backup_completo_${new Date().toISOString().slice(0, 10)}.json`, backupData);
+
                 showMessage('Sucesso', 'Backup completo exportado com sucesso', 'success');
-                
+
                 // Registrar ação no histórico
                 await registrarAcao(
                     'Backup completo',
                     'Backup completo do sistema realizado'
                 );
-                
+
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
             } finally {
@@ -1697,25 +1766,25 @@
 
         async function importBackup() {
             const fileInput = elements.backupFile;
-            
+
             if (!fileInput.files || fileInput.files.length === 0) {
                 showMessage('Aviso', 'Selecione um arquivo de backup primeiro', 'warning');
                 return;
             }
-            
+
             const file = fileInput.files[0];
             const reader = new FileReader();
-            
-            reader.onload = async function(e) {
+
+            reader.onload = async function (e) {
                 try {
                     showLoading(elements.importBackupBtn);
-                    
+
                     const backupData = JSON.parse(e.target.result);
-                    
+
                     if (!backupData.alunos || !backupData.escalas) {
                         throw new Error('Arquivo de backup inválido');
                     }
-                    
+
                     confirmAction(
                         'Importar Backup',
                         'Tem certeza que deseja importar este backup? Todos os dados atuais serão substituídos!',
@@ -1729,24 +1798,24 @@
                                     },
                                     body: JSON.stringify(backupData)
                                 });
-                                
+
                                 if (!response.ok) {
                                     const error = await response.json();
                                     throw new Error(error.error || 'Erro ao importar backup');
                                 }
-                                
+
                                 showMessage('Sucesso', 'Backup importado com sucesso', 'success');
-                                
+
                                 // Registrar ação no histórico
                                 await registrarAcao(
                                     'Backup importado',
                                     'Dados restaurados a partir de backup'
                                 );
-                                
+
                                 loadDashboard();
                                 loadTurmas();
                                 listarAlunos();
-                                
+
                             } catch (error) {
                                 showMessage('Erro', error.message, 'error');
                             } finally {
@@ -1754,13 +1823,13 @@
                             }
                         }
                     );
-                    
+
                 } catch (error) {
                     showMessage('Erro', error.message, 'error');
                     hideLoading(elements.importBackupBtn, '<i class="bi bi-upload"></i> Importar Backup');
                 }
             };
-            
+
             reader.readAsText(file);
         }
 
@@ -1779,7 +1848,7 @@
         function confirmAction(title, message, callback) {
             elements.confirmModalTitle.textContent = title;
             elements.confirmModalBody.textContent = message;
-            elements.confirmModalBtn.onclick = function() {
+            elements.confirmModalBtn.onclick = function () {
                 elements.confirmModal.hide();
                 callback();
             };
@@ -1789,10 +1858,10 @@
         function showMessage(title, message, type = 'info') {
             elements.messageModalTitle.textContent = title;
             elements.messageModalBody.textContent = message;
-            
+
             const header = elements.messageModal._element.querySelector('.modal-header');
             header.className = 'modal-header';
-            
+
             switch (type) {
                 case 'success':
                     header.classList.add('bg-success', 'text-white');
@@ -1806,7 +1875,7 @@
                 default:
                     header.classList.add('bg-primary', 'text-white');
             }
-            
+
             elements.messageModal.show();
         }
 
@@ -1840,24 +1909,25 @@
     <script>
         new window.VLibras.Widget('https://vlibras.gov.br/app');
         // Adiciona evento de clique à logo
-document.querySelector('.sidebar .logo').addEventListener('click', function() {
-    // Remove a classe active de todas as abas
-    document.querySelectorAll('.tab-pane').forEach(tab => {
-        tab.classList.remove('show', 'active');
-    });
-    
-    // Remove a classe active de todos os links
-    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-        link.classList.remove('active');
-    });
-    
-    // Adiciona active ao dashboard
-    document.querySelector('#dashboard').classList.add('show', 'active');
-    document.querySelector('[data-bs-target="#dashboard"]').classList.add('active');
-});
+        document.querySelector('.sidebar .logo').addEventListener('click', function () {
+            // Remove a classe active de todas as abas
+            document.querySelectorAll('.tab-pane').forEach(tab => {
+                tab.classList.remove('show', 'active');
+            });
+
+            // Remove a classe active de todos os links
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Adiciona active ao dashboard
+            document.querySelector('#dashboard').classList.add('show', 'active');
+            document.querySelector('[data-bs-target="#dashboard"]').classList.add('active');
+        });
     </script>
 
 
 
 </body>
+
 </html>
