@@ -942,432 +942,506 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', async function () {
-            // Elementos do DOM
-            const infoButton = document.getElementById('infoButton');
-            const infoModal = document.getElementById('infoModal');
-            const infoClose = document.getElementById('infoClose');
+   <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+        // Elementos do DOM
+        const infoButton = document.getElementById('infoButton');
+        const infoModal = document.getElementById('infoModal');
+        const infoClose = document.getElementById('infoClose');
 
-            const datePicker = document.getElementById('datePicker');
-            const attendanceList = document.getElementById('attendanceList');
-            const submitBtn = document.getElementById('submitBtn');
-            const saveChangesBtn = document.getElementById('saveChangesBtn');
-            const reportBtn = document.getElementById('reportBtn');
-            const notification = document.getElementById('notification');
-            const notificationText = document.getElementById('notificationText');
-            const errorModal = document.getElementById('errorModal');
-            const warningModal = document.getElementById('warningModal');
-            const reportModal = document.getElementById('reportModal');
-            const errorModalBody = document.getElementById('errorModalBody');
-            const warningModalBody = document.getElementById('warningModalBody');
-            const closeErrorModal = document.getElementById('closeErrorModal');
-            const closeWarningModal = document.getElementById('closeWarningModal');
-            const closeReportModal = document.getElementById('closeReportModal');
-            const confirmErrorModal = document.getElementById('confirmErrorModal');
-            const confirmWarningModal = document.getElementById('confirmWarningModal');
-            const cancelReportBtn = document.getElementById('cancelReportBtn');
-            const generateReportBtn = document.getElementById('generateReportBtn');
-            const monthSelect = document.getElementById('monthSelect');
+        const datePicker = document.getElementById('datePicker');
+        const attendanceList = document.getElementById('attendanceList');
+        const submitBtn = document.getElementById('submitBtn');
+        const saveChangesBtn = document.getElementById('saveChangesBtn');
+        const reportBtn = document.getElementById('reportBtn');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        const errorModal = document.getElementById('errorModal');
+        const warningModal = document.getElementById('warningModal');
+        const reportModal = document.getElementById('reportModal');
+        const errorModalBody = document.getElementById('errorModalBody');
+        const warningModalBody = document.getElementById('warningModalBody');
+        const closeErrorModal = document.getElementById('closeErrorModal');
+        const closeWarningModal = document.getElementById('closeWarningModal');
+        const closeReportModal = document.getElementById('closeReportModal');
+        const confirmErrorModal = document.getElementById('confirmErrorModal');
+        const confirmWarningModal = document.getElementById('confirmWarningModal');
+        const cancelReportBtn = document.getElementById('cancelReportBtn');
+        const generateReportBtn = document.getElementById('generateReportBtn');
+        const monthSelect = document.getElementById('monthSelect');
 
-            const API_BASE_URL = 'https://erickmth.pythonanywhere.com/api';
-            const API_HEADERS = {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            };
+        // Variáveis de controle
+        let isSubmitting = false;
+        let lastSubmittedDate = null;
+        let currentOperation = null; // 'submit' ou 'update'
 
-            const minDate = new Date(2025, 6, 14);
-            const maxDate = new Date(2025, 11, 31);
-            const today = new Date();
+        const API_BASE_URL = 'https://erickmth.pythonanywhere.com/api';
+        const API_HEADERS = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        };
 
-            // Funções para o modal de informações
-            infoButton.addEventListener('click', function () {
-                infoModal.classList.add('active');
-            });
+        const minDate = new Date(2025, 6, 14);
+        const maxDate = new Date(2025, 11, 31);
+        const today = new Date();
 
-            infoClose.addEventListener('click', function () {
+        // Funções para o modal de informações
+        infoButton.addEventListener('click', function () {
+            infoModal.classList.add('active');
+        });
+
+        infoClose.addEventListener('click', function () {
+            infoModal.classList.remove('active');
+        });
+
+        // Fechar modal ao clicar fora do conteúdo
+        infoModal.addEventListener('click', function (e) {
+            if (e.target === infoModal) {
                 infoModal.classList.remove('active');
-            });
+            }
+        });
 
-            // Fechar modal ao clicar fora do conteúdo
-            infoModal.addEventListener('click', function (e) {
-                if (e.target === infoModal) {
-                    infoModal.classList.remove('active');
+        // Função corrigida para formatar data considerando fuso horário de Brasília
+        const formatDate = (date) => {
+            const d = new Date(date);
+            // Ajusta para o fuso horário local (Brasília UTC-3)
+            const offset = d.getTimezoneOffset();
+            d.setMinutes(d.getMinutes() + offset);
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        };
+
+        const getNextWeekday = (date) => {
+            const d = new Date(date);
+            while (d.getDay() === 0 || d.getDay() === 6) {
+                d.setDate(d.getDate() + 1);
+            }
+            return d;
+        };
+
+        const showErrorModal = (message) => {
+            errorModalBody.textContent = message;
+            errorModal.classList.add('active');
+        };
+
+        const showWarningModal = (message) => {
+            warningModalBody.textContent = message;
+            warningModal.classList.add('active');
+        };
+
+        const showNotification = (message) => {
+            notificationText.textContent = message;
+            notification.style.display = 'flex';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        };
+
+        closeErrorModal.addEventListener('click', () => errorModal.classList.remove('active'));
+        closeWarningModal.addEventListener('click', () => warningModal.classList.remove('active'));
+        closeReportModal.addEventListener('click', () => reportModal.classList.remove('active'));
+        confirmErrorModal.addEventListener('click', () => errorModal.classList.remove('active'));
+        confirmWarningModal.addEventListener('click', () => warningModal.classList.remove('active'));
+        cancelReportBtn.addEventListener('click', () => reportModal.classList.remove('active'));
+
+        // Função melhorada para verificar chamada existente
+        async function checkExistingCall(date) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/presenca/obter/${date}`, {
+                    headers: API_HEADERS
+                });
+                
+                if (response.status === 404) {
+                    return false; // Não existe chamada para esta data
                 }
-            });
-
-            const formatDate = (date) => {
-                const yyyy = date.getFullYear();
-                const mm = String(date.getMonth() + 1).padStart(2, '0');
-                const dd = String(date.getDate()).padStart(2, '0');
-                return `${yyyy}-${mm}-${dd}`;
-            };
-
-            const getNextWeekday = (date) => {
-                const d = new Date(date);
-                while (d.getDay() === 0 || d.getDay() === 6) {
-                    d.setDate(d.getDate() + 1);
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao verificar chamada existente');
                 }
-                return d;
-            };
+                
+                return true; // Chamada existe
+            } catch (error) {
+                console.error('Erro ao verificar chamada:', error);
+                showErrorModal('Erro ao verificar chamada existente. Verifique sua conexão.');
+                return false;
+            }
+        }
 
-            const showErrorModal = (message) => {
-                errorModalBody.textContent = message;
-                errorModal.classList.add('active');
-            };
+        datePicker.addEventListener('change', async function () {
+            // Corrige a interpretação da data para o fuso de Brasília
+            const dateStr = this.value;
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const selectedDate = new Date(Date.UTC(year, month - 1, day, 3, 0, 0)); // UTC-3 (Brasília)
+            const dayOfWeek = selectedDate.getDay();
 
-            const showWarningModal = (message) => {
-                warningModalBody.textContent = message;
-                warningModal.classList.add('active');
-            };
-
-            const showNotification = (message) => {
-                notificationText.textContent = message;
-                notification.style.display = 'flex';
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 5000);
-            };
-
-            closeErrorModal.addEventListener('click', () => errorModal.classList.remove('active'));
-            closeWarningModal.addEventListener('click', () => warningModal.classList.remove('active'));
-            closeReportModal.addEventListener('click', () => reportModal.classList.remove('active'));
-            confirmErrorModal.addEventListener('click', () => errorModal.classList.remove('active'));
-            confirmWarningModal.addEventListener('click', () => warningModal.classList.remove('active'));
-            cancelReportBtn.addEventListener('click', () => reportModal.classList.remove('active'));
-
-            async function checkExistingCall(date) {
-                try {
-                    const response = await fetch(`${API_BASE_URL}/presenca/obter/${date}`, {
-                        headers: API_HEADERS
-                    });
-                    return response.ok;
-                } catch (error) {
-                    return false;
-                }
+            if (selectedDate < minDate || selectedDate > maxDate) {
+                showErrorModal('Por favor, selecione uma data entre 14/07/2025 e 31/12/2025.');
+                this.value = formatDate(minDate);
+                return;
             }
 
-            datePicker.addEventListener('change', async function () {
-                const [year, month, day] = this.value.split('-').map(Number);
-                const selectedDate = new Date(year, month - 1, day);
-                const dayOfWeek = selectedDate.getDay();
-
-                if (selectedDate < minDate || selectedDate > maxDate) {
-                    showErrorModal('Por favor, selecione uma data entre 14/07/2025 e 31/12/2025.');
-                    this.value = formatDate(minDate);
-                    return;
-                }
-
-                if (dayOfWeek === 0 || dayOfWeek === 6) {
-                    showWarningModal('Por favor, selecione um dia útil (segunda a sexta-feira).');
-                    this.value = formatDate(getNextWeekday(selectedDate));
-                    return;
-                }
-
-                people.forEach(person => {
-                    person.status = null;
-                    document.querySelectorAll(`.status-btn[data-person="${person.id}"]`).forEach(btn => {
-                        btn.classList.remove('active', 'inactive');
-                    });
-                });
-
-                const hasExistingCall = await checkExistingCall(this.value);
-                submitBtn.style.display = hasExistingCall ? 'none' : 'block';
-                saveChangesBtn.style.display = hasExistingCall ? 'block' : 'none';
-
-                if (hasExistingCall) {
-                    await loadExistingCall(this.value);
-                }
-            });
-
-            const names = [
-                "Ana Clara Da Silva Maia Gimenes",
-                "Anna Júlia Zanini Rodrigues",
-                "Conrado Juliano Lourenço de Souza",
-                "David Henrique Dias Calciolari De Matos",
-                "Eduarda dos Santos Mendes",
-                "Erick Matheus Leguisamon",
-                "Julia Gabrielly Marques Rodrigues",
-                "Laura Narciso Kopp",
-                "Mariana Flores de Almeida",
-                "Matheus Vinicius Veiga Gois",
-                "Milena da Silva Lima",
-                "Nathalia Quenupe de Lara",
-                "Nicoly Lopes dos Santos",
-                "Pedro Henrique de Almeida Lobo",
-                "Rafael da Silva de Quadros",
-                "Raquel Duarte dos Santos",
-                "Thais dos Santos Lino",
-                "Victor Silva de Lima"
-            ];
-
-            const people = names.map((name, index) => ({
-                id: index + 1,
-                name,
-                status: null
-            }));
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                showWarningModal('Por favor, selecione um dia útil (segunda a sexta-feira).');
+                this.value = formatDate(getNextWeekday(selectedDate));
+                return;
+            }
 
             people.forEach(person => {
-                const personRow = document.createElement('div');
-                personRow.className = 'person-row';
-                personRow.innerHTML = `
-            <div class="person-name">${person.name}</div>
-            <div class="status-buttons">
-                <button class="status-btn absent-btn" data-person="${person.id}" data-status="absent">
-                    <i class="fas fa-times"></i>
-                </button>
-                <button class="status-btn present-btn" data-person="${person.id}" data-status="present">
-                    <i class="fas fa-check"></i>
-                </button>
-                <button class="status-btn certificate-btn" data-person="${person.id}" data-status="certificate">
-                    <i class="fas fa-file-medical"></i>
-                </button>
-            </div>
-        `;
-                attendanceList.appendChild(personRow);
-            });
-
-            document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const personId = parseInt(this.getAttribute('data-person'));
-                    const status = this.getAttribute('data-status');
-                    people[personId - 1].status = status;
-
-                    document.querySelectorAll(`.status-btn[data-person="${personId}"]`).forEach(button => {
-                        button.classList.toggle('active', button === this);
-                        button.classList.toggle('inactive', button !== this);
-                    });
-
-                    if (datePicker.value) {
-                        saveChangesBtn.style.display = 'block';
-                    }
+                person.status = null;
+                document.querySelectorAll(`.status-btn[data-person="${person.id}"]`).forEach(btn => {
+                    btn.classList.remove('active', 'inactive');
                 });
             });
 
-            async function loadExistingCall(date) {
-                try {
-                    const response = await fetch(`${API_BASE_URL}/presenca/obter/${date}`, {
-                        headers: API_HEADERS
-                    });
-
-                    if (!response.ok) {
-                        if (response.status === 404) return;
-                        throw new Error('Erro ao carregar chamada');
-                    }
-
-                    const data = await response.json();
-
-                    if (data && Array.isArray(data.registros)) {
-                        data.registros.forEach(registro => {
-                            const person = people.find(p => p.name === registro.name);
-                            if (person) {
-                                person.status = registro.status.toLowerCase();
-                                const btn = document.querySelector(`.status-btn[data-person="${person.id}"][data-status="${person.status}"]`);
-                                if (btn) {
-                                    document.querySelectorAll(`.status-btn[data-person="${person.id}"]`).forEach(button => {
-                                        button.classList.toggle('active', button === btn);
-                                        button.classList.toggle('inactive', button !== btn);
-                                    });
-                                }
-                            }
-                        });
-
-                        showNotification(`Chamada do dia ${new Date(date).toLocaleDateString('pt-BR')} carregada!`);
-                    }
-                } catch (error) {
-                    console.error('Erro ao carregar chamada:', error);
-                    showErrorModal('Erro ao carregar chamada. Verifique sua conexão ou tente novamente mais tarde.');
-                }
-            }
-
-            async function saveCall(date, registros, isUpdate = false) {
-                submitBtn.innerHTML = '';
-                submitBtn.classList.add('loading');
-
-                try {
-                    const payload = {
-                        data: date,
-                        registros: registros.map(r => ({
-                            name: r.name,
-                            status: r.status.toUpperCase()
-                        }))
-                    };
-
-                    const response = await fetch(`${API_BASE_URL}/presenca/salvar`, {
-                        method: 'POST',
-                        headers: API_HEADERS,
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.message || 'Erro ao salvar chamada');
-                    }
-
-                    const data = await response.json();
-                    if (data.success) {
-                        showNotification(`Chamada do dia ${new Date(date).toLocaleDateString('pt-BR')} ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`);
-                        submitBtn.style.display = 'none';
-                        saveChangesBtn.style.display = 'block';
-                    }
-                } catch (error) {
-                    console.error('Erro ao salvar chamada:', error);
-                    showErrorModal(error.message || 'Erro ao salvar chamada. Por favor, tente novamente.');
-                } finally {
-                    submitBtn.classList.remove('loading');
-                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Chamada';
-                }
-            }
-
-            submitBtn.addEventListener('click', async function () {
-                if (!people.every(person => person.status !== null)) {
-                    showErrorModal('Registre o status de todas as pessoas antes de enviar.');
-                    return;
-                }
-
-                const registros = people.map(person => ({
-                    name: person.name,
-                    status: person.status
-                }));
-
-                await saveCall(datePicker.value, registros);
-            });
-
-            saveChangesBtn.addEventListener('click', async function () {
-                if (!people.every(person => person.status !== null)) {
-                    showErrorModal('Registre o status de todas as pessoas antes de salvar.');
-                    return;
-                }
-
-                const registros = people.map(person => ({
-                    name: person.name,
-                    status: person.status
-                }));
-
-                await saveCall(datePicker.value, registros, true);
-            });
-
-            reportBtn.addEventListener('click', async function () {
-                try {
-                    // Definir os meses de julho a novembro de 2025
-                    const months = [
-                        { value: '2025-07', name: 'Julho 2025', available: false },
-                        { value: '2025-08', name: 'Agosto 2025', available: false },
-                        { value: '2025-09', name: 'Setembro 2025', available: false },
-                        { value: '2025-10', name: 'Outubro 2025', available: false },
-                        { value: '2025-11', name: 'Novembro 2025', available: false }
-                    ];
-
-                    // Verificar quais meses têm chamadas disponíveis
-                    const availabilityResponse = await fetch(`${API_BASE_URL}/presenca/meses_disponiveis`, {
-                        headers: API_HEADERS
-                    });
-
-                    if (availabilityResponse.ok) {
-                        const availableMonths = await availabilityResponse.json();
-
-                        // Marcar os meses que têm dados disponíveis
-                        months.forEach(month => {
-                            month.available = availableMonths.meses.includes(month.value);
-                        });
-                    }
-
-                    // Preencher o select
-                    monthSelect.innerHTML = '';
-
-                    months.forEach(month => {
-                        const option = document.createElement('option');
-                        option.value = month.value;
-                        option.textContent = month.name;
-                        option.disabled = !month.available;
-                        monthSelect.appendChild(option);
-                    });
-
-                    // Adicionar evento para atualizar o botão quando o mês for selecionado
-                    monthSelect.addEventListener('change', function () {
-                        const selectedOption = this.options[this.selectedIndex];
-                        const isAvailable = !selectedOption.disabled;
-
-                        generateReportBtn.disabled = !isAvailable;
-
-                        if (isAvailable) {
-                            const monthName = selectedOption.textContent;
-                            generateReportBtn.innerHTML = `<i class="fas fa-download"></i> Baixar Relatório - ${monthName}`;
-                        } else {
-                            generateReportBtn.innerHTML = '<i class="fas fa-download"></i> Baixar Relatório';
-                        }
-                    });
-
-                    // Selecionar o primeiro mês disponível, se houver
-                    const firstAvailable = months.find(m => m.available);
-                    if (firstAvailable) {
-                        monthSelect.value = firstAvailable.value;
-                        generateReportBtn.disabled = false;
-                        generateReportBtn.innerHTML = `<i class="fas fa-download"></i> Baixar Relatório - ${firstAvailable.name}`;
-                    } else {
-                        generateReportBtn.disabled = true;
-                    }
-
-                    reportModal.classList.add('active');
-                } catch (error) {
-                    console.error('Erro ao carregar meses:', error);
-                    showErrorModal('Erro ao verificar meses disponíveis. Verifique sua conexão.');
-                }
-            });
-
-            generateReportBtn.addEventListener('click', async function () {
-                const mesSelecionado = monthSelect.value;
-                if (!mesSelecionado) return;
-
-                // Mostrar loading
-                const originalText = generateReportBtn.innerHTML;
-                generateReportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
-                generateReportBtn.disabled = true;
-
-                try {
-                    // Criar um link temporário para forçar o download
-                    const downloadLink = document.createElement('a');
-                    downloadLink.href = `${API_BASE_URL}/presenca/relatorio/${mesSelecionado}`;
-                    downloadLink.target = '_blank';
-                    downloadLink.download = `relatorio_${mesSelecionado}.xlsx`;
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-
-                    // Fechar o modal após um pequeno delay
-                    setTimeout(() => {
-                        reportModal.classList.remove('active');
-                    }, 1000);
-
-                } catch (error) {
-                    console.error('Erro ao baixar relatório:', error);
-                    showErrorModal('Erro ao baixar relatório. Por favor, tente novamente.');
-                } finally {
-                    // Restaurar o botão
-                    generateReportBtn.innerHTML = originalText;
-                    generateReportBtn.disabled = false;
-                }
-            });
-
-            // Inicialização final
-            datePicker.min = formatDate(minDate);
-            datePicker.max = formatDate(maxDate);
-            const initialDate = today < minDate ? minDate : today > maxDate ? maxDate : today;
-            datePicker.value = formatDate(getNextWeekday(initialDate));
-
-            const hasExistingCall = await checkExistingCall(datePicker.value);
+            const hasExistingCall = await checkExistingCall(this.value);
             submitBtn.style.display = hasExistingCall ? 'none' : 'block';
             saveChangesBtn.style.display = hasExistingCall ? 'block' : 'none';
 
             if (hasExistingCall) {
-                await loadExistingCall(datePicker.value);
+                await loadExistingCall(this.value);
+            }
+        });
+
+        const names = [
+            "Ana Clara Da Silva Maia Gimenes",
+            "Anna Júlia Zanini Rodrigues",
+            "Conrado Juliano Lourenço de Souza",
+            "David Henrique Dias Calciolari De Matos",
+            "Eduarda dos Santos Mendes",
+            "Erick Matheus Leguisamon",
+            "Julia Gabrielly Marques Rodrigues",
+            "Laura Narciso Kopp",
+            "Mariana Flores de Almeida",
+            "Matheus Vinicius Veiga Gois",
+            "Milena da Silva Lima",
+            "Nathalia Quenupe de Lara",
+            "Nicoly Lopes dos Santos",
+            "Pedro Henrique de Almeida Lobo",
+            "Rafael da Silva de Quadros",
+            "Raquel Duarte dos Santos",
+            "Thais dos Santos Lino",
+            "Victor Silva de Lima"
+        ];
+
+        const people = names.map((name, index) => ({
+            id: index + 1,
+            name,
+            status: null
+        }));
+
+        people.forEach(person => {
+            const personRow = document.createElement('div');
+            personRow.className = 'person-row';
+            personRow.innerHTML = `
+                <div class="person-name">${person.name}</div>
+                <div class="status-buttons">
+                    <button class="status-btn absent-btn" data-person="${person.id}" data-status="absent">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button class="status-btn present-btn" data-person="${person.id}" data-status="present">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="status-btn certificate-btn" data-person="${person.id}" data-status="certificate">
+                        <i class="fas fa-file-medical"></i>
+                    </button>
+                </div>
+            `;
+            attendanceList.appendChild(personRow);
+        });
+
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const personId = parseInt(this.getAttribute('data-person'));
+                const status = this.getAttribute('data-status');
+                people[personId - 1].status = status;
+
+                document.querySelectorAll(`.status-btn[data-person="${personId}"]`).forEach(button => {
+                    button.classList.toggle('active', button === this);
+                    button.classList.toggle('inactive', button !== this);
+                });
+
+                if (datePicker.value) {
+                    saveChangesBtn.style.display = 'block';
+                }
+            });
+        });
+
+        async function loadExistingCall(date) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/presenca/obter/${date}`, {
+                    headers: API_HEADERS
+                });
+
+                if (!response.ok) {
+                    if (response.status === 404) return;
+                    throw new Error('Erro ao carregar chamada');
+                }
+
+                const data = await response.json();
+
+                if (data && Array.isArray(data.registros)) {
+                    data.registros.forEach(registro => {
+                        const person = people.find(p => p.name === registro.name);
+                        if (person) {
+                            person.status = registro.status.toLowerCase();
+                            const btn = document.querySelector(`.status-btn[data-person="${person.id}"][data-status="${person.status}"]`);
+                            if (btn) {
+                                document.querySelectorAll(`.status-btn[data-person="${person.id}"]`).forEach(button => {
+                                    button.classList.toggle('active', button === btn);
+                                    button.classList.toggle('inactive', button !== btn);
+                                });
+                            }
+                        }
+                    });
+
+                    // Corrigido: Exibe a data correta considerando o fuso horário
+                    const dataAjustada = new Date(date + 'T00:00:00-03:00');
+                    showNotification(`Chamada do dia ${dataAjustada.toLocaleDateString('pt-BR')} carregada!`);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar chamada:', error);
+                showErrorModal('Erro ao carregar chamada. Verifique sua conexão ou tente novamente mais tarde.');
+            }
+        }
+
+        // Função principal para salvar/atualizar chamada com proteção completa
+        async function saveCall(date, registros, isUpdate = false) {
+            // Verificação de duplo clique/submissão
+            if (isSubmitting) {
+                showWarningModal('Aguarde, a chamada já está sendo processada...');
+                return { success: false, message: 'Operação já em andamento' };
             }
 
-            setTimeout(() => {
-                attendanceList.style.opacity = '1';
-            }, 300);
+            // Verificação de data duplicada
+            if (lastSubmittedDate === date && currentOperation === (isUpdate ? 'update' : 'submit')) {
+                showWarningModal('Esta chamada já foi enviada. Aguarde o processamento.');
+                return { success: false, message: 'Chamada já enviada para esta data' };
+            }
+
+            // Bloqueia novos envios
+            isSubmitting = true;
+            currentOperation = isUpdate ? 'update' : 'submit';
+            lastSubmittedDate = date;
+            
+            // Feedback visual
+            const btn = isUpdate ? saveChangesBtn : submitBtn;
+            btn.innerHTML = '';
+            btn.classList.add('loading');
+
+            try {
+                // Verificação final no servidor para evitar race conditions
+                const exists = await checkExistingCall(date);
+                if (!isUpdate && exists) {
+                    throw new Error('Já existe uma chamada para esta data');
+                }
+
+                const payload = {
+                    data: date,
+                    registros: registros.map(r => ({
+                        name: r.name,
+                        status: r.status.toUpperCase()
+                    }))
+                };
+
+                const response = await fetch(`${API_BASE_URL}/presenca/salvar`, {
+                    method: 'POST',
+                    headers: API_HEADERS,
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erro ao salvar chamada');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    const dataAjustada = new Date(date + 'T00:00:00-03:00');
+                    showNotification(`Chamada do dia ${dataAjustada.toLocaleDateString('pt-BR')} ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`);
+                    
+                    // Atualiza a interface
+                    submitBtn.style.display = 'none';
+                    saveChangesBtn.style.display = 'block';
+                    
+                    return { success: true };
+                }
+            } catch (error) {
+                console.error('Erro ao salvar chamada:', error);
+                showErrorModal(error.message || 'Erro ao salvar chamada. Por favor, tente novamente.');
+                return { success: false, message: error.message };
+            } finally {
+                // Libera para novas operações
+                isSubmitting = false;
+                btn.classList.remove('loading');
+                btn.innerHTML = isUpdate 
+                    ? '<i class="fas fa-save"></i> Salvar Alterações' 
+                    : '<i class="fas fa-paper-plane"></i> Enviar Chamada';
+            }
+        }
+
+        // Event listeners com proteção contra duplo clique
+        submitBtn.addEventListener('click', async function () {
+            if (isSubmitting) {
+                showWarningModal('Aguarde, a chamada já está sendo enviada...');
+                return;
+            }
+
+            if (!people.every(person => person.status !== null)) {
+                showErrorModal('Registre o status de todas as pessoas antes de enviar.');
+                return;
+            }
+
+            const registros = people.map(person => ({
+                name: person.name,
+                status: person.status
+            }));
+
+            await saveCall(datePicker.value, registros);
         });
-    </script>
+
+        saveChangesBtn.addEventListener('click', async function () {
+            if (isSubmitting) {
+                showWarningModal('Aguarde, a chamada já está sendo atualizada...');
+                return;
+            }
+
+            if (!people.every(person => person.status !== null)) {
+                showErrorModal('Registre o status de todas as pessoas antes de salvar.');
+                return;
+            }
+
+            const registros = people.map(person => ({
+                name: person.name,
+                status: person.status
+            }));
+
+            await saveCall(datePicker.value, registros, true);
+        });
+
+        // Restante do código (reportBtn, generateReportBtn, etc...)
+        reportBtn.addEventListener('click', async function () {
+            try {
+                // Definir os meses de julho a novembro de 2025
+                const months = [
+                    { value: '2025-07', name: 'Julho 2025', available: false },
+                    { value: '2025-08', name: 'Agosto 2025', available: false },
+                    { value: '2025-09', name: 'Setembro 2025', available: false },
+                    { value: '2025-10', name: 'Outubro 2025', available: false },
+                    { value: '2025-11', name: 'Novembro 2025', available: false }
+                ];
+
+                // Verificar quais meses têm chamadas disponíveis
+                const availabilityResponse = await fetch(`${API_BASE_URL}/presenca/meses_disponiveis`, {
+                    headers: API_HEADERS
+                });
+
+                if (availabilityResponse.ok) {
+                    const availableMonths = await availabilityResponse.json();
+
+                    // Marcar os meses que têm dados disponíveis
+                    months.forEach(month => {
+                        month.available = availableMonths.meses.includes(month.value);
+                    });
+                }
+
+                // Preencher o select
+                monthSelect.innerHTML = '';
+
+                months.forEach(month => {
+                    const option = document.createElement('option');
+                    option.value = month.value;
+                    option.textContent = month.name;
+                    option.disabled = !month.available;
+                    monthSelect.appendChild(option);
+                });
+
+                // Adicionar evento para atualizar o botão quando o mês for selecionado
+                monthSelect.addEventListener('change', function () {
+                    const selectedOption = this.options[this.selectedIndex];
+                    const isAvailable = !selectedOption.disabled;
+
+                    generateReportBtn.disabled = !isAvailable;
+
+                    if (isAvailable) {
+                        const monthName = selectedOption.textContent;
+                        generateReportBtn.innerHTML = `<i class="fas fa-download"></i> Baixar Relatório - ${monthName}`;
+                    } else {
+                        generateReportBtn.innerHTML = '<i class="fas fa-download"></i> Baixar Relatório';
+                    }
+                });
+
+                // Selecionar o primeiro mês disponível, se houver
+                const firstAvailable = months.find(m => m.available);
+                if (firstAvailable) {
+                    monthSelect.value = firstAvailable.value;
+                    generateReportBtn.disabled = false;
+                    generateReportBtn.innerHTML = `<i class="fas fa-download"></i> Baixar Relatório - ${firstAvailable.name}`;
+                } else {
+                    generateReportBtn.disabled = true;
+                }
+
+                reportModal.classList.add('active');
+            } catch (error) {
+                console.error('Erro ao carregar meses:', error);
+                showErrorModal('Erro ao verificar meses disponíveis. Verifique sua conexão.');
+            }
+        });
+
+        generateReportBtn.addEventListener('click', async function () {
+            const mesSelecionado = monthSelect.value;
+            if (!mesSelecionado) return;
+
+            // Mostrar loading
+            const originalText = generateReportBtn.innerHTML;
+            generateReportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+            generateReportBtn.disabled = true;
+
+            try {
+                // Criar um link temporário para forçar o download
+                const downloadLink = document.createElement('a');
+                downloadLink.href = `${API_BASE_URL}/presenca/relatorio/${mesSelecionado}`;
+                downloadLink.target = '_blank';
+                downloadLink.download = `relatorio_${mesSelecionado}.xlsx`;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+
+                // Fechar o modal após um pequeno delay
+                setTimeout(() => {
+                    reportModal.classList.remove('active');
+                }, 1000);
+
+            } catch (error) {
+                console.error('Erro ao baixar relatório:', error);
+                showErrorModal('Erro ao baixar relatório. Por favor, tente novamente.');
+            } finally {
+                // Restaurar o botão
+                generateReportBtn.innerHTML = originalText;
+                generateReportBtn.disabled = false;
+            }
+        });
+
+        // Inicialização final
+        datePicker.min = formatDate(minDate);
+        datePicker.max = formatDate(maxDate);
+        const initialDate = today < minDate ? minDate : today > maxDate ? maxDate : today;
+        datePicker.value = formatDate(getNextWeekday(initialDate));
+
+        const hasExistingCall = await checkExistingCall(datePicker.value);
+        submitBtn.style.display = hasExistingCall ? 'none' : 'block';
+        saveChangesBtn.style.display = hasExistingCall ? 'block' : 'none';
+
+        if (hasExistingCall) {
+            await loadExistingCall(datePicker.value);
+        }
+
+        setTimeout(() => {
+            attendanceList.style.opacity = '1';
+        }, 300);
+    });
+</script>
 
 </body>
 
