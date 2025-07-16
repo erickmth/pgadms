@@ -942,7 +942,7 @@
         </div>
     </div>
 
-   <script>
+<script>
     document.addEventListener('DOMContentLoaded', async function () {
         // Elementos do DOM
         const infoButton = document.getElementById('infoButton');
@@ -969,11 +969,6 @@
         const cancelReportBtn = document.getElementById('cancelReportBtn');
         const generateReportBtn = document.getElementById('generateReportBtn');
         const monthSelect = document.getElementById('monthSelect');
-
-        // Variáveis de controle
-        let isSubmitting = false;
-        let lastSubmittedDate = null;
-        let currentOperation = null; // 'submit' ou 'update'
 
         const API_BASE_URL = 'https://erickmth.pythonanywhere.com/api';
         const API_HEADERS = {
@@ -1046,25 +1041,13 @@
         confirmWarningModal.addEventListener('click', () => warningModal.classList.remove('active'));
         cancelReportBtn.addEventListener('click', () => reportModal.classList.remove('active'));
 
-        // Função melhorada para verificar chamada existente
         async function checkExistingCall(date) {
             try {
                 const response = await fetch(`${API_BASE_URL}/presenca/obter/${date}`, {
                     headers: API_HEADERS
                 });
-                
-                if (response.status === 404) {
-                    return false; // Não existe chamada para esta data
-                }
-                
-                if (!response.ok) {
-                    throw new Error('Erro ao verificar chamada existente');
-                }
-                
-                return true; // Chamada existe
+                return response.ok;
             } catch (error) {
-                console.error('Erro ao verificar chamada:', error);
-                showErrorModal('Erro ao verificar chamada existente. Verifique sua conexão.');
                 return false;
             }
         }
@@ -1206,37 +1189,11 @@
             }
         }
 
-        // Função principal para salvar/atualizar chamada com proteção completa
         async function saveCall(date, registros, isUpdate = false) {
-            // Verificação de duplo clique/submissão
-            if (isSubmitting) {
-                showWarningModal('Aguarde, a chamada já está sendo processada...');
-                return { success: false, message: 'Operação já em andamento' };
-            }
-
-            // Verificação de data duplicada
-            if (lastSubmittedDate === date && currentOperation === (isUpdate ? 'update' : 'submit')) {
-                showWarningModal('Esta chamada já foi enviada. Aguarde o processamento.');
-                return { success: false, message: 'Chamada já enviada para esta data' };
-            }
-
-            // Bloqueia novos envios
-            isSubmitting = true;
-            currentOperation = isUpdate ? 'update' : 'submit';
-            lastSubmittedDate = date;
-            
-            // Feedback visual
-            const btn = isUpdate ? saveChangesBtn : submitBtn;
-            btn.innerHTML = '';
-            btn.classList.add('loading');
+            submitBtn.innerHTML = '';
+            submitBtn.classList.add('loading');
 
             try {
-                // Verificação final no servidor para evitar race conditions
-                const exists = await checkExistingCall(date);
-                if (!isUpdate && exists) {
-                    throw new Error('Já existe uma chamada para esta data');
-                }
-
                 const payload = {
                     data: date,
                     registros: registros.map(r => ({
@@ -1258,36 +1215,22 @@
 
                 const data = await response.json();
                 if (data.success) {
+                    // Corrigido: Exibe a data correta considerando o fuso horário
                     const dataAjustada = new Date(date + 'T00:00:00-03:00');
                     showNotification(`Chamada do dia ${dataAjustada.toLocaleDateString('pt-BR')} ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`);
-                    
-                    // Atualiza a interface
                     submitBtn.style.display = 'none';
                     saveChangesBtn.style.display = 'block';
-                    
-                    return { success: true };
                 }
             } catch (error) {
                 console.error('Erro ao salvar chamada:', error);
                 showErrorModal(error.message || 'Erro ao salvar chamada. Por favor, tente novamente.');
-                return { success: false, message: error.message };
             } finally {
-                // Libera para novas operações
-                isSubmitting = false;
-                btn.classList.remove('loading');
-                btn.innerHTML = isUpdate 
-                    ? '<i class="fas fa-save"></i> Salvar Alterações' 
-                    : '<i class="fas fa-paper-plane"></i> Enviar Chamada';
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Chamada';
             }
         }
 
-        // Event listeners com proteção contra duplo clique
         submitBtn.addEventListener('click', async function () {
-            if (isSubmitting) {
-                showWarningModal('Aguarde, a chamada já está sendo enviada...');
-                return;
-            }
-
             if (!people.every(person => person.status !== null)) {
                 showErrorModal('Registre o status de todas as pessoas antes de enviar.');
                 return;
@@ -1302,11 +1245,6 @@
         });
 
         saveChangesBtn.addEventListener('click', async function () {
-            if (isSubmitting) {
-                showWarningModal('Aguarde, a chamada já está sendo atualizada...');
-                return;
-            }
-
             if (!people.every(person => person.status !== null)) {
                 showErrorModal('Registre o status de todas as pessoas antes de salvar.');
                 return;
@@ -1320,7 +1258,6 @@
             await saveCall(datePicker.value, registros, true);
         });
 
-        // Restante do código (reportBtn, generateReportBtn, etc...)
         reportBtn.addEventListener('click', async function () {
             try {
                 // Definir os meses de julho a novembro de 2025
