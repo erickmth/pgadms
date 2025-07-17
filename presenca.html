@@ -1339,7 +1339,7 @@
             try {
                 // Criar um link temporário para forçar o download
                 const downloadLink = document.createElement('a');
-downloadLink.href = `${API_BASE_URL}/api/presenca/relatorio_excel/${mesSelecionado}`;
+downloadLink.href = `${API_BASE_URL}/presenca/relatorio_excel/${mesSelecionado}`;
                 downloadLink.target = '_blank';
                 downloadLink.download = `relatorio_${mesSelecionado}.xlsx`;
                 document.body.appendChild(downloadLink);
