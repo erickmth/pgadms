@@ -530,6 +530,14 @@
                 font-size: 16px !important;
             }
         }
+          .form-check-input {
+    box-shadow: 0 0 5px 2px rgba(0, 123, 255, 0.5); /* sombra azul mais forte */
+    transition: box-shadow 0.3s ease;
+  }
+
+  .form-check-input:focus {
+    box-shadow: 0 0 8px 3px rgba(0, 123, 255, 0.7); /* sombra maior ao focar */
+  }
     </style>
 </head>
 
@@ -539,48 +547,51 @@
             <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="text-center mb-4">
                     <a href="index.html">
-                    <img src="logu.svg" alt="Logo" class="logo">
+                        <img src="logu.svg" alt="Logo" class="logo">
                     </a>
                     <h5>Painel de Administração</h5>
                 </div>
-                
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#dashboard">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#alunos">
-                            <i class="bi bi-people-fill"></i> Gerenciar Alunos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#escalas">
-                            <i class="bi bi-calendar-check"></i> Gerenciar Escalas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#backup">
-                            <i class="bi bi-cloud-arrow-down"></i> Backup
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="presenca.html">
-                            <i class="bi bi-brush"></i> Lista de Presença
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#sobre">
-                            <i class="bi bi-person-badge"></i> Sobre
-                        </a>
-                    </li>
-                    <li class="nav-item mt-4">
-                        <button class="btn btn-sm btn-danger w-100 btn-action" id="logoutBtn">
-                            <i class="bi bi-box-arrow-left"></i> Sair
-                        </button>
-                    </li>
-                </ul>
+
+ <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#dashboard" tabindex="-1" aria-disabled="true">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#alunos" tabindex="-1" aria-disabled="true">
+                <i class="bi bi-people-fill"></i> Gerenciar Alunos
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#escalas" tabindex="-1" aria-disabled="true">
+                <i class="bi bi-calendar-check"></i> Gerenciar Escalas
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#backup" tabindex="-1" aria-disabled="true">
+                <i class="bi bi-cloud-arrow-down"></i> Backup
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#sobre" tabindex="-1" aria-disabled="true">
+                <i class="bi bi-person-badge"></i> Sobre
+            </a>
+        </li>
+        <li class="nav-item">
+            
+            <a class="nav-link" href="presenca.html">
+                <i class="bi bi-brush"></i> Lista de Presença
+            </a>
+        </li>
+        <li class="nav-item mt-4">
+            <button class="btn btn-sm btn-danger w-100 btn-action" id="logoutBtn">
+                <i class="bi bi-box-arrow-left"></i> Sair
+            </button>
+        </li>
+    </ul>
+
+
             </div>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
@@ -1026,905 +1037,976 @@
         <i class="bi bi-list"></i>
     </button>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const API_URL = 'https://erickmth.pythonanywhere.com/api';
-        let currentTurmaEscala = '';
-        let lastActionId = 0;
-        let turmasList = [];
-        let lastUpdateTime = null;
-        let eventSource = null;
+   <script>
+    // Adiciona evento de clique no documento para fechar o menu ao clicar fora
+document.addEventListener('click', function(event) {
+    const sidebar = document.querySelector('.sidebar');
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    
+    // Verifica se o clique foi fora do menu e do botão de toggle
+    if (!sidebar.contains(event.target) && event.target !== mobileMenuToggle && 
+        !mobileMenuToggle.contains(event.target)) {
+        sidebar.classList.remove('show');
+    }
+});
 
-        const elements = {
-            loginModal: new bootstrap.Modal('#loginModal'),
-            confirmModal: new bootstrap.Modal('#confirmModal'),
-            messageModal: new bootstrap.Modal('#messageModal'),
-            loginForm: document.getElementById('loginForm'),
-            loginBtn: document.getElementById('loginBtn'),
-            loginError: document.getElementById('loginError'),
-            logoutBtn: document.getElementById('logoutBtn'),
-            refreshDashboard: document.getElementById('refreshDashboard'),
-            refreshAlunosBtn: document.getElementById('refreshAlunosBtn'),
-            totalTurmas: document.getElementById('totalTurmas'),
-            totalAlunos: document.getElementById('totalAlunos'),
-            connectionStatus: document.getElementById('connectionStatus'),
-            lastUpdate: document.getElementById('lastUpdate'),
-            lastActions: document.getElementById('lastActions'),
-            newActionsBadge: document.getElementById('newActionsBadge'),
-            addAlunoForm: document.getElementById('addAlunoForm'),
-            turmaAluno: document.getElementById('turmaAluno'),
-            edvAluno: document.getElementById('edvAluno'),
-            nomeAluno: document.getElementById('nomeAluno'),
-            isAdmin: document.getElementById('isAdmin'),
-            turmaLista: document.getElementById('turmaLista'),
-            listarAlunosBtn: document.getElementById('listarAlunosBtn'),
-            alunosList: document.getElementById('alunosList'),
-            turmaEscala: document.getElementById('turmaEscala'),
-            carregarEscalaBtn: document.getElementById('carregarEscalaBtn'),
-            semanaAtual: document.getElementById('semanaAtual'),
-            escalaItems: document.getElementById('escalaItems'),
-            addItemEscalaBtn: document.getElementById('addItemEscalaBtn'),
-            salvarEscalaBtn: document.getElementById('salvarEscalaBtn'),
-            exportAlunosBtn: document.getElementById('exportAlunosBtn'),
-            exportEscalasBtn: document.getElementById('exportEscalasBtn'),
-            exportFullBackupBtn: document.getElementById('exportFullBackupBtn'),
-            backupFile: document.getElementById('backupFile'),
-            importBackupBtn: document.getElementById('importBackupBtn'),
-            alunosDataPreview: document.getElementById('alunosDataPreview'),
-            escalasDataPreview: document.getElementById('escalasDataPreview'),
-            confirmModalTitle: document.getElementById('confirmModalTitle'),
-            confirmModalBody: document.getElementById('confirmModalBody'),
-            confirmModalBtn: document.getElementById('confirmModalBtn'),
-            messageModalTitle: document.getElementById('messageModalTitle'),
-            messageModalBody: document.getElementById('messageModalBody'),
-            mobileMenuToggle: document.getElementById('mobileMenuToggle')
-        };
+// Adiciona evento de clique no menu hamburguer para evitar propagação
+document.getElementById('mobileMenuToggle').addEventListener('click', function(event) {
+    event.stopPropagation();
+});
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+            .then(() => console.log('Service Worker registrado'))
+            .catch(err => console.error('Erro ao registrar SW', err));
+    }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            elements.loginModal.show();
+    const API_URL = 'https://erickmth.pythonanywhere.com/api';
+    let currentTurmaEscala = '';
+    let lastActionId = 0;
+    let turmasList = [];
+    let lastUpdateTime = null;
+    let eventSource = null;
 
-            const savedUsername = localStorage.getItem('adminUsername');
-            const savedPassword = localStorage.getItem('adminPassword');
-            if (savedUsername && savedPassword) {
-                document.getElementById('username').value = savedUsername;
-                document.getElementById('password').value = savedPassword;
-                document.getElementById('rememberMe').checked = true;
+    const elements = {
+        loginModal: new bootstrap.Modal('#loginModal'),
+        confirmModal: new bootstrap.Modal('#confirmModal'),
+        messageModal: new bootstrap.Modal('#messageModal'),
+        loginForm: document.getElementById('loginForm'),
+        loginBtn: document.getElementById('loginBtn'),
+        loginError: document.getElementById('loginError'),
+        logoutBtn: document.getElementById('logoutBtn'),
+        refreshDashboard: document.getElementById('refreshDashboard'),
+        refreshAlunosBtn: document.getElementById('refreshAlunosBtn'),
+        totalTurmas: document.getElementById('totalTurmas'),
+        totalAlunos: document.getElementById('totalAlunos'),
+        connectionStatus: document.getElementById('connectionStatus'),
+        lastUpdate: document.getElementById('lastUpdate'),
+        lastActions: document.getElementById('lastActions'),
+        newActionsBadge: document.getElementById('newActionsBadge'),
+        addAlunoForm: document.getElementById('addAlunoForm'),
+        turmaAluno: document.getElementById('turmaAluno'),
+        edvAluno: document.getElementById('edvAluno'),
+        nomeAluno: document.getElementById('nomeAluno'),
+        isAdmin: document.getElementById('isAdmin'),
+        turmaLista: document.getElementById('turmaLista'),
+        listarAlunosBtn: document.getElementById('listarAlunosBtn'),
+        alunosList: document.getElementById('alunosList'),
+        turmaEscala: document.getElementById('turmaEscala'),
+        carregarEscalaBtn: document.getElementById('carregarEscalaBtn'),
+        semanaAtual: document.getElementById('semanaAtual'),
+        escalaItems: document.getElementById('escalaItems'),
+        addItemEscalaBtn: document.getElementById('addItemEscalaBtn'),
+        salvarEscalaBtn: document.getElementById('salvarEscalaBtn'),
+        exportAlunosBtn: document.getElementById('exportAlunosBtn'),
+        exportEscalasBtn: document.getElementById('exportEscalasBtn'),
+        exportFullBackupBtn: document.getElementById('exportFullBackupBtn'),
+        backupFile: document.getElementById('backupFile'),
+        importBackupBtn: document.getElementById('importBackupBtn'),
+        alunosDataPreview: document.getElementById('alunosDataPreview'),
+        escalasDataPreview: document.getElementById('escalasDataPreview'),
+        confirmModalTitle: document.getElementById('confirmModalTitle'),
+        confirmModalBody: document.getElementById('confirmModalBody'),
+        confirmModalBtn: document.getElementById('confirmModalBtn'),
+        messageModalTitle: document.getElementById('messageModalTitle'),
+        messageModalBody: document.getElementById('messageModalBody'),
+        mobileMenuToggle: document.getElementById('mobileMenuToggle')
+    };
+
+    // Função para habilitar/desabilitar elementos da UI
+    function enableUIElements(enable) {
+        // Links da sidebar
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            if (enable) {
+                link.classList.remove('disabled');
+                link.removeAttribute('tabindex');
+                link.removeAttribute('aria-disabled');
+            } else {
+                link.classList.add('disabled');
+                link.setAttribute('tabindex', '-1');
+                link.setAttribute('aria-disabled', 'true');
             }
-
-            setupEventListeners();
         });
 
-        function setupEventListeners() {
-            elements.loginBtn.addEventListener('click', handleLogin);
-            elements.logoutBtn.addEventListener('click', handleLogout);
-            elements.refreshDashboard.addEventListener('click', loadDashboard);
-            elements.refreshAlunosBtn.addEventListener('click', function () {
-                loadTurmas().then(() => {
-                    listarAlunos();
+        // Botões principais
+        const mainButtons = [
+            elements.refreshDashboard,
+            elements.refreshAlunosBtn,
+            elements.listarAlunosBtn,
+            elements.carregarEscalaBtn,
+            elements.salvarEscalaBtn,
+            elements.exportAlunosBtn,
+            elements.exportEscalasBtn,
+            elements.exportFullBackupBtn,
+            elements.importBackupBtn,
+            elements.addItemEscalaBtn
+        ];
+
+        mainButtons.forEach(button => {
+            if (button) {
+                button.disabled = !enable;
+            }
+        });
+
+        // Formulários e inputs
+        const formElements = [
+            elements.turmaAluno,
+            elements.edvAluno,
+            elements.nomeAluno,
+            elements.isAdmin,
+            elements.turmaLista,
+            elements.turmaEscala,
+            elements.semanaAtual,
+            elements.backupFile
+        ];
+
+        formElements.forEach(element => {
+            if (element) {
+                element.disabled = !enable;
+            }
+        });
+
+        // Botão de logout - sempre habilitado
+        elements.logoutBtn.disabled = false;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Desabilita todos os elementos da UI inicialmente
+        enableUIElements(false);
+        
+        elements.loginModal.show();
+
+        const savedUsername = localStorage.getItem('adminUsername');
+        const savedPassword = localStorage.getItem('adminPassword');
+        if (savedUsername && savedPassword) {
+            document.getElementById('username').value = savedUsername;
+            document.getElementById('password').value = savedPassword;
+            document.getElementById('rememberMe').checked = true;
+        }
+
+        setupEventListeners();
+    });
+
+    function setupEventListeners() {
+        elements.loginBtn.addEventListener('click', handleLogin);
+        elements.logoutBtn.addEventListener('click', handleLogout);
+        elements.refreshDashboard.addEventListener('click', loadDashboard);
+        elements.refreshAlunosBtn.addEventListener('click', function () {
+            loadTurmas().then(() => {
+                listarAlunos();
+            });
+        });
+        elements.addAlunoForm.addEventListener('submit', addAluno);
+        elements.listarAlunosBtn.addEventListener('click', listarAlunos);
+        elements.turmaLista.addEventListener('change', listarAlunos);
+        elements.carregarEscalaBtn.addEventListener('click', carregarEscala);
+        elements.addItemEscalaBtn.addEventListener('click', adicionarItemEscala);
+        elements.salvarEscalaBtn.addEventListener('click', salvarEscala);
+        elements.exportAlunosBtn.addEventListener('click', exportAlunos);
+        elements.exportEscalasBtn.addEventListener('click', exportEscalas);
+        elements.exportFullBackupBtn.addEventListener('click', exportFullBackup);
+        elements.importBackupBtn.addEventListener('click', importBackup);
+        elements.mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+
+        // Evita clique em links de abas desabilitadas
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                if (link.classList.contains('disabled')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+        });
+    }
+
+    function toggleMobileMenu() {
+        document.querySelector('.sidebar').classList.toggle('show');
+    }
+
+    async function handleLogin() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const rememberMe = document.getElementById('rememberMe').checked;
+
+        try {
+            showLoading(elements.loginBtn);
+
+            const response = await fetch(`${API_URL}/admin/status`, {
+                headers: {
+                    'Authorization': 'Basic ' + btoa(username + ':' + password)
+                }
+            });
+
+            if (response.ok) {
+                if (rememberMe) {
+                    localStorage.setItem('adminUsername', username);
+                    localStorage.setItem('adminPassword', password);
+                } else {
+                    localStorage.removeItem('adminUsername');
+                    localStorage.removeItem('adminPassword');
+                }
+
+                sessionStorage.setItem('adminAuth', btoa(username + ':' + password));
+                elements.loginModal.hide();
+                
+                // Habilita todos os elementos da UI
+                enableUIElements(true);
+                
+                loadDashboard();
+                loadTurmas();
+                setupSSEConnection();
+            } else {
+                throw new Error('Credenciais inválidas');
+            }
+        } catch (error) {
+            elements.loginError.textContent = 'Erro ao fazer login: ' + error.message;
+            elements.loginError.classList.remove('d-none');
+        } finally {
+            hideLoading(elements.loginBtn, 'Entrar');
+        }
+    }
+
+    function handleLogout() {
+        sessionStorage.removeItem('adminAuth');
+        if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+        }
+        
+        // Desabilita todos os elementos da UI
+        enableUIElements(false);
+        
+        // Mostra o modal de login novamente
+        elements.loginModal.show();
+    }
+
+    function getAuthHeader() {
+        return {
+            'Authorization': 'Basic ' + sessionStorage.getItem('adminAuth')
+        };
+    }
+
+    async function loadDashboard() {
+        try {
+            showLoading(elements.refreshDashboard);
+
+            const statusResponse = await fetch(`${API_URL}/admin/status`, {
+                headers: getAuthHeader()
+            });
+
+            if (!statusResponse.ok) {
+                throw new Error('Erro ao conectar com a API');
+            }
+
+            const statusData = await statusResponse.json();
+            elements.connectionStatus.textContent = `Conectado como ${statusData.admin}`;
+
+            // Carregar histórico completo
+            const historico = await carregarHistorico();
+            elements.lastActions.innerHTML = '';
+
+            historico.forEach(acao => {
+                addActionToUI(acao, false);
+            });
+
+            const backupResponse = await fetch(`${API_URL}/admin/backup`, {
+                headers: getAuthHeader()
+            });
+
+            if (!backupResponse.ok) {
+                throw new Error('Erro ao obter dados de backup');
+            }
+
+            const backupData = await backupResponse.json();
+
+            elements.totalTurmas.textContent = Object.keys(backupData.alunos).length;
+
+            let totalAlunos = 0;
+            for (const turma in backupData.alunos) {
+                totalAlunos += Object.keys(backupData.alunos[turma]).length;
+            }
+            elements.totalAlunos.textContent = totalAlunos;
+
+            const now = new Date();
+            elements.lastUpdate.textContent = `Última atualização: ${now.toLocaleString()}`;
+            lastUpdateTime = now;
+
+            // Esconder badge de novas ações após atualização
+            elements.newActionsBadge.style.display = 'none';
+
+        } catch (error) {
+            showMessage('Erro', `Erro ao carregar dashboard: ${error.message}`, 'error');
+        } finally {
+            hideLoading(elements.refreshDashboard, '<i class="bi bi-arrow-clockwise"></i> Atualizar');
+        }
+    }
+
+    function addActionToUI(acao, isNew = false) {
+        const row = document.createElement('tr');
+
+        if (isNew) {
+            row.classList.add('table-info');
+            setTimeout(() => {
+                row.classList.remove('table-info');
+            }, 3000);
+        }
+
+        row.innerHTML = `
+            <td>${new Date(acao.data_hora).toLocaleString()}</td>
+            <td>${acao.acao}</td>
+            <td>${acao.detalhes}</td>
+            <td>${acao.usuario}</td>
+        `;
+
+        if (isNew) {
+            elements.lastActions.prepend(row);
+        } else {
+            elements.lastActions.appendChild(row);
+        }
+
+        if (elements.lastActions.children.length > 50) {
+            elements.lastActions.removeChild(elements.lastActions.lastChild);
+        }
+    }
+
+    async function carregarHistorico() {
+        try {
+            const response = await fetch(`${API_URL}/api/admin/historico`, {
+                headers: getAuthHeader()
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao carregar histórico');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error("Erro ao carregar histórico:", error);
+            return [];
+        }
+    }
+
+    async function loadTurmas() {
+        try {
+            const response = await fetch(`${API_URL}/admin/status`, {
+                headers: getAuthHeader()
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao carregar turmas');
+            }
+
+            const data = await response.json();
+            turmasList = data.turmas;
+
+            const selects = [elements.turmaAluno, elements.turmaLista, elements.turmaEscala];
+            selects.forEach(select => {
+                select.innerHTML = '';
+
+                if (select !== elements.turmaLista) {
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Selecione a turma';
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    select.appendChild(defaultOption);
+                } else {
+                    const allOption = document.createElement('option');
+                    allOption.value = '';
+                    allOption.textContent = 'Todas as turmas';
+                    select.appendChild(allOption);
+                }
+
+                turmasList.forEach(turma => {
+                    const option = document.createElement('option');
+                    option.value = turma;
+                    option.textContent = turma;
+                    select.appendChild(option);
                 });
             });
-            elements.addAlunoForm.addEventListener('submit', addAluno);
-            elements.listarAlunosBtn.addEventListener('click', listarAlunos);
-            elements.turmaLista.addEventListener('change', listarAlunos);
-            elements.carregarEscalaBtn.addEventListener('click', carregarEscala);
-            elements.addItemEscalaBtn.addEventListener('click', adicionarItemEscala);
-            elements.salvarEscalaBtn.addEventListener('click', salvarEscala);
-            elements.exportAlunosBtn.addEventListener('click', exportAlunos);
-            elements.exportEscalasBtn.addEventListener('click', exportEscalas);
-            elements.exportFullBackupBtn.addEventListener('click', exportFullBackup);
-            elements.importBackupBtn.addEventListener('click', importBackup);
-            elements.mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+
+            return turmasList;
+        } catch (error) {
+            showMessage('Erro', `Erro ao carregar turmas: ${error.message}`, 'error');
+            return [];
         }
+    }
 
-        function toggleMobileMenu() {
-            document.querySelector('.sidebar').classList.toggle('show');
-        }
+    async function addAluno(e) {
+        e.preventDefault();
 
-        async function handleLogin() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
+        const turma = elements.turmaAluno.value;
+        const edv = elements.edvAluno.value;
+        let nome = elements.nomeAluno.value;
+        const admin = elements.isAdmin.checked;
 
-            try {
-                elements.loginBtn.disabled = true;
-                elements.loginBtn.innerHTML = '<span class="loading"></span> Verificando...';
-
-                const response = await fetch(`${API_URL}/admin/status`, {
-                    headers: {
-                        'Authorization': 'Basic ' + btoa(username + ':' + password)
-                    }
-                });
-
-                if (response.ok) {
-                    if (rememberMe) {
-                        localStorage.setItem('adminUsername', username);
-                        localStorage.setItem('adminPassword', password);
-                    } else {
-                        localStorage.removeItem('adminUsername');
-                        localStorage.removeItem('adminPassword');
-                    }
-
-                    sessionStorage.setItem('adminAuth', btoa(username + ':' + password));
-                    elements.loginModal.hide();
-                    loadDashboard();
-                    loadTurmas();
-                    setupSSEConnection();
-                } else {
-                    throw new Error('Credenciais inválidas');
-                }
-            } catch (error) {
-                elements.loginError.textContent = 'Erro ao fazer login: ' + error.message;
-                elements.loginError.classList.remove('d-none');
-            } finally {
-                elements.loginBtn.disabled = false;
-                elements.loginBtn.textContent = 'Entrar';
-            }
-        }
-
-        function setupSSEConnection() {
-            if (eventSource) {
-                eventSource.close();
-            }
-
-            eventSource = new EventSource(`${API_URL}/api/admin/historico/stream`);
-
-            eventSource.onmessage = function (event) {
-                const newAction = JSON.parse(event.data);
-                addActionToUI(newAction, true);
-
-                // Mostrar badge de novas ações
-                elements.newActionsBadge.style.display = 'inline-block';
-            };
-
-            eventSource.onerror = function () {
-                console.error("Erro na conexão SSE. Tentando reconectar...");
-                setTimeout(setupSSEConnection, 5000);
-            };
-        }
-
-        function handleLogout() {
-            sessionStorage.removeItem('adminAuth');
-            if (eventSource) {
-                eventSource.close();
-                eventSource = null;
-            }
-            window.location.reload();
-        }
-
-        function getAuthHeader() {
-            return {
-                'Authorization': 'Basic ' + sessionStorage.getItem('adminAuth')
-            };
-        }
-
-        async function loadDashboard() {
-            try {
-                showLoading(elements.refreshDashboard);
-
-                const statusResponse = await fetch(`${API_URL}/admin/status`, {
-                    headers: getAuthHeader()
-                });
-
-                if (!statusResponse.ok) {
-                    throw new Error('Erro ao conectar com a API');
-                }
-
-                const statusData = await statusResponse.json();
-                elements.connectionStatus.textContent = `Conectado como ${statusData.admin}`;
-
-                // Carregar histórico completo
-                const historico = await carregarHistorico();
-                elements.lastActions.innerHTML = '';
-
-                historico.forEach(acao => {
-                    addActionToUI(acao, false);
-                });
-
-                const backupResponse = await fetch(`${API_URL}/admin/backup`, {
-                    headers: getAuthHeader()
-                });
-
-                if (!backupResponse.ok) {
-                    throw new Error('Erro ao obter dados de backup');
-                }
-
-                const backupData = await backupResponse.json();
-
-                elements.totalTurmas.textContent = Object.keys(backupData.alunos).length;
-
-                let totalAlunos = 0;
-                for (const turma in backupData.alunos) {
-                    totalAlunos += Object.keys(backupData.alunos[turma]).length;
-                }
-                elements.totalAlunos.textContent = totalAlunos;
-
-                const now = new Date();
-                elements.lastUpdate.textContent = `Última atualização: ${now.toLocaleString()}`;
-                lastUpdateTime = now;
-
-                // Esconder badge de novas ações após atualização
-                elements.newActionsBadge.style.display = 'none';
-
-            } catch (error) {
-                showMessage('Erro', `Erro ao carregar dashboard: ${error.message}`, 'error');
-            } finally {
-                hideLoading(elements.refreshDashboard, '<i class="bi bi-arrow-clockwise"></i> Atualizar');
-            }
-        }
-
-        function addActionToUI(acao, isNew = false) {
-            const row = document.createElement('tr');
-
-            if (isNew) {
-                row.classList.add('table-info');
-                setTimeout(() => {
-                    row.classList.remove('table-info');
-                }, 3000);
-            }
-
-            row.innerHTML = `
-                <td>${new Date(acao.data_hora).toLocaleString()}</td>
-                <td>${acao.acao}</td>
-                <td>${acao.detalhes}</td>
-                <td>${acao.usuario}</td>
-            `;
-
-            if (isNew) {
-                elements.lastActions.prepend(row);
+        if (admin) {
+            if (nome.includes('👩‍🏫') || nome.includes('👨‍🏫')) {
             } else {
-                elements.lastActions.appendChild(row);
-            }
-
-            if (elements.lastActions.children.length > 50) {
-                elements.lastActions.removeChild(elements.lastActions.lastChild);
+                const genero = nome.match(/Prof[ªº]/)?.[0] || 'Profº';
+                nome += genero.includes('ª') ? '👩‍🏫' : '👨‍🏫';
             }
         }
 
-        async function carregarHistorico() {
-            try {
-                const response = await fetch(`${API_URL}/api/admin/historico`, {
-                    headers: getAuthHeader()
-                });
+        try {
+            showLoading(elements.addAlunoForm.querySelector('button[type="submit"]'));
 
-                if (!response.ok) {
-                    throw new Error('Erro ao carregar histórico');
-                }
+            const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeader()
+                },
+                body: JSON.stringify({ edv, nome })
+            });
 
-                return await response.json();
-            } catch (error) {
-                console.error("Erro ao carregar histórico:", error);
-                return [];
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Erro ao adicionar aluno');
             }
+
+            showMessage('Sucesso', 'Aluno adicionado com sucesso', 'success');
+
+            // Registrar ação no histórico
+            await registrarAcao(
+                'Adicionar Aluno',
+                `Adicionado aluno ${nome} (EDV: ${edv})`,
+                turma,
+                edv
+            );
+
+            elements.edvAluno.value = '';
+            elements.nomeAluno.value = '';
+            elements.isAdmin.checked = false;
+            listarAlunos();
+
+        } catch (error) {
+            showMessage('Erro', error.message, 'error');
+        } finally {
+            hideLoading(elements.addAlunoForm.querySelector('button[type="submit"]'),
+                '<i class="bi bi-plus-circle"></i> Adicionar Aluno');
         }
+    }
 
-        async function loadTurmas() {
-            try {
-                const response = await fetch(`${API_URL}/admin/status`, {
-                    headers: getAuthHeader()
-                });
+    async function registrarAcao(acao, detalhes, turma = null, itemAfetado = null) {
+        try {
+            const usuario = (await fetch(`${API_URL}/admin/status`, {
+                headers: getAuthHeader()
+            }).then(res => res.json())).admin;
 
-                if (!response.ok) {
-                    throw new Error('Erro ao carregar turmas');
-                }
-
-                const data = await response.json();
-                turmasList = data.turmas;
-
-                const selects = [elements.turmaAluno, elements.turmaLista, elements.turmaEscala];
-                selects.forEach(select => {
-                    select.innerHTML = '';
-
-                    if (select !== elements.turmaLista) {
-                        const defaultOption = document.createElement('option');
-                        defaultOption.value = '';
-                        defaultOption.textContent = 'Selecione a turma';
-                        defaultOption.disabled = true;
-                        defaultOption.selected = true;
-                        select.appendChild(defaultOption);
-                    } else {
-                        const allOption = document.createElement('option');
-                        allOption.value = '';
-                        allOption.textContent = 'Todas as turmas';
-                        select.appendChild(allOption);
-                    }
-
-                    turmasList.forEach(turma => {
-                        const option = document.createElement('option');
-                        option.value = turma;
-                        option.textContent = turma;
-                        select.appendChild(option);
-                    });
-                });
-
-                return turmasList;
-            } catch (error) {
-                showMessage('Erro', `Erro ao carregar turmas: ${error.message}`, 'error');
-                return [];
-            }
-        }
-
-        async function addAluno(e) {
-            e.preventDefault();
-
-            const turma = elements.turmaAluno.value;
-            const edv = elements.edvAluno.value;
-            let nome = elements.nomeAluno.value;
-            const admin = elements.isAdmin.checked;
-
-            if (admin) {
-                if (nome.includes('👩‍🏫') || nome.includes('👨‍🏫')) {
-                } else {
-                    const genero = nome.match(/Prof[ªº]/)?.[0] || 'Profº';
-                    nome += genero.includes('ª') ? '👩‍🏫' : '👨‍🏫';
-                }
-            }
-
-            try {
-                showLoading(elements.addAlunoForm.querySelector('button[type="submit"]'));
-
-                const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...getAuthHeader()
-                    },
-                    body: JSON.stringify({ edv, nome })
-                });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Erro ao adicionar aluno');
-                }
-
-                showMessage('Sucesso', 'Aluno adicionado com sucesso', 'success');
-
-                // Registrar ação no histórico
-                await registrarAcao(
-                    'Adicionar Aluno',
-                    `Adicionado aluno ${nome} (EDV: ${edv})`,
+            await fetch(`${API_URL}/api/admin/historico`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeader()
+                },
+                body: JSON.stringify({
+                    usuario,
+                    acao,
+                    detalhes,
                     turma,
-                    edv
-                );
-
-                elements.edvAluno.value = '';
-                elements.nomeAluno.value = '';
-                elements.isAdmin.checked = false;
-                listarAlunos();
-
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.addAlunoForm.querySelector('button[type="submit"]'),
-                    '<i class="bi bi-plus-circle"></i> Adicionar Aluno');
-            }
+                    item_afetado: itemAfetado
+                })
+            });
+        } catch (error) {
+            console.error("Erro ao registrar ação:", error);
         }
+    }
 
-        async function registrarAcao(acao, detalhes, turma = null, itemAfetado = null) {
-            try {
-                const usuario = (await fetch(`${API_URL}/admin/status`, {
+    async function listarAlunos() {
+        try {
+            showLoading(elements.listarAlunosBtn);
+
+            const turma = elements.turmaLista.value;
+            let alunos = {};
+
+            if (turma) {
+                const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
                     headers: getAuthHeader()
-                }).then(res => res.json())).admin;
-
-                await fetch(`${API_URL}/api/admin/historico`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...getAuthHeader()
-                    },
-                    body: JSON.stringify({
-                        usuario,
-                        acao,
-                        detalhes,
-                        turma,
-                        item_afetado: itemAfetado
-                    })
                 });
-            } catch (error) {
-                console.error("Erro ao registrar ação:", error);
-            }
-        }
 
-        async function listarAlunos() {
-            try {
-                showLoading(elements.listarAlunosBtn);
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar alunos');
+                }
 
-                const turma = elements.turmaLista.value;
-                let alunos = {};
-
-                if (turma) {
-                    const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
+                alunos[turma] = await response.json();
+            } else {
+                for (const t of turmasList) {
+                    const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(t)}/alunos`, {
                         headers: getAuthHeader()
                     });
 
-                    if (!response.ok) {
-                        throw new Error('Erro ao carregar alunos');
-                    }
-
-                    alunos[turma] = await response.json();
-                } else {
-                    for (const t of turmasList) {
-                        const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(t)}/alunos`, {
-                            headers: getAuthHeader()
-                        });
-
-                        if (response.ok) {
-                            alunos[t] = await response.json();
-                        }
+                    if (response.ok) {
+                        alunos[t] = await response.json();
                     }
                 }
+            }
 
-                elements.alunosList.innerHTML = '';
+            elements.alunosList.innerHTML = '';
 
-                for (const [turma, alunosTurma] of Object.entries(alunos)) {
-                    for (const [edv, nome] of Object.entries(alunosTurma)) {
-                        const row = document.createElement('tr');
+            for (const [turma, alunosTurma] of Object.entries(alunos)) {
+                for (const [edv, nome] of Object.entries(alunosTurma)) {
+                    const row = document.createElement('tr');
 
-                        const isAdmin = nome.includes('👩‍🏫') || nome.includes('👨‍🏫');
-                        const nomeDisplay = isAdmin ? nome.replace(/👩‍🏫|👨‍🏫/g, '') : nome;
+                    const isAdmin = nome.includes('👩‍🏫') || nome.includes('👨‍🏫');
+                    const nomeDisplay = isAdmin ? nome.replace(/👩‍🏫|👨‍🏫/g, '') : nome;
 
-                        row.innerHTML = `
-                            <td>${turma}</td>
-                            <td>${edv}</td>
-                            <td>${nomeDisplay} ${isAdmin ? '<span class="badge bg-warning text-dark">Admin</span>' : ''}</td>
-                            <td class="action-buttons">
-                                <button class="btn btn-sm btn-danger btn-remove-aluno btn-action" data-turma="${turma}" data-edv="${edv}">
-                                    <i class="bi bi-trash"></i> Remover
-                                </button>
-                            </td>
-                        `;
+                    row.innerHTML = `
+                        <td>${turma}</td>
+                        <td>${edv}</td>
+                        <td>${nomeDisplay} ${isAdmin ? '<span class="badge bg-warning text-dark">Admin</span>' : ''}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-sm btn-danger btn-remove-aluno btn-action" data-turma="${turma}" data-edv="${edv}">
+                                <i class="bi bi-trash"></i> Remover
+                            </button>
+                        </td>
+                    `;
 
-                        elements.alunosList.appendChild(row);
-                    }
+                    elements.alunosList.appendChild(row);
                 }
-
-                document.querySelectorAll('.btn-remove-aluno').forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        const turma = this.getAttribute('data-turma');
-                        const edv = this.getAttribute('data-edv');
-                        confirmAction(
-                            'Remover Aluno',
-                            `Tem certeza que deseja remover o aluno ${edv} da turma ${turma}?`,
-                            () => removerAluno(turma, edv)
-                        );
-                    });
-                });
-
-                await registrarAcao(
-                    'Alunos listados',
-                    turma ? `Filtro: ${turma}` : 'Todas as turmas'
-                );
-
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.listarAlunosBtn, '<i class="bi bi-arrow-repeat"></i> Atualizar Lista');
-            }
-        }
-
-        async function removerAluno(turma, edv) {
-            try {
-                const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos?edv=${edv}`, {
-                    method: 'DELETE',
-                    headers: getAuthHeader()
-                });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Erro ao remover aluno');
-                }
-
-                showMessage('Sucesso', 'Aluno removido com sucesso', 'success');
-
-                // Registrar ação no histórico
-                await registrarAcao(
-                    'Remover Aluno',
-                    `Removido aluno com EDV: ${edv}`,
-                    turma,
-                    edv
-                );
-
-                listarAlunos();
-
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            }
-        }
-
-        async function carregarEscala() {
-            const turma = elements.turmaEscala.value;
-            currentTurmaEscala = turma;
-
-            if (!turma) {
-                showMessage('Aviso', 'Selecione uma turma primeiro', 'warning');
-                return;
             }
 
-            try {
-                showLoading(elements.carregarEscalaBtn);
-
-                const response = await fetch(`${API_URL}/admin/escalas/${encodeURIComponent(turma)}`, {
-                    headers: getAuthHeader()
-                });
-
-                if (!response.ok) {
-                    throw new Error('Erro ao carregar escala');
-                }
-
-                const escala = await response.json();
-                elements.semanaAtual.value = escala.semana_atual || '';
-
-                elements.escalaItems.innerHTML = '';
-
-                if (escala.duplas && escala.duplas.length > 0) {
-                    escala.duplas.forEach(item => {
-                        addEscalaItem(item.semana, item.dupla);
-                    });
-                } else {
-                    showMessage('Info', 'Nenhum item de escala encontrado para esta turma', 'info');
-                }
-
-                await registrarAcao(
-                    'Escala carregada',
-                    `Turma: ${turma}`,
-                    turma
-                );
-
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.carregarEscalaBtn, '<i class="bi bi-arrow-down-circle"></i> Carregar Escala');
-            }
-        }
-
-        function addEscalaItem(semana = '', dupla = '') {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'escala-item';
-
-            itemDiv.innerHTML = `
-                <div class="mb-3">
-                    <label class="form-label">Semana</label>
-                    <input type="text" class="form-control semana-input" value="${semana}" placeholder="Ex: Semana 01: 22/04 - 25/04">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Dupla</label>
-                    <input type="text" class="form-control dupla-input" value="${dupla}" placeholder="Ex: Aluno 1 e Aluno 2">
-                </div>
-                <button type="button" class="btn btn-sm btn-danger btn-remove-item btn-action">
-                    <i class="bi bi-trash"></i> Remover Item
-                </button>
-            `;
-
-            itemDiv.querySelector('.btn-remove-item').addEventListener('click', function () {
-                itemDiv.remove();
-            });
-
-            elements.escalaItems.appendChild(itemDiv);
-        }
-
-        function adicionarItemEscala() {
-            addEscalaItem();
-        }
-
-        async function salvarEscala() {
-            const turma = currentTurmaEscala;
-
-            if (!turma) {
-                showMessage('Aviso', 'Selecione uma turma primeiro', 'warning');
-                return;
-            }
-
-            try {
-                showLoading(elements.salvarEscalaBtn);
-
-                const semanaAtual = elements.semanaAtual.value;
-                const items = elements.escalaItems.querySelectorAll('.escala-item');
-                const duplas = [];
-
-                items.forEach(item => {
-                    const semana = item.querySelector('.semana-input').value;
-                    const dupla = item.querySelector('.dupla-input').value;
-
-                    if (semana && dupla) {
-                        duplas.push({ semana, dupla });
-                    }
-                });
-
-                const response = await fetch(`${API_URL}/admin/escalas/${encodeURIComponent(turma)}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...getAuthHeader()
-                    },
-                    body: JSON.stringify({
-                        semana_atual: semanaAtual,
-                        duplas: duplas
-                    })
-                });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Erro ao salvar escala');
-                }
-
-                showMessage('Sucesso', 'Escala salva com sucesso', 'success');
-
-                // Registrar ação no histórico
-                await registrarAcao(
-                    'Escala salva',
-                    `Turma: ${turma} - ${duplas.length} itens`,
-                    turma
-                );
-
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.salvarEscalaBtn, '<i class="bi bi-save"></i> Salvar Escala');
-            }
-        }
-
-        async function exportAlunos() {
-            try {
-                showLoading(elements.exportAlunosBtn);
-
-                const response = await fetch(`${API_URL}/admin/backup`, {
-                    headers: getAuthHeader()
-                });
-
-                if (!response.ok) {
-                    throw new Error('Erro ao exportar alunos');
-                }
-
-                const data = await response.json();
-                const alunosData = JSON.stringify(data.alunos, null, 2);
-
-                elements.alunosDataPreview.textContent = alunosData;
-
-                downloadFile(`alunos_${new Date().toISOString().slice(0, 10)}.json`, alunosData);
-
-                showMessage('Sucesso', 'Alunos exportados com sucesso', 'success');
-
-                // Registrar ação no histórico
-                await registrarAcao(
-                    'Alunos exportados',
-                    'Backup dos alunos realizado'
-                );
-
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.exportAlunosBtn, '<i class="bi bi-download"></i> Exportar Alunos (JSON)');
-            }
-        }
-
-        async function exportEscalas() {
-            try {
-                showLoading(elements.exportEscalasBtn);
-
-                const response = await fetch(`${API_URL}/admin/backup`, {
-                    headers: getAuthHeader()
-                });
-
-                if (!response.ok) {
-                    throw new Error('Erro ao exportar escalas');
-                }
-
-                const data = await response.json();
-                const escalasData = JSON.stringify(data.escalas, null, 2);
-
-                elements.escalasDataPreview.textContent = escalasData;
-
-                downloadFile(`escalas_${new Date().toISOString().slice(0, 10)}.json`, escalasData);
-
-                showMessage('Sucesso', 'Escalas exportadas com sucesso', 'success');
-
-                // Registrar ação no histórico
-                await registrarAcao(
-                    'Escalas exportadas',
-                    'Backup das escalas realizado'
-                );
-
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.exportEscalasBtn, '<i class="bi bi-download"></i> Exportar Escalas (JSON)');
-            }
-        }
-
-        async function exportFullBackup() {
-            try {
-                showLoading(elements.exportFullBackupBtn);
-
-                const response = await fetch(`${API_URL}/admin/backup`, {
-                    headers: getAuthHeader()
-                });
-
-                if (!response.ok) {
-                    throw new Error('Erro ao exportar backup completo');
-                }
-
-                const data = await response.json();
-                const backupData = JSON.stringify(data, null, 2);
-
-                elements.alunosDataPreview.textContent = JSON.stringify(data.alunos, null, 2);
-                elements.escalasDataPreview.textContent = JSON.stringify(data.escalas, null, 2);
-
-                downloadFile(`backup_completo_${new Date().toISOString().slice(0, 10)}.json`, backupData);
-
-                showMessage('Sucesso', 'Backup completo exportado com sucesso', 'success');
-
-                // Registrar ação no histórico
-                await registrarAcao(
-                    'Backup completo',
-                    'Backup completo do sistema realizado'
-                );
-
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.exportFullBackupBtn, '<i class="bi bi-database"></i> Exportar Backup Completo');
-            }
-        }
-
-        async function importBackup() {
-            const fileInput = elements.backupFile;
-
-            if (!fileInput.files || fileInput.files.length === 0) {
-                showMessage('Aviso', 'Selecione um arquivo de backup primeiro', 'warning');
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-
-            reader.onload = async function (e) {
-                try {
-                    showLoading(elements.importBackupBtn);
-
-                    const backupData = JSON.parse(e.target.result);
-
-                    if (!backupData.alunos || !backupData.escalas) {
-                        throw new Error('Arquivo de backup inválido');
-                    }
-
+            document.querySelectorAll('.btn-remove-aluno').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const turma = this.getAttribute('data-turma');
+                    const edv = this.getAttribute('data-edv');
                     confirmAction(
-                        'Importar Backup',
-                        'Tem certeza que deseja importar este backup? Todos os dados atuais serão substituídos!',
-                        async () => {
-                            try {
-                                const response = await fetch(`${API_URL}/admin/backup`, {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        ...getAuthHeader()
-                                    },
-                                    body: JSON.stringify(backupData)
-                                });
-
-                                if (!response.ok) {
-                                    const error = await response.json();
-                                    throw new Error(error.error || 'Erro ao importar backup');
-                                }
-
-                                showMessage('Sucesso', 'Backup importado com sucesso', 'success');
-
-                                // Registrar ação no histórico
-                                await registrarAcao(
-                                    'Backup importado',
-                                    'Dados restaurados a partir de backup'
-                                );
-
-                                loadDashboard();
-                                loadTurmas();
-                                listarAlunos();
-
-                            } catch (error) {
-                                showMessage('Erro', error.message, 'error');
-                            } finally {
-                                hideLoading(elements.importBackupBtn, '<i class="bi bi-upload"></i> Importar Backup');
-                            }
-                        }
+                        'Remover Aluno',
+                        `Tem certeza que deseja remover o aluno ${edv} da turma ${turma}?`,
+                        () => removerAluno(turma, edv)
                     );
+                });
+            });
 
-                } catch (error) {
-                    showMessage('Erro', error.message, 'error');
-                    hideLoading(elements.importBackupBtn, '<i class="bi bi-upload"></i> Importar Backup');
-                }
-            };
+            await registrarAcao(
+                'Alunos listados',
+                turma ? `Filtro: ${turma}` : 'Todas as turmas'
+            );
 
-            reader.readAsText(file);
+        } catch (error) {
+            showMessage('Erro', error.message, 'error');
+        } finally {
+            hideLoading(elements.listarAlunosBtn, '<i class="bi bi-arrow-repeat"></i> Atualizar Lista');
         }
+    }
 
-        function downloadFile(filename, content) {
-            const blob = new Blob([content], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
+    async function removerAluno(turma, edv) {
+        try {
+            const response = await fetch(`${API_URL}/admin/turmas/${encodeURIComponent(turma)}/alunos?edv=${edv}`, {
+                method: 'DELETE',
+                headers: getAuthHeader()
+            });
 
-        function confirmAction(title, message, callback) {
-            elements.confirmModalTitle.textContent = title;
-            elements.confirmModalBody.textContent = message;
-            elements.confirmModalBtn.onclick = function () {
-                elements.confirmModal.hide();
-                callback();
-            };
-            elements.confirmModal.show();
-        }
-
-        function showMessage(title, message, type = 'info') {
-            elements.messageModalTitle.textContent = title;
-            elements.messageModalBody.textContent = message;
-
-            const header = elements.messageModal._element.querySelector('.modal-header');
-            header.className = 'modal-header';
-
-            switch (type) {
-                case 'success':
-                    header.classList.add('bg-success', 'text-white');
-                    break;
-                case 'error':
-                    header.classList.add('bg-danger', 'text-white');
-                    break;
-                case 'warning':
-                    header.classList.add('bg-warning', 'text-dark');
-                    break;
-                default:
-                    header.classList.add('bg-primary', 'text-white');
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Erro ao remover aluno');
             }
 
-            elements.messageModal.show();
+            showMessage('Sucesso', 'Aluno removido com sucesso', 'success');
+
+            // Registrar ação no histórico
+            await registrarAcao(
+                'Remover Aluno',
+                `Removido aluno com EDV: ${edv}`,
+                turma,
+                edv
+            );
+
+            listarAlunos();
+
+        } catch (error) {
+            showMessage('Erro', error.message, 'error');
+        }
+    }
+
+    async function carregarEscala() {
+        const turma = elements.turmaEscala.value;
+        currentTurmaEscala = turma;
+
+        if (!turma) {
+            showMessage('Aviso', 'Selecione uma turma primeiro', 'warning');
+            return;
         }
 
-        function showLoading(element) {
-            element.disabled = true;
-            const originalContent = element.innerHTML;
-            element.setAttribute('data-original-content', originalContent);
-            element.innerHTML = '<span class="loading"></span>';
-        }
+        try {
+            showLoading(elements.carregarEscalaBtn);
 
-        function hideLoading(element, content = null) {
-            element.disabled = false;
-            if (content) {
-                element.innerHTML = content;
+            const response = await fetch(`${API_URL}/admin/escalas/${encodeURIComponent(turma)}`, {
+                headers: getAuthHeader()
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao carregar escala');
+            }
+
+            const escala = await response.json();
+            elements.semanaAtual.value = escala.semana_atual || '';
+
+            elements.escalaItems.innerHTML = '';
+
+            if (escala.duplas && escala.duplas.length > 0) {
+                escala.duplas.forEach(item => {
+                    addEscalaItem(item.semana, item.dupla);
+                });
             } else {
-                const originalContent = element.getAttribute('data-original-content');
-                if (originalContent) {
-                    element.innerHTML = originalContent;
+                showMessage('Info', 'Nenhum item de escala encontrado para esta turma', 'info');
+            }
+
+            await registrarAcao(
+                'Escala carregada',
+                `Turma: ${turma}`,
+                turma
+            );
+
+        } catch (error) {
+            showMessage('Erro', error.message, 'error');
+        } finally {
+            hideLoading(elements.carregarEscalaBtn, '<i class="bi bi-arrow-down-circle"></i> Carregar Escala');
+        }
+    }
+
+    function addEscalaItem(semana = '', dupla = '') {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'escala-item';
+
+        itemDiv.innerHTML = `
+            <div class="mb-3">
+                <label class="form-label">Semana</label>
+                <input type="text" class="form-control semana-input" value="${semana}" placeholder="Ex: Semana 01: 22/04 - 25/04">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Dupla</label>
+                <input type="text" class="form-control dupla-input" value="${dupla}" placeholder="Ex: Aluno 1 e Aluno 2">
+            </div>
+            <button type="button" class="btn btn-sm btn-danger btn-remove-item btn-action">
+                <i class="bi bi-trash"></i> Remover Item
+            </button>
+        `;
+
+        itemDiv.querySelector('.btn-remove-item').addEventListener('click', function () {
+            itemDiv.remove();
+        });
+
+        elements.escalaItems.appendChild(itemDiv);
+    }
+
+    function adicionarItemEscala() {
+        addEscalaItem();
+    }
+
+    async function salvarEscala() {
+        const turma = currentTurmaEscala;
+
+        if (!turma) {
+            showMessage('Aviso', 'Selecione uma turma primeiro', 'warning');
+            return;
+        }
+
+        try {
+            showLoading(elements.salvarEscalaBtn);
+
+            const semanaAtual = elements.semanaAtual.value;
+            const items = elements.escalaItems.querySelectorAll('.escala-item');
+            const duplas = [];
+
+            items.forEach(item => {
+                const semana = item.querySelector('.semana-input').value;
+                const dupla = item.querySelector('.dupla-input').value;
+
+                if (semana && dupla) {
+                    duplas.push({ semana, dupla });
                 }
+            });
+
+            const response = await fetch(`${API_URL}/admin/escalas/${encodeURIComponent(turma)}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeader()
+                },
+                body: JSON.stringify({
+                    semana_atual: semanaAtual,
+                    duplas: duplas
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Erro ao salvar escala');
+            }
+
+            showMessage('Sucesso', 'Escala salva com sucesso', 'success');
+
+            // Registrar ação no histórico
+            await registrarAcao(
+                'Escala salva',
+                `Turma: ${turma} - ${duplas.length} itens`,
+                turma
+            );
+
+        } catch (error) {
+            showMessage('Erro', error.message, 'error');
+        } finally {
+            hideLoading(elements.salvarEscalaBtn, '<i class="bi bi-save"></i> Salvar Escala');
+        }
+    }
+
+    async function exportAlunos() {
+        try {
+            showLoading(elements.exportAlunosBtn);
+
+            const response = await fetch(`${API_URL}/admin/backup`, {
+                headers: getAuthHeader()
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao exportar alunos');
+            }
+
+            const data = await response.json();
+            const alunosData = JSON.stringify(data.alunos, null, 2);
+
+            elements.alunosDataPreview.textContent = alunosData;
+
+            downloadFile(`alunos_${new Date().toISOString().slice(0, 10)}.json`, alunosData);
+
+            showMessage('Sucesso', 'Alunos exportados com sucesso', 'success');
+
+            // Registrar ação no histórico
+            await registrarAcao(
+                'Alunos exportados',
+                'Backup dos alunos realizado'
+            );
+
+        } catch (error) {
+            showMessage('Erro', error.message, 'error');
+        } finally {
+            hideLoading(elements.exportAlunosBtn, '<i class="bi bi-download"></i> Exportar Alunos (JSON)');
+        }
+    }
+
+    async function exportEscalas() {
+        try {
+            showLoading(elements.exportEscalasBtn);
+
+            const response = await fetch(`${API_URL}/admin/backup`, {
+                headers: getAuthHeader()
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao exportar escalas');
+            }
+
+            const data = await response.json();
+            const escalasData = JSON.stringify(data.escalas, null, 2);
+
+            elements.escalasDataPreview.textContent = escalasData;
+
+            downloadFile(`escalas_${new Date().toISOString().slice(0, 10)}.json`, escalasData);
+
+            showMessage('Sucesso', 'Escalas exportadas com sucesso', 'success');
+
+            // Registrar ação no histórico
+            await registrarAcao(
+                'Escalas exportadas',
+                'Backup das escalas realizado'
+            );
+
+        } catch (error) {
+            showMessage('Erro', error.message, 'error');
+        } finally {
+            hideLoading(elements.exportEscalasBtn, '<i class="bi bi-download"></i> Exportar Escalas (JSON)');
+        }
+    }
+
+    async function exportFullBackup() {
+        try {
+            showLoading(elements.exportFullBackupBtn);
+
+            const response = await fetch(`${API_URL}/admin/backup`, {
+                headers: getAuthHeader()
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao exportar backup completo');
+            }
+
+            const data = await response.json();
+            const backupData = JSON.stringify(data, null, 2);
+
+            elements.alunosDataPreview.textContent = JSON.stringify(data.alunos, null, 2);
+            elements.escalasDataPreview.textContent = JSON.stringify(data.escalas, null, 2);
+
+            downloadFile(`backup_completo_${new Date().toISOString().slice(0, 10)}.json`, backupData);
+
+            showMessage('Sucesso', 'Backup completo exportado com sucesso', 'success');
+
+            // Registrar ação no histórico
+            await registrarAcao(
+                'Backup completo',
+                'Backup completo do sistema realizado'
+            );
+
+        } catch (error) {
+            showMessage('Erro', error.message, 'error');
+        } finally {
+            hideLoading(elements.exportFullBackupBtn, '<i class="bi bi-database"></i> Exportar Backup Completo');
+        }
+    }
+
+    async function importBackup() {
+        const fileInput = elements.backupFile;
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            showMessage('Aviso', 'Selecione um arquivo de backup primeiro', 'warning');
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = async function (e) {
+            try {
+                showLoading(elements.importBackupBtn);
+
+                const backupData = JSON.parse(e.target.result);
+
+                if (!backupData.alunos || !backupData.escalas) {
+                    throw new Error('Arquivo de backup inválido');
+                }
+
+                confirmAction(
+                    'Importar Backup',
+                    'Tem certeza que deseja importar este backup? Todos os dados atuais serão substituídos!',
+                    async () => {
+                        try {
+                            const response = await fetch(`${API_URL}/admin/backup`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    ...getAuthHeader()
+                                },
+                                body: JSON.stringify(backupData)
+                            });
+
+                            if (!response.ok) {
+                                const error = await response.json();
+                                throw new Error(error.error || 'Erro ao importar backup');
+                            }
+
+                            showMessage('Sucesso', 'Backup importado com sucesso', 'success');
+
+                            // Registrar ação no histórico
+                            await registrarAcao(
+                                'Backup importado',
+                                'Dados restaurados a partir de backup'
+                            );
+
+                            loadDashboard();
+                            loadTurmas();
+                            listarAlunos();
+
+                        } catch (error) {
+                            showMessage('Erro', error.message, 'error');
+                        } finally {
+                            hideLoading(elements.importBackupBtn, '<i class="bi bi-upload"></i> Importar Backup');
+                        }
+                    }
+                );
+
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+                hideLoading(elements.importBackupBtn, '<i class="bi bi-upload"></i> Importar Backup');
+            }
+        };
+
+        reader.readAsText(file);
+    }
+
+    function downloadFile(filename, content) {
+        const blob = new Blob([content], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function confirmAction(title, message, callback) {
+        elements.confirmModalTitle.textContent = title;
+        elements.confirmModalBody.textContent = message;
+        elements.confirmModalBtn.onclick = function () {
+            elements.confirmModal.hide();
+            callback();
+        };
+        elements.confirmModal.show();
+    }
+
+    function showMessage(title, message, type = 'info') {
+        elements.messageModalTitle.textContent = title;
+        elements.messageModalBody.textContent = message;
+
+        const header = elements.messageModal._element.querySelector('.modal-header');
+        header.className = 'modal-header';
+
+        switch (type) {
+            case 'success':
+                header.classList.add('bg-success', 'text-white');
+                break;
+            case 'error':
+                header.classList.add('bg-danger', 'text-white');
+                break;
+            case 'warning':
+                header.classList.add('bg-warning', 'text-dark');
+                break;
+            default:
+                header.classList.add('bg-primary', 'text-white');
+        }
+
+        elements.messageModal.show();
+    }
+
+    function showLoading(element) {
+        element.disabled = true;
+        const originalContent = element.innerHTML;
+        element.setAttribute('data-original-content', originalContent);
+        element.innerHTML = '<span class="loading"></span>';
+    }
+
+    function hideLoading(element, content = null) {
+        element.disabled = false;
+        if (content) {
+            element.innerHTML = content;
+        } else {
+            const originalContent = element.getAttribute('data-original-content');
+            if (originalContent) {
+                element.innerHTML = originalContent;
             }
         }
-    </script>
+    }
 
-    <div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
-        </div>
-    </div>
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script>
-        new window.VLibras.Widget('https://vlibras.gov.br/app');
-        // Adiciona evento de clique à logo
-        document.querySelector('.sidebar .logo').addEventListener('click', function () {
-            // Remove a classe active de todas as abas
-            document.querySelectorAll('.tab-pane').forEach(tab => {
-                tab.classList.remove('show', 'active');
-            });
-
-            // Remove a classe active de todos os links
-            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-
-            // Adiciona active ao dashboard
-            document.querySelector('#dashboard').classList.add('show', 'active');
-            document.querySelector('[data-bs-target="#dashboard"]').classList.add('active');
+    // VLibras Widget
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+    
+    // Evento de clique na logo
+    document.querySelector('.sidebar .logo').addEventListener('click', function () {
+        document.querySelectorAll('.tab-pane').forEach(tab => {
+            tab.classList.remove('show', 'active');
         });
-    </script>
+
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+
+        document.querySelector('#dashboard').classList.add('show', 'active');
+        document.querySelector('[data-bs-target="#dashboard"]').classList.add('active');
+    });
+
+
+    
+</script>
 
 
 
