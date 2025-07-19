@@ -943,7 +943,67 @@
     </div>
 
 <script>
-    
+  <script>
+document.addEventListener('DOMContentLoaded', async function () {
+    // 🔒 VERIFICAÇÃO DE DIA ÚTIL
+    function isDiaUtil(data = new Date()) {
+        const diaSemana = data.getDay(); // 0 = domingo, 6 = sábado
+        return diaSemana >= 1 && diaSemana <= 5;
+    }
+
+    function proximoDiaUtil(data = new Date()) {
+        const dia = data.getDay();
+        let diasParaAdicionar = 1;
+
+        if (dia === 5) diasParaAdicionar = 3;
+        else if (dia === 6) diasParaAdicionar = 2;
+        else if (dia === 0) diasParaAdicionar = 1;
+
+        const novaData = new Date(data);
+        novaData.setDate(data.getDate() + diasParaAdicionar);
+        return novaData.toLocaleDateString('pt-BR', {
+            weekday: 'long',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+    if (!isDiaUtil()) {
+        const hoje = new Date().toLocaleDateString('pt-BR', {
+            weekday: 'long',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+        const proximo = proximoDiaUtil();
+
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = 0;
+        overlay.style.left = 0;
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+        overlay.style.zIndex = 9999;
+        overlay.style.display = 'flex';
+        overlay.style.flexDirection = 'column';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.style.color = '#fff';
+        overlay.style.fontFamily = 'Arial, sans-serif';
+        overlay.style.textAlign = 'center';
+        overlay.innerHTML = `
+            <h1 style="margin-bottom: 16px;">Chamada indisponível</h1>
+            <p style="margin-bottom: 8px;">Hoje é <strong>${hoje}</strong>.</p>
+            <p style="margin-bottom: 16px;">Volte no próximo dia útil: <strong>${proximo}</strong>.</p>
+            <p>As chamadas só podem ser feitas em dias úteis.</p>
+        `;
+
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+        return; // 🔴 Impede a execução do restante do código
+    }  
     document.addEventListener('DOMContentLoaded', async function () {
         // Elementos do DOM
         const infoButton = document.getElementById('infoButton');
