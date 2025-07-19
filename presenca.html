@@ -948,7 +948,6 @@
         const infoButton = document.getElementById('infoButton');
         const infoModal = document.getElementById('infoModal');
         const infoClose = document.getElementById('infoClose');
-
         const datePicker = document.getElementById('datePicker');
         const attendanceList = document.getElementById('attendanceList');
         const submitBtn = document.getElementById('submitBtn');
@@ -980,6 +979,61 @@
         const maxDate = new Date(2025, 11, 31); // 31 de dezembro de 2025
         const today = new Date();
 
+        // Função para verificar se é dia útil (segunda a sexta)
+        const isWeekday = (date) => {
+            const day = date.getDay();
+            return day !== 0 && day !== 6; // 0 = Domingo, 6 = Sábado
+        };
+
+        // Função para bloquear completamente a interface em fins de semana
+        const blockWeekendAccess = () => {
+            // Cria a mensagem de bloqueio
+            const warningDiv = document.createElement('div');
+            warningDiv.className = 'weekend-warning';
+            warningDiv.innerHTML = `
+                <div style="background: #fff8e1; color: #ff6f00; padding: 20px; border-radius: 8px; 
+                            text-align: center; margin: 20px 0; border-left: 5px solid #ff6f00;">
+                    <i class="fas fa-calendar-times" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                    <h2 style="margin: 10px 0; color: #d32f2f;">Sistema Indisponível</h2>
+                    <p style="margin-bottom: 10px; font-size: 1.1rem;">
+                        O sistema de chamadas está disponível apenas em dias úteis.
+                    </p>
+                    <p style="font-weight: bold;">
+                        Hoje é ${today.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}.
+                    </p>
+                    <p style="margin-top: 15px; font-size: 0.9rem;">
+                        Volte na segunda-feira para registrar as presenças.
+                    </p>
+                </div>
+            `;
+
+            // Substitui o conteúdo do container pela mensagem
+            const container = document.querySelector('.container');
+            container.innerHTML = '';
+            container.appendChild(warningDiv);
+            container.style.textAlign = 'center';
+            container.style.padding = '30px';
+
+            // Adiciona estilo de animação
+            const style = document.createElement('style');
+            style.textContent = `
+                .weekend-warning {
+                    animation: fadeIn 0.5s ease-in-out;
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(-20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+            `;
+            document.head.appendChild(style);
+        };
+
+        // Verificação inicial - Se for fim de semana, bloqueia tudo
+        if (!isWeekday(today)) {
+            blockWeekendAccess();
+            return; // Encerra a execução do script se for fim de semana
+        }
+
         // Funções para o modal de informações
         infoButton.addEventListener('click', function () {
             infoModal.classList.add('active');
@@ -989,7 +1043,6 @@
             infoModal.classList.remove('active');
         });
 
-        // Fechar modal ao clicar fora do conteúdo
         infoModal.addEventListener('click', function (e) {
             if (e.target === infoModal) {
                 infoModal.classList.remove('active');
@@ -1007,12 +1060,6 @@
             return `${yyyy}-${mm}-${dd}`;
         };
 
-        // Função para verificar se é dia útil (segunda a sexta)
-        const isWeekday = (date) => {
-            const day = date.getDay();
-            return day !== 0 && day !== 6; // 0 = Domingo, 6 = Sábado
-        };
-
         // Função para obter o próximo dia útil
         const getNextWeekday = (date) => {
             const d = new Date(date);
@@ -1020,31 +1067,6 @@
                 d.setDate(d.getDate() + 1);
             }
             return d;
-        };
-
-        // Função para desabilitar a chamada
-        const disableCall = () => {
-            submitBtn.disabled = true;
-            saveChangesBtn.disabled = true;
-            reportBtn.disabled = true;
-            document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.disabled = true;
-                btn.style.opacity = '0.5';
-                btn.style.cursor = 'not-allowed';
-            });
-            showWarningModal('As chamadas só podem ser feitas em dias úteis (segunda a sexta-feira).');
-        };
-
-        // Função para habilitar a chamada
-        const enableCall = () => {
-            submitBtn.disabled = false;
-            saveChangesBtn.disabled = false;
-            reportBtn.disabled = false;
-            document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.disabled = false;
-                btn.style.opacity = '1';
-                btn.style.cursor = 'pointer';
-            });
         };
 
         const showErrorModal = (message) => {
@@ -1094,14 +1116,10 @@
                 return;
             }
 
-            // Verifica se é dia útil
             if (!isWeekday(selectedDate)) {
                 showWarningModal('Por favor, selecione um dia útil (segunda a sexta-feira).');
                 this.value = formatDate(getNextWeekday(selectedDate));
-                disableCall();
                 return;
-            } else {
-                enableCall();
             }
 
             people.forEach(person => {
@@ -1381,17 +1399,11 @@
             }
         });
 
-        // Inicialização final
+        // Inicialização final (só executa se for dia útil)
         datePicker.min = formatDate(minDate);
         datePicker.max = formatDate(maxDate);
         const initialDate = today < minDate ? minDate : today > maxDate ? maxDate : today;
         datePicker.value = formatDate(getNextWeekday(initialDate));
-
-        // Verifica se hoje é dia útil
-        if (!isWeekday(new Date())) {
-            disableCall();
-            showWarningModal('Hoje não é dia útil. As chamadas só podem ser feitas de segunda a sexta-feira.');
-        }
 
         const hasExistingCall = await checkExistingCall(datePicker.value);
         submitBtn.style.display = hasExistingCall ? 'none' : 'block';
@@ -1406,7 +1418,6 @@
         }, 300);
     });
 </script>
-
 </body>
 
 </html>
