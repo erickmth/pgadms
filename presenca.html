@@ -943,7 +943,6 @@
     </div>
 
 <script>
-    
     document.addEventListener('DOMContentLoaded', async function () {
         // Elementos do DOM
         const infoButton = document.getElementById('infoButton');
@@ -977,8 +976,8 @@
             'Accept': 'application/json'
         };
 
-        const minDate = new Date(2025, 6, 14);
-        const maxDate = new Date(2025, 11, 31);
+        const minDate = new Date(2025, 6, 14); // 14 de julho de 2025
+        const maxDate = new Date(2025, 11, 31); // 31 de dezembro de 2025
         const today = new Date();
 
         // Funções para o modal de informações
@@ -997,10 +996,9 @@
             }
         });
 
-        // Função corrigida para formatar data considerando fuso horário de Brasília
+        // Função para formatar data
         const formatDate = (date) => {
             const d = new Date(date);
-            // Ajusta para o fuso horário local (Brasília UTC-3)
             const offset = d.getTimezoneOffset();
             d.setMinutes(d.getMinutes() + offset);
             const yyyy = d.getFullYear();
@@ -1009,12 +1007,44 @@
             return `${yyyy}-${mm}-${dd}`;
         };
 
+        // Função para verificar se é dia útil (segunda a sexta)
+        const isWeekday = (date) => {
+            const day = date.getDay();
+            return day !== 0 && day !== 6; // 0 = Domingo, 6 = Sábado
+        };
+
+        // Função para obter o próximo dia útil
         const getNextWeekday = (date) => {
             const d = new Date(date);
-            while (d.getDay() === 0 || d.getDay() === 6) {
+            while (!isWeekday(d)) {
                 d.setDate(d.getDate() + 1);
             }
             return d;
+        };
+
+        // Função para desabilitar a chamada
+        const disableCall = () => {
+            submitBtn.disabled = true;
+            saveChangesBtn.disabled = true;
+            reportBtn.disabled = true;
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+            });
+            showWarningModal('As chamadas só podem ser feitas em dias úteis (segunda a sexta-feira).');
+        };
+
+        // Função para habilitar a chamada
+        const enableCall = () => {
+            submitBtn.disabled = false;
+            saveChangesBtn.disabled = false;
+            reportBtn.disabled = false;
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            });
         };
 
         const showErrorModal = (message) => {
@@ -1054,22 +1084,24 @@
         }
 
         datePicker.addEventListener('change', async function () {
-            // Corrige a interpretação da data para o fuso de Brasília
             const dateStr = this.value;
             const [year, month, day] = dateStr.split('-').map(Number);
             const selectedDate = new Date(Date.UTC(year, month - 1, day, 3, 0, 0)); // UTC-3 (Brasília)
-            const dayOfWeek = selectedDate.getDay();
-
+            
             if (selectedDate < minDate || selectedDate > maxDate) {
                 showErrorModal('Por favor, selecione uma data entre 14/07/2025 e 31/12/2025.');
                 this.value = formatDate(minDate);
                 return;
             }
 
-            if (dayOfWeek === 0 || dayOfWeek === 6) {
+            // Verifica se é dia útil
+            if (!isWeekday(selectedDate)) {
                 showWarningModal('Por favor, selecione um dia útil (segunda a sexta-feira).');
                 this.value = formatDate(getNextWeekday(selectedDate));
+                disableCall();
                 return;
+            } else {
+                enableCall();
             }
 
             people.forEach(person => {
@@ -1180,7 +1212,6 @@
                         }
                     });
 
-                    // Corrigido: Exibe a data correta considerando o fuso horário
                     const dataAjustada = new Date(date + 'T00:00:00-03:00');
                     showNotification(`Chamada do dia ${dataAjustada.toLocaleDateString('pt-BR')} carregada!`);
                 }
@@ -1216,7 +1247,6 @@
 
                 const data = await response.json();
                 if (data.success) {
-                    // Corrigido: Exibe a data correta considerando o fuso horário
                     const dataAjustada = new Date(date + 'T00:00:00-03:00');
                     showNotification(`Chamada do dia ${dataAjustada.toLocaleDateString('pt-BR')} ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`);
                     submitBtn.style.display = 'none';
@@ -1261,7 +1291,6 @@
 
         reportBtn.addEventListener('click', async function () {
             try {
-                // Definir os meses de julho a novembro de 2025
                 const months = [
                     { value: '2025-07', name: 'Julho 2025', available: false },
                     { value: '2025-08', name: 'Agosto 2025', available: false },
@@ -1270,7 +1299,6 @@
                     { value: '2025-11', name: 'Novembro 2025', available: false }
                 ];
 
-                // Verificar quais meses têm chamadas disponíveis
                 const availabilityResponse = await fetch(`${API_BASE_URL}/presenca/meses_disponiveis`, {
                     headers: API_HEADERS
                 });
@@ -1278,13 +1306,11 @@
                 if (availabilityResponse.ok) {
                     const availableMonths = await availabilityResponse.json();
 
-                    // Marcar os meses que têm dados disponíveis
                     months.forEach(month => {
                         month.available = availableMonths.meses.includes(month.value);
                     });
                 }
 
-                // Preencher o select
                 monthSelect.innerHTML = '';
 
                 months.forEach(month => {
@@ -1295,7 +1321,6 @@
                     monthSelect.appendChild(option);
                 });
 
-                // Adicionar evento para atualizar o botão quando o mês for selecionado
                 monthSelect.addEventListener('change', function () {
                     const selectedOption = this.options[this.selectedIndex];
                     const isAvailable = !selectedOption.disabled;
@@ -1310,7 +1335,6 @@
                     }
                 });
 
-                // Selecionar o primeiro mês disponível, se houver
                 const firstAvailable = months.find(m => m.available);
                 if (firstAvailable) {
                     monthSelect.value = firstAvailable.value;
@@ -1331,22 +1355,19 @@
             const mesSelecionado = monthSelect.value;
             if (!mesSelecionado) return;
 
-            // Mostrar loading
             const originalText = generateReportBtn.innerHTML;
             generateReportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
             generateReportBtn.disabled = true;
 
             try {
-                // Criar um link temporário para forçar o download
                 const downloadLink = document.createElement('a');
-downloadLink.href = `${API_BASE_URL}/presenca/relatorio_excel/${mesSelecionado}`;
+                downloadLink.href = `${API_BASE_URL}/presenca/relatorio_excel/${mesSelecionado}`;
                 downloadLink.target = '_blank';
                 downloadLink.download = `relatorio_${mesSelecionado}.xlsx`;
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
 
-                // Fechar o modal após um pequeno delay
                 setTimeout(() => {
                     reportModal.classList.remove('active');
                 }, 1000);
@@ -1355,7 +1376,6 @@ downloadLink.href = `${API_BASE_URL}/presenca/relatorio_excel/${mesSelecionado}`
                 console.error('Erro ao baixar relatório:', error);
                 showErrorModal('Erro ao baixar relatório. Por favor, tente novamente.');
             } finally {
-                // Restaurar o botão
                 generateReportBtn.innerHTML = originalText;
                 generateReportBtn.disabled = false;
             }
@@ -1366,6 +1386,12 @@ downloadLink.href = `${API_BASE_URL}/presenca/relatorio_excel/${mesSelecionado}`
         datePicker.max = formatDate(maxDate);
         const initialDate = today < minDate ? minDate : today > maxDate ? maxDate : today;
         datePicker.value = formatDate(getNextWeekday(initialDate));
+
+        // Verifica se hoje é dia útil
+        if (!isWeekday(new Date())) {
+            disableCall();
+            showWarningModal('Hoje não é dia útil. As chamadas só podem ser feitas de segunda a sexta-feira.');
+        }
 
         const hasExistingCall = await checkExistingCall(datePicker.value);
         submitBtn.style.display = hasExistingCall ? 'none' : 'block';
@@ -1379,8 +1405,6 @@ downloadLink.href = `${API_BASE_URL}/presenca/relatorio_excel/${mesSelecionado}`
             attendanceList.style.opacity = '1';
         }, 300);
     });
-
-
 </script>
 
 </body>
