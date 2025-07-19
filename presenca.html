@@ -944,7 +944,44 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', async function () {
-        // Elementos do DOM
+        // Verificação inicial - se for fim de semana, bloqueia tudo
+        const today = new Date();
+        const dayOfWeek = today.getDay(); // 0 = Domingo, 6 = Sábado
+        
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+            // Remove todo o conteúdo da página
+            document.body.innerHTML = `
+                <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+                    <div style="max-width: 600px; margin: 0 auto; background: #fff8e1; 
+                                padding: 30px; border-radius: 10px; border-left: 5px solid #ff6f00;">
+                        <i class="fas fa-calendar-times" style="font-size: 3rem; color: #d32f2f; margin-bottom: 20px;"></i>
+                        <h1 style="color: #d32f2f;">Sistema Indisponível</h1>
+                        <p style="font-size: 1.2rem; margin: 20px 0;">
+                            O sistema de chamadas está disponível apenas em dias úteis (segunda a sexta-feira).
+                        </p>
+                        <p style="font-weight: bold; font-size: 1.1rem;">
+                            Hoje é ${today.toLocaleDateString('pt-BR', { weekday: 'long' })}, 
+                            ${today.toLocaleDateString('pt-BR')}
+                        </p>
+                        <p style="margin-top: 30px;">
+                            <i class="fas fa-info-circle"></i> Volte na segunda-feira para registrar as presenças.
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            // Adiciona o CSS do Font Awesome se não estiver presente
+            if (!document.querySelector('link[href*="font-awesome"]')) {
+                const faLink = document.createElement('link');
+                faLink.rel = 'stylesheet';
+                faLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+                document.head.appendChild(faLink);
+            }
+            
+            return; // Encerra a execução do script
+        }
+
+        // Se não for fim de semana, continua com o sistema normal
         const infoButton = document.getElementById('infoButton');
         const infoModal = document.getElementById('infoModal');
         const infoClose = document.getElementById('infoClose');
@@ -975,64 +1012,8 @@
             'Accept': 'application/json'
         };
 
-        const minDate = new Date(2025, 6, 14); // 14 de julho de 2025
-        const maxDate = new Date(2025, 11, 31); // 31 de dezembro de 2025
-        const today = new Date();
-
-        // Função para verificar se é dia útil (segunda a sexta)
-        const isWeekday = (date) => {
-            const day = date.getDay();
-            return day !== 0 && day !== 6; // 0 = Domingo, 6 = Sábado
-        };
-
-        // Função para bloquear completamente a interface em fins de semana
-        const blockWeekendAccess = () => {
-            // Cria a mensagem de bloqueio
-            const warningDiv = document.createElement('div');
-            warningDiv.className = 'weekend-warning';
-            warningDiv.innerHTML = `
-                <div style="background: #fff8e1; color: #ff6f00; padding: 20px; border-radius: 8px; 
-                            text-align: center; margin: 20px 0; border-left: 5px solid #ff6f00;">
-                    <i class="fas fa-calendar-times" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                    <h2 style="margin: 10px 0; color: #d32f2f;">Sistema Indisponível</h2>
-                    <p style="margin-bottom: 10px; font-size: 1.1rem;">
-                        O sistema de chamadas está disponível apenas em dias úteis.
-                    </p>
-                    <p style="font-weight: bold;">
-                        Hoje é ${today.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}.
-                    </p>
-                    <p style="margin-top: 15px; font-size: 0.9rem;">
-                        Volte na segunda-feira para registrar as presenças.
-                    </p>
-                </div>
-            `;
-
-            // Substitui o conteúdo do container pela mensagem
-            const container = document.querySelector('.container');
-            container.innerHTML = '';
-            container.appendChild(warningDiv);
-            container.style.textAlign = 'center';
-            container.style.padding = '30px';
-
-            // Adiciona estilo de animação
-            const style = document.createElement('style');
-            style.textContent = `
-                .weekend-warning {
-                    animation: fadeIn 0.5s ease-in-out;
-                }
-                @keyframes fadeIn {
-                    from { opacity: 0; transform: translateY(-20px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-            `;
-            document.head.appendChild(style);
-        };
-
-        // Verificação inicial - Se for fim de semana, bloqueia tudo
-        if (!isWeekday(today)) {
-            blockWeekendAccess();
-            return; // Encerra a execução do script se for fim de semana
-        }
+        const minDate = new Date(2025, 6, 14);
+        const maxDate = new Date(2025, 11, 31);
 
         // Funções para o modal de informações
         infoButton.addEventListener('click', function () {
@@ -1058,6 +1039,12 @@
             const mm = String(d.getMonth() + 1).padStart(2, '0');
             const dd = String(d.getDate()).padStart(2, '0');
             return `${yyyy}-${mm}-${dd}`;
+        };
+
+        // Função para verificar se é dia útil (segunda a sexta)
+        const isWeekday = (date) => {
+            const day = date.getDay();
+            return day !== 0 && day !== 6;
         };
 
         // Função para obter o próximo dia útil
@@ -1399,7 +1386,7 @@
             }
         });
 
-        // Inicialização final (só executa se for dia útil)
+        // Inicialização final
         datePicker.min = formatDate(minDate);
         datePicker.max = formatDate(maxDate);
         const initialDate = today < minDate ? minDate : today > maxDate ? maxDate : today;
