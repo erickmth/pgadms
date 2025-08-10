@@ -244,7 +244,6 @@
             width: 70%;
         }
 
-        /* Animações para as tabelas */
         table tr {
             transition: all 0.2s;
         }
@@ -253,9 +252,13 @@
             background-color: rgba(0, 0, 0, 0.02);
         }
 
-        /* Efeito de fade para as abas */
         .tab-pane {
             animation: fadeIn 0.3s ease-in;
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
         }
 
         @keyframes fadeIn {
@@ -268,7 +271,6 @@
             }
         }
 
-        /* Badge animado para novas ações */
         .badge-pulse {
             animation: pulse 2s infinite;
         }
@@ -287,7 +289,6 @@
             }
         }
 
-        /* Barra de rolagem personalizada */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -307,7 +308,6 @@
             background: #c82333;
         }
 
-        /* Efeito de zoom para cards de status */
         .zoom-effect {
             transition: transform 0.3s;
         }
@@ -316,7 +316,6 @@
             transform: scale(1.03);
         }
 
-        /* Efeito de hover para botões de ação */
         .btn-action {
             transition: all 0.2s;
             position: relative;
@@ -358,7 +357,6 @@
             }
         }
 
-        /* Estilos para o chat de ajuda */
         .chat-help-btn {
             position: fixed;
             bottom: 30px;
@@ -630,7 +628,6 @@
                 padding: 10px;
             }
 
-            /* Ajustes do chat para mobile */
             .chat-help-btn {
                 width: 50px;
                 height: 50px;
@@ -737,13 +734,11 @@
 
         .form-check-input {
             box-shadow: 0 0 5px 2px rgba(0, 123, 255, 0.5);
-            /* sombra azul mais forte */
             transition: box-shadow 0.3s ease;
         }
 
         .form-check-input:focus {
             box-shadow: 0 0 8px 3px rgba(0, 123, 255, 0.7);
-            /* sombra maior ao focar */
         }
     </style>
 </head>
@@ -761,37 +756,31 @@
 
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#dashboard"
-                            tabindex="-1" aria-disabled="true">
+                        <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#dashboard">
                             <i class="bi bi-speedometer2"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#alunos"
-                            tabindex="-1" aria-disabled="true">
+                        <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#alunos">
                             <i class="bi bi-people-fill"></i> Gerenciar Alunos
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#escalas"
-                            tabindex="-1" aria-disabled="true">
+                        <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#escalas">
                             <i class="bi bi-calendar-check"></i> Gerenciar Escalas
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#backup"
-                            tabindex="-1" aria-disabled="true">
+                        <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#backup">
                             <i class="bi bi-cloud-arrow-down"></i> Backup
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#sobre" tabindex="-1"
-                            aria-disabled="true">
+                        <a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#sobre">
                             <i class="bi bi-person-badge"></i> Sobre
                         </a>
                     </li>
                     <li class="nav-item">
-
                         <a class="nav-link" href="presenca.html">
                             <i class="bi bi-brush"></i> Lista de Presença
                         </a>
@@ -802,19 +791,16 @@
                         </button>
                     </li>
                 </ul>
-
             </div>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="dashboard">
-                        <div
-                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Dashboard</h1>
                             <div class="btn-toolbar mb-2 mb-md-0">
                                 <div class="btn-group me-2">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-action"
-                                        id="refreshDashboard">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-action" id="refreshDashboard">
                                         <i class="bi bi-arrow-clockwise"></i> Atualizar
                                     </button>
                                 </div>
@@ -851,8 +837,7 @@
                             <div class="card-header">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="mb-0">Últimas Ações</h5>
-                                    <span class="badge bg-danger badge-pulse" id="newActionsBadge"
-                                        style="display: none;">Novo</span>
+                                    <span class="badge bg-danger badge-pulse" id="newActionsBadge" style="display: none;">Novo</span>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -874,8 +859,7 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="sobre">
-                        <div
-                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Sobre o Desenvolvedor</h1>
                         </div>
 
@@ -893,9 +877,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <h4><i class="bi bi-info-circle"></i> Sobre o Projeto</h4>
-                                        <p>Este sistema foi desenvolvido para gerenciar as escalas de limpeza do
-                                            Formare, proporcionando uma solução eficiente e organizada para a divisão de
-                                            tarefas entre os alunos.</p>
+                                        <p>Este sistema foi desenvolvido para gerenciar as escalas de limpeza do Formare, proporcionando uma solução eficiente e organizada para a divisão de tarefas entre os alunos.</p>
 
                                         <h4 class="mt-4"><i class="bi bi-code-slash"></i> Tecnologias Utilizadas</h4>
                                         <ul>
@@ -909,41 +891,34 @@
                                     <div class="col-md-6">
                                         <h4><i class="bi bi-person-lines-fill"></i> Contato</h4>
                                         <div class="list-group">
-                                            <a href="mailto:erickleguisamon@gmail.com"
-                                                class="list-group-item list-group-item-action">
+                                            <a href="mailto:erickleguisamon@gmail.com" class="list-group-item list-group-item-action">
                                                 <i class="bi bi-envelope"></i> erickleguisamon@gmail.com
                                             </a>
-                                            <a href="https://wa.me/+5541998239031"
-                                                class="list-group-item list-group-item-action">
+                                            <a href="https://wa.me/+5541998239031" class="list-group-item list-group-item-action">
                                                 <i class="bi bi-whatsapp"></i> (41) 99823-9031
                                             </a>
-                                            <a href="https://www.linkedin.com/in/erickleguisamon/"
-                                                class="list-group-item list-group-item-action">
-                                                <i class="bi bi-linkedin"></i>
-                                                https://www.linkedin.com/in/erickleguisamon/
+                                            <a href="https://www.linkedin.com/in/erickleguisamon/" class="list-group-item list-group-item-action">
+                                                <i class="bi bi-linkedin"></i> https://www.linkedin.com/in/erickleguisamon/
                                             </a>
                                         </div>
 
                                         <div class="mt-4">
                                             <h4><i class="bi bi-heart"></i> Agradecimentos</h4>
-                                            <p>Agradeço especialmente aos professores e colegas do Formare pelo apoio e
-                                                contribuições.</p>
+                                            <p>Agradeço especialmente aos professores e colegas do Formare pelo apoio e contribuições.</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="text-center mt-4">
                                     <div class="alert alert-info">
-                                        <i class="bi bi-lightbulb"></i> Este projeto foi desenvolvido para o Curso
-                                        Formare do Instituto Robert Bosch. - Turma 2025
+                                        <i class="bi bi-lightbulb"></i> Este projeto foi desenvolvido para o Curso Formare do Instituto Robert Bosch. - Turma 2025
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="alunos">
-                        <div
-                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Gerenciar Alunos</h1>
                             <div class="btn-toolbar mb-2 mb-md-0">
                                 <button class="btn btn-sm btn-outline-secondary btn-action" id="refreshAlunosBtn">
@@ -1023,8 +998,7 @@
                     </div>
 
                     <div class="tab-pane fade" id="escalas">
-                        <div
-                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Gerenciar Escalas</h1>
                         </div>
 
@@ -1051,8 +1025,7 @@
 
                                         <div class="mb-3">
                                             <label for="semanaAtual" class="form-label">Semana Atual</label>
-                                            <input type="text" class="form-control" id="semanaAtual"
-                                                placeholder="Ex: Semana 02: 28/04 - 30/04">
+                                            <input type="text" class="form-control" id="semanaAtual" placeholder="Ex: Semana 02: 28/04 - 30/04">
                                         </div>
 
                                         <h5 class="mb-3">Itens da Escala</h5>
@@ -1073,8 +1046,7 @@
                     </div>
 
                     <div class="tab-pane fade" id="backup">
-                        <div
-                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 class="h2">Backup dos Dados</h1>
                         </div>
 
@@ -1086,8 +1058,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="alert alert-info">
-                                            <i class="bi bi-info-circle"></i> Faça backup regularmente para evitar perda
-                                            de dados.
+                                            <i class="bi bi-info-circle"></i> Faça backup regularmente para evitar perda de dados.
                                         </div>
 
                                         <div class="row">
@@ -1097,16 +1068,13 @@
                                                         <h5 class="mb-0">Exportar Dados</h5>
                                                     </div>
                                                     <div class="card-body">
-                                                        <button class="btn btn-primary mb-2 btn-action"
-                                                            id="exportAlunosBtn">
+                                                        <button class="btn btn-primary mb-2 btn-action" id="exportAlunosBtn">
                                                             <i class="bi bi-download"></i> Exportar Alunos (JSON)
                                                         </button>
-                                                        <button class="btn btn-primary mb-2 btn-action"
-                                                            id="exportEscalasBtn">
+                                                        <button class="btn btn-primary mb-2 btn-action" id="exportEscalasBtn">
                                                             <i class="bi bi-download"></i> Exportar Escalas (JSON)
                                                         </button>
-                                                        <button class="btn btn-success btn-action"
-                                                            id="exportFullBackupBtn">
+                                                        <button class="btn btn-success btn-action" id="exportFullBackupBtn">
                                                             <i class="bi bi-database"></i> Exportar Backup Completo
                                                         </button>
                                                     </div>
@@ -1119,17 +1087,14 @@
                                                     </div>
                                                     <div class="card-body">
                                                         <div class="mb-3">
-                                                            <label for="backupFile" class="form-label">Selecione o
-                                                                arquivo de backup</label>
-                                                            <input class="form-control" type="file" id="backupFile"
-                                                                accept=".json">
+                                                            <label for="backupFile" class="form-label">Selecione o arquivo de backup</label>
+                                                            <input class="form-control" type="file" id="backupFile" accept=".json">
                                                         </div>
                                                         <button class="btn btn-warning btn-action" id="importBackupBtn">
                                                             <i class="bi bi-upload"></i> Importar Backup
                                                         </button>
                                                         <div class="alert alert-danger mt-3">
-                                                            <i class="bi bi-exclamation-triangle"></i> A importação
-                                                            substituirá todos os dados atuais!
+                                                            <i class="bi bi-exclamation-triangle"></i> A importação substituirá todos os dados atuais!
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1143,25 +1108,18 @@
                                             <div class="card-body">
                                                 <ul class="nav nav-tabs" id="backupTabs" role="tablist">
                                                     <li class="nav-item" role="presentation">
-                                                        <button class="nav-link active" id="alunos-tab"
-                                                            data-bs-toggle="tab" data-bs-target="#alunosData"
-                                                            type="button" role="tab">Alunos</button>
+                                                        <button class="nav-link active" id="alunos-tab" data-bs-toggle="tab" data-bs-target="#alunosData" type="button" role="tab">Alunos</button>
                                                     </li>
                                                     <li class="nav-item" role="presentation">
-                                                        <button class="nav-link" id="escalas-tab" data-bs-toggle="tab"
-                                                            data-bs-target="#escalasData" type="button"
-                                                            role="tab">Escalas</button>
+                                                        <button class="nav-link" id="escalas-tab" data-bs-toggle="tab" data-bs-target="#escalasData" type="button" role="tab">Escalas</button>
                                                     </li>
                                                 </ul>
                                                 <div class="tab-content p-3 border border-top-0" id="backupTabContent">
-                                                    <div class="tab-pane fade show active" id="alunosData"
-                                                        role="tabpanel">
-                                                        <pre id="alunosDataPreview"
-                                                            style="height: 300px; overflow-y: scroll;"></pre>
+                                                    <div class="tab-pane fade show active" id="alunosData" role="tabpanel">
+                                                        <pre id="alunosDataPreview" style="height: 300px; overflow-y: scroll;"></pre>
                                                     </div>
                                                     <div class="tab-pane fade" id="escalasData" role="tabpanel">
-                                                        <pre id="escalasDataPreview"
-                                                            style="height: 300px; overflow-y: scroll;"></pre>
+                                                        <pre id="escalasDataPreview" style="height: 300px; overflow-y: scroll;"></pre>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1176,7 +1134,6 @@
         </div>
     </div>
 
-    <!-- Chat de Ajuda IA -->
     <button class="chat-help-btn" id="chatHelpBtn">
         <img src="iconchat.webp" alt="Chat de Ajuda">
     </button>
@@ -1188,7 +1145,6 @@
             <button class="chat-close-btn" id="chatCloseBtn">&times;</button>
         </div>
         <div class="chat-messages" id="chatMessages">
-            <!-- Mensagens serão adicionadas aqui dinamicamente -->
         </div>
         <div class="chat-input-container">
             <input type="text" class="chat-input" id="chatInput" placeholder="Digite sua mensagem...">
@@ -1203,8 +1159,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="confirmModalTitle">Confirmação</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="confirmModalBody">
                     Tem certeza que deseja realizar esta ação?
@@ -1222,8 +1177,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="messageModalTitle">Mensagem</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="messageModalBody">
                     Mensagem de exemplo
@@ -1235,8 +1189,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="false" data-bs-backdrop="static"
-        data-bs-keyboard="false">
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="false" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
@@ -1271,20 +1224,17 @@
     </button>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
    
-  <script>
-    // Adiciona evento de clique no documento para fechar o menu ao clicar fora
+<script>
     document.addEventListener('click', function(event) {
         const sidebar = document.querySelector('.sidebar');
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');
         
-        // Verifica se o clique foi fora do menu e do botão de toggle
         if (!sidebar.contains(event.target) && event.target !== mobileMenuToggle && 
             !mobileMenuToggle.contains(event.target)) {
             sidebar.classList.remove('show');
         }
     });
 
-    // Adiciona evento de clique no menu hamburguer para evitar propagação
     document.getElementById('mobileMenuToggle').addEventListener('click', function(event) {
         event.stopPropagation();
     });
@@ -1302,7 +1252,6 @@
     let lastUpdateTime = null;
     let eventSource = null;
 
-    // Elementos do chat
     const chatElements = {
         chatHelpBtn: document.getElementById('chatHelpBtn'),
         chatCloseBtn: document.getElementById('chatCloseBtn'),
@@ -1312,18 +1261,36 @@
         chatSendBtn: document.getElementById('chatSendBtn')
     };
 
-    // Variáveis do chat
     let chatHistory = [];
     let isTyping = false;
     let inactivityTimer = null;
-    const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutos
+    const INACTIVITY_TIMEOUT = 5 * 60 * 1000;
 
-    // Inicialização do chat
+    // Função para ativar corretamente as abas
+    function activateTab(tabId) {
+        // Remove classes ativas de todas as abas e links
+        document.querySelectorAll('.tab-pane').forEach(tab => {
+            tab.classList.remove('show', 'active');
+        });
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+
+        // Ativa a aba e link correspondentes
+        const targetTab = document.querySelector(tabId);
+        const targetLink = document.querySelector(`[data-bs-target="${tabId}"]`);
+        
+        if (targetTab) {
+            targetTab.classList.add('show', 'active');
+        }
+        if (targetLink) {
+            targetLink.classList.add('active');
+        }
+    }
+
     function initChat() {
-        // Mostrar mensagem de boas-vindas
         addBotMessage("Olá! Sou a assistente do sistema de administração do Instituto Robert Bosch. Posso te ajudar com:\n\n• Gerenciamento de alunos e turmas\n• Controle de escalas\n• Registro de presença\n• Backup de dados\n\nComo posso ajudar você hoje?");
         
-        // Configurar eventos
         chatElements.chatHelpBtn.addEventListener('click', toggleChat);
         chatElements.chatCloseBtn.addEventListener('click', toggleChat);
         chatElements.chatSendBtn.addEventListener('click', sendMessage);
@@ -1333,15 +1300,12 @@
             }
         });
         
-        // Iniciar temporizador de inatividade
         resetInactivityTimer();
         
-        // Monitorar eventos para resetar o temporizador
         chatElements.chatInput.addEventListener('input', resetInactivityTimer);
         chatElements.chatMessages.addEventListener('scroll', resetInactivityTimer);
     }
 
-    // Alternar visibilidade do chat
     function toggleChat() {
         chatElements.chatContainer.style.display = chatElements.chatContainer.style.display === 'flex' ? 'none' : 'flex';
         if (chatElements.chatContainer.style.display === 'flex') {
@@ -1351,7 +1315,6 @@
         }
     }
 
-    // Adicionar mensagem do usuário ao chat
     function addUserMessage(message) {
         if (!message.trim()) return;
         
@@ -1360,42 +1323,34 @@
         messageDiv.textContent = message;
         chatElements.chatMessages.appendChild(messageDiv);
         
-        // Adicionar ao histórico
         chatHistory.push({ role: 'user', content: message });
         
-        // Limpar input
         chatElements.chatInput.value = '';
         chatElements.chatSendBtn.disabled = true;
         
         scrollChatToBottom();
     }
 
-    // Adicionar mensagem do bot ao chat
     function addBotMessage(message) {
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message bot-message';
         
-        // Substituir quebras de linha por tags <br> e manter outros espaços
         const formattedMessage = message.replace(/\n/g, '<br>').replace(/  /g, ' &nbsp;');
         messageDiv.innerHTML = formattedMessage;
         
         chatElements.chatMessages.appendChild(messageDiv);
         
-        // Adicionar ao histórico
         chatHistory.push({ role: 'assistant', content: message });
         
         scrollChatToBottom();
     }
 
-    // Rolagem automática para a última mensagem
     function scrollChatToBottom() {
-        // Pequeno timeout para garantir que o DOM foi atualizado
         setTimeout(() => {
             chatElements.chatMessages.scrollTop = chatElements.chatMessages.scrollHeight;
         }, 50);
     }
 
-    // Mostrar indicador de digitação
     function showTypingIndicator() {
         const typingDiv = document.createElement('div');
         typingDiv.className = 'typing-indicator';
@@ -1405,7 +1360,6 @@
         scrollChatToBottom();
     }
 
-    // Esconder indicador de digitação
     function hideTypingIndicator() {
         const typingIndicator = document.getElementById('typingIndicator');
         if (typingIndicator) {
@@ -1413,12 +1367,10 @@
         }
     }
 
-    // Tratar consultas à API
     async function handleApiQuery(message) {
         const lowerMessage = message.toLowerCase();
         
         try {
-            // Consulta sobre turmas
             if (lowerMessage.includes('turmas') || lowerMessage.includes('quantas turmas')) {
                 const response = await fetch(`${API_URL}/admin/status`, {
                     headers: getAuthHeader()
@@ -1433,7 +1385,6 @@
                 };
             }
             
-            // Consulta sobre alunos
             if (lowerMessage.includes('alunos') || lowerMessage.includes('quantos alunos')) {
                 const response = await fetch(`${API_URL}/admin/backup`, {
                     headers: getAuthHeader()
@@ -1457,7 +1408,6 @@
                 };
             }
             
-            // Consulta sobre um aluno específico
             const alunoMatch = message.match(/(edv|EDV)\s*(\d+)/i);
             if (alunoMatch) {
                 const edv = alunoMatch[2];
@@ -1492,7 +1442,6 @@
         return { handled: false };
     }
 
-    // Enviar mensagem para a IA
     async function sendMessage() {
         const message = chatElements.chatInput.value.trim();
         if (!message || isTyping) return;
@@ -1502,7 +1451,6 @@
         showTypingIndicator();
         
         try {
-            // Verificar se é uma consulta à API
             const apiQuery = await handleApiQuery(message);
             if (apiQuery.handled) {
                 hideTypingIndicator();
@@ -1510,7 +1458,6 @@
                 return;
             }
 
-            // Se não for consulta à API, usar o OpenRouter
             const prompt = [
                 {
                     role: "system",
@@ -1556,7 +1503,7 @@ Regras de resposta:
 - Sugira próximos passos após cada ação
 - Para erros, ofereça soluções claras`
                 },
-                ...chatHistory.slice(-6) // Manter histórico recente
+                ...chatHistory.slice(-6)
             ];
 
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -1592,7 +1539,6 @@ Regras de resposta:
         }
     }
 
-    // Resetar temporizador de inatividade
     function resetInactivityTimer() {
         if (inactivityTimer) {
             clearTimeout(inactivityTimer);
@@ -1605,12 +1551,11 @@ Regras de resposta:
                     chatHistory = [];
                     chatElements.chatMessages.innerHTML = '';
                     addBotMessage("Olá! Sou a assistente do sistema de administração do Instituto Robert Bosch. Como posso ajudar você hoje?");
-                }, 30000); // 30 segundos após o aviso
+                }, 30000);
             }
         }, INACTIVITY_TIMEOUT);
     }
 
-    // Monitorar input para habilitar/desabilitar botão de enviar
     chatElements.chatInput.addEventListener('input', function() {
         chatElements.chatSendBtn.disabled = this.value.trim() === '' || isTyping;
     });
@@ -1660,9 +1605,7 @@ Regras de resposta:
         mobileMenuToggle: document.getElementById('mobileMenuToggle')
     };
 
-    // Função para habilitar/desabilitar elementos da UI
     function enableUIElements(enable) {
-        // Links da sidebar
         document.querySelectorAll('.sidebar .nav-link').forEach(link => {
             if (enable) {
                 link.classList.remove('disabled');
@@ -1675,7 +1618,6 @@ Regras de resposta:
             }
         });
 
-        // Botões principais
         const mainButtons = [
             elements.refreshDashboard,
             elements.refreshAlunosBtn,
@@ -1695,7 +1637,6 @@ Regras de resposta:
             }
         });
 
-        // Formulários e inputs
         const formElements = [
             elements.turmaAluno,
             elements.edvAluno,
@@ -1713,15 +1654,12 @@ Regras de resposta:
             }
         });
 
-        // Botão de logout - sempre habilitado
         elements.logoutBtn.disabled = false;
         
-        // Chat - só mostra se estiver autenticado
         chatElements.chatHelpBtn.style.display = enable ? 'flex' : 'none';
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Desabilita todos os elementos da UI inicialmente
         enableUIElements(false);
         
         elements.loginModal.show();
@@ -1739,10 +1677,30 @@ Regras de resposta:
     });
 
     function setupEventListeners() {
+        // Event listeners para as abas
+        document.querySelectorAll('.sidebar .nav-link[data-bs-toggle="tab"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.classList.contains('disabled')) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                const tabId = this.getAttribute('data-bs-target');
+                activateTab(tabId);
+            });
+        });
+
+        // Event listener para o logo (volta para o dashboard)
+        document.querySelector('.sidebar .logo').addEventListener('click', function(e) {
+            e.preventDefault();
+            activateTab('#dashboard');
+        });
+
+        // Outros event listeners
         elements.loginBtn.addEventListener('click', handleLogin);
         elements.logoutBtn.addEventListener('click', handleLogout);
         elements.refreshDashboard.addEventListener('click', loadDashboard);
-        elements.refreshAlunosBtn.addEventListener('click', function () {
+        elements.refreshAlunosBtn.addEventListener('click', function() {
             loadTurmas().then(() => {
                 listarAlunos();
             });
@@ -1758,16 +1716,6 @@ Regras de resposta:
         elements.exportFullBackupBtn.addEventListener('click', exportFullBackup);
         elements.importBackupBtn.addEventListener('click', importBackup);
         elements.mobileMenuToggle.addEventListener('click', toggleMobileMenu);
-
-        // Evita clique em links de abas desabilitadas
-        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-            link.addEventListener('click', function (e) {
-                if (link.classList.contains('disabled')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
-        });
     }
 
     function toggleMobileMenu() {
@@ -1800,7 +1748,6 @@ Regras de resposta:
                 sessionStorage.setItem('adminAuth', btoa(username + ':' + password));
                 elements.loginModal.hide();
                 
-                // Habilita todos os elementos da UI
                 enableUIElements(true);
                 
                 loadDashboard();
@@ -1824,13 +1771,10 @@ Regras de resposta:
             eventSource = null;
         }
         
-        // Desabilita todos os elementos da UI
         enableUIElements(false);
         
-        // Mostra o modal de login novamente
         elements.loginModal.show();
         
-        // Fecha o chat e limpa o histórico
         chatElements.chatContainer.style.display = 'none';
         chatHistory = [];
         chatElements.chatMessages.innerHTML = '';
@@ -1858,7 +1802,6 @@ Regras de resposta:
             const statusData = await statusResponse.json();
             elements.connectionStatus.textContent = `Conectado como ${statusData.admin}`;
 
-            // Carregar histórico completo
             const historico = await carregarHistorico();
             elements.lastActions.innerHTML = '';
 
@@ -1888,7 +1831,6 @@ Regras de resposta:
             elements.lastUpdate.textContent = `Última atualização: ${now.toLocaleString()}`;
             lastUpdateTime = now;
 
-            // Esconder badge de novas ações após atualização
             elements.newActionsBadge.style.display = 'none';
 
         } catch (error) {
@@ -2024,7 +1966,6 @@ Regras de resposta:
 
             showMessage('Sucesso', 'Aluno adicionado com sucesso', 'success');
 
-            // Registrar ação no histórico
             await registrarAcao(
                 'Adicionar Aluno',
                 `Adicionado aluno ${nome} (EDV: ${edv})`,
@@ -2161,7 +2102,6 @@ Regras de resposta:
 
             showMessage('Sucesso', 'Aluno removido com sucesso', 'success');
 
-            // Registrar ação no histórico
             await registrarAcao(
                 'Remover Aluno',
                 `Removido aluno com EDV: ${edv}`,
@@ -2294,7 +2234,6 @@ Regras de resposta:
 
             showMessage('Sucesso', 'Escala salva com sucesso', 'success');
 
-            // Registrar ação no histórico
             await registrarAcao(
                 'Escala salva',
                 `Turma: ${turma} - ${duplas.length} itens`,
@@ -2329,7 +2268,6 @@ Regras de resposta:
 
             showMessage('Sucesso', 'Alunos exportados com sucesso', 'success');
 
-            // Registrar ação no histórico
             await registrarAcao(
                 'Alunos exportados',
                 'Backup dos alunos realizado'
@@ -2363,7 +2301,6 @@ Regras de resposta:
 
             showMessage('Sucesso', 'Escalas exportadas com sucesso', 'success');
 
-            // Registrar ação no histórico
             await registrarAcao(
                 'Escalas exportadas',
                 'Backup das escalas realizado'
@@ -2398,7 +2335,6 @@ Regras de resposta:
 
             showMessage('Sucesso', 'Backup completo exportado com sucesso', 'success');
 
-            // Registrar ação no histórico
             await registrarAcao(
                 'Backup completo',
                 'Backup completo do sistema realizado'
@@ -2453,7 +2389,6 @@ Regras de resposta:
 
                             showMessage('Sucesso', 'Backup importado com sucesso', 'success');
 
-                            // Registrar ação no histórico
                             await registrarAcao(
                                 'Backup importado',
                                 'Dados restaurados a partir de backup'
@@ -2545,23 +2480,6 @@ Regras de resposta:
         }
     }
 
-    // VLibras Widget
-    new window.VLibras.Widget('https://vlibras.gov.br/app');
-    
-    // Evento de clique na logo
-    document.querySelector('.sidebar .logo').addEventListener('click', function () {
-        document.querySelectorAll('.tab-pane').forEach(tab => {
-            tab.classList.remove('show', 'active');
-        });
-
-        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-
-        document.querySelector('#dashboard').classList.add('show', 'active');
-        document.querySelector('[data-bs-target="#dashboard"]').classList.add('active');
-    });
-
     function setupSSEConnection() {
         if (eventSource) {
             eventSource.close();
@@ -2576,7 +2494,6 @@ Regras de resposta:
             if (data.type === 'new_action') {
                 addActionToUI(data.action, true);
                 
-                // Mostrar badge de novas ações se não for a primeira vez
                 if (lastUpdateTime) {
                     elements.newActionsBadge.style.display = 'inline-block';
                 }
@@ -2590,8 +2507,9 @@ Regras de resposta:
                 eventSource = null;
             }
             
-            // Tentar reconectar após 5 segundos
             setTimeout(setupSSEConnection, 5000);
         };
     }
 </script>
+</body>
+</html>
