@@ -486,7 +486,6 @@
         </div>
     </div>
 
-    <!-- Modal de Relatório -->
     <div class="modal-overlay" id="reportModal">
         <div class="modal-container">
             <div class="modal-header">
@@ -505,7 +504,61 @@
     </div>
 
     <script>
-        // Configurações
+        // ============================================
+        // SALVAR DADOS NO SESSIONSTORAGE ANTES DE USAR
+        // ============================================
+        
+        // Função para garantir que os dados do admin estão no sessionStorage
+        function ensureAdminSession() {
+            // Verificar se já existe nome no sessionStorage
+            let nome = sessionStorage.getItem('nome');
+            let turma = sessionStorage.getItem('turma');
+            let admin = sessionStorage.getItem('admin');
+            
+            console.log('🔍 Verificando sessionStorage:', { nome, turma, admin });
+            
+            // Se não tiver nome, tentar recuperar do localStorage (admin)
+            if (!nome) {
+                const adminUsername = localStorage.getItem('adminUsername');
+                if (adminUsername) {
+                    console.log('📌 Recuperando admin do localStorage:', adminUsername);
+                    nome = 'Administrador';
+                    turma = 'Formare 2025';
+                    admin = 'true';
+                    
+                    // Salvar no sessionStorage
+                    sessionStorage.setItem('nome', nome);
+                    sessionStorage.setItem('turma', turma);
+                    sessionStorage.setItem('admin', admin);
+                    
+                    console.log('✅ Dados do admin salvos no sessionStorage');
+                    return true;
+                }
+            }
+            
+            // Se ainda não tiver nome, redirecionar para login
+            if (!nome || !turma) {
+                console.log('❌ Nenhum dado de sessão encontrado. Redirecionando para login...');
+                // Salvar intenção de voltar
+                sessionStorage.setItem('redirectAfterLogin', 'presenca.html');
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            console.log('✅ Sessão válida encontrada');
+            return true;
+        }
+        
+        // Executar verificação IMEDIATAMENTE
+        if (!ensureAdminSession()) {
+            // Se falhou, o redirecionamento já ocorreu
+            throw new Error('Redirecionando para login');
+        }
+        
+        // ============================================
+        // CONFIGURAÇÕES
+        // ============================================
+        
         const API_BASE = 'https://erickmth.pythonanywhere.com/api';
         const TURMA_NOME = 'Formare 2025';
         
@@ -552,35 +605,6 @@
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
-        }
-
-        // VERIFICAÇÃO DE AUTENTICAÇÃO - CORRIGIDA
-        function checkAuth() {
-            // Buscar dados do sessionStorage
-            const nome = sessionStorage.getItem('nome');
-            const turma = sessionStorage.getItem('turma');
-            
-            console.log('🔍 Verificando autenticação no presenca.html');
-            console.log('   nome:', nome);
-            console.log('   turma:', turma);
-            
-            // Se não tiver nome OU não tiver turma, NÃO está logado
-            if (!nome || !turma) {
-                console.log('❌ Usuário NÃO autenticado! Redirecionando para login...');
-                // Salvar no sessionStorage que está tentando acessar presenca
-                sessionStorage.setItem('redirectAfterLogin', 'presenca.html');
-                window.location.href = 'index.html';
-                return false;
-            }
-            
-            // Se chegou aqui, está autenticado
-            console.log('✅ Usuário autenticado com sucesso!');
-            
-            // Atualizar interface com dados do usuário
-            userNameSpan.textContent = decodeURIComponent(nome);
-            turmaNameSpan.textContent = TURMA_NOME;
-            
-            return true;
         }
 
         // Buscar lista de alunos da API
@@ -898,17 +922,22 @@
             if (e.target === reportModal) reportModal.classList.remove('active');
         });
 
-        // INICIALIZAÇÃO PRINCIPAL
+        // ============================================
+        // INICIALIZAÇÃO
+        // ============================================
+        
         async function init() {
             console.log('🚀 Inicializando presenca.html...');
             
-            // PRIMEIRO: verificar autenticação
-            if (!checkAuth()) {
-                console.log('⏸️ Aguardando autenticação...');
-                return; // checkAuth já redireciona
-            }
+            // Atualizar interface com dados do usuário
+            const nome = sessionStorage.getItem('nome');
+            const turma = sessionStorage.getItem('turma');
             
-            // SEGUNDO: carregar dados
+            if (nome) {
+                userNameSpan.textContent = decodeURIComponent(nome);
+            }
+            turmaNameSpan.textContent = TURMA_NOME;
+            
             console.log('📅 Configurando datas...');
             setupDates();
             
