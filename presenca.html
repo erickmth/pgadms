@@ -457,9 +457,36 @@
             padding: 40px;
             color: var(--gray-600);
         }
+
+        /* Loading Spinner */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
     </style>
 </head>
 <body>
+    <!-- Loader inicial -->
+    <div class="page-loader" id="pageLoader">
+        <div class="spinner"></div>
+    </div>
 
     <div class="app-header">
         <a href="index.html">
@@ -480,7 +507,7 @@
                 <span class="user-name" id="userName">Carregando...</span>
                 <span class="turma-name" id="turmaName">Formare 2025</span>
             </div>
-            <a href="index.html" class="logout-link"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            <a href="index.html" class="logout-link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</a>
         </div>
 
         <div class="date-section">
@@ -530,8 +557,10 @@
         let students = [];
         let currentAttendance = {};
         let selectedDate = '';
+        let isAuthenticated = false;
 
         // Elementos DOM
+        const pageLoader = document.getElementById('pageLoader');
         const datePicker = document.getElementById('datePicker');
         const attendanceList = document.getElementById('attendanceList');
         const submitBtn = document.getElementById('submitBtn');
@@ -543,6 +572,7 @@
         const monthSelect = document.getElementById('monthSelect');
         const userNameSpan = document.getElementById('userName');
         const turmaNameSpan = document.getElementById('turmaName');
+        const logoutBtn = document.getElementById('logoutBtn');
 
         // Helper Functions
         function showNotification(message, type = 'success') {
@@ -569,6 +599,30 @@
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
+        }
+
+        // VERIFICAÇÃO DE AUTENTICAÇÃO - CORRIGIDA
+        function checkAuth() {
+            // Verificar sessionStorage
+            const nome = sessionStorage.getItem('nome');
+            const turma = sessionStorage.getItem('turma');
+            const admin = sessionStorage.getItem('admin');
+            
+            console.log('Verificando autenticação:', { nome, turma, admin });
+            
+            // Se não tiver nome ou turma, não está logado
+            if (!nome || !turma) {
+                console.log('Usuário não autenticado, redirecionando para login...');
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            // Atualizar interface com dados do usuário
+            userNameSpan.textContent = decodeURIComponent(nome);
+            turmaNameSpan.textContent = TURMA_NOME;
+            
+            isAuthenticated = true;
+            return true;
         }
 
         // Buscar lista de alunos da API
@@ -664,8 +718,6 @@
             // Mostrar botão de salvar alterações se já existia chamada
             if (saveChangesBtn.style.display === 'block') {
                 // Já está visível
-            } else if (submitBtn.style.display !== 'none') {
-                // Chamada nova
             }
         }
 
@@ -736,7 +788,7 @@
                 data: selectedDate,
                 turma: TURMA_NOME,
                 registros,
-                responsavel: 'Admin'
+                responsavel: sessionStorage.getItem('nome') || 'Admin'
             };
             
             const btn = isUpdate ? saveChangesBtn : submitBtn;
@@ -769,19 +821,6 @@
             } finally {
                 hideLoading(btn);
             }
-        }
-
-        // Carregar dados do usuário logado
-        async function loadUserData() {
-            const nome = sessionStorage.getItem('nome');
-            const isAdmin = sessionStorage.getItem('admin') === 'true';
-            
-            if (nome) {
-                userNameSpan.textContent = nome;
-            } else {
-                userNameSpan.textContent = 'Administrador';
-            }
-            turmaNameSpan.textContent = TURMA_NOME;
         }
 
         // Configurar datas
@@ -889,6 +928,14 @@
             showNotification('Relatório gerado com sucesso!', 'success');
         }
 
+        // Logout
+        function handleLogout() {
+            sessionStorage.clear();
+            localStorage.removeItem('adminUsername');
+            localStorage.removeItem('adminPassword');
+            window.location.href = 'index.html';
+        }
+
         // Event Listeners
         datePicker.addEventListener('change', async () => {
             if (datePicker.value) {
@@ -898,6 +945,10 @@
 
         submitBtn.addEventListener('click', () => saveAttendance(false));
         saveChangesBtn.addEventListener('click', () => saveAttendance(true));
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleLogout();
+        });
 
         reportBtn.addEventListener('click', () => {
             loadAvailableMonths();
@@ -911,22 +962,30 @@
             if (e.target === reportModal) reportModal.classList.remove('active');
         });
 
-        // Verificar autenticação e inicializar
+        // Inicialização - CORRIGIDA
         async function init() {
-            const nome = sessionStorage.getItem('nome');
-            const turma = sessionStorage.getItem('turma');
+            // Esconder loader
+            if (pageLoader) pageLoader.style.display = 'none';
             
-            if (!nome || !turma) {
-                window.location.href = 'index.html';
-                return;
+            // Verificar autenticação PRIMEIRO
+            if (!checkAuth()) {
+                return; // checkAuth já redireciona
             }
             
-            await loadUserData();
+            // Se chegou aqui, está autenticado
+            console.log('Usuário autenticado, carregando página...');
+            
+            // Configurar datas
             setupDates();
+            
+            // Carregar alunos
             await fetchStudents();
+            
+            // Carregar chamada do dia
             await loadAttendanceForDate(datePicker.value);
         }
         
+        // Executar inicialização
         init();
     </script>
 </body>
