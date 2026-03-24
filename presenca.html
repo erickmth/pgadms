@@ -40,7 +40,6 @@
             padding: 20px;
         }
 
-        /* Header */
         .app-header {
             display: flex;
             align-items: center;
@@ -67,7 +66,6 @@
             text-align: center;
         }
 
-        /* User Info Bar */
         .user-info {
             background: white;
             border-radius: var(--radius);
@@ -117,7 +115,6 @@
             color: var(--primary);
         }
 
-        /* Container */
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -127,7 +124,6 @@
             overflow: hidden;
         }
 
-        /* Legend */
         .legend {
             display: flex;
             justify-content: center;
@@ -151,7 +147,6 @@
             border-radius: 6px;
         }
 
-        /* Date Selector */
         .date-section {
             padding: 20px;
             border-bottom: 1px solid var(--gray-200);
@@ -176,7 +171,6 @@
             box-shadow: 0 0 0 3px rgba(236, 51, 51, 0.2);
         }
 
-        /* Attendance List */
         .attendance-list {
             padding: 0 20px;
             max-height: 60vh;
@@ -242,7 +236,6 @@
         .btn-absent { background: var(--danger); color: white; }
         .btn-certificate { background: var(--info); color: white; }
 
-        /* Action Buttons */
         .actions {
             padding: 20px;
             display: flex;
@@ -323,7 +316,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Notification */
         .notification {
             position: fixed;
             top: 20px;
@@ -349,7 +341,6 @@
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
-        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -409,13 +400,6 @@
             margin-bottom: 24px;
         }
 
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        /* Report Modal */
         .month-select {
             width: 100%;
             padding: 12px;
@@ -425,7 +409,6 @@
             margin-bottom: 20px;
         }
 
-        /* Responsive */
         @media (max-width: 600px) {
             body { padding: 12px; }
             .header-title { font-size: 1.3rem; }
@@ -437,7 +420,6 @@
             .user-info { flex-direction: column; text-align: center; }
         }
 
-        /* Scrollbar */
         .attendance-list::-webkit-scrollbar {
             width: 6px;
         }
@@ -457,36 +439,9 @@
             padding: 40px;
             color: var(--gray-600);
         }
-
-        /* Loading Spinner */
-        .page-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--gray-200);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
     </style>
 </head>
 <body>
-    <!-- Loader inicial -->
-    <div class="page-loader" id="pageLoader">
-        <div class="spinner"></div>
-    </div>
 
     <div class="app-header">
         <a href="index.html">
@@ -507,7 +462,7 @@
                 <span class="user-name" id="userName">Carregando...</span>
                 <span class="turma-name" id="turmaName">Formare 2025</span>
             </div>
-            <a href="index.html" class="logout-link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            <a href="#" class="logout-link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</a>
         </div>
 
         <div class="date-section">
@@ -557,10 +512,8 @@
         let students = [];
         let currentAttendance = {};
         let selectedDate = '';
-        let isAuthenticated = false;
 
         // Elementos DOM
-        const pageLoader = document.getElementById('pageLoader');
         const datePicker = document.getElementById('datePicker');
         const attendanceList = document.getElementById('attendanceList');
         const submitBtn = document.getElementById('submitBtn');
@@ -603,25 +556,30 @@
 
         // VERIFICAÇÃO DE AUTENTICAÇÃO - CORRIGIDA
         function checkAuth() {
-            // Verificar sessionStorage
+            // Buscar dados do sessionStorage
             const nome = sessionStorage.getItem('nome');
             const turma = sessionStorage.getItem('turma');
-            const admin = sessionStorage.getItem('admin');
             
-            console.log('Verificando autenticação:', { nome, turma, admin });
+            console.log('🔍 Verificando autenticação no presenca.html');
+            console.log('   nome:', nome);
+            console.log('   turma:', turma);
             
-            // Se não tiver nome ou turma, não está logado
+            // Se não tiver nome OU não tiver turma, NÃO está logado
             if (!nome || !turma) {
-                console.log('Usuário não autenticado, redirecionando para login...');
+                console.log('❌ Usuário NÃO autenticado! Redirecionando para login...');
+                // Salvar no sessionStorage que está tentando acessar presenca
+                sessionStorage.setItem('redirectAfterLogin', 'presenca.html');
                 window.location.href = 'index.html';
                 return false;
             }
+            
+            // Se chegou aqui, está autenticado
+            console.log('✅ Usuário autenticado com sucesso!');
             
             // Atualizar interface com dados do usuário
             userNameSpan.textContent = decodeURIComponent(nome);
             turmaNameSpan.textContent = TURMA_NOME;
             
-            isAuthenticated = true;
             return true;
         }
 
@@ -643,7 +601,7 @@
                     edv,
                     nome: nome.replace(/👩‍🏫|👨‍🏫/g, '').trim(),
                     isAdmin: nome.includes('👩‍🏫') || nome.includes('👨‍🏫')
-                })).filter(s => !s.isAdmin); // Filtrar admins da lista de chamada
+                })).filter(s => !s.isAdmin);
                 
                 renderStudentList();
                 return students;
@@ -679,12 +637,10 @@
                 </div>
             `).join('');
             
-            // Adicionar event listeners aos botões
             document.querySelectorAll('.status-btn').forEach(btn => {
                 btn.addEventListener('click', handleStatusClick);
             });
             
-            // Carregar status salvos se existirem
             if (selectedDate && currentAttendance[selectedDate]) {
                 applySavedStatus(currentAttendance[selectedDate]);
             }
@@ -696,32 +652,23 @@
             return div.innerHTML;
         }
 
-        // Handler para clique nos botões de status
         function handleStatusClick(e) {
             const btn = e.currentTarget;
             const edv = btn.dataset.edv;
             const status = btn.dataset.status;
             const card = document.querySelector(`.person-card[data-edv="${edv}"]`);
             
-            // Atualizar visual dos botões
             card.querySelectorAll('.status-btn').forEach(b => {
                 b.classList.remove('active');
             });
             btn.classList.add('active');
             
-            // Salvar status localmente
             if (!currentAttendance[selectedDate]) {
                 currentAttendance[selectedDate] = {};
             }
             currentAttendance[selectedDate][edv] = status;
-            
-            // Mostrar botão de salvar alterações se já existia chamada
-            if (saveChangesBtn.style.display === 'block') {
-                // Já está visível
-            }
         }
 
-        // Aplicar status salvos aos botões
         function applySavedStatus(statusMap) {
             Object.entries(statusMap).forEach(([edv, status]) => {
                 const card = document.querySelector(`.person-card[data-edv="${edv}"]`);
@@ -735,7 +682,6 @@
             });
         }
 
-        // Buscar chamada existente para uma data
         async function fetchAttendance(date) {
             try {
                 const response = await fetch(`${API_BASE}/presenca/obter/${date}?turma=${encodeURIComponent(TURMA_NOME)}`);
@@ -766,7 +712,6 @@
             }
         }
 
-        // Salvar chamada
         async function saveAttendance(isUpdate = false) {
             if (!selectedDate) {
                 showNotification('Selecione uma data primeiro', 'warning');
@@ -810,8 +755,6 @@
                 }
                 
                 showNotification(`Chamada ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`);
-                
-                // Atualizar UI
                 submitBtn.style.display = 'none';
                 saveChangesBtn.style.display = 'block';
                 
@@ -823,7 +766,6 @@
             }
         }
 
-        // Configurar datas
         function setupDates() {
             const today = new Date();
             const minDate = new Date(2025, 6, 14);
@@ -836,7 +778,6 @@
             if (today < minDate) initialDate = minDate;
             if (today > maxDate) initialDate = maxDate;
             
-            // Ajustar para próximo dia útil se necessário
             while (initialDate.getDay() === 0 || initialDate.getDay() === 6) {
                 initialDate.setDate(initialDate.getDate() + 1);
             }
@@ -845,11 +786,8 @@
             selectedDate = datePicker.value;
         }
 
-        // Carregar chamada da data selecionada
         async function loadAttendanceForDate(date) {
             selectedDate = date;
-            
-            // Limpar seleções visuais
             document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
             
             const savedStatus = await fetchAttendance(date);
@@ -871,7 +809,6 @@
             return `${day}/${month}/${year}`;
         }
 
-        // Carregar meses disponíveis para relatório
         async function loadAvailableMonths() {
             try {
                 const response = await fetch(`${API_BASE}/presenca/meses_disponiveis`);
@@ -908,7 +845,6 @@
             }
         }
 
-        // Baixar relatório
         function downloadReport() {
             const mes = monthSelect.value;
             if (!mes) {
@@ -928,8 +864,8 @@
             showNotification('Relatório gerado com sucesso!', 'success');
         }
 
-        // Logout
         function handleLogout() {
+            console.log('🚪 Realizando logout...');
             sessionStorage.clear();
             localStorage.removeItem('adminUsername');
             localStorage.removeItem('adminPassword');
@@ -962,30 +898,29 @@
             if (e.target === reportModal) reportModal.classList.remove('active');
         });
 
-        // Inicialização - CORRIGIDA
+        // INICIALIZAÇÃO PRINCIPAL
         async function init() {
-            // Esconder loader
-            if (pageLoader) pageLoader.style.display = 'none';
+            console.log('🚀 Inicializando presenca.html...');
             
-            // Verificar autenticação PRIMEIRO
+            // PRIMEIRO: verificar autenticação
             if (!checkAuth()) {
+                console.log('⏸️ Aguardando autenticação...');
                 return; // checkAuth já redireciona
             }
             
-            // Se chegou aqui, está autenticado
-            console.log('Usuário autenticado, carregando página...');
-            
-            // Configurar datas
+            // SEGUNDO: carregar dados
+            console.log('📅 Configurando datas...');
             setupDates();
             
-            // Carregar alunos
+            console.log('👥 Carregando alunos...');
             await fetchStudents();
             
-            // Carregar chamada do dia
+            console.log('📋 Carregando chamada do dia...');
             await loadAttendanceForDate(datePicker.value);
+            
+            console.log('✅ Página carregada com sucesso!');
         }
         
-        // Executar inicialização
         init();
     </script>
 </body>
