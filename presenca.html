@@ -460,7 +460,12 @@
         <div class="user-info" id="userInfo">
             <div class="user-details">
                 <span class="user-name" id="userName">Carregando...</span>
-                <span class="turma-name" id="turmaName">Formare 2025</span>
+                <span class="turma-name" id="turmaName"></span>
+
+<script>
+  const anoAtual = new Date().getFullYear();
+  document.getElementById("turmaName").textContent = `Formare ${anoAtual}`;
+</script>
             </div>
             <a href="#" class="logout-link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</a>
         </div>
@@ -523,7 +528,7 @@
                 if (adminUsername) {
                     console.log('📌 Recuperando admin do localStorage:', adminUsername);
                     nome = 'Administrador';
-                    turma = 'Formare 2025';
+                    turma = 'Formare 2026';
                     admin = 'true';
                     
                     // Salvar no sessionStorage
@@ -560,7 +565,7 @@
         // ============================================
         
         const API_BASE = 'https://erickmth.pythonanywhere.com/api';
-        const TURMA_NOME = 'Formare 2025';
+        const TURMA_NOME = 'Formare 2026';
         
         let students = [];
         let currentAttendance = {};
@@ -792,8 +797,8 @@
 
         function setupDates() {
             const today = new Date();
-            const minDate = new Date(2025, 6, 14);
-            const maxDate = new Date(2025, 11, 31);
+            const minDate = new Date(2026, 6, 14);
+            const maxDate = new Date(2026, 11, 31);
             
             datePicker.min = formatDate(minDate);
             datePicker.max = formatDate(maxDate);
@@ -844,11 +849,11 @@
                 monthSelect.innerHTML = '<option value="">Selecione um mês</option>';
                 
                 const months = [
-                    { value: '2025-07', name: 'Julho 2025' },
-                    { value: '2025-08', name: 'Agosto 2025' },
-                    { value: '2025-09', name: 'Setembro 2025' },
-                    { value: '2025-10', name: 'Outubro 2025' },
-                    { value: '2025-11', name: 'Novembro 2025' }
+                    { value: '2026-07', name: 'Julho 2026' },
+                    { value: '2026-08', name: 'Agosto 2026' },
+                    { value: '2026-09', name: 'Setembro 2026' },
+                    { value: '2026-10', name: 'Outubro 2026' },
+                    { value: '2026-11', name: 'Novembro 2026' }
                 ];
                 
                 months.forEach(month => {
