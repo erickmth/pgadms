@@ -2,932 +2,484 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Sistema de Chamada - Formare 2026</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Importar Alunos - Sistema de Escalas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #ec3333;
-            --primary-dark: #c82333;
-            --success: #2ecc71;
-            --danger: #e74c3c;
-            --info: #3498db;
-            --warning: #f39c12;
-            --gray-100: #f8f9fa;
-            --gray-200: #e9ecef;
-            --gray-300: #dee2e6;
-            --gray-600: #6c757d;
-            --gray-800: #343a40;
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-            --radius: 12px;
-        }
-
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
-            color: var(--gray-800);
-            line-height: 1.5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 40px 20px;
         }
-
-        /* Header */
-        .app-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .logo {
-            height: 70px;
-            width: auto;
-            transition: transform 0.3s;
-        }
-
-        .logo:hover {
-            transform: scale(1.02);
-        }
-
-        .header-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-align: center;
-        }
-
-        /* User Info Bar */
-        .user-info {
-            background: white;
-            border-radius: var(--radius);
-            padding: 12px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--gray-200);
-        }
-
-        .user-details {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .user-name {
-            font-weight: 600;
-            color: var(--primary);
-            background: rgba(236, 51, 51, 0.1);
-            padding: 5px 12px;
+        .card {
             border-radius: 20px;
-        }
-
-        .turma-name {
-            background: var(--gray-100);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-
-        .logout-link {
-            color: var(--gray-600);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: color 0.3s;
-        }
-
-        .logout-link:hover {
-            color: var(--primary);
-        }
-
-        /* Container */
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: none;
             overflow: hidden;
         }
-
-        /* Legend */
-        .legend {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            padding: 15px 20px;
-            background: var(--gray-100);
-            border-bottom: 1px solid var(--gray-200);
-            flex-wrap: wrap;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 6px;
-        }
-
-        /* Date Selector */
-        .date-section {
-            padding: 20px;
-            border-bottom: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: center;
-        }
-
-        .date-input {
-            padding: 12px 20px;
-            border: 2px solid var(--gray-200);
-            border-radius: 40px;
-            font-size: 1rem;
-            min-width: 250px;
-            text-align: center;
-            transition: all 0.3s;
-            background: white;
-        }
-
-        .date-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(236, 51, 51, 0.2);
-        }
-
-        /* Attendance List */
-        .attendance-list {
-            padding: 0 20px;
-            max-height: 60vh;
-            overflow-y: auto;
-        }
-
-        .person-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 16px;
-            margin: 10px 0;
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius);
-            transition: all 0.2s;
-        }
-
-        .person-card:hover {
-            border-color: var(--primary);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .person-name {
-            font-weight: 500;
-            font-size: 1rem;
-            color: var(--gray-800);
-            word-break: break-word;
-            max-width: 50%;
-        }
-
-        .status-group {
-            display: flex;
-            gap: 8px;
-        }
-
-        .status-btn {
-            width: 44px;
-            height: 44px;
+        .card-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 25px;
             border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.6;
         }
-
-        .status-btn.active {
-            opacity: 1;
-            transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .status-btn:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
-        }
-
-        .btn-present { background: var(--success); color: white; }
-        .btn-absent { background: var(--danger); color: white; }
-        .btn-certificate { background: var(--info); color: white; }
-
-        /* Action Buttons */
-        .actions {
-            padding: 20px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            border-top: 1px solid var(--gray-200);
-            background: var(--gray-100);
-        }
-
-        .btn {
-            flex: 1;
-            padding: 14px 20px;
+        .btn-import {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             border: none;
-            border-radius: 40px;
-            font-size: 1rem;
+            padding: 12px 30px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-success:hover:not(:disabled) {
-            background: #27ae60;
-            transform: translateY(-2px);
-        }
-
-        .btn-report {
-            background: #9b59b6;
-            color: white;
-        }
-
-        .btn-report:hover:not(:disabled) {
-            background: #8e44ad;
-            transform: translateY(-2px);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn.loading {
-            position: relative;
-            color: transparent;
-        }
-
-        .btn.loading::after {
-            content: "";
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--success);
-            color: white;
-            padding: 14px 24px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 2000;
-            box-shadow: var(--shadow-lg);
-            animation: slideDown 0.3s ease;
-        }
-
-        .notification.error { background: var(--danger); }
-        .notification.warning { background: var(--warning); }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateX(-50%) translateY(-100%); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1500;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-container {
-            background: white;
-            border-radius: 24px;
-            width: 90%;
-            max-width: 450px;
-            padding: 24px;
-            transform: scale(0.9);
             transition: transform 0.3s;
         }
-
-        .modal-overlay.active .modal-container {
-            transform: scale(1);
+        .btn-import:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
         }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        .modal-close {
-            background: none;
+        .btn-clear {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
             border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--gray-600);
+            padding: 12px 30px;
+            font-weight: 600;
         }
-
-        .modal-body {
-            margin-bottom: 24px;
+        .result-box {
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 13px;
         }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        /* Report Modal */
-        .month-select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--gray-200);
-            border-radius: 12px;
-            font-size: 1rem;
-            margin-bottom: 20px;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            body { padding: 12px; }
-            .header-title { font-size: 1.3rem; }
-            .logo { height: 50px; }
-            .person-card { flex-direction: column; align-items: stretch; gap: 12px; }
-            .person-name { max-width: 100%; text-align: center; }
-            .status-group { justify-content: center; }
-            .btn { padding: 12px; font-size: 0.9rem; }
-            .user-info { flex-direction: column; text-align: center; }
-        }
-
-        /* Scrollbar */
-        .attendance-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .attendance-list::-webkit-scrollbar-track {
-            background: var(--gray-200);
+        .file-drop-area {
+            border: 2px dashed #dee2e6;
             border-radius: 10px;
-        }
-
-        .attendance-list::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-        }
-
-        .empty-message {
+            padding: 30px;
             text-align: center;
-            padding: 40px;
-            color: var(--gray-600);
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        .file-drop-area:hover {
+            border-color: #28a745;
+            background: #f0f9f0;
+        }
+        .file-drop-area.drag-over {
+            border-color: #28a745;
+            background: #e8f5e9;
+        }
+        .preview-table {
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+        .preview-table table {
+            font-size: 12px;
+        }
+        .badge-status {
+            font-size: 12px;
+            padding: 5px 10px;
         }
     </style>
 </head>
 <body>
-
-    <div class="app-header">
-        <a href="index.html">
-            <img src="logu-black.svg" alt="Logo" class="logo">
-        </a>
-        <h1 class="header-title">📋 Sistema de Chamada</h1>
-    </div>
-
     <div class="container">
-        <div class="legend">
-            <div class="legend-item"><div class="legend-color" style="background: var(--success);"></div><span>Presente</span></div>
-            <div class="legend-item"><div class="legend-color" style="background: var(--danger);"></div><span>Ausente</span></div>
-            <div class="legend-item"><div class="legend-color" style="background: var(--info);"></div><span>Atestado</span></div>
-        </div>
-
-        <div class="user-info" id="userInfo">
-            <div class="user-details">
-                <span class="user-name" id="userName">Carregando...</span>
-                <span class="turma-name" id="turmaName">Formare 2025</span>
-            </div>
-            <a href="index.html" class="logout-link"><i class="fas fa-sign-out-alt"></i> Sair</a>
-        </div>
-
-        <div class="date-section">
-            <input type="date" id="datePicker" class="date-input">
-        </div>
-
-        <div class="attendance-list" id="attendanceList">
-            <div class="empty-message">Carregando lista de alunos...</div>
-        </div>
-
-        <div class="actions">
-            <button class="btn btn-primary" id="submitBtn">
-                <i class="fas fa-paper-plane"></i> Enviar Chamada
-            </button>
-            <button class="btn btn-success" id="saveChangesBtn" style="display: none;">
-                <i class="fas fa-save"></i> Salvar Alterações
-            </button>
-            <button class="btn btn-report" id="reportBtn">
-                <i class="fas fa-file-excel"></i> Relatório do Mês
-            </button>
-        </div>
-    </div>
-
-    <!-- Modal de Relatório -->
-    <div class="modal-overlay" id="reportModal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 class="modal-title"><i class="fas fa-calendar-alt"></i> Relatório Mensal</h3>
-                <button class="modal-close" id="closeReportModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <select id="monthSelect" class="month-select">
-                    <option value="">Carregando meses...</option>
-                </select>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-report" id="generateReportBtn" disabled>Baixar Relatório</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Configurações
-        const API_BASE = 'https://erickmth.pythonanywhere.com/api';
-        const TURMA_NOME = 'Formare 2025';
-        
-        let students = [];
-        let currentAttendance = {};
-        let selectedDate = '';
-
-        // Elementos DOM
-        const datePicker = document.getElementById('datePicker');
-        const attendanceList = document.getElementById('attendanceList');
-        const submitBtn = document.getElementById('submitBtn');
-        const saveChangesBtn = document.getElementById('saveChangesBtn');
-        const reportBtn = document.getElementById('reportBtn');
-        const reportModal = document.getElementById('reportModal');
-        const closeReportModal = document.getElementById('closeReportModal');
-        const generateReportBtn = document.getElementById('generateReportBtn');
-        const monthSelect = document.getElementById('monthSelect');
-        const userNameSpan = document.getElementById('userName');
-        const turmaNameSpan = document.getElementById('turmaName');
-
-        // Helper Functions
-        function showNotification(message, type = 'success') {
-            const notif = document.createElement('div');
-            notif.className = `notification ${type}`;
-            notif.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i><span>${message}</span>`;
-            document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), 4000);
-        }
-
-        function showLoading(btn) {
-            btn.disabled = true;
-            btn.classList.add('loading');
-        }
-
-        function hideLoading(btn) {
-            btn.disabled = false;
-            btn.classList.remove('loading');
-        }
-
-        function formatDate(date) {
-            const d = new Date(date);
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        // Buscar lista de alunos da API
-        async function fetchStudents() {
-            try {
-                const response = await fetch(`${API_BASE}/admin/turmas/${encodeURIComponent(TURMA_NOME)}/alunos`, {
-                    headers: {
-                        'Authorization': 'Basic ' + btoa('admin:formare2026')
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Erro ao carregar alunos');
-                }
-                
-                const data = await response.json();
-                students = Object.entries(data).map(([edv, nome]) => ({
-                    edv,
-                    nome: nome.replace(/👩‍🏫|👨‍🏫/g, '').trim(),
-                    isAdmin: nome.includes('👩‍🏫') || nome.includes('👨‍🏫')
-                })).filter(s => !s.isAdmin); // Filtrar admins da lista de chamada
-                
-                renderStudentList();
-                return students;
-            } catch (error) {
-                console.error('Erro ao carregar alunos:', error);
-                showNotification('Erro ao carregar lista de alunos', 'error');
-                attendanceList.innerHTML = '<div class="empty-message">❌ Erro ao carregar alunos. Verifique sua conexão.</div>';
-                return [];
-            }
-        }
-
-        // Renderizar lista de alunos
-        function renderStudentList() {
-            if (!students.length) {
-                attendanceList.innerHTML = '<div class="empty-message">📭 Nenhum aluno cadastrado nesta turma.</div>';
-                return;
-            }
-            
-            attendanceList.innerHTML = students.map(student => `
-                <div class="person-card" data-edv="${student.edv}">
-                    <div class="person-name">${escapeHtml(student.nome)}</div>
-                    <div class="status-group">
-                        <button class="status-btn btn-present" data-status="PRESENTE" data-edv="${student.edv}">
-                            <i class="fas fa-check"></i>
-                        </button>
-                        <button class="status-btn btn-absent" data-status="AUSENTE" data-edv="${student.edv}">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <button class="status-btn btn-certificate" data-status="ATESTADO" data-edv="${student.edv}">
-                            <i class="fas fa-file-medical"></i>
-                        </button>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h2 class="mb-0">
+                            <i class="bi bi-file-excel me-2"></i>
+                            Importação em Lote de Alunos
+                        </h2>
+                        <p class="text-white-50 mt-2 mb-0">Importe alunos via arquivo CSV ou Excel</p>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <!-- Alertas -->
+                        <div id="alertArea"></div>
+                        
+                        <!-- Seleção de Turma -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-building"></i> Turma:
+                            </label>
+                            <select id="turmaSelect" class="form-select form-select-lg">
+                                <option value="">Carregando turmas...</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Área de Upload -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-upload"></i> Arquivo:
+                            </label>
+                            <div id="dropArea" class="file-drop-area">
+                                <i class="bi bi-cloud-upload fs-1 text-secondary"></i>
+                                <p class="mt-2 mb-0">Clique ou arraste o arquivo aqui</p>
+                                <small class="text-muted">Suporta .csv, .xlsx, .xls</small>
+                                <input type="file" id="fileInput" style="display: none;" accept=".csv,.xlsx,.xls">
+                            </div>
+                        </div>
+                        
+                        <!-- Preview do Arquivo -->
+                        <div id="previewArea" style="display: none;" class="mb-4">
+                            <div class="alert alert-info">
+                                <i class="bi bi-eye"></i> <strong>Pré-visualização:</strong>
+                            </div>
+                            <div class="preview-table border rounded p-2 bg-light">
+                                <div id="previewContent"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Botões de Ação -->
+                        <div class="d-flex gap-3">
+                            <button id="importBtn" class="btn btn-import flex-grow-1" disabled>
+                                <i class="bi bi-cloud-upload"></i> Importar Alunos
+                            </button>
+                            <button id="clearHistoryBtn" class="btn btn-clear">
+                                <i class="bi bi-trash"></i> Limpar Histórico
+                            </button>
+                        </div>
+                        
+                        <!-- Link para baixar modelo -->
+                        <div class="mt-3 text-center">
+                            <a href="#" id="downloadTemplateBtn" class="text-decoration-none">
+                                <i class="bi bi-download"></i> Baixar modelo de planilha (CSV)
+                            </a>
+                        </div>
+                        
+                        <!-- Resultado da Importação -->
+                        <div id="resultArea" style="display: none;" class="mt-4">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <i class="bi bi-check-circle"></i> Resultado da Importação
+                                </div>
+                                <div class="card-body result-box" id="resultContent">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            `).join('');
-            
-            // Adicionar event listeners aos botões
-            document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.addEventListener('click', handleStatusClick);
-            });
-            
-            // Carregar status salvos se existirem
-            if (selectedDate && currentAttendance[selectedDate]) {
-                applySavedStatus(currentAttendance[selectedDate]);
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = 'https://erickmth.pythonanywhere.com';
+        
+        // Elementos
+        const turmaSelect = document.getElementById('turmaSelect');
+        const fileInput = document.getElementById('fileInput');
+        const dropArea = document.getElementById('dropArea');
+        const importBtn = document.getElementById('importBtn');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+        const previewArea = document.getElementById('previewArea');
+        const previewContent = document.getElementById('previewContent');
+        const alertArea = document.getElementById('alertArea');
+        const resultArea = document.getElementById('resultArea');
+        const resultContent = document.getElementById('resultContent');
+        
+        let selectedFile = null;
+        
+        // Mostrar alerta
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertArea.appendChild(alertDiv);
+            setTimeout(() => alertDiv.remove(), 5000);
+        }
+        
+        // Carregar turmas
+        async function loadTurmas() {
+            try {
+                const response = await fetch(`${API_URL}/api/admin/status`, {
+                    headers: {
+                        'Authorization': 'Basic ' + btoa('admin:formare2026')
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    turmaSelect.innerHTML = '<option value="">Selecione uma turma</option>';
+                    data.turmas.forEach(turma => {
+                        const option = document.createElement('option');
+                        option.value = turma;
+                        option.textContent = turma;
+                        turmaSelect.appendChild(option);
+                    });
+                } else {
+                    turmaSelect.innerHTML = '<option value="">Erro ao carregar turmas</option>';
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                turmaSelect.innerHTML = '<option value="">Erro de conexão</option>';
             }
         }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Handler para clique nos botões de status
-        function handleStatusClick(e) {
-            const btn = e.currentTarget;
-            const edv = btn.dataset.edv;
-            const status = btn.dataset.status;
-            const card = document.querySelector(`.person-card[data-edv="${edv}"]`);
-            
-            // Atualizar visual dos botões
-            card.querySelectorAll('.status-btn').forEach(b => {
-                b.classList.remove('active');
-            });
-            btn.classList.add('active');
-            
-            // Salvar status localmente
-            if (!currentAttendance[selectedDate]) {
-                currentAttendance[selectedDate] = {};
-            }
-            currentAttendance[selectedDate][edv] = status;
-            
-            // Mostrar botão de salvar alterações se já existia chamada
-            if (saveChangesBtn.style.display === 'block') {
-                // Já está visível
-            } else if (submitBtn.style.display !== 'none') {
-                // Chamada nova
-            }
-        }
-
-        // Aplicar status salvos aos botões
-        function applySavedStatus(statusMap) {
-            Object.entries(statusMap).forEach(([edv, status]) => {
-                const card = document.querySelector(`.person-card[data-edv="${edv}"]`);
-                if (card) {
-                    const btn = card.querySelector(`.status-btn[data-status="${status}"]`);
-                    if (btn) {
-                        card.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
+        
+        // Preview do CSV
+        function previewCSV(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const lines = content.split('\n').slice(0, 11); // Mostrar até 10 linhas
+                
+                let html = '<table class="table table-sm table-bordered"><thead><tr>';
+                const headers = lines[0]?.split(',') || [];
+                headers.forEach(h => html += `<th>${h.trim()}</th>`);
+                html += '</tr></thead><tbody>';
+                
+                for (let i = 1; i < lines.length && i <= 10; i++) {
+                    if (lines[i].trim()) {
+                        const cells = lines[i].split(',');
+                        html += '<tr>';
+                        cells.forEach(c => html += `<td>${c.trim()}</td>`);
+                        html += '</tr>';
                     }
                 }
+                html += '</tbody></table>';
+                
+                if (lines.length > 11) {
+                    html += `<p class="text-muted small mt-2">... e mais ${lines.length - 11} linhas</p>`;
+                }
+                
+                previewContent.innerHTML = html;
+                previewArea.style.display = 'block';
+            };
+            reader.readAsText(file);
+        }
+        
+        // Configurar upload
+        function setupFileUpload() {
+            dropArea.addEventListener('click', () => fileInput.click());
+            
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.classList.add('drag-over');
+            });
+            
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('drag-over');
+            });
+            
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.classList.remove('drag-over');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    selectedFile = files[0];
+                    handleFileSelect(selectedFile);
+                }
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    selectedFile = e.target.files[0];
+                    handleFileSelect(selectedFile);
+                }
             });
         }
-
-        // Buscar chamada existente para uma data
-        async function fetchAttendance(date) {
-            try {
-                const response = await fetch(`${API_BASE}/presenca/obter/${date}?turma=${encodeURIComponent(TURMA_NOME)}`);
-                
-                if (response.status === 404) {
-                    return null;
-                }
-                
-                if (!response.ok) {
-                    throw new Error('Erro ao carregar chamada');
-                }
-                
-                const data = await response.json();
-                if (data.registros && Array.isArray(data.registros)) {
-                    const statusMap = {};
-                    data.registros.forEach(r => {
-                        const student = students.find(s => s.nome === r.name);
-                        if (student) {
-                            statusMap[student.edv] = r.status;
-                        }
-                    });
-                    return statusMap;
-                }
-                return null;
-            } catch (error) {
-                console.error('Erro ao buscar chamada:', error);
-                return null;
+        
+        function handleFileSelect(file) {
+            const validExtensions = ['.csv', '.xlsx', '.xls'];
+            const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+            
+            if (!validExtensions.includes(ext)) {
+                showAlert('Formato de arquivo não suportado. Use .csv, .xlsx ou .xls', 'danger');
+                selectedFile = null;
+                importBtn.disabled = true;
+                previewArea.style.display = 'none';
+                return;
             }
+            
+            importBtn.disabled = false;
+            
+            if (ext === '.csv') {
+                previewCSV(file);
+            } else {
+                previewContent.innerHTML = '<p class="text-muted">Pré-visualização disponível apenas para arquivos CSV</p>';
+                previewArea.style.display = 'block';
+            }
+            
+            showAlert(`Arquivo selecionado: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`, 'success');
         }
-
-        // Salvar chamada
-        async function saveAttendance(isUpdate = false) {
-            if (!selectedDate) {
-                showNotification('Selecione uma data primeiro', 'warning');
+        
+        // Importar alunos
+        async function importAlunos() {
+            const turma = turmaSelect.value;
+            
+            if (!turma) {
+                showAlert('Selecione uma turma', 'warning');
                 return;
             }
             
-            const statusMap = currentAttendance[selectedDate] || {};
-            const registros = students.map(student => ({
-                name: student.nome,
-                status: statusMap[student.edv] || ''
-            })).filter(r => r.status);
-            
-            if (registros.length === 0) {
-                showNotification('Selecione o status de pelo menos um aluno', 'warning');
+            if (!selectedFile) {
+                showAlert('Selecione um arquivo', 'warning');
                 return;
             }
             
-            const payload = {
-                data: selectedDate,
-                turma: TURMA_NOME,
-                registros,
-                responsavel: 'Admin'
-            };
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('turma', turma);
             
-            const btn = isUpdate ? saveChangesBtn : submitBtn;
-            showLoading(btn);
+            importBtn.disabled = true;
+            importBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Importando...';
             
             try {
-                const response = await fetch(`${API_BASE}/presenca/salvar`, {
+                const response = await fetch(`${API_URL}/api/admin/alunos/import`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'Authorization': 'Basic ' + btoa('admin:formare2026')
                     },
-                    body: JSON.stringify(payload)
+                    body: formData
                 });
                 
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Erro ao salvar');
+                const result = await response.json();
+                
+                resultArea.style.display = 'block';
+                
+                if (response.ok && result.success) {
+                    resultContent.innerHTML = `
+                        <div class="text-success mb-3">
+                            <i class="bi bi-check-circle-fill fs-3"></i>
+                            <h4 class="mt-2">Importação concluída!</h4>
+                        </div>
+                        <p><strong>✅ Alunos importados:</strong> ${result.importados}</p>
+                        ${result.erros && result.erros.length > 0 ? `
+                            <hr>
+                            <p><strong>⚠️ Erros encontrados (${result.erros.length}):</strong></p>
+                            <ul class="text-danger">
+                                ${result.erros.slice(0, 20).map(erro => `<li>${erro}</li>`).join('')}
+                                ${result.erros.length > 20 ? `<li>... e mais ${result.erros.length - 20} erros</li>` : ''}
+                            </ul>
+                        ` : ''}
+                    `;
+                    showAlert(`${result.importados} alunos importados com sucesso!`, 'success');
+                } else {
+                    resultContent.innerHTML = `
+                        <div class="text-danger mb-3">
+                            <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                            <h4 class="mt-2">Erro na importação</h4>
+                        </div>
+                        <p>${result.error || 'Erro ao processar o arquivo'}</p>
+                    `;
+                    showAlert(result.error || 'Erro na importação', 'danger');
                 }
                 
-                showNotification(`Chamada ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`);
-                
-                // Atualizar UI
-                submitBtn.style.display = 'none';
-                saveChangesBtn.style.display = 'block';
-                
             } catch (error) {
-                console.error('Erro ao salvar:', error);
-                showNotification(error.message || 'Erro ao salvar chamada', 'error');
+                console.error('Erro:', error);
+                resultArea.style.display = 'block';
+                resultContent.innerHTML = `
+                    <div class="text-danger mb-3">
+                        <i class="bi bi-wifi-off fs-3"></i>
+                        <h4 class="mt-2">Erro de conexão</h4>
+                    </div>
+                    <p>Não foi possível conectar ao servidor. Verifique sua conexão.</p>
+                `;
+                showAlert('Erro de conexão com o servidor', 'danger');
             } finally {
-                hideLoading(btn);
+                importBtn.disabled = false;
+                importBtn.innerHTML = '<i class="bi bi-cloud-upload"></i> Importar Alunos';
             }
         }
-
-        // Carregar dados do usuário logado
-        async function loadUserData() {
-            const nome = sessionStorage.getItem('nome');
-            const isAdmin = sessionStorage.getItem('admin') === 'true';
-            
-            if (nome) {
-                userNameSpan.textContent = nome;
-            } else {
-                userNameSpan.textContent = 'Administrador';
-            }
-            turmaNameSpan.textContent = TURMA_NOME;
-        }
-
-        // Configurar datas
-        function setupDates() {
-            const today = new Date();
-            const minDate = new Date(2025, 6, 14);
-            const maxDate = new Date(2025, 11, 31);
-            
-            datePicker.min = formatDate(minDate);
-            datePicker.max = formatDate(maxDate);
-            
-            let initialDate = today;
-            if (today < minDate) initialDate = minDate;
-            if (today > maxDate) initialDate = maxDate;
-            
-            // Ajustar para próximo dia útil se necessário
-            while (initialDate.getDay() === 0 || initialDate.getDay() === 6) {
-                initialDate.setDate(initialDate.getDate() + 1);
-            }
-            
-            datePicker.value = formatDate(initialDate);
-            selectedDate = datePicker.value;
-        }
-
-        // Carregar chamada da data selecionada
-        async function loadAttendanceForDate(date) {
-            selectedDate = date;
-            
-            // Limpar seleções visuais
-            document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
-            
-            const savedStatus = await fetchAttendance(date);
-            if (savedStatus && Object.keys(savedStatus).length > 0) {
-                currentAttendance[date] = savedStatus;
-                applySavedStatus(savedStatus);
-                submitBtn.style.display = 'none';
-                saveChangesBtn.style.display = 'block';
-                showNotification(`Chamada do dia ${formatDisplayDate(date)} carregada!`, 'success');
-            } else {
-                currentAttendance[date] = {};
-                submitBtn.style.display = 'block';
-                saveChangesBtn.style.display = 'none';
-            }
-        }
-
-        function formatDisplayDate(dateStr) {
-            const [year, month, day] = dateStr.split('-');
-            return `${day}/${month}/${year}`;
-        }
-
-        // Carregar meses disponíveis para relatório
-        async function loadAvailableMonths() {
-            try {
-                const response = await fetch(`${API_BASE}/presenca/meses_disponiveis`);
-                if (!response.ok) throw new Error('Erro ao carregar meses');
-                
-                const data = await response.json();
-                const availableMonths = data.meses || [];
-                
-                monthSelect.innerHTML = '<option value="">Selecione um mês</option>';
-                
-                const months = [
-                    { value: '2025-07', name: 'Julho 2025' },
-                    { value: '2025-08', name: 'Agosto 2025' },
-                    { value: '2025-09', name: 'Setembro 2025' },
-                    { value: '2025-10', name: 'Outubro 2025' },
-                    { value: '2025-11', name: 'Novembro 2025' }
-                ];
-                
-                months.forEach(month => {
-                    const option = document.createElement('option');
-                    option.value = month.value;
-                    option.textContent = month.name;
-                    option.disabled = !availableMonths.includes(month.value);
-                    monthSelect.appendChild(option);
-                });
-                
-                monthSelect.addEventListener('change', () => {
-                    generateReportBtn.disabled = !monthSelect.value || monthSelect.selectedOptions[0]?.disabled;
-                });
-                
-            } catch (error) {
-                console.error('Erro ao carregar meses:', error);
-                monthSelect.innerHTML = '<option value="">Erro ao carregar meses</option>';
-            }
-        }
-
-        // Baixar relatório
-        function downloadReport() {
-            const mes = monthSelect.value;
-            if (!mes) {
-                showNotification('Selecione um mês', 'warning');
+        
+        // Limpar histórico
+        async function clearHistory() {
+            if (!confirm('⚠️ TEM CERTEZA? Isso irá apagar TODO o histórico de ações. Esta ação não pode ser desfeita!')) {
                 return;
             }
             
-            const url = `${API_BASE}/presenca/relatorio_excel/${mes}?turma=${encodeURIComponent(TURMA_NOME)}`;
+            clearHistoryBtn.disabled = true;
+            clearHistoryBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Limpando...';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/historico`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Basic ' + btoa('admin:formare2026')
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert(`✅ Histórico limpo! ${result.removidos} registros removidos.`, 'success');
+                } else {
+                    throw new Error(result.error || 'Erro ao limpar histórico');
+                }
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                showAlert(`❌ Erro: ${error.message}`, 'danger');
+            } finally {
+                clearHistoryBtn.disabled = false;
+                clearHistoryBtn.innerHTML = '<i class="bi bi-trash"></i> Limpar Histórico';
+            }
+        }
+        
+        // Download do modelo
+        function downloadTemplate() {
+            const headers = ['EDV', 'NOME'];
+            const samples = [
+                ['12345', 'João Silva'],
+                ['67890', 'Maria Oliveira'],
+                ['11121', 'Pedro Santos'],
+                ['22233', 'Ana Clara'],
+                ['33344', 'Lucas Ferreira']
+            ];
+            
+            const csvContent = [headers, ...samples].map(row => row.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
             link.href = url;
-            link.download = `relatorio_chamadas_${mes}.xlsx`;
+            link.setAttribute('download', 'modelo_importacao_alunos.csv');
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            URL.revokeObjectURL(url);
             
-            reportModal.classList.remove('active');
-            showNotification('Relatório gerado com sucesso!', 'success');
-        }
-
-        // Event Listeners
-        datePicker.addEventListener('change', async () => {
-            if (datePicker.value) {
-                await loadAttendanceForDate(datePicker.value);
-            }
-        });
-
-        submitBtn.addEventListener('click', () => saveAttendance(false));
-        saveChangesBtn.addEventListener('click', () => saveAttendance(true));
-
-        reportBtn.addEventListener('click', () => {
-            loadAvailableMonths();
-            reportModal.classList.add('active');
-        });
-
-        closeReportModal.addEventListener('click', () => reportModal.classList.remove('active'));
-        generateReportBtn.addEventListener('click', downloadReport);
-
-        reportModal.addEventListener('click', (e) => {
-            if (e.target === reportModal) reportModal.classList.remove('active');
-        });
-
-        // Verificar autenticação e inicializar
-        async function init() {
-            const nome = sessionStorage.getItem('nome');
-            const turma = sessionStorage.getItem('turma');
-            
-            if (!nome || !turma) {
-                window.location.href = 'index.html';
-                return;
-            }
-            
-            await loadUserData();
-            setupDates();
-            await fetchStudents();
-            await loadAttendanceForDate(datePicker.value);
+            showAlert('Modelo baixado! Preencha com seus dados e importe.', 'info');
         }
         
-        init();
+        // Event Listeners
+        importBtn.addEventListener('click', importAlunos);
+        clearHistoryBtn.addEventListener('click', clearHistory);
+        downloadTemplateBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            downloadTemplate();
+        });
+        
+        turmaSelect.addEventListener('change', () => {
+            if (turmaSelect.value && selectedFile) {
+                importBtn.disabled = false;
+            } else {
+                importBtn.disabled = !selectedFile;
+            }
+        });
+        
+        // Inicializar
+        loadTurmas();
+        setupFileUpload();
+        
+        // Verificar autenticação
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${API_URL}/api/admin/status`, {
+                    headers: {
+                        'Authorization': 'Basic ' + btoa('admin:formare2026')
+                    }
+                });
+                if (!response.ok) {
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                window.location.href = 'index.html';
+            }
+        }
+        checkAuth();
     </script>
 </body>
 </html>
