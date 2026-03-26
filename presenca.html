@@ -797,8 +797,8 @@
 
         function setupDates() {
             const today = new Date();
-            const minDate = new Date(2026, 6, 14);
-            const maxDate = new Date(2026, 11, 31);
+            const minDate = new Date(2026, 3, 30);
+            const maxDate = new Date(2026, 12, 31);
             
             datePicker.min = formatDate(minDate);
             datePicker.max = formatDate(maxDate);
@@ -849,11 +849,17 @@
                 monthSelect.innerHTML = '<option value="">Selecione um mês</option>';
                 
                 const months = [
-                    { value: '2026-07', name: 'Julho 2026' },
-                    { value: '2026-08', name: 'Agosto 2026' },
-                    { value: '2026-09', name: 'Setembro 2026' },
-                    { value: '2026-10', name: 'Outubro 2026' },
-                    { value: '2026-11', name: 'Novembro 2026' }
+
+  { value: '2026-03', name: 'Março 2026' },
+  { value: '2026-04', name: 'Abril 2026' },
+  { value: '2026-05', name: 'Maio 2026' },
+  { value: '2026-06', name: 'Junho 2026' },
+  { value: '2026-07', name: 'Julho 2026' },
+  { value: '2026-08', name: 'Agosto 2026' },
+  { value: '2026-09', name: 'Setembro 2026' },
+  { value: '2026-10', name: 'Outubro 2026' },
+  { value: '2026-11', name: 'Novembro 2026' },
+  { value: '2026-12', name: 'Dezembro 2026' }
                 ];
                 
                 months.forEach(month => {
