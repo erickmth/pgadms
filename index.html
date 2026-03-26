@@ -1948,34 +1948,39 @@
             elements.logoutBtn.disabled = false;
         }
 
-        async function handleLogin() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+      async function handleLogin() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-            try {
-                showLoading(elements.loginBtn);
-                
-                const response = await fetch(`${API_URL}/api/admin/status`, {
-                    headers: { 'Authorization': 'Basic ' + btoa(username + ':' + password) },
-                    credentials: 'include'
-                });
+    try {
+        showLoading(elements.loginBtn);
+        
+        // Usar a nova rota de login que cria sessão
+        const response = await fetch(`${API_URL}/api/admin/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ username, password })
+        });
 
-                if (response.ok) {
-                    elements.loginModal.hide();
-                    enableUIElements(true);
-                    loadDashboard();
-                    loadTurmas();
-                    showMessage('Bem-vindo!', `Login realizado como ${username}`, 'success');
-                } else {
-                    throw new Error('Credenciais inválidas');
-                }
-            } catch (error) {
-                elements.loginError.textContent = 'Erro ao fazer login: ' + error.message;
-                elements.loginError.classList.remove('d-none');
-            } finally {
-                hideLoading(elements.loginBtn, '<i class="bi bi-arrow-right-circle me-2"></i>Entrar');
-            }
+        if (response.ok) {
+            const data = await response.json();
+            elements.loginModal.hide();
+            enableUIElements(true);
+            loadDashboard();
+            loadTurmas();
+            showMessage('Bem-vindo!', `Login realizado como ${data.admin}`, 'success');
+        } else {
+            const error = await response.json();
+            throw new Error(error.error || 'Credenciais inválidas');
         }
+    } catch (error) {
+        elements.loginError.textContent = 'Erro ao fazer login: ' + error.message;
+        elements.loginError.classList.remove('d-none');
+    } finally {
+        hideLoading(elements.loginBtn, '<i class="bi bi-arrow-right-circle me-2"></i>Entrar');
+    }
+}
 
         async function handleLogout() {
             try {
