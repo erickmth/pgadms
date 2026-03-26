@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Painel Admin - Sistema de Escalas</title>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -80,12 +80,10 @@
             border-bottom: 1px solid var(--sidebar-border);
         }
 
-.sidebar-logo-area img {
-    width: 65%;
-    /* filter removido */
-    opacity: 0.92;
-    
-}
+        .sidebar-logo-area img {
+            width: 65%;
+            opacity: 0.92;
+        }
 
         .sidebar-logo-area img:hover { opacity: 1; transform: scale(1.03); }
 
@@ -219,6 +217,7 @@
             align-items: center;
             justify-content: space-between;
             backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95);
         }
 
         .page-header h1 {
@@ -816,6 +815,127 @@
         }
 
         /* ═══════════════════════════════════════
+           GALERIA DE UPLOADS - NOVA SEÇÃO
+        ═══════════════════════════════════════ */
+        .upload-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .upload-card {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .upload-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .upload-thumbnail {
+            width: 100%;
+            height: 160px;
+            background: var(--surface-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .upload-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--text-muted);
+        }
+
+        .upload-info {
+            padding: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .upload-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .upload-meta {
+            font-size: 10px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .upload-type-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+
+        .empty-uploads {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        /* Modal de visualização de arquivo */
+        .file-viewer-modal .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .file-viewer-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            max-height: 70vh;
+            overflow: auto;
+        }
+
+        .file-viewer-content img {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+        }
+
+        .file-viewer-content iframe {
+            width: 100%;
+            height: 70vh;
+            border: none;
+        }
+
+        .file-viewer-content .file-info {
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* ═══════════════════════════════════════
            RESPONSIVE
         ═══════════════════════════════════════ */
         @media (max-width: 992px) {
@@ -834,6 +954,23 @@
 
             .page-body { padding: 20px 16px; }
             .page-header { padding: 16px 20px; padding-left: 64px; }
+
+            .upload-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 12px;
+            }
+
+            .upload-thumbnail { height: 120px; }
+        }
+
+        @media (max-width: 576px) {
+            .upload-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            }
+            
+            .upload-thumbnail { height: 100px; }
+            
+            .upload-name { font-size: 11px; }
         }
     </style>
 </head>
@@ -860,6 +997,11 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#dashboard">
                         <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#uploads">
+                        <i class="bi bi-images"></i> Galeria de Uploads
                     </a>
                 </li>
             </ul>
@@ -972,6 +1114,35 @@
                                     </thead>
                                     <tbody id="lastActions"></tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── GALERIA DE UPLOADS (NOVA) ─── -->
+            <div class="tab-pane fade" id="uploads">
+                <div class="page-header">
+                    <div>
+                        <h1><i class="bi bi-images me-2" style="color:var(--primary)"></i>Galeria de Uploads</h1>
+                        <div class="breadcrumb-text">Arquivos enviados para avisos e comunicados</div>
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm" id="refreshUploadsBtn">
+                        <i class="bi bi-arrow-repeat me-1"></i> Atualizar Galeria
+                    </button>
+                </div>
+                <div class="page-body">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="bi bi-grid-3x3-gap-fill"></i> Todos os Arquivos</h5>
+                            <span class="badge bg-primary" id="uploadCount">0 arquivos</span>
+                        </div>
+                        <div class="card-body">
+                            <div id="uploadsGrid" class="upload-grid">
+                                <div class="empty-uploads">
+                                    <i class="bi bi-cloud-upload" style="font-size:48px;opacity:0.5"></i>
+                                    <p class="mt-2">Carregando arquivos...</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1493,6 +1664,32 @@
         </div>
     </div>
 
+    <!-- Modal de Visualização de Arquivo (GALERIA) -->
+    <div class="modal fade file-viewer-modal" id="fileViewerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="fileViewerTitle">Visualizar Arquivo</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="file-viewer-content" id="fileViewerContent">
+                        <div class="text-center p-5">
+                            <div class="loading"></div>
+                            <p class="mt-2">Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="fileDownloadLink" class="btn btn-primary" download>
+                        <i class="bi bi-download me-2"></i>Baixar Arquivo
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Configurações iniciais
@@ -1539,11 +1736,13 @@
         confirmModal: new bootstrap.Modal('#confirmModal'),
         messageModal: new bootstrap.Modal('#messageModal'),
         avisoModal: new bootstrap.Modal('#avisoModal'),
+        fileViewerModal: new bootstrap.Modal('#fileViewerModal'),
         loginForm: document.getElementById('loginForm'),
         loginBtn: document.getElementById('loginBtn'),
         loginError: document.getElementById('loginError'),
         logoutBtn: document.getElementById('logoutBtn'),
         refreshDashboard: document.getElementById('refreshDashboard'),
+        refreshUploadsBtn: document.getElementById('refreshUploadsBtn'),
         refreshAlunosBtn: document.getElementById('refreshAlunosBtn'),
         totalTurmas: document.getElementById('totalTurmas'),
         totalAlunos: document.getElementById('totalAlunos'),
@@ -1597,7 +1796,9 @@
         previewConteudo: document.getElementById('previewConteudo'),
         imagemPreview: document.getElementById('imagemPreview'),
         salvarAvisoBtn: document.getElementById('salvarAvisoBtn'),
-        avisoModalTitle: document.getElementById('avisoModalTitle')
+        avisoModalTitle: document.getElementById('avisoModalTitle'),
+        uploadsGrid: document.getElementById('uploadsGrid'),
+        uploadCount: document.getElementById('uploadCount')
     };
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -1636,6 +1837,7 @@
         elements.loginBtn.addEventListener('click', handleLogin);
         elements.logoutBtn.addEventListener('click', handleLogout);
         elements.refreshDashboard.addEventListener('click', loadDashboard);
+        elements.refreshUploadsBtn.addEventListener('click', loadUploads);
         elements.refreshAlunosBtn.addEventListener('click', function() {
             loadTurmas().then(() => { listarAlunos(); });
         });
@@ -1680,6 +1882,7 @@
         if (targetTab) {
             targetTab.classList.add('show', 'active');
             if (tabId === '#avisos') carregarAvisos();
+            if (tabId === '#uploads') loadUploads();
         }
         if (targetLink) targetLink.classList.add('active');
     }
@@ -1706,7 +1909,7 @@
         });
 
         const mainButtons = [
-            elements.refreshDashboard, elements.refreshAlunosBtn, elements.listarAlunosBtn,
+            elements.refreshDashboard, elements.refreshUploadsBtn, elements.refreshAlunosBtn, elements.listarAlunosBtn,
             elements.carregarEscalaBtn, elements.salvarEscalaBtn, elements.exportAlunosBtn,
             elements.exportEscalasBtn, elements.exportFullBackupBtn, elements.importBackupBtn,
             elements.addItemEscalaBtn, elements.novoAvisoBtn
@@ -1883,6 +2086,132 @@
             showMessage('Erro', `Erro ao carregar turmas: ${error.message}`, 'error');
             return [];
         }
+    }
+
+    // =============================================
+    // FUNÇÕES DA GALERIA DE UPLOADS
+    // =============================================
+    async function loadUploads() {
+        try {
+            showLoading(elements.refreshUploadsBtn);
+            elements.uploadsGrid.innerHTML = '<div class="empty-uploads"><div class="loading"></div><p class="mt-2">Carregando arquivos...</p></div>';
+            
+            const response = await fetch(`${API_URL}/api/admin/uploads/list`, { headers: getAuthHeader() });
+            if (!response.ok) throw new Error('Erro ao carregar lista de uploads');
+            
+            const data = await response.json();
+            const files = data.files || [];
+            
+            if (files.length === 0) {
+                elements.uploadsGrid.innerHTML = `
+                    <div class="empty-uploads">
+                        <i class="bi bi-cloud-upload" style="font-size:48px;opacity:0.5"></i>
+                        <p class="mt-2">Nenhum arquivo enviado ainda</p>
+                        <small class="text-muted">Os arquivos aparecerão aqui quando forem enviados nos avisos</small>
+                    </div>
+                `;
+                elements.uploadCount.textContent = '0 arquivos';
+                return;
+            }
+            
+            elements.uploadCount.textContent = `${files.length} arquivo${files.length !== 1 ? 's' : ''}`;
+            elements.uploadsGrid.innerHTML = '';
+            
+            files.forEach(file => {
+                const card = document.createElement('div');
+                card.className = 'upload-card';
+                card.setAttribute('data-url', file.url);
+                card.setAttribute('data-name', file.name);
+                card.setAttribute('data-type', file.type);
+                card.setAttribute('data-thumbnail', file.thumbnail_url || '');
+                card.setAttribute('data-icon', file.icon || '📄');
+                
+                const fileType = file.type.split('/')[0];
+                const isImage = fileType === 'image';
+                
+                card.innerHTML = `
+                    <div class="upload-thumbnail">
+                        ${isImage && file.thumbnail_url ? 
+                            `<img src="${API_URL}${file.thumbnail_url}" alt="${file.name}" loading="lazy">` : 
+                            `<i class="bi ${getIconClass(file.icon)} upload-icon"></i>`
+                        }
+                        <span class="upload-type-badge">${file.type.split('/')[1]?.toUpperCase() || 'ARQUIVO'}</span>
+                    </div>
+                    <div class="upload-info">
+                        <div class="upload-name" title="${file.name}">${file.name}</div>
+                        <div class="upload-meta">
+                            <span>${file.size_formatted}</span>
+                            <span>${file.modified_formatted?.split(' ')[0] || ''}</span>
+                        </div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => openFileViewer(file));
+                elements.uploadsGrid.appendChild(card);
+            });
+            
+        } catch (error) {
+            console.error('Erro ao carregar uploads:', error);
+            elements.uploadsGrid.innerHTML = `
+                <div class="empty-uploads">
+                    <i class="bi bi-exclamation-triangle" style="font-size:48px;color:var(--warning)"></i>
+                    <p class="mt-2">Erro ao carregar arquivos</p>
+                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="loadUploads()">Tentar novamente</button>
+                </div>
+            `;
+        } finally {
+            hideLoading(elements.refreshUploadsBtn, '<i class="bi bi-arrow-repeat me-1"></i> Atualizar Galeria');
+        }
+    }
+    
+    function getIconClass(icon) {
+        const iconMap = {
+            '🖼️': 'bi-image',
+            '🎬': 'bi-film',
+            '🎵': 'bi-music-note-beamed',
+            '📄': 'bi-file-pdf',
+            '📝': 'bi-file-word',
+            '📊': 'bi-file-spreadsheet',
+            '📽️': 'bi-file-slides',
+            '📃': 'bi-file-text',
+            '🗜️': 'bi-file-zip',
+            '💻': 'bi-file-code',
+            '📁': 'bi-folder'
+        };
+        return iconMap[icon] || 'bi-file';
+    }
+    
+    function openFileViewer(file) {
+        const viewerTitle = document.getElementById('fileViewerTitle');
+        const viewerContent = document.getElementById('fileViewerContent');
+        const downloadLink = document.getElementById('fileDownloadLink');
+        
+        viewerTitle.textContent = `Visualizar: ${file.name}`;
+        downloadLink.href = `${API_URL}${file.url}`;
+        downloadLink.download = file.name;
+        
+        const fileType = file.type.split('/')[0];
+        const isImage = fileType === 'image';
+        
+        viewerContent.innerHTML = '';
+        
+        if (isImage) {
+            viewerContent.innerHTML = `
+                <img src="${API_URL}${file.url}" alt="${file.name}" style="max-width:100%;max-height:70vh;object-fit:contain">
+            `;
+        } else {
+            viewerContent.innerHTML = `
+                <div class="file-info">
+                    <i class="bi ${getIconClass(file.icon)}" style="font-size:64px;color:var(--text-muted)"></i>
+                    <h5 class="mt-3">${file.name}</h5>
+                    <p class="text-muted">${file.type} • ${file.size_formatted}</p>
+                    <p>Este tipo de arquivo não pode ser visualizado diretamente.</p>
+                    <p>Clique no botão abaixo para baixar.</p>
+                </div>
+            `;
+        }
+        
+        elements.fileViewerModal.show();
     }
 
     async function addAluno(e) {
@@ -2384,6 +2713,13 @@
                 </div>
             </div>
         `;
+        
+        const editBtn = div.querySelector('.btn-editar-aviso');
+        if (editBtn) editBtn.addEventListener('click', () => abrirModalAviso(aviso));
+        
+        const desativarBtn = div.querySelector('.btn-desativar-aviso');
+        if (desativarBtn) desativarBtn.addEventListener('click', () => desativarAviso(aviso.id));
+        
         if (aviso.has_countdown && !expirado) iniciarContagemRegressiva(aviso.id, aviso.end_at);
         return div;
     }
@@ -2413,6 +2749,19 @@
             const response = await fetch(`${API_URL}/api/admin/alerts/${avisoId}`, { method: 'DELETE', headers: getAuthHeader() });
             if (!response.ok) throw new Error('Erro ao excluir aviso');
             showMessage('Sucesso', 'Aviso excluído com sucesso', 'success');
+            carregarAvisos();
+        } catch (error) { showMessage('Erro', error.message, 'error'); }
+    }
+
+    async function desativarAviso(avisoId) {
+        try {
+            const response = await fetch(`${API_URL}/api/admin/alerts/${avisoId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                body: JSON.stringify({ active: false })
+            });
+            if (!response.ok) throw new Error('Erro ao desativar aviso');
+            showMessage('Sucesso', 'Aviso desativado com sucesso', 'success');
             carregarAvisos();
         } catch (error) { showMessage('Erro', error.message, 'error'); }
     }
