@@ -244,6 +244,7 @@
         /* ═══════════════════════════════════════
            CARDS
         ═══════════════════════════════════════ */
+        
         .card {
             border: 1px solid var(--border);
             border-radius: var(--radius);
@@ -253,7 +254,10 @@
             transition: box-shadow 0.3s ease, transform 0.3s ease;
             overflow: hidden;
         }
-
+        
+.card-text {
+    white-space: normal;
+}
         .card:hover {
             box-shadow: var(--card-shadow-hover);
             transform: translateY(-2px);
@@ -1105,7 +1109,7 @@
                             <div class="table-responsive">
                                 <table class="table mb-0">
                                     <thead>
-                                        32
+                                        
                                             <th>Data/Hora</th>
                                             <th>Ação</th>
                                             <th>Detalhes</th>
@@ -1218,7 +1222,7 @@
                                     <div class="table-responsive">
                                         <table class="table mb-0">
                                             <thead>
-                                                32
+                                            
                                                     <th>Turma</th>
                                                     <th>EDV</th>
                                                     <th>Nome</th>
@@ -1317,7 +1321,7 @@
                             <div class="table-responsive">
                                 <table class="table mb-0">
                                     <thead>
-                                        32
+                                        
                                             <th>Título</th>
                                             <th>Status</th>
                                             <th>Início</th>
@@ -1513,7 +1517,7 @@
                     <form id="loginForm">
                         <div class="mb-3">
                             <label for="username" class="form-label">Usuário</label>
-                            <input type="text" class="form-control" id="username" required placeholder="Seu usuário">
+                            <input type="text" class="form-control" id="username" required placeholder="Seu usuário" autocomplete="username">
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Senha</label>
@@ -1690,7 +1694,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Configurações iniciais
     const API_URL = 'https://erickmth.pythonanywhere.com';
@@ -1818,7 +1822,6 @@
         if (!token) return false;
         
         try {
-            // Testar token com uma rota protegida
             const response = await fetch(`${API_URL}/api/admin/backup`, {
                 headers: getAuthHeader()
             });
@@ -2038,10 +2041,10 @@
     }
 
     async function testarConexaoAPI() {
+        const token = sessionStorage.getItem('adminToken');
+        if (!token) return false;
+        
         try {
-            const token = sessionStorage.getItem('adminToken');
-            if (!token) return false;
-            
             const response = await fetch(`${API_URL}/api/admin/backup`, {
                 headers: getAuthHeader()
             });
@@ -2326,9 +2329,9 @@
                     const isAdmin = nome.includes('👩‍🏫') || nome.includes('👨‍🏫');
                     const nomeDisplay = isAdmin ? nome.replace(/👩‍🏫|👨‍🏫/g, '') : nome;
                     row.innerHTML = `
-                          <td><span class="badge" style="background:var(--surface-3);color:var(--text);font-weight:600;font-size:11px">${turma}</span></td>
-                          <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px">${edv}</span></td>
-                          <td>${nomeDisplay} ${isAdmin ? '<span class="badge bg-warning text-dark">Admin</span>' : ''}</td>
+                           <td><span class="badge" style="background:var(--surface-3);color:var(--text);font-weight:600;font-size:11px">${turma}</span></td>
+                           <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px">${edv}</span></td>
+                           <td>${nomeDisplay} ${isAdmin ? '<span class="badge bg-warning text-dark">Admin</span>' : ''}</td>
                         <td class="action-buttons">
                             <button class="btn btn-sm btn-danger btn-remove-aluno" data-turma="${turma}" data-edv="${edv}">
                                 <i class="bi bi-trash"></i>
@@ -2715,7 +2718,7 @@
         elements.todosAvisos.innerHTML = '';
         const avisosValidos = avisos.filter(aviso => !aviso.deleted_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         if (avisosValidos.length === 0) {
-            elements.todosAvisos.innerHTML = `<td colspan="6" class="text-center text-muted py-4"><i class="bi bi-inbox me-2"></i>Nenhum aviso cadastrado</td>`;
+            elements.todosAvisos.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-inbox me-2"></i>Nenhum aviso cadastrado</td></tr>`;
             return;
         }
         avisosValidos.forEach(aviso => {
@@ -2731,11 +2734,11 @@
             else if (!aviso.active) { status = 'Inativo'; statusClass = 'secondary'; }
 
             row.innerHTML = `
-                <td><strong>${aviso.title || 'Sem título'}</strong>\\
-                <td><span class="badge bg-${statusClass}">${status}</span>\\
-                <td><span style="font-size:12px;color:var(--text-muted)">${inicio}</span>\\
-                <td><span style="font-size:12px;color:var(--text-muted)">${fim}</span>\\
-                <td>${aviso.stats?.view || 0}\\
+                <td><strong>${aviso.title || 'Sem título'}</strong>
+                <td><span class="badge bg-${statusClass}">${status}</span>
+                <td><span style="font-size:12px;color:var(--text-muted)">${inicio}</span>
+                <td><span style="font-size:12px;color:var(--text-muted)">${fim}</span>
+                <td>${aviso.stats?.view || 0}
                 <td class="action-buttons">
                     <button class="btn btn-sm btn-primary btn-editar-aviso" data-id="${aviso.id}"><i class="bi bi-pencil"></i></button>
                     <button class="btn btn-sm btn-danger btn-excluir-aviso" data-id="${aviso.id}"><i class="bi bi-trash"></i></button>
