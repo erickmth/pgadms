@@ -22,20 +22,16 @@
             --warning: #f39c12;
             --gray-100: #f8f9fa;
             --gray-200: #e9ecef;
-            --gray-300: #dee2e6;
             --gray-600: #6c757d;
             --gray-800: #343a40;
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
             --radius: 12px;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
-            color: var(--gray-800);
-            line-height: 1.5;
             min-height: 100vh;
             padding: 20px;
         }
@@ -52,18 +48,12 @@
         .logo {
             height: 70px;
             width: auto;
-            transition: transform 0.3s;
-        }
-
-        .logo:hover {
-            transform: scale(1.02);
         }
 
         .header-title {
             font-size: 1.8rem;
             font-weight: 700;
             color: var(--primary);
-            text-align: center;
         }
 
         .user-info {
@@ -78,13 +68,6 @@
             gap: 15px;
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--gray-200);
-        }
-
-        .user-details {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
         }
 
         .user-name {
@@ -108,12 +91,9 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            transition: color 0.3s;
         }
 
-        .logout-link:hover {
-            color: var(--primary);
-        }
+        .logout-link:hover { color: var(--primary); }
 
         .container {
             max-width: 900px;
@@ -161,14 +141,11 @@
             font-size: 1rem;
             min-width: 250px;
             text-align: center;
-            transition: all 0.3s;
-            background: white;
         }
 
         .date-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(236, 51, 51, 0.2);
         }
 
         .attendance-list {
@@ -189,23 +166,15 @@
             transition: all 0.2s;
         }
 
-        .person-card:hover {
-            border-color: var(--primary);
-            box-shadow: var(--shadow-sm);
-        }
+        .person-card:hover { border-color: var(--primary); }
 
         .person-name {
             font-weight: 500;
             font-size: 1rem;
             color: var(--gray-800);
-            word-break: break-word;
-            max-width: 50%;
         }
 
-        .status-group {
-            display: flex;
-            gap: 8px;
-        }
+        .status-group { display: flex; gap: 8px; }
 
         .status-btn {
             width: 44px;
@@ -214,11 +183,8 @@
             border-radius: 12px;
             cursor: pointer;
             font-size: 1.2rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             opacity: 0.6;
+            transition: all 0.2s;
         }
 
         .status-btn.active {
@@ -260,41 +226,16 @@
             gap: 10px;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
 
-        .btn-primary:hover:not(:disabled) {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #27ae60; transform: translateY(-2px); }
 
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
+        .btn-report { background: #9b59b6; color: white; }
+        .btn-report:hover { background: #8e44ad; transform: translateY(-2px); }
 
-        .btn-success:hover:not(:disabled) {
-            background: #27ae60;
-            transform: translateY(-2px);
-        }
-
-        .btn-report {
-            background: #9b59b6;
-            color: white;
-        }
-
-        .btn-report:hover:not(:disabled) {
-            background: #8e44ad;
-            transform: translateY(-2px);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .btn.loading {
             position: relative;
@@ -329,7 +270,7 @@
             align-items: center;
             gap: 12px;
             z-index: 2000;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-md);
             animation: slideDown 0.3s ease;
         }
 
@@ -372,32 +313,13 @@
             transition: transform 0.3s;
         }
 
-        .modal-overlay.active .modal-container {
-            transform: scale(1);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
+        .modal-overlay.active .modal-container { transform: scale(1); }
 
         .modal-close {
             background: none;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: var(--gray-600);
-        }
-
-        .modal-body {
-            margin-bottom: 24px;
         }
 
         .month-select {
@@ -409,64 +331,19 @@
             margin-bottom: 20px;
         }
 
-        @media (max-width: 600px) {
-            body { padding: 12px; }
-            .header-title { font-size: 1.3rem; }
-            .logo { height: 50px; }
-            .person-card { flex-direction: column; align-items: stretch; gap: 12px; }
-            .person-name { max-width: 100%; text-align: center; }
-            .status-group { justify-content: center; }
-            .btn { padding: 12px; font-size: 0.9rem; }
-            .user-info { flex-direction: column; text-align: center; }
-        }
-
-        .attendance-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .attendance-list::-webkit-scrollbar-track {
-            background: var(--gray-200);
-            border-radius: 10px;
-        }
-
-        .attendance-list::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-        }
-
         .empty-message {
             text-align: center;
             padding: 40px;
             color: var(--gray-600);
         }
-        
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        .loading-text {
-            color: white;
-            font-size: 16px;
+
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .header-title { font-size: 1.3rem; }
+            .logo { height: 50px; }
+            .person-card { flex-direction: column; align-items: stretch; gap: 12px; }
+            .person-name { text-align: center; }
+            .status-group { justify-content: center; }
         }
     </style>
 </head>
@@ -486,10 +363,10 @@
             <div class="legend-item"><div class="legend-color" style="background: var(--info);"></div><span>Atestado</span></div>
         </div>
 
-        <div class="user-info" id="userInfo">
+        <div class="user-info">
             <div class="user-details">
                 <span class="user-name" id="userName">Carregando...</span>
-                <span class="turma-name" id="turmaName">Formare 2026</span>
+                <span class="turma-name">Formare 2026</span>
             </div>
             <a href="#" class="logout-link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</a>
         </div>
@@ -517,8 +394,8 @@
 
     <div class="modal-overlay" id="reportModal">
         <div class="modal-container">
-            <div class="modal-header">
-                <h3 class="modal-title"><i class="fas fa-calendar-alt"></i> Relatório Mensal</h3>
+            <div class="modal-header" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <h3><i class="fas fa-calendar-alt"></i> Relatório Mensal</h3>
                 <button class="modal-close" id="closeReportModal">&times;</button>
             </div>
             <div class="modal-body">
@@ -543,7 +420,6 @@
         let students = [];
         let currentAttendance = {};
         let selectedDate = '';
-        let isLoading = false;
         
         // Elementos DOM
         const datePicker = document.getElementById('datePicker');
@@ -578,71 +454,6 @@
             return 'Administrador';
         }
 
-        function showLoadingOverlay(message = 'Carregando...') {
-            if (document.getElementById('loadingOverlay')) return;
-            
-            const overlay = document.createElement('div');
-            overlay.id = 'loadingOverlay';
-            overlay.className = 'loading-overlay';
-            overlay.innerHTML = `
-                <div class="loading-spinner"></div>
-                <div class="loading-text">${message}</div>
-            `;
-            document.body.appendChild(overlay);
-        }
-
-        function hideLoadingOverlay() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) overlay.remove();
-        }
-
-        async function checkSession() {
-            const token = sessionStorage.getItem('adminToken');
-            if (!token) {
-                console.log('❌ Nenhum token encontrado');
-                return false;
-            }
-            
-            try {
-                console.log('🔍 Verificando token...');
-                const response = await fetch(`${API_BASE}/admin/backup`, {
-                    headers: getAuthHeader()
-                });
-                
-                if (response.ok) {
-                    console.log('✅ Token válido');
-                    return true;
-                } else if (response.status === 401) {
-                    console.log('❌ Token inválido/expirado');
-                    return false;
-                }
-                return false;
-            } catch (error) {
-                console.error('Erro ao verificar sessão:', error);
-                return false;
-            }
-        }
-
-        async function ensureAuthenticated() {
-            showLoadingOverlay('Verificando autenticação...');
-            
-            const isValid = await checkSession();
-            
-            if (!isValid) {
-                console.log('🔄 Redirecionando para login...');
-                sessionStorage.removeItem('adminToken');
-                sessionStorage.removeItem('adminName');
-                sessionStorage.setItem('redirectAfterLogin', 'presenca.html');
-                hideLoadingOverlay();
-                window.location.href = 'index.html';
-                return false;
-            }
-            
-            hideLoadingOverlay();
-            return true;
-        }
-
-        // Helper: Mostrar notificação
         function showNotification(message, type = 'success') {
             const notif = document.createElement('div');
             notif.className = `notification ${type}`;
@@ -663,10 +474,7 @@
 
         function formatDate(date) {
             const d = new Date(date);
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         }
 
         function formatDisplayDate(dateStr) {
@@ -685,8 +493,6 @@
         // ============================================
         async function fetchStudents() {
             try {
-                showLoadingOverlay('Carregando lista de alunos...');
-                
                 const response = await fetch(`${API_BASE}/admin/turmas/${encodeURIComponent(TURMA_NOME)}/alunos`, {
                     headers: getAuthHeader()
                 });
@@ -705,21 +511,18 @@
                     isAdmin: nome.includes('👩‍🏫') || nome.includes('👨‍🏫')
                 })).filter(s => !s.isAdmin);
                 
-                hideLoadingOverlay();
                 renderStudentList();
                 return students;
             } catch (error) {
-                hideLoadingOverlay();
                 console.error('Erro ao carregar alunos:', error);
                 if (error.message === 'Não autorizado') {
                     showNotification('Sessão expirada, redirecionando...', 'error');
                     setTimeout(() => {
-                        sessionStorage.clear();
                         window.location.href = 'index.html';
                     }, 1500);
                 } else {
                     showNotification('Erro ao carregar lista de alunos', 'error');
-                    attendanceList.innerHTML = '<div class="empty-message">❌ Erro ao carregar alunos. Verifique sua conexão.</div>';
+                    attendanceList.innerHTML = '<div class="empty-message">❌ Erro ao carregar alunos</div>';
                 }
                 return [];
             }
@@ -727,7 +530,7 @@
 
         function renderStudentList() {
             if (!students.length) {
-                attendanceList.innerHTML = '<div class="empty-message">📭 Nenhum aluno cadastrado nesta turma.</div>';
+                attendanceList.innerHTML = '<div class="empty-message">📭 Nenhum aluno cadastrado</div>';
                 return;
             }
             
@@ -763,9 +566,7 @@
             const status = btn.dataset.status;
             const card = document.querySelector(`.person-card[data-edv="${edv}"]`);
             
-            card.querySelectorAll('.status-btn').forEach(b => {
-                b.classList.remove('active');
-            });
+            card.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
             if (!currentAttendance[selectedDate]) {
@@ -788,13 +589,11 @@
         }
 
         // ============================================
-        // BUSCAR CHAMADA EXISTENTE
+        // BUSCAR CHAMADA EXISTENTE (rota pública - sem token)
         // ============================================
         async function fetchAttendance(date) {
             try {
-                const response = await fetch(`${API_BASE}/presenca/obter/${date}?turma=${encodeURIComponent(TURMA_NOME)}`, {
-                    headers: getAuthHeader()
-                });
+                const response = await fetch(`${API_BASE}/presenca/obter/${date}?turma=${encodeURIComponent(TURMA_NOME)}`);
                 
                 if (response.status === 404) {
                     return null;
@@ -862,13 +661,10 @@
                 return;
             }
             
-            const responsavel = getUserDisplayName();
-            
             const payload = {
                 data: selectedDate,
                 turma: TURMA_NOME,
-                registros: registros,
-                responsavel: responsavel
+                registros: registros
             };
             
             const btn = isUpdate ? saveChangesBtn : submitBtn;
@@ -932,9 +728,7 @@
         // ============================================
         async function loadAvailableMonths() {
             try {
-                const response = await fetch(`${API_BASE}/presenca/meses_disponiveis`, {
-                    headers: getAuthHeader()
-                });
+                const response = await fetch(`${API_BASE}/presenca/meses_disponiveis`);
                 if (!response.ok) throw new Error('Erro ao carregar meses');
                 
                 const data = await response.json();
@@ -976,32 +770,9 @@
             }
             
             const url = `${API_BASE}/presenca/relatorio_excel/${mes}?turma=${encodeURIComponent(TURMA_NOME)}`;
-            
-            showLoading(generateReportBtn);
-            fetch(url, { headers: getAuthHeader() })
-                .then(response => {
-                    if (!response.ok) throw new Error('Erro ao gerar relatório');
-                    return response.blob();
-                })
-                .then(blob => {
-                    const link = document.createElement('a');
-                    const blobUrl = URL.createObjectURL(blob);
-                    link.href = blobUrl;
-                    link.download = `relatorio_chamadas_${mes}.xlsx`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(blobUrl);
-                    reportModal.classList.remove('active');
-                    showNotification('Relatório gerado com sucesso!', 'success');
-                })
-                .catch(error => {
-                    console.error('Erro ao baixar relatório:', error);
-                    showNotification('Erro ao gerar relatório', 'error');
-                })
-                .finally(() => {
-                    hideLoading(generateReportBtn);
-                });
+            window.open(url, '_blank');
+            reportModal.classList.remove('active');
+            showNotification('Relatório gerado com sucesso!', 'success');
         }
 
         // ============================================
@@ -1043,33 +814,39 @@
         });
 
         // ============================================
+        // VERIFICAÇÃO DE AUTENTICAÇÃO SIMPLES
+        // ============================================
+        async function checkAndInit() {
+            const token = sessionStorage.getItem('adminToken');
+            
+            if (!token) {
+                showNotification('Faça login primeiro', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+                return false;
+            }
+            
+            userNameSpan.textContent = getUserDisplayName();
+            return true;
+        }
+
+        // ============================================
         // INICIALIZAÇÃO
         // ============================================
         async function init() {
             console.log('🚀 Iniciando presenca.html...');
             
-            // Verifica autenticação
-            const isValid = await ensureAuthenticated();
-            if (!isValid) return;
+            const authenticated = await checkAndInit();
+            if (!authenticated) return;
             
-            // Exibe nome do usuário
-            userNameSpan.textContent = getUserDisplayName();
-            
-            // Configura datas
             setupDates();
-            
-            // Carrega alunos
             await fetchStudents();
-            
-            // Carrega chamada do dia
-            if (students.length && datePicker.value) {
-                await loadAttendanceForDate(datePicker.value);
-            }
+            await loadAttendanceForDate(datePicker.value);
             
             console.log('✅ Página carregada com sucesso!');
         }
         
-        // Executa inicialização
         init();
     </script>
 </body>
