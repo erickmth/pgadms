@@ -445,7 +445,7 @@
 
     <div class="app-header">
         <a href="index.html">
-            <img src="logu-black.svg" alt="Logo" class="logo">
+            <img src="logu-black.svg" alt="Logo" class="logo" onerror="this.src='logu.svg'">
         </a>
         <h1 class="header-title">📋 Sistema de Chamada</h1>
     </div>
@@ -505,14 +505,14 @@
 
     <script>
         // ============================================
-        // CONFIGURAÇÕES E AUTENTICAÇÃO
+        // CONFIGURAÇÕES
         // ============================================
         
         const API_BASE = 'https://erickmth.pythonanywhere.com/api';
         const TURMA_NOME = 'Formare 2026';
         
         let students = [];
-        let currentAttendance = {};      // { "YYYY-MM-DD": { edv: status } }
+        let currentAttendance = {};
         let selectedDate = '';
         
         // Elementos DOM
@@ -528,16 +528,92 @@
         const userNameSpan = document.getElementById('userName');
         const logoutBtn = document.getElementById('logoutBtn');
 
-        // Helper: Obter credenciais de autenticação (Basic Auth)
+        // ============================================
+        // FUNÇÕES DE AUTENTICAÇÃO
+        // ============================================
+        
         function getAuthHeader() {
-            // Tenta recuperar credenciais do sessionStorage (setadas no login)
+            // Tenta recuperar do sessionStorage (setado no login do index.html)
             let auth = sessionStorage.getItem('adminAuth');
+            
             if (auth) {
                 return { 'Authorization': 'Basic ' + auth };
             }
-            // Fallback para credenciais padrão (caso admin já esteja logado por outro meio)
+            
+            // Tenta recuperar do localStorage (remember me)
+            const savedUsername = localStorage.getItem('adminUsername');
+            const savedPassword = localStorage.getItem('adminPassword');
+            
+            if (savedUsername && savedPassword) {
+                auth = btoa(savedUsername + ':' + savedPassword);
+                sessionStorage.setItem('adminAuth', auth);
+                return { 'Authorization': 'Basic ' + auth };
+            }
+            
+            // Credenciais padrão como último recurso
             const defaultAuth = btoa('admin:formare2026');
             return { 'Authorization': 'Basic ' + defaultAuth };
+        }
+        
+        function isAuthenticated() {
+            // Verifica se tem auth no sessionStorage
+            if (sessionStorage.getItem('adminAuth')) {
+                return true;
+            }
+            
+            // Verifica se tem credenciais no localStorage
+            if (localStorage.getItem('adminUsername') && localStorage.getItem('adminPassword')) {
+                return true;
+            }
+            
+            return false;
+        }
+        
+        function getUserDisplayName() {
+            // Tenta pegar o nome do admin logado
+            const nome = sessionStorage.getItem('nome');
+            if (nome && nome !== 'null' && nome !== 'undefined') {
+                return decodeURIComponent(nome);
+            }
+            
+            const admin = sessionStorage.getItem('admin');
+            if (admin && admin !== 'null' && admin !== 'undefined') {
+                return admin;
+            }
+            
+            // Se não tem, tenta pegar do localStorage
+            const savedUsername = localStorage.getItem('adminUsername');
+            if (savedUsername) {
+                return savedUsername;
+            }
+            
+            return 'Administrador';
+        }
+        
+        async function verifyAndRestoreSession() {
+            // Se já tem auth, testa se funciona
+            if (isAuthenticated()) {
+                try {
+                    const response = await fetch(`${API_BASE}/admin/status`, {
+                        headers: getAuthHeader()
+                    });
+                    
+                    if (response.ok) {
+                        console.log('✅ Sessão válida');
+                        return true;
+                    }
+                } catch (e) {
+                    console.log('Erro ao verificar sessão:', e);
+                }
+            }
+            
+            // Se chegou aqui, precisa redirecionar para login
+            console.log('❌ Sessão inválida, redirecionando para login');
+            sessionStorage.clear();
+            // Guarda a intenção de voltar
+            sessionStorage.setItem('redirectAfterLogin', 'presenca.html');
+            window.location.href = 'index.html';
+            return false;
         }
 
         // Helper: Mostrar notificação
@@ -579,46 +655,7 @@
         }
 
         // ============================================
-        // GERENCIAMENTO DE SESSÃO E REDIRECIONAMENTO
-        // ============================================
-        
-        function isUserAuthenticated() {
-            // Verifica se existe token de admin no sessionStorage OU se o usuário logado é admin via session
-            const adminAuth = sessionStorage.getItem('adminAuth');
-            const adminUser = sessionStorage.getItem('admin');
-            const nome = sessionStorage.getItem('nome');
-            
-            if (adminAuth || adminUser === 'true' || nome) {
-                return true;
-            }
-            return false;
-        }
-
-        function getUserDisplayName() {
-            // Prioridade: nome do admin logado via sessionStorage, ou "Administrador"
-            const nome = sessionStorage.getItem('nome');
-            if (nome && nome !== 'undefined') {
-                return decodeURIComponent(nome);
-            }
-            const admin = sessionStorage.getItem('admin');
-            if (admin && admin !== 'false') {
-                return admin;
-            }
-            return 'Administrador';
-        }
-
-        function ensureAuthenticated() {
-            if (!isUserAuthenticated()) {
-                // Guarda a intenção de retorno
-                sessionStorage.setItem('redirectAfterLogin', 'presenca.html');
-                window.location.href = 'index.html';
-                return false;
-            }
-            return true;
-        }
-
-        // ============================================
-        // BUSCAR ALUNOS (somente alunos comuns, exclui admins)
+        // BUSCAR ALUNOS
         // ============================================
         async function fetchStudents() {
             try {
@@ -627,28 +664,37 @@
                 });
                 
                 if (!response.ok) {
+                    if (response.status === 401) {
+                        throw new Error('Não autorizado');
+                    }
                     throw new Error('Erro ao carregar alunos');
                 }
                 
                 const data = await response.json();
-                // data é um objeto: { "12345": "Nome Aluno", ... }
                 students = Object.entries(data).map(([edv, nome]) => ({
                     edv,
                     nome: nome.replace(/👩‍🏫|👨‍🏫/g, '').trim(),
                     isAdmin: nome.includes('👩‍🏫') || nome.includes('👨‍🏫')
-                })).filter(s => !s.isAdmin);  // Apenas alunos comuns para chamada
+                })).filter(s => !s.isAdmin);
                 
                 renderStudentList();
                 return students;
             } catch (error) {
                 console.error('Erro ao carregar alunos:', error);
-                showNotification('Erro ao carregar lista de alunos', 'error');
-                attendanceList.innerHTML = '<div class="empty-message">❌ Erro ao carregar alunos. Verifique sua conexão.</div>';
+                if (error.message === 'Não autorizado') {
+                    showNotification('Sessão expirada, redirecionando...', 'error');
+                    setTimeout(() => {
+                        sessionStorage.clear();
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    showNotification('Erro ao carregar lista de alunos', 'error');
+                    attendanceList.innerHTML = '<div class="empty-message">❌ Erro ao carregar alunos. Verifique sua conexão.</div>';
+                }
                 return [];
             }
         }
 
-        // Renderizar lista de alunos com botões de status
         function renderStudentList() {
             if (!students.length) {
                 attendanceList.innerHTML = '<div class="empty-message">📭 Nenhum aluno cadastrado nesta turma.</div>';
@@ -672,18 +718,15 @@
                 </div>
             `).join('');
             
-            // Atribuir eventos
             document.querySelectorAll('.status-btn').forEach(btn => {
                 btn.addEventListener('click', handleStatusClick);
             });
             
-            // Se já existe status salvo para a data atual, aplica
             if (selectedDate && currentAttendance[selectedDate]) {
                 applySavedStatus(currentAttendance[selectedDate]);
             }
         }
 
-        // Quando clica em um botão de status
         function handleStatusClick(e) {
             const btn = e.currentTarget;
             const edv = btn.dataset.edv;
@@ -701,7 +744,6 @@
             currentAttendance[selectedDate][edv] = status;
         }
 
-        // Aplica os status salvos para a data atual
         function applySavedStatus(statusMap) {
             Object.entries(statusMap).forEach(([edv, status]) => {
                 const card = document.querySelector(`.person-card[data-edv="${edv}"]`);
@@ -750,10 +792,8 @@
             }
         }
 
-        // Carrega chamada para a data selecionada
         async function loadAttendanceForDate(date) {
             selectedDate = date;
-            // Limpa destaque visual
             document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
             
             const savedStatus = await fetchAttendance(date);
@@ -771,7 +811,7 @@
         }
 
         // ============================================
-        // SALVAR CHAMADA (POST)
+        // SALVAR CHAMADA
         // ============================================
         async function saveAttendance(isUpdate = false) {
             if (!selectedDate) {
@@ -780,11 +820,10 @@
             }
             
             const statusMap = currentAttendance[selectedDate] || {};
-            // Converte para array de registros com nome e status
             const registros = students.map(student => {
                 const status = statusMap[student.edv] || '';
                 return { name: student.nome, status: status };
-            }).filter(r => r.status); // só envia quem tem status definido
+            }).filter(r => r.status);
             
             if (registros.length === 0) {
                 showNotification('Selecione o status de pelo menos um aluno', 'warning');
@@ -819,12 +858,12 @@
                 }
                 
                 showNotification(`Chamada ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`, 'success');
-                // Atualiza a interface para modo edição
+                
                 if (!isUpdate) {
                     submitBtn.style.display = 'none';
                     saveChangesBtn.style.display = 'block';
                 }
-                // Recarrega os dados para garantir consistência
+                
                 await loadAttendanceForDate(selectedDate);
                 
             } catch (error) {
@@ -836,12 +875,11 @@
         }
 
         // ============================================
-        // CONFIGURAÇÃO DE DATAS (período letivo)
+        // CONFIGURAÇÃO DE DATAS
         // ============================================
         function setupDates() {
             const today = new Date();
-            // Período de 14/07/2026 a 31/12/2026 (conforme seu backend)
-            const minDate = new Date(2026, 6, 14);  // mês 6 = julho
+            const minDate = new Date(2026, 6, 14);
             const maxDate = new Date(2026, 11, 31);
             
             datePicker.min = formatDate(minDate);
@@ -851,7 +889,6 @@
             if (today < minDate) initialDate = minDate;
             if (today > maxDate) initialDate = maxDate;
             
-            // Se for final de semana, avança para segunda-feira
             while (initialDate.getDay() === 0 || initialDate.getDay() === 6) {
                 initialDate.setDate(initialDate.getDate() + 1);
             }
@@ -861,7 +898,7 @@
         }
 
         // ============================================
-        // RELATÓRIO: MESES DISPONÍVEIS E DOWNLOAD
+        // RELATÓRIO
         // ============================================
         async function loadAvailableMonths() {
             try {
@@ -875,7 +912,6 @@
                 
                 monthSelect.innerHTML = '<option value="">Selecione um mês</option>';
                 
-                // Lista de meses do período letivo
                 const months = [
                     { value: '2026-07', name: 'Julho 2026' },
                     { value: '2026-08', name: 'Agosto 2026' },
@@ -909,8 +945,6 @@
                 return;
             }
             
-            // Constrói a URL com autenticação via query param? Não, usa header mas o download via link precisa de auth.
-            // Como o endpoint de relatório exige autenticação, usamos fetch com blob para manter o header.
             const url = `${API_BASE}/presenca/relatorio_excel/${mes}?turma=${encodeURIComponent(TURMA_NOME)}`;
             
             showLoading(generateReportBtn);
@@ -979,11 +1013,14 @@
         });
 
         // ============================================
-        // INICIALIZAÇÃO PRINCIPAL
+        // INICIALIZAÇÃO
         // ============================================
         async function init() {
-            // Verifica autenticação antes de qualquer coisa
-            if (!ensureAuthenticated()) return;
+            console.log('🚀 Iniciando presenca.html...');
+            
+            // Primeiro, verifica se tem sessão válida
+            const isValid = await verifyAndRestoreSession();
+            if (!isValid) return;
             
             // Exibe nome do usuário
             userNameSpan.textContent = getUserDisplayName();
@@ -991,6 +1028,8 @@
             setupDates();
             await fetchStudents();
             await loadAttendanceForDate(datePicker.value);
+            
+            console.log('✅ Página carregada com sucesso!');
         }
         
         init();
