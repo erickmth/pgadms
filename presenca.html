@@ -22,20 +22,16 @@
             --warning: #f39c12;
             --gray-100: #f8f9fa;
             --gray-200: #e9ecef;
-            --gray-300: #dee2e6;
             --gray-600: #6c757d;
             --gray-800: #343a40;
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
             --radius: 12px;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
-            color: var(--gray-800);
-            line-height: 1.5;
             min-height: 100vh;
             padding: 20px;
         }
@@ -52,18 +48,12 @@
         .logo {
             height: 70px;
             width: auto;
-            transition: transform 0.3s;
-        }
-
-        .logo:hover {
-            transform: scale(1.02);
         }
 
         .header-title {
             font-size: 1.8rem;
             font-weight: 700;
             color: var(--primary);
-            text-align: center;
         }
 
         .user-info {
@@ -78,13 +68,6 @@
             gap: 15px;
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--gray-200);
-        }
-
-        .user-details {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
         }
 
         .user-name {
@@ -108,12 +91,9 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            transition: color 0.3s;
         }
 
-        .logout-link:hover {
-            color: var(--primary);
-        }
+        .logout-link:hover { color: var(--primary); }
 
         .container {
             max-width: 900px;
@@ -154,6 +134,7 @@
             justify-content: center;
             gap: 15px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .date-input {
@@ -163,59 +144,33 @@
             font-size: 1rem;
             min-width: 250px;
             text-align: center;
-            transition: all 0.3s;
             background: white;
         }
 
         .date-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(236, 51, 51, 0.2);
-        }
-
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
         }
 
         .quick-btn {
-            padding: 8px 16px;
+            padding: 12px 24px;
+            background: var(--success);
+            color: white;
             border: none;
             border-radius: 40px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 6px;
-        }
-
-        .quick-btn-all-present {
-            background: var(--success);
-            color: white;
-        }
-
-        .quick-btn-all-absent {
-            background: var(--danger);
-            color: white;
-        }
-
-        .quick-btn-all-certificate {
-            background: var(--info);
-            color: white;
-        }
-
-        .quick-btn-clear {
-            background: var(--gray-600);
-            color: white;
+            gap: 8px;
         }
 
         .quick-btn:hover {
             transform: translateY(-2px);
             opacity: 0.9;
+            box-shadow: var(--shadow-sm);
         }
 
         .attendance-list {
@@ -238,14 +193,12 @@
 
         .person-card:hover {
             border-color: var(--primary);
-            box-shadow: var(--shadow-sm);
         }
 
         .person-name {
             font-weight: 500;
             font-size: 0.95rem;
             color: var(--gray-800);
-            word-break: break-word;
             flex: 1;
         }
 
@@ -315,7 +268,6 @@
         .btn-primary:hover:not(:disabled) {
             background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
         }
 
         .btn-success {
@@ -376,7 +328,7 @@
             align-items: center;
             gap: 12px;
             z-index: 2000;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-md);
             animation: slideDown 0.3s ease;
             font-size: 0.9rem;
         }
@@ -431,17 +383,11 @@
             margin-bottom: 20px;
         }
 
-        .modal-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
         .modal-close {
             background: none;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: var(--gray-600);
         }
 
         .month-select {
@@ -453,6 +399,24 @@
             margin-bottom: 20px;
         }
 
+        .stats-info {
+            padding: 10px 20px;
+            background: var(--gray-100);
+            border-top: 1px solid var(--gray-200);
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-600);
+        }
+
         @media (max-width: 600px) {
             body { padding: 12px; }
             .header-title { font-size: 1.3rem; }
@@ -461,9 +425,7 @@
             .person-name { text-align: center; }
             .status-group { justify-content: center; }
             .btn { padding: 10px; font-size: 0.85rem; }
-            .user-info { flex-direction: column; text-align: center; }
-            .quick-btn { padding: 6px 12px; font-size: 0.75rem; }
-            .status-btn { width: 34px; height: 34px; font-size: 0.9rem; }
+            .quick-btn { padding: 8px 16px; font-size: 0.8rem; }
         }
 
         .attendance-list::-webkit-scrollbar {
@@ -478,24 +440,6 @@
         .attendance-list::-webkit-scrollbar-thumb {
             background: var(--primary);
             border-radius: 10px;
-        }
-
-        .empty-message {
-            text-align: center;
-            padding: 40px;
-            color: var(--gray-600);
-        }
-
-        .stats-info {
-            padding: 10px 20px;
-            background: var(--gray-100);
-            border-top: 1px solid var(--gray-200);
-            font-size: 0.8rem;
-            color: var(--gray-600);
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
         }
     </style>
 </head>
@@ -525,20 +469,9 @@
 
         <div class="date-section">
             <input type="date" id="datePicker" class="date-input">
-            <div class="quick-actions">
-                <button class="quick-btn quick-btn-all-present" id="markAllPresent">
-                    <i class="fas fa-check-double"></i> Todos Presente
-                </button>
-                <button class="quick-btn quick-btn-all-absent" id="markAllAbsent">
-                    <i class="fas fa-ban"></i> Todos Ausente
-                </button>
-                <button class="quick-btn quick-btn-all-certificate" id="markAllCertificate">
-                    <i class="fas fa-file-medical"></i> Todos Atestado
-                </button>
-                <button class="quick-btn quick-btn-clear" id="clearAll">
-                    <i class="fas fa-eraser"></i> Limpar Tudo
-                </button>
-            </div>
+            <button class="quick-btn" id="markAllPresent">
+                <i class="fas fa-check-double"></i> Todos Presente
+            </button>
         </div>
 
         <div class="attendance-list" id="attendanceList">
@@ -569,7 +502,7 @@
     <div class="modal-overlay" id="reportModal">
         <div class="modal-container">
             <div class="modal-header">
-                <h3 class="modal-title"><i class="fas fa-calendar-alt"></i> Relatório Mensal</h3>
+                <h3><i class="fas fa-calendar-alt"></i> Relatório Mensal</h3>
                 <button class="modal-close" id="closeReportModal">&times;</button>
             </div>
             <div class="modal-body">
@@ -608,12 +541,7 @@
         const userNameSpan = document.getElementById('userName');
         const logoutBtn = document.getElementById('logoutBtn');
         const statsInfo = document.getElementById('statsInfo');
-
-        // Botões de ação rápida
-        const markAllPresent = document.getElementById('markAllPresent');
-        const markAllAbsent = document.getElementById('markAllAbsent');
-        const markAllCertificate = document.getElementById('markAllCertificate');
-        const clearAll = document.getElementById('clearAll');
+        const markAllPresentBtn = document.getElementById('markAllPresent');
 
         // Helper Functions
         function showNotification(message, type = 'success') {
@@ -650,6 +578,14 @@
             return div.innerHTML;
         }
 
+        function getAuthHeader() {
+            const token = sessionStorage.getItem('adminToken');
+            if (token) {
+                return { 'Authorization': 'Bearer ' + token };
+            }
+            return {};
+        }
+
         function updateStats() {
             const statusMap = currentAttendance[selectedDate] || {};
             let presente = 0, ausente = 0, atestado = 0, pendente = 0;
@@ -671,43 +607,36 @@
             `;
         }
 
-        function markAllWithStatus(status) {
-            if (!selectedDate || !students.length) return;
+        function markAllPresent() {
+            if (!selectedDate || !students.length) {
+                showNotification('Aguardando carregamento dos alunos...', 'warning');
+                return;
+            }
             
             if (!currentAttendance[selectedDate]) {
                 currentAttendance[selectedDate] = {};
             }
             
             students.forEach(student => {
-                currentAttendance[selectedDate][student.edv] = status;
+                currentAttendance[selectedDate][student.edv] = 'PRESENTE';
             });
             
             renderStudentList();
             updateStats();
-            
-            const statusText = status === 'PRESENTE' ? 'Presente' : status === 'AUSENTE' ? 'Ausente' : 'Atestado';
-            showNotification(`Todos os alunos marcados como ${statusText}!`, 'success');
+            showNotification('Todos os alunos marcados como PRESENTE!', 'success');
         }
 
-        function clearAllMarks() {
-            if (!selectedDate || !students.length) return;
-            
-            currentAttendance[selectedDate] = {};
-            renderStudentList();
-            updateStats();
-            showNotification('Todas as marcações foram limpas!', 'info');
-        }
-
-        // Buscar lista de alunos da API
+        // Buscar lista de alunos da API com JWT
         async function fetchStudents() {
             try {
                 const response = await fetch(`${API_BASE}/admin/turmas/${encodeURIComponent(TURMA_NOME)}/alunos`, {
-                    headers: {
-                        'Authorization': 'Basic ' + btoa('admin:formare2026')
-                    }
+                    headers: getAuthHeader()
                 });
                 
                 if (!response.ok) {
+                    if (response.status === 401) {
+                        throw new Error('Não autorizado');
+                    }
                     throw new Error('Erro ao carregar alunos');
                 }
                 
@@ -723,8 +652,15 @@
                 return students;
             } catch (error) {
                 console.error('Erro ao carregar alunos:', error);
-                showNotification('Erro ao carregar lista de alunos', 'error');
-                attendanceList.innerHTML = '<div class="empty-message">❌ Erro ao carregar alunos. Verifique sua conexão.</div>';
+                if (error.message === 'Não autorizado') {
+                    showNotification('Sessão expirada, redirecionando...', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    showNotification('Erro ao carregar lista de alunos', 'error');
+                    attendanceList.innerHTML = '<div class="empty-message">❌ Erro ao carregar alunos</div>';
+                }
                 return [];
             }
         }
@@ -785,6 +721,7 @@
             updateStats();
         }
 
+        // Buscar chamada existente (rota pública)
         async function fetchAttendance(date) {
             try {
                 const response = await fetch(`${API_BASE}/presenca/obter/${date}?turma=${encodeURIComponent(TURMA_NOME)}`);
@@ -815,6 +752,7 @@
             }
         }
 
+        // Salvar chamada
         async function saveAttendance(isUpdate = false) {
             if (!selectedDate) {
                 showNotification('Selecione uma data primeiro', 'warning');
@@ -835,8 +773,7 @@
             const payload = {
                 data: selectedDate,
                 turma: TURMA_NOME,
-                registros,
-                responsavel: sessionStorage.getItem('nome') || 'Admin'
+                registros
             };
             
             const btn = isUpdate ? saveChangesBtn : submitBtn;
@@ -847,7 +784,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Basic ' + btoa('admin:formare2026')
+                        ...getAuthHeader()
                     },
                     body: JSON.stringify(payload)
                 });
@@ -890,6 +827,8 @@
         }
 
         async function loadAttendanceForDate(date) {
+            if (!students.length) return;
+            
             selectedDate = date;
             
             const savedStatus = await fetchAttendance(date);
@@ -957,28 +896,34 @@
             }
             
             const url = `${API_BASE}/presenca/relatorio_excel/${mes}?turma=${encodeURIComponent(TURMA_NOME)}`;
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `relatorio_chamadas_${mes}.xlsx`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
+            window.open(url, '_blank');
             reportModal.classList.remove('active');
             showNotification('Relatório gerado com sucesso!', 'success');
         }
 
         function handleLogout() {
-            console.log('🚪 Realizando logout...');
             sessionStorage.clear();
             localStorage.removeItem('adminUsername');
             localStorage.removeItem('adminPassword');
             window.location.href = 'index.html';
         }
 
+        // Verificar autenticação
+        function checkAuth() {
+            const token = sessionStorage.getItem('adminToken');
+            if (!token) {
+                showNotification('Faça login primeiro', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+                return false;
+            }
+            return true;
+        }
+
         // Event Listeners
         datePicker.addEventListener('change', async () => {
-            if (datePicker.value) {
+            if (datePicker.value && students.length) {
                 await loadAttendanceForDate(datePicker.value);
             }
         });
@@ -997,16 +942,11 @@
 
         closeReportModal.addEventListener('click', () => reportModal.classList.remove('active'));
         generateReportBtn.addEventListener('click', downloadReport);
+        markAllPresentBtn.addEventListener('click', markAllPresent);
 
         reportModal.addEventListener('click', (e) => {
             if (e.target === reportModal) reportModal.classList.remove('active');
         });
-
-        // Ações rápidas
-        markAllPresent.addEventListener('click', () => markAllWithStatus('PRESENTE'));
-        markAllAbsent.addEventListener('click', () => markAllWithStatus('AUSENTE'));
-        markAllCertificate.addEventListener('click', () => markAllWithStatus('ATESTADO'));
-        clearAll.addEventListener('click', clearAllMarks);
 
         // ============================================
         // INICIALIZAÇÃO
@@ -1015,17 +955,16 @@
         async function init() {
             console.log('🚀 Inicializando presenca.html...');
             
-            // Atualizar interface com dados do usuário
-            const nome = sessionStorage.getItem('nome');
-            if (nome) {
-                userNameSpan.textContent = decodeURIComponent(nome);
-            } else {
-                userNameSpan.textContent = 'Administrador';
-            }
+            if (!checkAuth()) return;
+            
+            const adminName = sessionStorage.getItem('adminName');
+            userNameSpan.textContent = adminName || 'Administrador';
             
             setupDates();
             await fetchStudents();
-            await loadAttendanceForDate(datePicker.value);
+            if (students.length) {
+                await loadAttendanceForDate(datePicker.value);
+            }
             
             console.log('✅ Página carregada com sucesso!');
         }
