@@ -439,6 +439,35 @@
             padding: 40px;
             color: var(--gray-600);
         }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loading-text {
+            color: white;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -514,6 +543,7 @@
         let students = [];
         let currentAttendance = {};
         let selectedDate = '';
+        let isLoading = false;
         
         // Elementos DOM
         const datePicker = document.getElementById('datePicker');
@@ -533,87 +563,83 @@
         // ============================================
         
         function getAuthHeader() {
-            // Tenta recuperar do sessionStorage (setado no login do index.html)
-            let auth = sessionStorage.getItem('adminAuth');
-            
-            if (auth) {
-                return { 'Authorization': 'Basic ' + auth };
+            const token = sessionStorage.getItem('adminToken');
+            if (token) {
+                return { 'Authorization': 'Bearer ' + token };
             }
-            
-            // Tenta recuperar do localStorage (remember me)
-            const savedUsername = localStorage.getItem('adminUsername');
-            const savedPassword = localStorage.getItem('adminPassword');
-            
-            if (savedUsername && savedPassword) {
-                auth = btoa(savedUsername + ':' + savedPassword);
-                sessionStorage.setItem('adminAuth', auth);
-                return { 'Authorization': 'Basic ' + auth };
-            }
-            
-            // Credenciais padrão como último recurso
-            const defaultAuth = btoa('admin:formare2026');
-            return { 'Authorization': 'Basic ' + defaultAuth };
+            return {};
         }
-        
-        function isAuthenticated() {
-            // Verifica se tem auth no sessionStorage
-            if (sessionStorage.getItem('adminAuth')) {
-                return true;
-            }
-            
-            // Verifica se tem credenciais no localStorage
-            if (localStorage.getItem('adminUsername') && localStorage.getItem('adminPassword')) {
-                return true;
-            }
-            
-            return false;
-        }
-        
+
         function getUserDisplayName() {
-            // Tenta pegar o nome do admin logado
-            const nome = sessionStorage.getItem('nome');
-            if (nome && nome !== 'null' && nome !== 'undefined') {
-                return decodeURIComponent(nome);
+            const adminName = sessionStorage.getItem('adminName');
+            if (adminName && adminName !== 'null' && adminName !== 'undefined') {
+                return adminName;
             }
-            
-            const admin = sessionStorage.getItem('admin');
-            if (admin && admin !== 'null' && admin !== 'undefined') {
-                return admin;
-            }
-            
-            // Se não tem, tenta pegar do localStorage
-            const savedUsername = localStorage.getItem('adminUsername');
-            if (savedUsername) {
-                return savedUsername;
-            }
-            
             return 'Administrador';
         }
-        
-        async function verifyAndRestoreSession() {
-            // Se já tem auth, testa se funciona
-            if (isAuthenticated()) {
-                try {
-                    const response = await fetch(`${API_BASE}/admin/status`, {
-                        headers: getAuthHeader()
-                    });
-                    
-                    if (response.ok) {
-                        console.log('✅ Sessão válida');
-                        return true;
-                    }
-                } catch (e) {
-                    console.log('Erro ao verificar sessão:', e);
-                }
+
+        function showLoadingOverlay(message = 'Carregando...') {
+            if (document.getElementById('loadingOverlay')) return;
+            
+            const overlay = document.createElement('div');
+            overlay.id = 'loadingOverlay';
+            overlay.className = 'loading-overlay';
+            overlay.innerHTML = `
+                <div class="loading-spinner"></div>
+                <div class="loading-text">${message}</div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        function hideLoadingOverlay() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.remove();
+        }
+
+        async function checkSession() {
+            const token = sessionStorage.getItem('adminToken');
+            if (!token) {
+                console.log('❌ Nenhum token encontrado');
+                return false;
             }
             
-            // Se chegou aqui, precisa redirecionar para login
-            console.log('❌ Sessão inválida, redirecionando para login');
-            sessionStorage.clear();
-            // Guarda a intenção de voltar
-            sessionStorage.setItem('redirectAfterLogin', 'presenca.html');
-            window.location.href = 'index.html';
-            return false;
+            try {
+                console.log('🔍 Verificando token...');
+                const response = await fetch(`${API_BASE}/admin/backup`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Token válido');
+                    return true;
+                } else if (response.status === 401) {
+                    console.log('❌ Token inválido/expirado');
+                    return false;
+                }
+                return false;
+            } catch (error) {
+                console.error('Erro ao verificar sessão:', error);
+                return false;
+            }
+        }
+
+        async function ensureAuthenticated() {
+            showLoadingOverlay('Verificando autenticação...');
+            
+            const isValid = await checkSession();
+            
+            if (!isValid) {
+                console.log('🔄 Redirecionando para login...');
+                sessionStorage.removeItem('adminToken');
+                sessionStorage.removeItem('adminName');
+                sessionStorage.setItem('redirectAfterLogin', 'presenca.html');
+                hideLoadingOverlay();
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            hideLoadingOverlay();
+            return true;
         }
 
         // Helper: Mostrar notificação
@@ -659,6 +685,8 @@
         // ============================================
         async function fetchStudents() {
             try {
+                showLoadingOverlay('Carregando lista de alunos...');
+                
                 const response = await fetch(`${API_BASE}/admin/turmas/${encodeURIComponent(TURMA_NOME)}/alunos`, {
                     headers: getAuthHeader()
                 });
@@ -677,9 +705,11 @@
                     isAdmin: nome.includes('👩‍🏫') || nome.includes('👨‍🏫')
                 })).filter(s => !s.isAdmin);
                 
+                hideLoadingOverlay();
                 renderStudentList();
                 return students;
             } catch (error) {
+                hideLoadingOverlay();
                 console.error('Erro ao carregar alunos:', error);
                 if (error.message === 'Não autorizado') {
                     showNotification('Sessão expirada, redirecionando...', 'error');
@@ -793,6 +823,8 @@
         }
 
         async function loadAttendanceForDate(date) {
+            if (!students.length) return;
+            
             selectedDate = date;
             document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
             
@@ -863,8 +895,6 @@
                     submitBtn.style.display = 'none';
                     saveChangesBtn.style.display = 'block';
                 }
-                
-                await loadAttendanceForDate(selectedDate);
                 
             } catch (error) {
                 console.error('Erro ao salvar:', error);
@@ -988,7 +1018,7 @@
         // EVENT LISTENERS
         // ============================================
         datePicker.addEventListener('change', async () => {
-            if (datePicker.value) {
+            if (datePicker.value && students.length) {
                 await loadAttendanceForDate(datePicker.value);
             }
         });
@@ -1018,20 +1048,28 @@
         async function init() {
             console.log('🚀 Iniciando presenca.html...');
             
-            // Primeiro, verifica se tem sessão válida
-            const isValid = await verifyAndRestoreSession();
+            // Verifica autenticação
+            const isValid = await ensureAuthenticated();
             if (!isValid) return;
             
             // Exibe nome do usuário
             userNameSpan.textContent = getUserDisplayName();
             
+            // Configura datas
             setupDates();
+            
+            // Carrega alunos
             await fetchStudents();
-            await loadAttendanceForDate(datePicker.value);
+            
+            // Carrega chamada do dia
+            if (students.length && datePicker.value) {
+                await loadAttendanceForDate(datePicker.value);
+            }
             
             console.log('✅ Página carregada com sucesso!');
         }
         
+        // Executa inicialização
         init();
     </script>
 </body>
