@@ -3,913 +3,997 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Lista de Presença - Sistema de Escalas</title>
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <title>Sistema de Chamada - Formare 2026</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="favicon.png" type="image/png">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --primary: #ec3333;
             --primary-dark: #c82333;
-            --primary-glow: rgba(236, 51, 51, 0.18);
-            --sidebar-bg: #181e2a;
-            --surface: #ffffff;
-            --surface-2: #f4f6fb;
-            --surface-3: #edf0f7;
-            --text: #1a1d2e;
-            --text-muted: #6b7280;
-            --border: #e5e9f2;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --info: #3b82f6;
-            --card-shadow: 0 2px 20px rgba(24, 30, 42, 0.08);
-            --radius: 14px;
-            --radius-sm: 8px;
-            --transition: all 0.2s ease;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --info: #3498db;
+            --warning: #f39c12;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-600: #6c757d;
+            --gray-800: #343a40;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius: 12px;
         }
-
-        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Sora', sans-serif;
-            background: var(--surface-2);
-            color: var(--text);
-            margin: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            color: var(--gray-800);
+            line-height: 1.5;
             min-height: 100vh;
+            padding: 20px;
         }
 
-        /* Header */
-        .user-header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            background: rgba(255,255,255,0.95);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .user-avatar {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            border-radius: 50%;
+        .app-header {
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 18px;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
-        .user-details h4 {
-            font-size: 15px;
+        .logo {
+            height: 70px;
+            width: auto;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        .header-title {
+            font-size: 1.8rem;
             font-weight: 700;
-            margin: 0;
+            color: var(--primary);
+            text-align: center;
         }
 
-        .user-details p {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin: 2px 0 0;
+        .user-info {
+            background: white;
+            border-radius: var(--radius);
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
         }
 
-        .class-badge {
-            background: var(--surface-2);
-            padding: 8px 16px;
-            border-radius: 40px;
+        .user-details {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 500;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
-        .class-badge i { color: var(--primary); }
-
-        .back-button {
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 8px 16px;
-            font-size: 13px;
+        .user-name {
             font-weight: 600;
-            color: var(--text);
+            color: var(--primary);
+            background: rgba(236, 51, 51, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .turma-name {
+            background: var(--gray-100);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .logout-link {
+            color: var(--gray-600);
             text-decoration: none;
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 8px;
-            transition: var(--transition);
+            gap: 5px;
+            transition: color 0.3s;
         }
 
-        .back-button:hover {
-            background: var(--surface-3);
-            transform: translateX(-2px);
+        .logout-link:hover {
+            color: var(--primary);
         }
 
-        /* Main Content */
-        .main-container {
-            max-width: 1400px;
+        .container {
+            max-width: 900px;
             margin: 0 auto;
-            padding: 24px;
-        }
-
-        /* Cards */
-        .card {
-            border: 1px solid var(--border);
+            background: white;
             border-radius: var(--radius);
-            box-shadow: var(--card-shadow);
-            background: var(--surface);
-            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
             overflow: hidden;
         }
 
-        .card-header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 18px 24px;
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            padding: 15px 20px;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+        }
+
+        .date-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: center;
+        }
+
+        .date-input {
+            padding: 12px 20px;
+            border: 2px solid var(--gray-200);
+            border-radius: 40px;
+            font-size: 1rem;
+            min-width: 250px;
+            text-align: center;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(236, 51, 51, 0.2);
+        }
+
+        .attendance-list {
+            padding: 0 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .person-card {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
+            padding: 14px 16px;
+            margin: 10px 0;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            transition: all 0.2s;
         }
 
-        .card-header h5 {
-            font-size: 14px;
-            font-weight: 700;
-            margin: 0;
+        .person-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .person-name {
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--gray-800);
+            word-break: break-word;
+            max-width: 50%;
+        }
+
+        .status-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .status-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            opacity: 0.6;
         }
 
-        .card-header h5 i { color: var(--primary); }
-
-        .card-body { padding: 24px; }
-
-        /* Formulário */
-        .form-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 6px;
+        .status-btn.active {
+            opacity: 1;
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
-        .form-control, .form-select {
-            font-family: 'Sora', sans-serif;
-            font-size: 14px;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 9px 14px;
+        .status-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
         }
 
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-glow);
-            outline: none;
-        }
+        .btn-present { background: var(--success); color: white; }
+        .btn-absent { background: var(--danger); color: white; }
+        .btn-certificate { background: var(--info); color: white; }
 
-        /* Tabela de alunos */
-        .students-table { overflow-x: auto; }
-
-        .table {
-            font-size: 13.5px;
-            margin-bottom: 0;
-        }
-
-        .table thead th {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            border-bottom: 2px solid var(--border);
-            padding: 12px 16px;
-            background: var(--surface-2);
-        }
-
-        .table tbody td {
-            padding: 12px 16px;
-            vertical-align: middle;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .table tbody tr:hover { background: var(--surface-2); }
-
-        /* Botões de status */
-        .status-buttons {
+        .actions {
+            padding: 20px;
             display: flex;
-            gap: 8px;
+            gap: 15px;
             flex-wrap: wrap;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-100);
         }
 
-        .btn-status {
-            padding: 6px 14px;
-            font-size: 12px;
-            font-weight: 600;
-            border-radius: 40px;
-            transition: var(--transition);
-            cursor: pointer;
-            border: 1.5px solid transparent;
-        }
-
-        .btn-presente {
-            background: rgba(16, 185, 129, 0.1);
-            color: #059669;
-            border-color: rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-presente.active, .btn-presente:hover {
-            background: #10b981;
-            color: white;
-            border-color: #10b981;
-            transform: scale(1.02);
-        }
-
-        .btn-ausente {
-            background: rgba(236, 51, 51, 0.1);
-            color: var(--primary-dark);
-            border-color: rgba(236, 51, 51, 0.3);
-        }
-
-        .btn-ausente.active, .btn-ausente:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: scale(1.02);
-        }
-
-        .btn-atestado {
-            background: rgba(59, 130, 246, 0.1);
-            color: #1d4ed8;
-            border-color: rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-atestado.active, .btn-atestado:hover {
-            background: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-            transform: scale(1.02);
-        }
-
-        /* Botões gerais */
         .btn {
-            font-family: 'Sora', sans-serif;
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 40px;
+            font-size: 1rem;
             font-weight: 600;
-            font-size: 13px;
-            border-radius: var(--radius-sm);
-            transition: var(--transition);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .btn-primary {
             background: var(--primary);
-            border-color: var(--primary);
+            color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background: var(--primary-dark);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
         .btn-success {
             background: var(--success);
-            border-color: var(--success);
+            color: white;
         }
 
-        .btn-success:hover {
-            transform: translateY(-1px);
+        .btn-success:hover:not(:disabled) {
+            background: #27ae60;
+            transform: translateY(-2px);
         }
 
-        .btn-outline-secondary {
-            border-color: var(--border);
-            color: var(--text-muted);
+        .btn-report {
+            background: #9b59b6;
+            color: white;
         }
 
-        .btn-outline-secondary:hover {
-            background: var(--surface-3);
-            color: var(--text);
+        .btn-report:hover:not(:disabled) {
+            background: #8e44ad;
+            transform: translateY(-2px);
         }
 
-        /* Alertas */
-        .alert {
-            border-radius: var(--radius-sm);
-            border: none;
-            font-size: 13.5px;
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
-        .alert-warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: #b45309;
-            border-left: 3px solid var(--warning);
+        .btn.loading {
+            position: relative;
+            color: transparent;
         }
 
-        /* Info do responsável */
-        .responsavel-info {
-            background: var(--surface-2);
-            border-radius: var(--radius-sm);
-            padding: 12px 16px;
+        .btn.loading::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 50px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
             gap: 12px;
-            margin-top: 16px;
+            z-index: 2000;
+            box-shadow: var(--shadow-lg);
+            animation: slideDown 0.3s ease;
         }
 
-        .responsavel-info span { font-size: 12px; color: var(--text-muted); }
-        .responsavel-info strong { color: var(--primary); }
+        .notification.error { background: var(--danger); }
+        .notification.warning { background: var(--warning); }
 
-        /* Footer */
-        .footer-actions {
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateX(-50%) translateY(-100%); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
             display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-top: 24px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border);
+            align-items: center;
+            justify-content: center;
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
         }
 
-        /* Loading */
-        .loading {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255,255,255,0.35);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 0.7s linear infinite;
-            vertical-align: middle;
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .user-header { flex-direction: column; align-items: flex-start; }
-            .user-info { width: 100%; justify-content: space-between; }
-            .main-container { padding: 16px; }
-            .card-header { flex-direction: column; align-items: flex-start; }
-            .table thead th, .table tbody td { padding: 8px 12px; }
-            .status-buttons { gap: 4px; }
-            .btn-status { padding: 4px 10px; font-size: 11px; }
+        .modal-container {
+            background: white;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 450px;
+            padding: 24px;
+            transform: scale(0.9);
+            transition: transform 0.3s;
         }
 
-        @media (max-width: 576px) {
-            .table { font-size: 12px; }
-            .btn-status { padding: 3px 8px; }
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-600);
+        }
+
+        .modal-body {
+            margin-bottom: 24px;
+        }
+
+        .month-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .header-title { font-size: 1.3rem; }
+            .logo { height: 50px; }
+            .person-card { flex-direction: column; align-items: stretch; gap: 12px; }
+            .person-name { max-width: 100%; text-align: center; }
+            .status-group { justify-content: center; }
+            .btn { padding: 12px; font-size: 0.9rem; }
+            .user-info { flex-direction: column; text-align: center; }
+        }
+
+        .attendance-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .attendance-list::-webkit-scrollbar-track {
+            background: var(--gray-200);
+            border-radius: 10px;
+        }
+
+        .attendance-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-600);
         }
     </style>
 </head>
 <body>
 
-    <div class="user-header">
-        <div class="user-info">
-            <div class="user-avatar" id="userAvatar">?</div>
-            <div class="user-details">
-                <h4 id="userName">Carregando...</h4>
-                <p id="userRole">Painel Administrativo</p>
-            </div>
-        </div>
-        <div class="class-badge" id="classInfo">
-            <i class="bi bi-building"></i>
-            <span id="className">Formare 2026</span>
-        </div>
-        <a href="index.html" class="back-button">
-            <i class="bi bi-arrow-left"></i> Voltar ao Painel
+    <div class="app-header">
+        <a href="index.html">
+            <img src="logu-black.svg" alt="Logo" class="logo">
         </a>
+        <h1 class="header-title">📋 Sistema de Chamada</h1>
     </div>
 
-    <div class="main-container">
-        <!-- Seleção de Turma e Data -->
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="bi bi-calendar-event"></i> Selecionar Turma e Data</h5>
-                <button class="btn btn-outline-secondary btn-sm" id="refreshBtn">
-                    <i class="bi bi-arrow-repeat"></i> Atualizar
-                </button>
-            </div>
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-5">
-                        <label for="turmaSelect" class="form-label">Turma</label>
-                        <select class="form-select" id="turmaSelect">
-                            <option value="">Carregando turmas...</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="dataSelect" class="form-label">Data</label>
-                        <input type="date" class="form-control" id="dataSelect">
-                    </div>
-                </div>
-                <div class="alert alert-warning mt-3 d-none" id="weekendAlert">
-                    <i class="bi bi-calendar-x"></i> <strong>Fim de semana!</strong> A chamada só pode ser registrada em dias úteis (segunda a sexta).
-                </div>
-            </div>
+    <div class="container">
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background: var(--success);"></div><span>Presente</span></div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--danger);"></div><span>Ausente</span></div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--info);"></div><span>Atestado</span></div>
         </div>
 
-        <!-- Lista de Presença -->
-        <div class="card" id="presencaCard">
-            <div class="card-header">
-                <h5><i class="bi bi-person-lines-fill"></i> Lista de Presença</h5>
-                <span class="badge bg-primary" id="alunosCount">0 alunos</span>
+        <div class="user-info" id="userInfo">
+            <div class="user-details">
+                <span class="user-name" id="userName">Carregando...</span>
+                <span class="turma-name" id="turmaName">Formare 2026</span>
             </div>
-            <div class="card-body">
-                <div class="students-table">
-                    <table class="table">
-                        <thead>
-                            32
-                                <th>Aluno</th>
-                                <th style="width: 280px">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="alunosList">
-                            <tr>
-                                <td colspan="2" class="text-center text-muted py-4">
-                                    <span class="loading"></span> Carregando alunos...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <a href="#" class="logout-link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</a>
+        </div>
 
-                <!-- Informações do responsável -->
-                <div id="responsavelInfo" class="responsavel-info d-none">
-                    <div>
-                        <i class="bi bi-person-check"></i> <span>Registrado por:</span>
-                        <strong id="responsavelNome">-</strong>
-                    </div>
-                    <div>
-                        <i class="bi bi-clock-history"></i> <span>Em:</span>
-                        <strong id="responsavelData">-</strong>
-                    </div>
-                </div>
+        <div class="date-section">
+            <input type="date" id="datePicker" class="date-input">
+        </div>
 
-                <div class="footer-actions">
-                    <button class="btn btn-outline-secondary" id="resetPresencaBtn">
-                        <i class="bi bi-arrow-counterclockwise"></i> Resetar Todos
-                    </button>
-                    <button class="btn btn-success" id="salvarPresencaBtn">
-                        <i class="bi bi-check-lg"></i> Salvar Chamada
-                    </button>
-                </div>
+        <div class="attendance-list" id="attendanceList">
+            <div class="empty-message">Carregando lista de alunos...</div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" id="submitBtn">
+                <i class="fas fa-paper-plane"></i> Enviar Chamada
+            </button>
+            <button class="btn btn-success" id="saveChangesBtn" style="display: none;">
+                <i class="fas fa-save"></i> Salvar Alterações
+            </button>
+            <button class="btn btn-report" id="reportBtn">
+                <i class="fas fa-file-excel"></i> Relatório do Mês
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-calendar-alt"></i> Relatório Mensal</h3>
+                <button class="modal-close" id="closeReportModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <select id="monthSelect" class="month-select">
+                    <option value="">Carregando meses...</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-report" id="generateReportBtn" disabled>Baixar Relatório</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Mensagem -->
-    <div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header" id="messageModalHeader">
-                    <h5 class="modal-title" id="messageModalTitle">Mensagem</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="messageModalBody"></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // ============================================
-        // CONFIGURAÇÕES
+        // CONFIGURAÇÕES E AUTENTICAÇÃO
         // ============================================
-        const API_URL = 'https://erickmth.pythonanywhere.com';
-        let currentTurma = '';
-        let currentData = '';
-        let alunosList = [];
-        let registros = [];
-        let currentResponsavel = null;
-
+        
+        const API_BASE = 'https://erickmth.pythonanywhere.com/api';
+        const TURMA_NOME = 'Formare 2026';
+        
+        let students = [];
+        let currentAttendance = {};      // { "YYYY-MM-DD": { edv: status } }
+        let selectedDate = '';
+        
         // Elementos DOM
-        const elements = {
-            turmaSelect: document.getElementById('turmaSelect'),
-            dataSelect: document.getElementById('dataSelect'),
-            refreshBtn: document.getElementById('refreshBtn'),
-            presencaCard: document.getElementById('presencaCard'),
-            alunosList: document.getElementById('alunosList'),
-            alunosCount: document.getElementById('alunosCount'),
-            salvarPresencaBtn: document.getElementById('salvarPresencaBtn'),
-            resetPresencaBtn: document.getElementById('resetPresencaBtn'),
-            weekendAlert: document.getElementById('weekendAlert'),
-            responsavelInfo: document.getElementById('responsavelInfo'),
-            responsavelNome: document.getElementById('responsavelNome'),
-            responsavelData: document.getElementById('responsavelData'),
-            userName: document.getElementById('userName'),
-            userAvatar: document.getElementById('userAvatar'),
-            className: document.getElementById('className')
-        };
+        const datePicker = document.getElementById('datePicker');
+        const attendanceList = document.getElementById('attendanceList');
+        const submitBtn = document.getElementById('submitBtn');
+        const saveChangesBtn = document.getElementById('saveChangesBtn');
+        const reportBtn = document.getElementById('reportBtn');
+        const reportModal = document.getElementById('reportModal');
+        const closeReportModal = document.getElementById('closeReportModal');
+        const generateReportBtn = document.getElementById('generateReportBtn');
+        const monthSelect = document.getElementById('monthSelect');
+        const userNameSpan = document.getElementById('userName');
+        const logoutBtn = document.getElementById('logoutBtn');
 
-        const messageModal = new bootstrap.Modal('#messageModal');
-
-        // ============================================
-        // AUTENTICAÇÃO
-        // ============================================
-        
+        // Helper: Obter credenciais de autenticação (Basic Auth)
         function getAuthHeader() {
-            const token = sessionStorage.getItem('adminToken');
-            if (token) return { 'Authorization': 'Bearer ' + token };
-            return {};
+            // Tenta recuperar credenciais do sessionStorage (setadas no login)
+            let auth = sessionStorage.getItem('adminAuth');
+            if (auth) {
+                return { 'Authorization': 'Basic ' + auth };
+            }
+            // Fallback para credenciais padrão (caso admin já esteja logado por outro meio)
+            const defaultAuth = btoa('admin:formare2026');
+            return { 'Authorization': 'Basic ' + defaultAuth };
         }
 
-        async function checkAuth() {
-            const token = sessionStorage.getItem('adminToken');
-            if (!token) {
-                showMessage('Sessão Expirada', 'Por favor, faça login novamente.', 'warning');
-                setTimeout(() => window.location.href = 'index.html', 2000);
+        // Helper: Mostrar notificação
+        function showNotification(message, type = 'success') {
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i><span>${message}</span>`;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 4000);
+        }
+
+        function showLoading(btn) {
+            btn.disabled = true;
+            btn.classList.add('loading');
+        }
+
+        function hideLoading(btn) {
+            btn.disabled = false;
+            btn.classList.remove('loading');
+        }
+
+        function formatDate(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDisplayDate(dateStr) {
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================
+        // GERENCIAMENTO DE SESSÃO E REDIRECIONAMENTO
+        // ============================================
+        
+        function isUserAuthenticated() {
+            // Verifica se existe token de admin no sessionStorage OU se o usuário logado é admin via session
+            const adminAuth = sessionStorage.getItem('adminAuth');
+            const adminUser = sessionStorage.getItem('admin');
+            const nome = sessionStorage.getItem('nome');
+            
+            if (adminAuth || adminUser === 'true' || nome) {
+                return true;
+            }
+            return false;
+        }
+
+        function getUserDisplayName() {
+            // Prioridade: nome do admin logado via sessionStorage, ou "Administrador"
+            const nome = sessionStorage.getItem('nome');
+            if (nome && nome !== 'undefined') {
+                return decodeURIComponent(nome);
+            }
+            const admin = sessionStorage.getItem('admin');
+            if (admin && admin !== 'false') {
+                return admin;
+            }
+            return 'Administrador';
+        }
+
+        function ensureAuthenticated() {
+            if (!isUserAuthenticated()) {
+                // Guarda a intenção de retorno
+                sessionStorage.setItem('redirectAfterLogin', 'presenca.html');
+                window.location.href = 'index.html';
                 return false;
             }
-            
-            try {
-                const response = await fetch(`${API_URL}/api/admin/backup`, { headers: getAuthHeader() });
-                if (response.ok) {
-                    const adminName = sessionStorage.getItem('adminName');
-                    updateUserUI(adminName || 'Admin', true);
-                    return true;
-                }
-                throw new Error('Token inválido');
-            } catch (error) {
-                showMessage('Sessão Expirada', 'Sua sessão expirou. Faça login novamente.', 'warning');
-                setTimeout(() => window.location.href = 'index.html', 2000);
-                return false;
-            }
+            return true;
         }
-        
-        function updateUserUI(nome, isAdmin) {
-            elements.userName.textContent = nome;
-            elements.userAvatar.textContent = nome.charAt(0).toUpperCase();
-        }
-        
+
         // ============================================
-        // FUNÇÕES PRINCIPAIS
+        // BUSCAR ALUNOS (somente alunos comuns, exclui admins)
         // ============================================
-        
-        async function loadTurmas() {
+        async function fetchStudents() {
             try {
-                const response = await fetch(`${API_URL}/api/admin/backup`, { headers: getAuthHeader() });
-                if (!response.ok) throw new Error('Erro ao carregar turmas');
-                
-                const data = await response.json();
-                const turmas = Object.keys(data.alunos) || [];
-                
-                elements.turmaSelect.innerHTML = '<option value="">Selecione uma turma</option>';
-                turmas.forEach(turma => {
-                    const option = document.createElement('option');
-                    option.value = turma;
-                    option.textContent = turma;
-                    elements.turmaSelect.appendChild(option);
-                });
-                
-                if (turmas.includes('Formare 2026')) {
-                    elements.turmaSelect.value = 'Formare 2026';
-                    elements.className.textContent = 'Formare 2026';
-                    currentTurma = 'Formare 2026';
-                }
-                
-                setDefaultDate();
-                await carregarTudo();
-                
-            } catch (error) {
-                console.error('Erro ao carregar turmas:', error);
-                elements.turmaSelect.innerHTML = '<option value="">Erro ao carregar turmas</option>';
-                showMessage('Erro', 'Não foi possível carregar as turmas.', 'error');
-            }
-        }
-        
-        function setDefaultDate() {
-            const today = new Date();
-            const dayOfWeek = today.getDay();
-            let defaultDate = new Date(today);
-            
-            if (dayOfWeek === 0) defaultDate.setDate(today.getDate() + 1);
-            else if (dayOfWeek === 6) defaultDate.setDate(today.getDate() + 2);
-            
-            const year = defaultDate.getFullYear();
-            const month = String(defaultDate.getMonth() + 1).padStart(2, '0');
-            const day = String(defaultDate.getDate()).padStart(2, '0');
-            elements.dataSelect.value = `${year}-${month}-${day}`;
-            currentData = elements.dataSelect.value;
-        }
-        
-        function checkWeekend(dateStr) {
-            const date = new Date(dateStr);
-            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-            elements.weekendAlert.classList.toggle('d-none', !isWeekend);
-            return isWeekend;
-        }
-        
-        async function loadAlunos(turma) {
-            try {
-                const response = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
+                const response = await fetch(`${API_BASE}/admin/turmas/${encodeURIComponent(TURMA_NOME)}/alunos`, {
                     headers: getAuthHeader()
-                });
-                if (!response.ok) throw new Error('Erro ao carregar alunos');
-                
-                const alunos = await response.json();
-                alunosList = [];
-                
-                for (const [edv, nome] of Object.entries(alunos)) {
-                    alunosList.push({
-                        edv: edv,
-                        nome: nome.replace(/👩‍🏫|👨‍🏫/g, '')
-                    });
-                }
-                
-                alunosList.sort((a, b) => a.nome.localeCompare(b.nome));
-                elements.alunosCount.textContent = `${alunosList.length} alunos`;
-                return alunosList;
-            } catch (error) {
-                showMessage('Erro', 'Não foi possível carregar os alunos.', 'error');
-                return [];
-            }
-        }
-        
-        async function loadPresenca(data, turma) {
-            try {
-                const response = await fetch(`${API_URL}/api/presenca/obter/${data}?turma=${encodeURIComponent(turma)}`, {
-                    headers: getAuthHeader()
-                });
-                
-                if (response.status === 404) return null;
-                if (!response.ok) throw new Error('Erro ao carregar presença');
-                
-                const result = await response.json();
-                if (result.created_by) {
-                    currentResponsavel = {
-                        nome: result.created_by,
-                        criado_em: result.created_at
-                    };
-                    updateResponsavelInfo();
-                }
-                return result.registros || [];
-            } catch (error) {
-                return null;
-            }
-        }
-        
-        async function loadResponsavel(data, turma) {
-            try {
-                const response = await fetch(`${API_URL}/api/presenca/responsavel/${data}?turma=${encodeURIComponent(turma)}`, {
-                    headers: getAuthHeader()
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    currentResponsavel = {
-                        nome: result.responsavel,
-                        criado_em: result.criado_em
-                    };
-                    updateResponsavelInfo();
-                } else {
-                    currentResponsavel = null;
-                    elements.responsavelInfo.classList.add('d-none');
-                }
-            } catch (error) {
-                currentResponsavel = null;
-                elements.responsavelInfo.classList.add('d-none');
-            }
-        }
-        
-        function updateResponsavelInfo() {
-            if (currentResponsavel?.nome) {
-                elements.responsavelNome.textContent = currentResponsavel.nome;
-                if (currentResponsavel.criado_em) {
-                    elements.responsavelData.textContent = new Date(currentResponsavel.criado_em).toLocaleString('pt-BR');
-                }
-                elements.responsavelInfo.classList.remove('d-none');
-            } else {
-                elements.responsavelInfo.classList.add('d-none');
-            }
-        }
-        
-        function renderTable() {
-            if (alunosList.length === 0) {
-                elements.alunosList.innerHTML = `
-                    <tr><td colspan="2" class="text-center text-muted py-4">
-                        <i class="bi bi-people"></i> Nenhum aluno cadastrado nesta turma
-                    </td></tr>
-                `;
-                return;
-            }
-            
-            elements.alunosList.innerHTML = '';
-            
-            alunosList.forEach(aluno => {
-                const registro = registros.find(r => r.name === aluno.nome);
-                const status = registro ? registro.status : 'PRESENTE';
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><strong>${aluno.nome}</strong><br><small class="text-muted">EDV: ${aluno.edv}</small></td>
-                    <td>
-                        <div class="status-buttons" data-aluno="${aluno.nome}">
-                            <button class="btn-status btn-presente ${status === 'PRESENTE' ? 'active' : ''}" data-status="PRESENTE">
-                                <i class="bi bi-check-circle-fill"></i> Presente
-                            </button>
-                            <button class="btn-status btn-ausente ${status === 'AUSENTE' ? 'active' : ''}" data-status="AUSENTE">
-                                <i class="bi bi-x-circle-fill"></i> Ausente
-                            </button>
-                            <button class="btn-status btn-atestado ${status === 'ATESTADO' ? 'active' : ''}" data-status="ATESTADO">
-                                <i class="bi bi-file-medical-fill"></i> Atestado
-                            </button>
-                        </div>
-                    </td>
-                `;
-                
-                elements.alunosList.appendChild(row);
-            });
-            
-            // Adicionar event listeners para os botões
-            document.querySelectorAll('.status-buttons').forEach(container => {
-                const alunoNome = container.getAttribute('data-aluno');
-                const buttons = container.querySelectorAll('.btn-status');
-                
-                buttons.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const newStatus = btn.getAttribute('data-status');
-                        
-                        // Atualizar registro
-                        const registroIndex = registros.findIndex(r => r.name === alunoNome);
-                        if (registroIndex >= 0) {
-                            registros[registroIndex].status = newStatus;
-                        } else {
-                            registros.push({ name: alunoNome, status: newStatus });
-                        }
-                        
-                        // Atualizar visual dos botões
-                        buttons.forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                    });
-                });
-            });
-        }
-        
-        function resetAllStatus() {
-            registros = alunosList.map(aluno => ({
-                name: aluno.nome,
-                status: 'PRESENTE'
-            }));
-            renderTable();
-            showMessage('Reset', 'Todos os status foram resetados para "Presente".', 'info');
-        }
-        
-        async function saveAttendance() {
-            if (!currentTurma || !currentData) {
-                showMessage('Erro', 'Selecione turma e data.', 'error');
-                return;
-            }
-            
-            if (checkWeekend(currentData)) {
-                showMessage('Erro', 'Não é possível salvar chamada em finais de semana.', 'error');
-                return;
-            }
-            
-            try {
-                elements.salvarPresencaBtn.disabled = true;
-                elements.salvarPresencaBtn.innerHTML = '<span class="loading"></span> Salvando...';
-                
-                const response = await fetch(`${API_URL}/api/presenca/salvar`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
-                    body: JSON.stringify({
-                        data: currentData,
-                        turma: currentTurma,
-                        registros: registros
-                    })
                 });
                 
                 if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Erro ao salvar chamada');
+                    throw new Error('Erro ao carregar alunos');
                 }
                 
-                const result = await response.json();
-                showMessage('Sucesso', 'Chamada salva com sucesso!', 'success');
+                const data = await response.json();
+                // data é um objeto: { "12345": "Nome Aluno", ... }
+                students = Object.entries(data).map(([edv, nome]) => ({
+                    edv,
+                    nome: nome.replace(/👩‍🏫|👨‍🏫/g, '').trim(),
+                    isAdmin: nome.includes('👩‍🏫') || nome.includes('👨‍🏫')
+                })).filter(s => !s.isAdmin);  // Apenas alunos comuns para chamada
                 
-                if (result.created_by) {
-                    currentResponsavel = { nome: result.created_by, criado_em: new Date().toISOString() };
-                    updateResponsavelInfo();
-                }
-                
+                renderStudentList();
+                return students;
             } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                elements.salvarPresencaBtn.disabled = false;
-                elements.salvarPresencaBtn.innerHTML = '<i class="bi bi-check-lg"></i> Salvar Chamada';
+                console.error('Erro ao carregar alunos:', error);
+                showNotification('Erro ao carregar lista de alunos', 'error');
+                attendanceList.innerHTML = '<div class="empty-message">❌ Erro ao carregar alunos. Verifique sua conexão.</div>';
+                return [];
             }
         }
-        
-        async function carregarTudo() {
-            const turma = elements.turmaSelect.value || currentTurma;
-            const data = elements.dataSelect.value || currentData;
+
+        // Renderizar lista de alunos com botões de status
+        function renderStudentList() {
+            if (!students.length) {
+                attendanceList.innerHTML = '<div class="empty-message">📭 Nenhum aluno cadastrado nesta turma.</div>';
+                return;
+            }
             
-            if (!turma || !data) return;
+            attendanceList.innerHTML = students.map(student => `
+                <div class="person-card" data-edv="${student.edv}">
+                    <div class="person-name">${escapeHtml(student.nome)}</div>
+                    <div class="status-group">
+                        <button class="status-btn btn-present" data-status="PRESENTE" data-edv="${student.edv}">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="status-btn btn-absent" data-status="AUSENTE" data-edv="${student.edv}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button class="status-btn btn-certificate" data-status="ATESTADO" data-edv="${student.edv}">
+                            <i class="fas fa-file-medical"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
             
-            const isWeekend = checkWeekend(data);
-            if (isWeekend) return;
+            // Atribuir eventos
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.addEventListener('click', handleStatusClick);
+            });
             
-            currentTurma = turma;
-            currentData = data;
-            elements.className.textContent = turma;
+            // Se já existe status salvo para a data atual, aplica
+            if (selectedDate && currentAttendance[selectedDate]) {
+                applySavedStatus(currentAttendance[selectedDate]);
+            }
+        }
+
+        // Quando clica em um botão de status
+        function handleStatusClick(e) {
+            const btn = e.currentTarget;
+            const edv = btn.dataset.edv;
+            const status = btn.dataset.status;
+            const card = document.querySelector(`.person-card[data-edv="${edv}"]`);
             
-            elements.alunosList.innerHTML = '<tr><td colspan="2" class="text-center py-4"><span class="loading"></span> Carregando alunos...</td></tr>';
+            card.querySelectorAll('.status-btn').forEach(b => {
+                b.classList.remove('active');
+            });
+            btn.classList.add('active');
+            
+            if (!currentAttendance[selectedDate]) {
+                currentAttendance[selectedDate] = {};
+            }
+            currentAttendance[selectedDate][edv] = status;
+        }
+
+        // Aplica os status salvos para a data atual
+        function applySavedStatus(statusMap) {
+            Object.entries(statusMap).forEach(([edv, status]) => {
+                const card = document.querySelector(`.person-card[data-edv="${edv}"]`);
+                if (card) {
+                    const btn = card.querySelector(`.status-btn[data-status="${status}"]`);
+                    if (btn) {
+                        card.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // BUSCAR CHAMADA EXISTENTE
+        // ============================================
+        async function fetchAttendance(date) {
+            try {
+                const response = await fetch(`${API_BASE}/presenca/obter/${date}?turma=${encodeURIComponent(TURMA_NOME)}`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (response.status === 404) {
+                    return null;
+                }
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar chamada');
+                }
+                
+                const data = await response.json();
+                if (data.registros && Array.isArray(data.registros)) {
+                    const statusMap = {};
+                    data.registros.forEach(r => {
+                        const student = students.find(s => s.nome === r.name);
+                        if (student) {
+                            statusMap[student.edv] = r.status;
+                        }
+                    });
+                    return statusMap;
+                }
+                return null;
+            } catch (error) {
+                console.error('Erro ao buscar chamada:', error);
+                return null;
+            }
+        }
+
+        // Carrega chamada para a data selecionada
+        async function loadAttendanceForDate(date) {
+            selectedDate = date;
+            // Limpa destaque visual
+            document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
+            
+            const savedStatus = await fetchAttendance(date);
+            if (savedStatus && Object.keys(savedStatus).length > 0) {
+                currentAttendance[date] = savedStatus;
+                applySavedStatus(savedStatus);
+                submitBtn.style.display = 'none';
+                saveChangesBtn.style.display = 'block';
+                showNotification(`Chamada do dia ${formatDisplayDate(date)} carregada!`, 'success');
+            } else {
+                currentAttendance[date] = {};
+                submitBtn.style.display = 'block';
+                saveChangesBtn.style.display = 'none';
+            }
+        }
+
+        // ============================================
+        // SALVAR CHAMADA (POST)
+        // ============================================
+        async function saveAttendance(isUpdate = false) {
+            if (!selectedDate) {
+                showNotification('Selecione uma data primeiro', 'warning');
+                return;
+            }
+            
+            const statusMap = currentAttendance[selectedDate] || {};
+            // Converte para array de registros com nome e status
+            const registros = students.map(student => {
+                const status = statusMap[student.edv] || '';
+                return { name: student.nome, status: status };
+            }).filter(r => r.status); // só envia quem tem status definido
+            
+            if (registros.length === 0) {
+                showNotification('Selecione o status de pelo menos um aluno', 'warning');
+                return;
+            }
+            
+            const responsavel = getUserDisplayName();
+            
+            const payload = {
+                data: selectedDate,
+                turma: TURMA_NOME,
+                registros: registros,
+                responsavel: responsavel
+            };
+            
+            const btn = isUpdate ? saveChangesBtn : submitBtn;
+            showLoading(btn);
             
             try {
-                await loadAlunos(turma);
-                const presencaExistente = await loadPresenca(data, turma);
+                const response = await fetch(`${API_BASE}/presenca/salvar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeader()
+                    },
+                    body: JSON.stringify(payload)
+                });
                 
-                if (presencaExistente && presencaExistente.length > 0) {
-                    registros = [...presencaExistente];
-                } else {
-                    registros = alunosList.map(aluno => ({ name: aluno.nome, status: 'PRESENTE' }));
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Erro ao salvar');
                 }
                 
-                await loadResponsavel(data, turma);
-                renderTable();
+                showNotification(`Chamada ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`, 'success');
+                // Atualiza a interface para modo edição
+                if (!isUpdate) {
+                    submitBtn.style.display = 'none';
+                    saveChangesBtn.style.display = 'block';
+                }
+                // Recarrega os dados para garantir consistência
+                await loadAttendanceForDate(selectedDate);
                 
             } catch (error) {
-                elements.alunosList.innerHTML = `
-                    <tr><td colspan="2" class="text-center text-danger py-4">
-                        <i class="bi bi-exclamation-triangle"></i> Erro ao carregar dados
-                    </td></tr>
-                `;
+                console.error('Erro ao salvar:', error);
+                showNotification(error.message || 'Erro ao salvar chamada', 'error');
+            } finally {
+                hideLoading(btn);
             }
         }
-        
-        function showMessage(title, message, type = 'info') {
-            const modalTitle = document.getElementById('messageModalTitle');
-            const modalBody = document.getElementById('messageModalBody');
-            const modalHeader = document.getElementById('messageModalHeader');
+
+        // ============================================
+        // CONFIGURAÇÃO DE DATAS (período letivo)
+        // ============================================
+        function setupDates() {
+            const today = new Date();
+            // Período de 14/07/2026 a 31/12/2026 (conforme seu backend)
+            const minDate = new Date(2026, 6, 14);  // mês 6 = julho
+            const maxDate = new Date(2026, 11, 31);
             
-            modalTitle.textContent = title;
-            modalBody.textContent = message;
+            datePicker.min = formatDate(minDate);
+            datePicker.max = formatDate(maxDate);
             
-            modalHeader.className = 'modal-header';
-            if (type === 'success') modalHeader.classList.add('bg-success', 'text-white');
-            else if (type === 'error') modalHeader.classList.add('bg-danger', 'text-white');
-            else if (type === 'warning') modalHeader.classList.add('bg-warning', 'text-dark');
-            else modalHeader.classList.add('bg-primary', 'text-white');
+            let initialDate = today;
+            if (today < minDate) initialDate = minDate;
+            if (today > maxDate) initialDate = maxDate;
             
-            messageModal.show();
+            // Se for final de semana, avança para segunda-feira
+            while (initialDate.getDay() === 0 || initialDate.getDay() === 6) {
+                initialDate.setDate(initialDate.getDate() + 1);
+            }
+            
+            datePicker.value = formatDate(initialDate);
+            selectedDate = datePicker.value;
         }
-        
+
+        // ============================================
+        // RELATÓRIO: MESES DISPONÍVEIS E DOWNLOAD
+        // ============================================
+        async function loadAvailableMonths() {
+            try {
+                const response = await fetch(`${API_BASE}/presenca/meses_disponiveis`, {
+                    headers: getAuthHeader()
+                });
+                if (!response.ok) throw new Error('Erro ao carregar meses');
+                
+                const data = await response.json();
+                const availableMonths = data.meses || [];
+                
+                monthSelect.innerHTML = '<option value="">Selecione um mês</option>';
+                
+                // Lista de meses do período letivo
+                const months = [
+                    { value: '2026-07', name: 'Julho 2026' },
+                    { value: '2026-08', name: 'Agosto 2026' },
+                    { value: '2026-09', name: 'Setembro 2026' },
+                    { value: '2026-10', name: 'Outubro 2026' },
+                    { value: '2026-11', name: 'Novembro 2026' }
+                ];
+                
+                months.forEach(month => {
+                    const option = document.createElement('option');
+                    option.value = month.value;
+                    option.textContent = month.name;
+                    option.disabled = !availableMonths.includes(month.value);
+                    monthSelect.appendChild(option);
+                });
+                
+                monthSelect.addEventListener('change', () => {
+                    generateReportBtn.disabled = !monthSelect.value || (monthSelect.selectedOptions[0] && monthSelect.selectedOptions[0].disabled);
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar meses:', error);
+                monthSelect.innerHTML = '<option value="">Erro ao carregar meses</option>';
+            }
+        }
+
+        function downloadReport() {
+            const mes = monthSelect.value;
+            if (!mes) {
+                showNotification('Selecione um mês', 'warning');
+                return;
+            }
+            
+            // Constrói a URL com autenticação via query param? Não, usa header mas o download via link precisa de auth.
+            // Como o endpoint de relatório exige autenticação, usamos fetch com blob para manter o header.
+            const url = `${API_BASE}/presenca/relatorio_excel/${mes}?turma=${encodeURIComponent(TURMA_NOME)}`;
+            
+            showLoading(generateReportBtn);
+            fetch(url, { headers: getAuthHeader() })
+                .then(response => {
+                    if (!response.ok) throw new Error('Erro ao gerar relatório');
+                    return response.blob();
+                })
+                .then(blob => {
+                    const link = document.createElement('a');
+                    const blobUrl = URL.createObjectURL(blob);
+                    link.href = blobUrl;
+                    link.download = `relatorio_chamadas_${mes}.xlsx`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(blobUrl);
+                    reportModal.classList.remove('active');
+                    showNotification('Relatório gerado com sucesso!', 'success');
+                })
+                .catch(error => {
+                    console.error('Erro ao baixar relatório:', error);
+                    showNotification('Erro ao gerar relatório', 'error');
+                })
+                .finally(() => {
+                    hideLoading(generateReportBtn);
+                });
+        }
+
+        // ============================================
+        // LOGOUT
+        // ============================================
+        function handleLogout() {
+            sessionStorage.clear();
+            localStorage.removeItem('adminUsername');
+            localStorage.removeItem('adminPassword');
+            window.location.href = 'index.html';
+        }
+
         // ============================================
         // EVENT LISTENERS
         // ============================================
-        
-        elements.turmaSelect.addEventListener('change', () => {
-            currentTurma = elements.turmaSelect.value;
-            if (currentTurma && currentData) carregarTudo();
-        });
-        
-        elements.dataSelect.addEventListener('change', () => {
-            currentData = elements.dataSelect.value;
-            checkWeekend(currentData);
-            if (currentTurma && currentData && !checkWeekend(currentData)) carregarTudo();
-        });
-        
-        elements.refreshBtn.addEventListener('click', () => {
-            if (currentTurma && currentData && !checkWeekend(currentData)) {
-                carregarTudo();
-            } else {
-                loadTurmas();
+        datePicker.addEventListener('change', async () => {
+            if (datePicker.value) {
+                await loadAttendanceForDate(datePicker.value);
             }
         });
-        
-        elements.salvarPresencaBtn.addEventListener('click', saveAttendance);
-        elements.resetPresencaBtn.addEventListener('click', resetAllStatus);
-        
+
+        submitBtn.addEventListener('click', () => saveAttendance(false));
+        saveChangesBtn.addEventListener('click', () => saveAttendance(true));
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleLogout();
+        });
+
+        reportBtn.addEventListener('click', () => {
+            loadAvailableMonths();
+            reportModal.classList.add('active');
+        });
+
+        closeReportModal.addEventListener('click', () => reportModal.classList.remove('active'));
+        generateReportBtn.addEventListener('click', downloadReport);
+
+        reportModal.addEventListener('click', (e) => {
+            if (e.target === reportModal) reportModal.classList.remove('active');
+        });
+
         // ============================================
-        // INICIALIZAÇÃO
+        // INICIALIZAÇÃO PRINCIPAL
         // ============================================
-        
         async function init() {
-            const isAuth = await checkAuth();
-            if (!isAuth) return;
-            await loadTurmas();
+            // Verifica autenticação antes de qualquer coisa
+            if (!ensureAuthenticated()) return;
+            
+            // Exibe nome do usuário
+            userNameSpan.textContent = getUserDisplayName();
+            
+            setupDates();
+            await fetchStudents();
+            await loadAttendanceForDate(datePicker.value);
         }
         
         init();
-        
     </script>
 </body>
 </html>
