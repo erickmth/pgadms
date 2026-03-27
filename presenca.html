@@ -543,6 +543,9 @@
         const statsInfo = document.getElementById('statsInfo');
         const markAllPresentBtn = document.getElementById('markAllPresent');
 
+        // Lista de nomes de administradores para filtrar
+        const ADMIN_NAMES = ['Erick Matheus Leguisamon', 'Marineide Maia dos Santos', 'Eduardo Oliveira Silva'];
+        
         // Helper Functions
         function showNotification(message, type = 'success') {
             const notif = document.createElement('div');
@@ -586,6 +589,13 @@
             return {};
         }
 
+        // Verificar se é um administrador (pelo nome)
+        function isAdminByName(nome) {
+            // Remove emojis antes de comparar
+            const nomeLimpo = nome.replace(/👩‍🏫|👨‍🏫/g, '').trim();
+            return ADMIN_NAMES.some(admin => admin === nomeLimpo);
+        }
+
         function updateStats() {
             const statusMap = currentAttendance[selectedDate] || {};
             let presente = 0, ausente = 0, atestado = 0, pendente = 0;
@@ -626,7 +636,7 @@
             showNotification('Todos os alunos marcados como PRESENTE!', 'success');
         }
 
-        // Buscar lista de alunos da API com JWT
+        // Buscar lista de alunos da API e filtrar admins
         async function fetchStudents() {
             try {
                 const response = await fetch(`${API_BASE}/admin/turmas/${encodeURIComponent(TURMA_NOME)}/alunos`, {
@@ -641,11 +651,17 @@
                 }
                 
                 const data = await response.json();
-                students = Object.entries(data).map(([edv, nome]) => ({
-                    edv,
-                    nome: nome.replace(/👩‍🏫|👨‍🏫/g, '').trim(),
-                    isAdmin: nome.includes('👩‍🏫') || nome.includes('👨‍🏫')
-                })).filter(s => !s.isAdmin);
+                
+                // Filtrar alunos: remove administradores pelo nome
+                students = Object.entries(data)
+                    .map(([edv, nome]) => ({
+                        edv,
+                        nome: nome.replace(/👩‍🏫|👨‍🏫/g, '').trim(),
+                        nomeOriginal: nome
+                    }))
+                    .filter(student => !isAdminByName(student.nome));
+                
+                console.log('Alunos carregados (excluindo admins):', students.length);
                 
                 renderStudentList();
                 updateStats();
@@ -665,7 +681,7 @@
             }
         }
 
-        // Renderizar lista de alunos
+        // Renderizar lista de alunos (apenas alunos comuns)
         function renderStudentList() {
             if (!students.length) {
                 attendanceList.innerHTML = '<div class="empty-message">📭 Nenhum aluno cadastrado nesta turma.</div>';
@@ -738,7 +754,9 @@
                 if (data.registros && Array.isArray(data.registros)) {
                     const statusMap = {};
                     data.registros.forEach(r => {
-                        const student = students.find(s => s.nome === r.name);
+                        // Encontrar aluno pelo nome (ignorando emojis)
+                        const nomeLimpo = r.name.replace(/👩‍🏫|👨‍🏫/g, '').trim();
+                        const student = students.find(s => s.nome === nomeLimpo);
                         if (student) {
                             statusMap[student.edv] = r.status;
                         }
