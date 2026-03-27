@@ -22,16 +22,20 @@
             --warning: #f39c12;
             --gray-100: #f8f9fa;
             --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
             --gray-600: #6c757d;
             --gray-800: #343a40;
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
             --radius: 12px;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            color: var(--gray-800);
+            line-height: 1.5;
             min-height: 100vh;
             padding: 20px;
         }
@@ -48,12 +52,18 @@
         .logo {
             height: 70px;
             width: auto;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
         }
 
         .header-title {
             font-size: 1.8rem;
             font-weight: 700;
             color: var(--primary);
+            text-align: center;
         }
 
         .user-info {
@@ -68,6 +78,13 @@
             gap: 15px;
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--gray-200);
+        }
+
+        .user-details {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .user-name {
@@ -91,9 +108,12 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            transition: color 0.3s;
         }
 
-        .logout-link:hover { color: var(--primary); }
+        .logout-link:hover {
+            color: var(--primary);
+        }
 
         .container {
             max-width: 900px;
@@ -132,6 +152,8 @@
             border-bottom: 1px solid var(--gray-200);
             display: flex;
             justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .date-input {
@@ -141,16 +163,64 @@
             font-size: 1rem;
             min-width: 250px;
             text-align: center;
+            transition: all 0.3s;
+            background: white;
         }
 
         .date-input:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(236, 51, 51, 0.2);
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .quick-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .quick-btn-all-present {
+            background: var(--success);
+            color: white;
+        }
+
+        .quick-btn-all-absent {
+            background: var(--danger);
+            color: white;
+        }
+
+        .quick-btn-all-certificate {
+            background: var(--info);
+            color: white;
+        }
+
+        .quick-btn-clear {
+            background: var(--gray-600);
+            color: white;
+        }
+
+        .quick-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
         }
 
         .attendance-list {
             padding: 0 20px;
-            max-height: 60vh;
+            max-height: 55vh;
             overflow-y: auto;
         }
 
@@ -158,33 +228,44 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 16px;
-            margin: 10px 0;
+            padding: 12px 16px;
+            margin: 8px 0;
             background: white;
             border: 1px solid var(--gray-200);
             border-radius: var(--radius);
             transition: all 0.2s;
         }
 
-        .person-card:hover { border-color: var(--primary); }
+        .person-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
 
         .person-name {
             font-weight: 500;
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--gray-800);
+            word-break: break-word;
+            flex: 1;
         }
 
-        .status-group { display: flex; gap: 8px; }
+        .status-group {
+            display: flex;
+            gap: 6px;
+        }
 
         .status-btn {
-            width: 44px;
-            height: 44px;
+            width: 38px;
+            height: 38px;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 1.2rem;
-            opacity: 0.6;
+            font-size: 1rem;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.6;
         }
 
         .status-btn.active {
@@ -213,10 +294,10 @@
 
         .btn {
             flex: 1;
-            padding: 14px 20px;
+            padding: 12px 20px;
             border: none;
             border-radius: 40px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
@@ -226,16 +307,41 @@
             gap: 10px;
         }
 
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
 
-        .btn-success { background: var(--success); color: white; }
-        .btn-success:hover { background: #27ae60; transform: translateY(-2px); }
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
 
-        .btn-report { background: #9b59b6; color: white; }
-        .btn-report:hover { background: #8e44ad; transform: translateY(-2px); }
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
 
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-success:hover:not(:disabled) {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .btn-report {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .btn-report:hover:not(:disabled) {
+            background: #8e44ad;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
         .btn.loading {
             position: relative;
@@ -264,14 +370,15 @@
             transform: translateX(-50%);
             background: var(--success);
             color: white;
-            padding: 14px 24px;
+            padding: 12px 24px;
             border-radius: 50px;
             display: flex;
             align-items: center;
             gap: 12px;
             z-index: 2000;
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-lg);
             animation: slideDown 0.3s ease;
+            font-size: 0.9rem;
         }
 
         .notification.error { background: var(--danger); }
@@ -313,13 +420,28 @@
             transition: transform 0.3s;
         }
 
-        .modal-overlay.active .modal-container { transform: scale(1); }
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
 
         .modal-close {
             background: none;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
+            color: var(--gray-600);
         }
 
         .month-select {
@@ -331,19 +453,49 @@
             margin-bottom: 20px;
         }
 
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .header-title { font-size: 1.3rem; }
+            .logo { height: 50px; }
+            .person-card { flex-direction: column; align-items: stretch; gap: 10px; }
+            .person-name { text-align: center; }
+            .status-group { justify-content: center; }
+            .btn { padding: 10px; font-size: 0.85rem; }
+            .user-info { flex-direction: column; text-align: center; }
+            .quick-btn { padding: 6px 12px; font-size: 0.75rem; }
+            .status-btn { width: 34px; height: 34px; font-size: 0.9rem; }
+        }
+
+        .attendance-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .attendance-list::-webkit-scrollbar-track {
+            background: var(--gray-200);
+            border-radius: 10px;
+        }
+
+        .attendance-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
         .empty-message {
             text-align: center;
             padding: 40px;
             color: var(--gray-600);
         }
 
-        @media (max-width: 600px) {
-            body { padding: 12px; }
-            .header-title { font-size: 1.3rem; }
-            .logo { height: 50px; }
-            .person-card { flex-direction: column; align-items: stretch; gap: 12px; }
-            .person-name { text-align: center; }
-            .status-group { justify-content: center; }
+        .stats-info {
+            padding: 10px 20px;
+            background: var(--gray-100);
+            border-top: 1px solid var(--gray-200);
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
         }
     </style>
 </head>
@@ -373,10 +525,32 @@
 
         <div class="date-section">
             <input type="date" id="datePicker" class="date-input">
+            <div class="quick-actions">
+                <button class="quick-btn quick-btn-all-present" id="markAllPresent">
+                    <i class="fas fa-check-double"></i> Todos Presente
+                </button>
+                <button class="quick-btn quick-btn-all-absent" id="markAllAbsent">
+                    <i class="fas fa-ban"></i> Todos Ausente
+                </button>
+                <button class="quick-btn quick-btn-all-certificate" id="markAllCertificate">
+                    <i class="fas fa-file-medical"></i> Todos Atestado
+                </button>
+                <button class="quick-btn quick-btn-clear" id="clearAll">
+                    <i class="fas fa-eraser"></i> Limpar Tudo
+                </button>
+            </div>
         </div>
 
         <div class="attendance-list" id="attendanceList">
             <div class="empty-message">Carregando lista de alunos...</div>
+        </div>
+
+        <div class="stats-info" id="statsInfo">
+            <span><i class="fas fa-users"></i> Total: 0</span>
+            <span><i class="fas fa-check-circle" style="color: var(--success);"></i> Presente: 0</span>
+            <span><i class="fas fa-times-circle" style="color: var(--danger);"></i> Ausente: 0</span>
+            <span><i class="fas fa-file-medical" style="color: var(--info);"></i> Atestado: 0</span>
+            <span><i class="fas fa-clock"></i> Pendente: 0</span>
         </div>
 
         <div class="actions">
@@ -394,8 +568,8 @@
 
     <div class="modal-overlay" id="reportModal">
         <div class="modal-container">
-            <div class="modal-header" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                <h3><i class="fas fa-calendar-alt"></i> Relatório Mensal</h3>
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-calendar-alt"></i> Relatório Mensal</h3>
                 <button class="modal-close" id="closeReportModal">&times;</button>
             </div>
             <div class="modal-body">
@@ -420,7 +594,7 @@
         let students = [];
         let currentAttendance = {};
         let selectedDate = '';
-        
+
         // Elementos DOM
         const datePicker = document.getElementById('datePicker');
         const attendanceList = document.getElementById('attendanceList');
@@ -433,33 +607,21 @@
         const monthSelect = document.getElementById('monthSelect');
         const userNameSpan = document.getElementById('userName');
         const logoutBtn = document.getElementById('logoutBtn');
+        const statsInfo = document.getElementById('statsInfo');
 
-        // ============================================
-        // FUNÇÕES DE AUTENTICAÇÃO
-        // ============================================
-        
-        function getAuthHeader() {
-            const token = sessionStorage.getItem('adminToken');
-            if (token) {
-                return { 'Authorization': 'Bearer ' + token };
-            }
-            return {};
-        }
+        // Botões de ação rápida
+        const markAllPresent = document.getElementById('markAllPresent');
+        const markAllAbsent = document.getElementById('markAllAbsent');
+        const markAllCertificate = document.getElementById('markAllCertificate');
+        const clearAll = document.getElementById('clearAll');
 
-        function getUserDisplayName() {
-            const adminName = sessionStorage.getItem('adminName');
-            if (adminName && adminName !== 'null' && adminName !== 'undefined') {
-                return adminName;
-            }
-            return 'Administrador';
-        }
-
+        // Helper Functions
         function showNotification(message, type = 'success') {
             const notif = document.createElement('div');
             notif.className = `notification ${type}`;
             notif.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i><span>${message}</span>`;
             document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), 4000);
+            setTimeout(() => notif.remove(), 3000);
         }
 
         function showLoading(btn) {
@@ -488,19 +650,64 @@
             return div.innerHTML;
         }
 
-        // ============================================
-        // BUSCAR ALUNOS
-        // ============================================
+        function updateStats() {
+            const statusMap = currentAttendance[selectedDate] || {};
+            let presente = 0, ausente = 0, atestado = 0, pendente = 0;
+            
+            students.forEach(student => {
+                const status = statusMap[student.edv];
+                if (status === 'PRESENTE') presente++;
+                else if (status === 'AUSENTE') ausente++;
+                else if (status === 'ATESTADO') atestado++;
+                else pendente++;
+            });
+            
+            statsInfo.innerHTML = `
+                <span><i class="fas fa-users"></i> Total: ${students.length}</span>
+                <span><i class="fas fa-check-circle" style="color: var(--success);"></i> Presente: ${presente}</span>
+                <span><i class="fas fa-times-circle" style="color: var(--danger);"></i> Ausente: ${ausente}</span>
+                <span><i class="fas fa-file-medical" style="color: var(--info);"></i> Atestado: ${atestado}</span>
+                <span><i class="fas fa-clock"></i> Pendente: ${pendente}</span>
+            `;
+        }
+
+        function markAllWithStatus(status) {
+            if (!selectedDate || !students.length) return;
+            
+            if (!currentAttendance[selectedDate]) {
+                currentAttendance[selectedDate] = {};
+            }
+            
+            students.forEach(student => {
+                currentAttendance[selectedDate][student.edv] = status;
+            });
+            
+            renderStudentList();
+            updateStats();
+            
+            const statusText = status === 'PRESENTE' ? 'Presente' : status === 'AUSENTE' ? 'Ausente' : 'Atestado';
+            showNotification(`Todos os alunos marcados como ${statusText}!`, 'success');
+        }
+
+        function clearAllMarks() {
+            if (!selectedDate || !students.length) return;
+            
+            currentAttendance[selectedDate] = {};
+            renderStudentList();
+            updateStats();
+            showNotification('Todas as marcações foram limpas!', 'info');
+        }
+
+        // Buscar lista de alunos da API
         async function fetchStudents() {
             try {
                 const response = await fetch(`${API_BASE}/admin/turmas/${encodeURIComponent(TURMA_NOME)}/alunos`, {
-                    headers: getAuthHeader()
+                    headers: {
+                        'Authorization': 'Basic ' + btoa('admin:formare2026')
+                    }
                 });
                 
                 if (!response.ok) {
-                    if (response.status === 401) {
-                        throw new Error('Não autorizado');
-                    }
                     throw new Error('Erro ao carregar alunos');
                 }
                 
@@ -512,52 +719,52 @@
                 })).filter(s => !s.isAdmin);
                 
                 renderStudentList();
+                updateStats();
                 return students;
             } catch (error) {
                 console.error('Erro ao carregar alunos:', error);
-                if (error.message === 'Não autorizado') {
-                    showNotification('Sessão expirada, redirecionando...', 'error');
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1500);
-                } else {
-                    showNotification('Erro ao carregar lista de alunos', 'error');
-                    attendanceList.innerHTML = '<div class="empty-message">❌ Erro ao carregar alunos</div>';
-                }
+                showNotification('Erro ao carregar lista de alunos', 'error');
+                attendanceList.innerHTML = '<div class="empty-message">❌ Erro ao carregar alunos. Verifique sua conexão.</div>';
                 return [];
             }
         }
 
+        // Renderizar lista de alunos
         function renderStudentList() {
             if (!students.length) {
-                attendanceList.innerHTML = '<div class="empty-message">📭 Nenhum aluno cadastrado</div>';
+                attendanceList.innerHTML = '<div class="empty-message">📭 Nenhum aluno cadastrado nesta turma.</div>';
                 return;
             }
             
-            attendanceList.innerHTML = students.map(student => `
-                <div class="person-card" data-edv="${student.edv}">
-                    <div class="person-name">${escapeHtml(student.nome)}</div>
-                    <div class="status-group">
-                        <button class="status-btn btn-present" data-status="PRESENTE" data-edv="${student.edv}">
-                            <i class="fas fa-check"></i>
-                        </button>
-                        <button class="status-btn btn-absent" data-status="AUSENTE" data-edv="${student.edv}">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <button class="status-btn btn-certificate" data-status="ATESTADO" data-edv="${student.edv}">
-                            <i class="fas fa-file-medical"></i>
-                        </button>
+            const statusMap = currentAttendance[selectedDate] || {};
+            
+            attendanceList.innerHTML = students.map(student => {
+                const currentStatus = statusMap[student.edv] || '';
+                const isPresent = currentStatus === 'PRESENTE';
+                const isAbsent = currentStatus === 'AUSENTE';
+                const isCertificate = currentStatus === 'ATESTADO';
+                
+                return `
+                    <div class="person-card" data-edv="${student.edv}">
+                        <div class="person-name">${escapeHtml(student.nome)}</div>
+                        <div class="status-group">
+                            <button class="status-btn btn-present ${isPresent ? 'active' : ''}" data-status="PRESENTE" data-edv="${student.edv}">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="status-btn btn-absent ${isAbsent ? 'active' : ''}" data-status="AUSENTE" data-edv="${student.edv}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button class="status-btn btn-certificate ${isCertificate ? 'active' : ''}" data-status="ATESTADO" data-edv="${student.edv}">
+                                <i class="fas fa-file-medical"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
             
             document.querySelectorAll('.status-btn').forEach(btn => {
                 btn.addEventListener('click', handleStatusClick);
             });
-            
-            if (selectedDate && currentAttendance[selectedDate]) {
-                applySavedStatus(currentAttendance[selectedDate]);
-            }
         }
 
         function handleStatusClick(e) {
@@ -566,31 +773,18 @@
             const status = btn.dataset.status;
             const card = document.querySelector(`.person-card[data-edv="${edv}"]`);
             
-            card.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+            card.querySelectorAll('.status-btn').forEach(b => {
+                b.classList.remove('active');
+            });
             btn.classList.add('active');
             
             if (!currentAttendance[selectedDate]) {
                 currentAttendance[selectedDate] = {};
             }
             currentAttendance[selectedDate][edv] = status;
+            updateStats();
         }
 
-        function applySavedStatus(statusMap) {
-            Object.entries(statusMap).forEach(([edv, status]) => {
-                const card = document.querySelector(`.person-card[data-edv="${edv}"]`);
-                if (card) {
-                    const btn = card.querySelector(`.status-btn[data-status="${status}"]`);
-                    if (btn) {
-                        card.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                    }
-                }
-            });
-        }
-
-        // ============================================
-        // BUSCAR CHAMADA EXISTENTE (rota pública - sem token)
-        // ============================================
         async function fetchAttendance(date) {
             try {
                 const response = await fetch(`${API_BASE}/presenca/obter/${date}?turma=${encodeURIComponent(TURMA_NOME)}`);
@@ -621,29 +815,6 @@
             }
         }
 
-        async function loadAttendanceForDate(date) {
-            if (!students.length) return;
-            
-            selectedDate = date;
-            document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
-            
-            const savedStatus = await fetchAttendance(date);
-            if (savedStatus && Object.keys(savedStatus).length > 0) {
-                currentAttendance[date] = savedStatus;
-                applySavedStatus(savedStatus);
-                submitBtn.style.display = 'none';
-                saveChangesBtn.style.display = 'block';
-                showNotification(`Chamada do dia ${formatDisplayDate(date)} carregada!`, 'success');
-            } else {
-                currentAttendance[date] = {};
-                submitBtn.style.display = 'block';
-                saveChangesBtn.style.display = 'none';
-            }
-        }
-
-        // ============================================
-        // SALVAR CHAMADA
-        // ============================================
         async function saveAttendance(isUpdate = false) {
             if (!selectedDate) {
                 showNotification('Selecione uma data primeiro', 'warning');
@@ -651,10 +822,10 @@
             }
             
             const statusMap = currentAttendance[selectedDate] || {};
-            const registros = students.map(student => {
-                const status = statusMap[student.edv] || '';
-                return { name: student.nome, status: status };
-            }).filter(r => r.status);
+            const registros = students.map(student => ({
+                name: student.nome,
+                status: statusMap[student.edv] || ''
+            })).filter(r => r.status);
             
             if (registros.length === 0) {
                 showNotification('Selecione o status de pelo menos um aluno', 'warning');
@@ -664,7 +835,8 @@
             const payload = {
                 data: selectedDate,
                 turma: TURMA_NOME,
-                registros: registros
+                registros,
+                responsavel: sessionStorage.getItem('nome') || 'Admin'
             };
             
             const btn = isUpdate ? saveChangesBtn : submitBtn;
@@ -675,22 +847,19 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        ...getAuthHeader()
+                        'Authorization': 'Basic ' + btoa('admin:formare2026')
                     },
                     body: JSON.stringify(payload)
                 });
                 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Erro ao salvar');
+                    const error = await response.json();
+                    throw new Error(error.error || 'Erro ao salvar');
                 }
                 
-                showNotification(`Chamada ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`, 'success');
-                
-                if (!isUpdate) {
-                    submitBtn.style.display = 'none';
-                    saveChangesBtn.style.display = 'block';
-                }
+                showNotification(`Chamada ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`);
+                submitBtn.style.display = 'none';
+                saveChangesBtn.style.display = 'block';
                 
             } catch (error) {
                 console.error('Erro ao salvar:', error);
@@ -700,12 +869,9 @@
             }
         }
 
-        // ============================================
-        // CONFIGURAÇÃO DE DATAS
-        // ============================================
         function setupDates() {
             const today = new Date();
-            const minDate = new Date(2026, 6, 14);
+            const minDate = new Date(2026, 2, 30);
             const maxDate = new Date(2026, 11, 31);
             
             datePicker.min = formatDate(minDate);
@@ -723,9 +889,25 @@
             selectedDate = datePicker.value;
         }
 
-        // ============================================
-        // RELATÓRIO
-        // ============================================
+        async function loadAttendanceForDate(date) {
+            selectedDate = date;
+            
+            const savedStatus = await fetchAttendance(date);
+            if (savedStatus && Object.keys(savedStatus).length > 0) {
+                currentAttendance[date] = savedStatus;
+                submitBtn.style.display = 'none';
+                saveChangesBtn.style.display = 'block';
+                showNotification(`Chamada do dia ${formatDisplayDate(date)} carregada!`, 'success');
+            } else {
+                currentAttendance[date] = {};
+                submitBtn.style.display = 'block';
+                saveChangesBtn.style.display = 'none';
+            }
+            
+            renderStudentList();
+            updateStats();
+        }
+
         async function loadAvailableMonths() {
             try {
                 const response = await fetch(`${API_BASE}/presenca/meses_disponiveis`);
@@ -737,11 +919,16 @@
                 monthSelect.innerHTML = '<option value="">Selecione um mês</option>';
                 
                 const months = [
+                    { value: '2026-03', name: 'Março 2026' },
+                    { value: '2026-04', name: 'Abril 2026' },
+                    { value: '2026-05', name: 'Maio 2026' },
+                    { value: '2026-06', name: 'Junho 2026' },
                     { value: '2026-07', name: 'Julho 2026' },
                     { value: '2026-08', name: 'Agosto 2026' },
                     { value: '2026-09', name: 'Setembro 2026' },
                     { value: '2026-10', name: 'Outubro 2026' },
-                    { value: '2026-11', name: 'Novembro 2026' }
+                    { value: '2026-11', name: 'Novembro 2026' },
+                    { value: '2026-12', name: 'Dezembro 2026' }
                 ];
                 
                 months.forEach(month => {
@@ -753,7 +940,7 @@
                 });
                 
                 monthSelect.addEventListener('change', () => {
-                    generateReportBtn.disabled = !monthSelect.value || (monthSelect.selectedOptions[0] && monthSelect.selectedOptions[0].disabled);
+                    generateReportBtn.disabled = !monthSelect.value || monthSelect.selectedOptions[0]?.disabled;
                 });
                 
             } catch (error) {
@@ -770,26 +957,28 @@
             }
             
             const url = `${API_BASE}/presenca/relatorio_excel/${mes}?turma=${encodeURIComponent(TURMA_NOME)}`;
-            window.open(url, '_blank');
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `relatorio_chamadas_${mes}.xlsx`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
             reportModal.classList.remove('active');
             showNotification('Relatório gerado com sucesso!', 'success');
         }
 
-        // ============================================
-        // LOGOUT
-        // ============================================
         function handleLogout() {
+            console.log('🚪 Realizando logout...');
             sessionStorage.clear();
             localStorage.removeItem('adminUsername');
             localStorage.removeItem('adminPassword');
             window.location.href = 'index.html';
         }
 
-        // ============================================
-        // EVENT LISTENERS
-        // ============================================
+        // Event Listeners
         datePicker.addEventListener('change', async () => {
-            if (datePicker.value && students.length) {
+            if (datePicker.value) {
                 await loadAttendanceForDate(datePicker.value);
             }
         });
@@ -813,32 +1002,26 @@
             if (e.target === reportModal) reportModal.classList.remove('active');
         });
 
-        // ============================================
-        // VERIFICAÇÃO DE AUTENTICAÇÃO SIMPLES
-        // ============================================
-        async function checkAndInit() {
-            const token = sessionStorage.getItem('adminToken');
-            
-            if (!token) {
-                showNotification('Faça login primeiro', 'warning');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-                return false;
-            }
-            
-            userNameSpan.textContent = getUserDisplayName();
-            return true;
-        }
+        // Ações rápidas
+        markAllPresent.addEventListener('click', () => markAllWithStatus('PRESENTE'));
+        markAllAbsent.addEventListener('click', () => markAllWithStatus('AUSENTE'));
+        markAllCertificate.addEventListener('click', () => markAllWithStatus('ATESTADO'));
+        clearAll.addEventListener('click', clearAllMarks);
 
         // ============================================
         // INICIALIZAÇÃO
         // ============================================
+        
         async function init() {
-            console.log('🚀 Iniciando presenca.html...');
+            console.log('🚀 Inicializando presenca.html...');
             
-            const authenticated = await checkAndInit();
-            if (!authenticated) return;
+            // Atualizar interface com dados do usuário
+            const nome = sessionStorage.getItem('nome');
+            if (nome) {
+                userNameSpan.textContent = decodeURIComponent(nome);
+            } else {
+                userNameSpan.textContent = 'Administrador';
+            }
             
             setupDates();
             await fetchStudents();
@@ -849,5 +1032,6 @@
         
         init();
     </script>
+
 </body>
 </html>
