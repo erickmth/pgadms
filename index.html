@@ -78,14 +78,8 @@
         }
 
         .sidebar-logo-area img {
-            width: 75%;
-            opacity: 0.95;
-            transition: transform 0.3s;
-        }
-
-        .sidebar-logo-area img:hover {
-            opacity: 1;
-            transform: scale(1.03);
+            width: 65%;
+            opacity: 0.92;
         }
 
         .sidebar-label {
@@ -248,11 +242,11 @@
             transition: box-shadow 0.3s ease, transform 0.3s ease;
             overflow: hidden;
         }
-
+        
         .card-text {
             white-space: normal;
         }
-
+        
         .card:hover {
             box-shadow: var(--card-shadow-hover);
             transform: translateY(-2px);
@@ -282,14 +276,6 @@
         .card-header h5 i {
             color: var(--primary);
             font-size: 15px;
-        }
-
-        .card-header.dark-header {
-            background: var(--sidebar-bg);
-        }
-
-        .card-header.dark-header h5 {
-            color: #fff;
         }
 
         .card-header.success-header { background: linear-gradient(135deg, #059669, #10b981); }
@@ -387,6 +373,15 @@
             box-shadow: 0 4px 16px rgba(236, 51, 51, 0.4);
         }
 
+        .btn-success {
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+        }
+
         .btn-outline-secondary {
             border-color: var(--border);
             color: var(--text-muted);
@@ -426,6 +421,11 @@
             outline: none;
         }
 
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
         .table {
             font-size: 13.5px;
             color: var(--text);
@@ -447,6 +447,8 @@
             vertical-align: middle;
             border-bottom: 1px solid var(--border);
         }
+
+        .table tbody tr:hover { background: var(--surface-2); }
 
         .badge {
             font-family: 'Sora', sans-serif;
@@ -474,7 +476,6 @@
             font-size: 18px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: var(--transition);
         }
 
         .mobile-menu-toggle:hover { background: #242c3d; }
@@ -800,29 +801,9 @@
             object-fit: contain;
         }
 
-        .import-area {
-            background: var(--surface-2);
-            border: 2px dashed var(--border);
-            border-radius: var(--radius);
-            padding: 30px;
+        .file-viewer-content .file-info {
             text-align: center;
-            transition: all 0.3s;
-        }
-
-        .import-area:hover {
-            border-color: var(--primary);
-            background: rgba(236, 51, 51, 0.02);
-        }
-
-        .import-area i {
-            font-size: 48px;
-            color: var(--text-muted);
-            margin-bottom: 15px;
-        }
-
-        .template-link {
-            margin-top: 15px;
-            font-size: 12px;
+            padding: 20px;
         }
 
         @media (max-width: 992px) {
@@ -841,6 +822,13 @@
 
             .page-body { padding: 20px 16px; }
             .page-header { padding: 16px 20px; padding-left: 64px; }
+
+            .upload-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 12px;
+            }
+
+            .upload-thumbnail { height: 120px; }
         }
 
         @media (max-width: 576px) {
@@ -849,83 +837,42 @@
             }
             
             .upload-thumbnail { height: 100px; }
+            
+            .upload-name { font-size: 11px; }
         }
     </style>
 </head>
 <body>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <button class="mobile-menu-toggle" id="mobileMenuToggle">
-        <i class="bi bi-list"></i>
-    </button>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="bi bi-list"></i></button>
 
     <div class="sidebar" id="sidebar">
         <div class="sidebar-logo-area">
-            <a href="index.html">
-                <img src="logu.svg" alt="Logo" class="logo">
-            </a>
+            <a href="index.html"><img src="logu.svg" alt="Logo" class="logo"></a>
             <div class="sidebar-label">Administração</div>
         </div>
-
         <nav class="sidebar-nav">
             <div class="nav-section-label">Geral</div>
             <ul class="nav flex-column mb-3">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#dashboard">
-                        <i class="bi bi-speedometer2"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#uploads">
-                        <i class="bi bi-images"></i> Galeria de Uploads
-                    </a>
-                </li>
+                <li class="nav-item"><a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#uploads"><i class="bi bi-images"></i> Galeria de Uploads</a></li>
             </ul>
-
             <div class="nav-section-label">Gerenciamento</div>
             <ul class="nav flex-column mb-3">
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#alunos">
-                        <i class="bi bi-people-fill"></i> Alunos
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#escalas">
-                        <i class="bi bi-calendar-check"></i> Escalas
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#avisos">
-                        <i class="bi bi-megaphone"></i> Avisos
-                    </a>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#alunos"><i class="bi bi-people-fill"></i> Alunos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#escalas"><i class="bi bi-calendar-check"></i> Escalas</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#avisos"><i class="bi bi-megaphone"></i> Avisos</a></li>
             </ul>
-
             <div class="nav-section-label">Sistema</div>
             <ul class="nav flex-column mb-3">
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#backup">
-                        <i class="bi bi-cloud-arrow-down"></i> Backup
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#sobre">
-                        <i class="bi bi-person-badge"></i> Sobre
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="presenca.html">
-                        <i class="bi bi-check2-square"></i> Lista de Presença
-                    </a>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#backup"><i class="bi bi-cloud-arrow-down"></i> Backup</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#sobre"><i class="bi bi-person-badge"></i> Sobre</a></li>
+                <li class="nav-item"><a class="nav-link" href="presenca.html"><i class="bi bi-brush"></i> Lista de Presença</a></li>
             </ul>
         </nav>
-
         <div class="sidebar-footer">
-            <button class="btn-logout" id="logoutBtn">
-                <i class="bi bi-box-arrow-left"></i> Sair
-            </button>
+            <button class="btn-logout" id="logoutBtn"><i class="bi bi-box-arrow-left"></i> Sair</button>
         </div>
     </div>
 
@@ -935,200 +882,69 @@
             <!-- DASHBOARD -->
             <div class="tab-pane fade show active" id="dashboard">
                 <div class="page-header">
-                    <div>
-                        <h1><i class="bi bi-speedometer2 me-2" style="color:var(--primary)"></i>Dashboard</h1>
-                        <div class="breadcrumb-text">Visão geral do sistema</div>
-                    </div>
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="refreshDashboard">
-                        <i class="bi bi-arrow-clockwise me-1"></i> Atualizar
-                    </button>
+                    <div><h1><i class="bi bi-speedometer2 me-2" style="color:var(--primary)"></i>Dashboard</h1><div class="breadcrumb-text">Visão geral do sistema</div></div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="refreshDashboard"><i class="bi bi-arrow-clockwise me-1"></i> Atualizar</button>
                 </div>
                 <div class="page-body">
                     <div class="row mb-4 g-3">
-                        <div class="col-md-4">
-                            <div class="stat-card stat-card-connected">
-                                <i class="bi bi-wifi stat-card-icon"></i>
-                                <div style="display:flex;align-items:center;gap:6px">
-                                    <span class="status-dot"></span>
-                                    <div class="stat-card-value" style="font-size:20px;letter-spacing:-0.3px" id="connectionStatus">Conectado à API</div>
-                                </div>
-                                <div class="stat-card-label" style="margin-top:6px">Status da Conexão</div>
-                                <div class="stat-card-sub" id="lastUpdate"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="stat-card stat-card-blue">
-                                <i class="bi bi-collection stat-card-icon"></i>
-                                <div class="stat-card-value" id="totalTurmas">0</div>
-                                <div class="stat-card-label">Total de Turmas</div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="stat-card stat-card-red">
-                                <i class="bi bi-mortarboard stat-card-icon"></i>
-                                <div class="stat-card-value" id="totalAlunos">0</div>
-                                <div class="stat-card-label">Total de Alunos</div>
-                            </div>
-                        </div>
+                        <div class="col-md-4"><div class="stat-card stat-card-connected"><i class="bi bi-wifi stat-card-icon"></i><div style="display:flex;align-items:center;gap:6px"><span class="status-dot"></span><div class="stat-card-value" style="font-size:20px" id="connectionStatus">Conectado à API</div></div><div class="stat-card-label">Status da Conexão</div><div class="stat-card-sub" id="lastUpdate"></div></div></div>
+                        <div class="col-md-4"><div class="stat-card stat-card-blue"><i class="bi bi-collection stat-card-icon"></i><div class="stat-card-value" id="totalTurmas">0</div><div class="stat-card-label">Total de Turmas</div></div></div>
+                        <div class="col-md-4"><div class="stat-card stat-card-red"><i class="bi bi-mortarboard stat-card-icon"></i><div class="stat-card-value" id="totalAlunos">0</div><div class="stat-card-label">Total de Alunos</div></div></div>
                     </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><i class="bi bi-clock-history"></i> Últimas Ações</h5>
-                            <span class="badge bg-danger" id="newActionsBadge" style="display:none">Novo</span>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Data/Hora</th>
-                                            <th>Ação</th>
-                                            <th>Detalhes</th>
-                                            <th>Usuário</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="lastActions"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="card"><div class="card-header"><h5><i class="bi bi-clock-history"></i> Últimas Ações</h5><span class="badge bg-danger" id="newActionsBadge" style="display:none">Novo</span></div><div class="card-body p-0"><div class="table-responsive"><table class="table mb-0"><thead><tr><th>Data/Hora</th><th>Ação</th><th>Detalhes</th><th>Usuário</th></tr></thead><tbody id="lastActions"></tbody></table></div></div></div>
                 </div>
             </div>
 
             <!-- GALERIA DE UPLOADS -->
             <div class="tab-pane fade" id="uploads">
-                <div class="page-header">
-                    <div>
-                        <h1><i class="bi bi-images me-2" style="color:var(--primary)"></i>Galeria de Uploads</h1>
-                        <div class="breadcrumb-text">Arquivos enviados para avisos e comunicados</div>
-                    </div>
-                    <button class="btn btn-outline-secondary btn-sm" id="refreshUploadsBtn">
-                        <i class="bi bi-arrow-repeat me-1"></i> Atualizar Galeria
-                    </button>
-                </div>
-                <div class="page-body">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><i class="bi bi-grid-3x3-gap-fill"></i> Todos os Arquivos</h5>
-                            <span class="badge bg-primary" id="uploadCount">0 arquivos</span>
-                        </div>
-                        <div class="card-body">
-                            <div id="uploadsGrid" class="upload-grid">
-                                <div class="empty-uploads">
-                                    <i class="bi bi-cloud-upload" style="font-size:48px;opacity:0.5"></i>
-                                    <p class="mt-2">Carregando arquivos...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="page-header"><div><h1><i class="bi bi-images me-2" style="color:var(--primary)"></i>Galeria de Uploads</h1><div class="breadcrumb-text">Arquivos enviados para avisos e comunicados</div></div><button class="btn btn-outline-secondary btn-sm" id="refreshUploadsBtn"><i class="bi bi-arrow-repeat me-1"></i> Atualizar Galeria</button></div>
+                <div class="page-body"><div class="card"><div class="card-header"><h5><i class="bi bi-grid-3x3-gap-fill"></i> Todos os Arquivos</h5><span class="badge bg-primary" id="uploadCount">0 arquivos</span></div><div class="card-body"><div id="uploadsGrid" class="upload-grid"><div class="empty-uploads"><i class="bi bi-cloud-upload" style="font-size:48px;opacity:0.5"></i><p class="mt-2">Carregando arquivos...</p></div></div></div></div></div>
             </div>
 
-            <!-- ALUNOS -->
+            <!-- ALUNOS - COM ADICIONAR INDIVIDUAL + IMPORTAR EXCEL -->
             <div class="tab-pane fade" id="alunos">
                 <div class="page-header">
-                    <div>
-                        <h1><i class="bi bi-people-fill me-2" style="color:var(--primary)"></i>Gerenciar Alunos</h1>
-                        <div class="breadcrumb-text">Cadastro, importação e gerenciamento</div>
-                    </div>
-                    <button class="btn btn-outline-secondary btn-sm" id="refreshAlunosBtn">
-                        <i class="bi bi-arrow-repeat me-1"></i> Atualizar Tudo
-                    </button>
+                    <div><h1><i class="bi bi-people-fill me-2" style="color:var(--primary)"></i>Gerenciar Alunos</h1><div class="breadcrumb-text">Cadastro individual e importação em lote</div></div>
+                    <button class="btn btn-outline-secondary btn-sm" id="refreshAlunosBtn"><i class="bi bi-arrow-repeat me-1"></i> Atualizar Tudo</button>
                 </div>
                 <div class="page-body">
                     <div class="row g-4">
+                        <!-- CARD: ADICIONAR ALUNO INDIVIDUAL -->
                         <div class="col-md-5">
                             <div class="card">
-                                <div class="card-header">
-                                    <h5><i class="bi bi-person-plus-fill"></i> Adicionar Aluno</h5>
-                                </div>
+                                <div class="card-header"><h5><i class="bi bi-person-plus-fill"></i> Adicionar Aluno</h5></div>
                                 <div class="card-body">
                                     <form id="addAlunoForm">
-                                        <div class="mb-3">
-                                            <label for="turmaAluno" class="form-label">Turma</label>
-                                            <select class="form-select" id="turmaAluno" required>
-                                                <option value="" selected disabled>Selecione a turma</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="edvAluno" class="form-label">EDV</label>
-                                            <input type="text" class="form-control" id="edvAluno" required placeholder="Número EDV">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="nomeAluno" class="form-label">Nome Completo</label>
-                                            <input type="text" class="form-control" id="nomeAluno" required placeholder="Nome do aluno">
-                                        </div>
-                                        <div class="form-check mb-4">
-                                            <input class="form-check-input" type="checkbox" id="isAdmin">
-                                            <label class="form-check-label" for="isAdmin" style="font-size:13px;font-weight:500">
-                                                É administrador?
-                                            </label>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary w-100">
-                                            <i class="bi bi-plus-circle me-2"></i> Adicionar Aluno
-                                        </button>
+                                        <div class="mb-3"><label for="turmaAluno" class="form-label">Turma</label><select class="form-select" id="turmaAluno" required><option value="" selected disabled>Selecione a turma</option></select></div>
+                                        <div class="mb-3"><label for="edvAluno" class="form-label">EDV</label><input type="text" class="form-control" id="edvAluno" required placeholder="Número EDV"></div>
+                                        <div class="mb-3"><label for="nomeAluno" class="form-label">Nome Completo</label><input type="text" class="form-control" id="nomeAluno" required placeholder="Nome do aluno"></div>
+                                        <div class="form-check mb-4"><input class="form-check-input" type="checkbox" id="isAdmin"><label class="form-check-label" for="isAdmin" style="font-size:13px;font-weight:500">É administrador?</label></div>
+                                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-circle me-2"></i> Adicionar Aluno</button>
                                     </form>
                                 </div>
                             </div>
-
-                            <!-- Importação em Lote -->
+                            
+                            <!-- CARD: IMPORTAÇÃO EXCEL/CSV -->
                             <div class="card mt-4">
-                                <div class="card-header">
-                                    <h5><i class="bi bi-file-excel-fill"></i> Importar em Lote</h5>
-                                </div>
+                                <div class="card-header"><h5><i class="bi bi-file-excel"></i> Importar Alunos em Lote</h5></div>
                                 <div class="card-body">
-                                    <div class="import-area" id="importArea">
-                                        <i class="bi bi-file-spreadsheet"></i>
-                                        <p class="mb-2">Arraste um arquivo Excel/CSV ou clique para selecionar</p>
-                                        <small class="text-muted">Formato: coluna A = EDV, coluna B = Nome</small>
-                                        <input type="file" id="importFile" accept=".csv,.xlsx,.xls" style="display: none;">
-                                        <button class="btn btn-outline-primary btn-sm mt-3" id="selectFileBtn">
-                                            <i class="bi bi-folder2-open"></i> Selecionar Arquivo
-                                        </button>
-                                        <div class="template-link">
-                                            <a href="#" id="downloadTemplate" class="text-muted">
-                                                <i class="bi bi-download"></i> Baixar modelo Excel
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div id="importProgress" style="display: none;" class="mt-3">
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%">Processando...</div>
-                                        </div>
-                                    </div>
-                                    <div id="importResult" class="mt-3" style="display: none;"></div>
+                                    <div class="mb-3"><label for="importTurma" class="form-label">Turma</label><select class="form-select" id="importTurma" required><option value="" selected disabled>Selecione a turma</option></select></div>
+                                    <div class="mb-3"><label for="importFile" class="form-label">Arquivo (CSV ou Excel)</label><input type="file" class="form-control" id="importFile" accept=".csv,.xlsx,.xls"><small class="form-text text-muted mt-2 d-block"><i class="bi bi-info-circle me-1"></i> Formato esperado: coluna A = EDV, coluna B = Nome (primeira linha ignorada como cabeçalho)</small><small class="form-text text-muted d-block mt-1"><i class="bi bi-file-earmark-excel me-1"></i> Exemplo: <code>EDV,Nome<br>12345,João Silva</code></small></div>
+                                    <button class="btn btn-success w-100" id="importAlunosBtn"><i class="bi bi-upload me-2"></i> Importar Alunos</button>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- CARD: LISTA DE ALUNOS -->
                         <div class="col-md-7">
                             <div class="card">
-                                <div class="card-header">
-                                    <h5><i class="bi bi-list-ul"></i> Lista de Alunos</h5>
-                                    <div>
-                                        <select id="turmaLista" class="form-select form-select-sm" style="width: auto; display: inline-block;">
-                                            <option value="">Todas as turmas</option>
-                                        </select>
-                                        <button class="btn btn-primary btn-sm ms-2" id="listarAlunosBtn">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </button>
+                                <div class="card-header"><h5><i class="bi bi-list-ul"></i> Lista de Alunos</h5></div>
+                                <div class="card-body">
+                                    <div class="row g-2 mb-3">
+                                        <div class="col"><label for="turmaLista" class="form-label">Filtrar por Turma</label><select class="form-select" id="turmaLista"><option value="">Todas as turmas</option></select></div>
+                                        <div class="col-auto d-flex align-items-end"><button class="btn btn-primary" id="listarAlunosBtn"><i class="bi bi-arrow-repeat me-1"></i> Atualizar</button></div>
                                     </div>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table mb-0">
-                                            <thead>
-                                                <tr>
-                                                    <th>Turma</th>
-                                                    <th>EDV</th>
-                                                    <th>Nome</th>
-                                                    <th>Ações</th>
-                                                 </tr>
-                                            </thead>
-                                            <tbody id="alunosList"></tbody>
-                                        </table>
-                                    </div>
+                                    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Turma</th><th>EDV</th><th>Nome</th><th>Ações</th></tr></thead><tbody id="alunosList"></tbody></table></div>
                                 </div>
                             </div>
                         </div>
@@ -1138,52 +954,19 @@
 
             <!-- ESCALAS -->
             <div class="tab-pane fade" id="escalas">
-                <div class="page-header">
-                    <div>
-                        <h1><i class="bi bi-calendar-check me-2" style="color:var(--primary)"></i>Gerenciar Escalas</h1>
-                        <div class="breadcrumb-text">Edição de escalas por turma</div>
-                    </div>
-                </div>
+                <div class="page-header"><div><h1><i class="bi bi-calendar-check me-2" style="color:var(--primary)"></i>Gerenciar Escalas</h1><div class="breadcrumb-text">Edição de escalas por turma</div></div></div>
                 <div class="page-body">
                     <div class="card">
-                        <div class="card-header">
-                            <h5><i class="bi bi-pencil-square"></i> Editar Escala</h5>
-                        </div>
+                        <div class="card-header"><h5><i class="bi bi-pencil-square"></i> Editar Escala</h5></div>
                         <div class="card-body">
                             <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <label for="turmaEscala" class="form-label">Selecione a Turma</label>
-                                    <select class="form-select" id="turmaEscala">
-                                        <option value="" selected disabled>Selecione a turma</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-auto d-flex align-items-end">
-                                    <button class="btn btn-primary" id="carregarEscalaBtn">
-                                        <i class="bi bi-arrow-down-circle me-2"></i> Carregar Escala
-                                    </button>
-                                </div>
+                                <div class="col-md-6"><label for="turmaEscala" class="form-label">Selecione a Turma</label><select class="form-select" id="turmaEscala"><option value="" selected disabled>Selecione a turma</option></select></div>
+                                <div class="col-md-auto d-flex align-items-end"><button class="btn btn-primary" id="carregarEscalaBtn"><i class="bi bi-arrow-down-circle me-2"></i> Carregar Escala</button></div>
                             </div>
-
-                            <div class="mb-4">
-                                <label for="semanaAtual" class="form-label">Semana Atual</label>
-                                <input type="text" class="form-control" id="semanaAtual" placeholder="Ex: Semana 02: 28/04 - 30/04" style="max-width:480px">
-                            </div>
-
-                            <div class="d-flex align-items-center gap-2 mb-3">
-                                <h5 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:0">Itens da Escala</h5>
-                                <div style="flex:1;height:1px;background:var(--border)"></div>
-                            </div>
-
+                            <div class="mb-4"><label for="semanaAtual" class="form-label">Semana Atual</label><input type="text" class="form-control" id="semanaAtual" placeholder="Ex: Semana 02: 28/04 - 30/04" style="max-width:480px"></div>
+                            <div class="d-flex align-items-center gap-2 mb-3"><h5 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:0">Itens da Escala</h5><div style="flex:1;height:1px;background:var(--border)"></div></div>
                             <div id="escalaItems"></div>
-
-                            <div class="d-flex gap-2 mt-3">
-                                <button class="btn btn-outline-secondary" id="addItemEscalaBtn">
-                                    <i class="bi bi-plus-circle me-2"></i> Adicionar Item
-                                </button>
-                                <button class="btn btn-success" id="salvarEscalaBtn">
-                                    <i class="bi bi-check-circle me-2"></i> Salvar Escala
-                                </button>
-                            </div>
+                            <div class="d-flex gap-2 mt-3"><button class="btn btn-outline-secondary" id="addItemEscalaBtn"><i class="bi bi-plus-circle me-2"></i> Adicionar Item</button><button class="btn btn-success" id="salvarEscalaBtn"><i class="bi bi-check-circle me-2"></i> Salvar Escala</button></div>
                         </div>
                     </div>
                 </div>
@@ -1191,1739 +974,670 @@
 
             <!-- AVISOS -->
             <div class="tab-pane fade" id="avisos">
-                <div class="page-header">
-                    <div>
-                        <h1><i class="bi bi-megaphone me-2" style="color:var(--primary)"></i>Gerenciar Avisos</h1>
-                        <div class="breadcrumb-text">Comunicados e alertas</div>
-                    </div>
-                    <button class="btn btn-success btn-sm" id="novoAvisoBtn">
-                        <i class="bi bi-plus-circle me-1"></i> Novo Aviso
-                    </button>
-                </div>
+                <div class="page-header"><div><h1><i class="bi bi-megaphone me-2" style="color:var(--primary)"></i>Gerenciar Avisos</h1><div class="breadcrumb-text">Comunicados e alertas</div></div><button class="btn btn-success btn-sm" id="novoAvisoBtn"><i class="bi bi-plus-circle me-1"></i> Novo Aviso</button></div>
                 <div class="page-body">
-                    <div class="card mb-4">
-                        <div class="card-header success-header">
-                            <h5 style="color:#fff"><i class="bi bi-bell-fill" style="color:#fff"></i> Avisos Ativos</h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="avisosAtivos" class="row g-3"></div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><i class="bi bi-list-check"></i> Todos os Avisos</h5>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Título</th>
-                                            <th>Status</th>
-                                            <th>Início</th>
-                                            <th>Término</th>
-                                            <th>Visualizações</th>
-                                            <th>Ações</th>
-                                         </tr>
-                                    </thead>
-                                    <tbody id="todosAvisos"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="card mb-4"><div class="card-header success-header"><h5 style="color:#fff"><i class="bi bi-bell-fill" style="color:#fff"></i> Avisos Ativos</h5></div><div class="card-body"><div id="avisosAtivos" class="row g-3"></div></div></div>
+                    <div class="card"><div class="card-header"><h5><i class="bi bi-list-check"></i> Todos os Avisos</h5></div><div class="card-body p-0"><div class="table-responsive"><table class="table mb-0"><thead><tr><th>Título</th><th>Status</th><th>Início</th><th>Término</th><th>Visualizações</th><th>Ações</th></tr></thead><tbody id="todosAvisos"></tbody></table></div></div></div>
                 </div>
             </div>
 
             <!-- BACKUP -->
             <div class="tab-pane fade" id="backup">
-                <div class="page-header">
-                    <div>
-                        <h1><i class="bi bi-cloud-arrow-down me-2" style="color:var(--primary)"></i>Backup dos Dados</h1>
-                        <div class="breadcrumb-text">Exportação e importação</div>
-                    </div>
-                </div>
+                <div class="page-header"><div><h1><i class="bi bi-cloud-arrow-down me-2" style="color:var(--primary)"></i>Backup dos Dados</h1><div class="breadcrumb-text">Exportação e importação</div></div></div>
                 <div class="page-body">
-                    <div class="alert alert-info mb-4">
-                        <i class="bi bi-info-circle me-2"></i> Faça backup regularmente para evitar perda de dados.
-                    </div>
-
+                    <div class="alert alert-info mb-4"><i class="bi bi-info-circle me-2"></i> Faça backup regularmente para evitar perda de dados.</div>
                     <div class="row g-4 mb-4">
-                        <div class="col-md-6">
-                            <div class="card h-100">
-                                <div class="card-header">
-                                    <h5><i class="bi bi-download"></i> Exportar Dados</h5>
-                                </div>
-                                <div class="card-body d-flex flex-column gap-2">
-                                    <button class="btn btn-primary" id="exportAlunosBtn">
-                                        <i class="bi bi-download me-2"></i> Exportar Alunos (JSON)
-                                    </button>
-                                    <button class="btn btn-primary" id="exportEscalasBtn">
-                                        <i class="bi bi-download me-2"></i> Exportar Escalas (JSON)
-                                    </button>
-                                    <button class="btn btn-success" id="exportFullBackupBtn">
-                                        <i class="bi bi-database me-2"></i> Exportar Backup Completo
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card h-100">
-                                <div class="card-header">
-                                    <h5><i class="bi bi-upload"></i> Importar Dados</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label for="backupFile" class="form-label">Arquivo de Backup</label>
-                                        <input class="form-control" type="file" id="backupFile" accept=".json">
-                                    </div>
-                                    <button class="btn btn-warning mb-3" id="importBackupBtn">
-                                        <i class="bi bi-upload me-2"></i> Importar Backup
-                                    </button>
-                                    <div class="alert alert-danger mb-0">
-                                        <i class="bi bi-exclamation-triangle me-2"></i> A importação substituirá todos os dados atuais!
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="col-md-6"><div class="card h-100"><div class="card-header"><h5><i class="bi bi-download"></i> Exportar Dados</h5></div><div class="card-body d-flex flex-column gap-2"><button class="btn btn-primary" id="exportAlunosBtn"><i class="bi bi-download me-2"></i> Exportar Alunos (JSON)</button><button class="btn btn-primary" id="exportEscalasBtn"><i class="bi bi-download me-2"></i> Exportar Escalas (JSON)</button><button class="btn btn-success" id="exportFullBackupBtn"><i class="bi bi-database me-2"></i> Exportar Backup Completo</button></div></div></div>
+                        <div class="col-md-6"><div class="card h-100"><div class="card-header"><h5><i class="bi bi-upload"></i> Importar Dados</h5></div><div class="card-body"><div class="mb-3"><label for="backupFile" class="form-label">Arquivo de Backup</label><input class="form-control" type="file" id="backupFile" accept=".json"></div><button class="btn btn-warning mb-3" id="importBackupBtn"><i class="bi bi-upload me-2"></i> Importar Backup</button><div class="alert alert-danger mb-0"><i class="bi bi-exclamation-triangle me-2"></i> A importação substituirá todos os dados atuais!</div></div></div></div>
                     </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><i class="bi bi-eye"></i> Visualização dos Dados</h5>
-                        </div>
-                        <div class="card-body">
-                            <ul class="nav nav-tabs mb-0" id="backupTabs" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="alunos-tab" data-bs-toggle="tab" data-bs-target="#alunosData" type="button" role="tab">
-                                        <i class="bi bi-people me-1"></i> Alunos
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="escalas-tab" data-bs-toggle="tab" data-bs-target="#escalasData" type="button" role="tab">
-                                        <i class="bi bi-calendar3 me-1"></i> Escalas
-                                    </button>
-                                </li>
-                            </ul>
-                            <div class="tab-content border border-top-0 rounded-bottom" id="backupTabContent" style="padding:16px">
-                                <div class="tab-pane fade show active" id="alunosData" role="tabpanel">
-                                    <pre id="alunosDataPreview" style="height:300px;overflow-y:scroll;margin:0"></pre>
-                                </div>
-                                <div class="tab-pane fade" id="escalasData" role="tabpanel">
-                                    <pre id="escalasDataPreview" style="height:300px;overflow-y:scroll;margin:0"></pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="card"><div class="card-header"><h5><i class="bi bi-eye"></i> Visualização dos Dados</h5></div><div class="card-body"><ul class="nav nav-tabs mb-0" id="backupTabs" role="tablist"><li class="nav-item"><button class="nav-link active" id="alunos-tab" data-bs-toggle="tab" data-bs-target="#alunosData"><i class="bi bi-people me-1"></i> Alunos</button></li><li class="nav-item"><button class="nav-link" id="escalas-tab" data-bs-toggle="tab" data-bs-target="#escalasData"><i class="bi bi-calendar3 me-1"></i> Escalas</button></li></ul><div class="tab-content border border-top-0 rounded-bottom" id="backupTabContent" style="padding:16px"><div class="tab-pane fade show active" id="alunosData"><pre id="alunosDataPreview" style="height:300px;overflow-y:scroll;margin:0"></pre></div><div class="tab-pane fade" id="escalasData"><pre id="escalasDataPreview" style="height:300px;overflow-y:scroll;margin:0"></pre></div></div></div></div>
                 </div>
             </div>
 
             <!-- SOBRE -->
             <div class="tab-pane fade" id="sobre">
-                <div class="page-header">
-                    <div>
-                        <h1><i class="bi bi-person-badge me-2" style="color:var(--primary)"></i>Sobre o Desenvolvedor</h1>
-                        <div class="breadcrumb-text">Créditos e informações</div>
-                    </div>
-                </div>
-                <div class="page-body">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="text-center mb-5 pt-2">
-                                <img src="dev.png" alt="Foto do Desenvolvedor" class="dev-avatar mb-3">
-                                <h3 style="font-weight:700;letter-spacing:-0.5px;font-size:22px">Erick Matheus Leguisamon</h3>
-                                <span class="badge" style="background:var(--primary-glow);color:var(--primary);font-size:12px;padding:6px 14px">Desenvolvedor do Sistema</span>
-                            </div>
-
-                            <div class="row g-4">
-                                <div class="col-md-6">
-                                    <div class="card" style="background:var(--surface-2)">
-                                        <div class="card-body">
-                                            <h4 style="font-size:15px;font-weight:700;margin-bottom:12px">
-                                                <i class="bi bi-info-circle text-primary me-2"></i> Sobre o Projeto
-                                            </h4>
-                                            <p style="font-size:13.5px;color:var(--text-muted);line-height:1.7">
-                                                Este sistema foi desenvolvido para gerenciar as escalas de limpeza do Formare, proporcionando uma solução eficiente e organizada para a divisão de tarefas entre os alunos.
-                                            </p>
-
-                                            <h4 style="font-size:15px;font-weight:700;margin-bottom:12px;margin-top:20px">
-                                                <i class="bi bi-code-slash text-primary me-2"></i> Tecnologias Utilizadas
-                                            </h4>
-                                            <div class="d-flex flex-wrap gap-2">
-                                                <span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">HTML5 / CSS3</span>
-                                                <span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">JavaScript</span>
-                                                <span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">Bootstrap 5</span>
-                                                <span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">Python / Flask</span>
-                                                <span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">SQLite</span>
-                                                <span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">PythonAnywhere</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="card" style="background:var(--surface-2)">
-                                        <div class="card-body">
-                                            <h4 style="font-size:15px;font-weight:700;margin-bottom:14px">
-                                                <i class="bi bi-person-lines-fill text-primary me-2"></i> Contato
-                                            </h4>
-                                            <div class="list-group mb-4">
-                                                <a href="mailto:erickleguisamon@gmail.com" class="list-group-item list-group-item-action" style="font-size:13px">
-                                                    <i class="bi bi-envelope-fill me-2" style="color:var(--primary)"></i> erickleguisamon@gmail.com
-                                                </a>
-                                                <a href="https://wa.me/+5541998239031" class="list-group-item list-group-item-action" style="font-size:13px">
-                                                    <i class="bi bi-whatsapp me-2" style="color:#25d366"></i> (41) 99823-9031
-                                                </a>
-                                                <a href="https://www.linkedin.com/in/erickleguisamon/" class="list-group-item list-group-item-action" style="font-size:13px">
-                                                    <i class="bi bi-linkedin me-2" style="color:#0077b5"></i> linkedin.com/in/erickleguisamon
-                                                </a>
-                                            </div>
-
-                                            <h4 style="font-size:15px;font-weight:700;margin-bottom:10px">
-                                                <i class="bi bi-heart-fill me-2" style="color:var(--primary)"></i> Agradecimentos
-                                            </h4>
-                                            <p style="font-size:13.5px;color:var(--text-muted);line-height:1.7;margin:0">
-                                                Agradeço especialmente aos professores e colegas do Formare pelo apoio e contribuições.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="alert alert-info mt-4 mb-0">
-                                <i class="bi bi-lightbulb me-2"></i> Este projeto foi desenvolvido para o Curso Formare do Instituto Robert Bosch. — Turma 2026
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="page-header"><div><h1><i class="bi bi-person-badge me-2" style="color:var(--primary)"></i>Sobre o Desenvolvedor</h1><div class="breadcrumb-text">Créditos e informações</div></div></div>
+                <div class="page-body"><div class="card"><div class="card-body"><div class="text-center mb-5 pt-2"><img src="dev.png" alt="Foto do Desenvolvedor" class="dev-avatar mb-3"><h3 style="font-weight:700;letter-spacing:-0.5px;font-size:22px">Erick Matheus Leguisamon</h3><span class="badge" style="background:var(--primary-glow);color:var(--primary);font-size:12px;padding:6px 14px">Desenvolvedor do Sistema</span></div><div class="row g-4"><div class="col-md-6"><div class="card" style="background:var(--surface-2)"><div class="card-body"><h4 style="font-size:15px;font-weight:700;margin-bottom:12px"><i class="bi bi-info-circle text-primary me-2"></i> Sobre o Projeto</h4><p style="font-size:13.5px;color:var(--text-muted);line-height:1.7">Este sistema foi desenvolvido para gerenciar as escalas de limpeza do Formare, proporcionando uma solução eficiente e organizada para a divisão de tarefas entre os alunos.</p><h4 style="font-size:15px;font-weight:700;margin-bottom:12px;margin-top:20px"><i class="bi bi-code-slash text-primary me-2"></i> Tecnologias Utilizadas</h4><div class="d-flex flex-wrap gap-2"><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">HTML5 / CSS3</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">JavaScript</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">Bootstrap 5</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">Python / Flask</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">SQLite</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">PythonAnywhere</span></div></div></div></div><div class="col-md-6"><div class="card" style="background:var(--surface-2)"><div class="card-body"><h4 style="font-size:15px;font-weight:700;margin-bottom:14px"><i class="bi bi-person-lines-fill text-primary me-2"></i> Contato</h4><div class="list-group mb-4"><a href="mailto:erickleguisamon@gmail.com" class="list-group-item list-group-item-action" style="font-size:13px"><i class="bi bi-envelope-fill me-2" style="color:var(--primary)"></i> erickleguisamon@gmail.com</a><a href="https://wa.me/+5541998239031" class="list-group-item list-group-item-action" style="font-size:13px"><i class="bi bi-whatsapp me-2" style="color:#25d366"></i> (41) 99823-9031</a><a href="https://www.linkedin.com/in/erickleguisamon/" class="list-group-item list-group-item-action" style="font-size:13px"><i class="bi bi-linkedin me-2" style="color:#0077b5"></i> linkedin.com/in/erickleguisamon</a></div><h4 style="font-size:15px;font-weight:700;margin-bottom:10px"><i class="bi bi-heart-fill me-2" style="color:var(--primary)"></i> Agradecimentos</h4><p style="font-size:13.5px;color:var(--text-muted);line-height:1.7;margin:0">Agradeço especialmente aos professores e colegas do Formare pelo apoio e contribuições.</p></div></div></div></div><div class="alert alert-info mt-4 mb-0"><i class="bi bi-lightbulb me-2"></i> Este projeto foi desenvolvido para o Curso Formare do Instituto Robert Bosch. — Turma 2026</div></div></div></div>
             </div>
-
         </div>
     </div>
 
     <!-- MODALS -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="false" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Acesso ao Painel Admin</h5>
-                </div>
-                <div class="modal-body">
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Usuário</label>
-                            <input type="text" class="form-control" id="username" required placeholder="Seu usuário" autocomplete="username">
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Senha</label>
-                            <input type="password" class="form-control" id="password" required placeholder="Sua senha" autocomplete="current-password">
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="rememberMe">
-                            <label class="form-check-label" for="rememberMe" style="font-size:13px">Lembrar de mim</label>
-                        </div>
-                        <div class="alert alert-danger d-none" id="loginError"></div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary w-100" id="loginBtn">
-                        <i class="bi bi-arrow-right-circle me-2"></i>Entrar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="confirmModalTitle">Confirmação</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="confirmModalBody">Tem certeza que deseja realizar esta ação?</div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="confirmModalBtn">Confirmar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="messageModalTitle">Mensagem</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="messageModalBody">Mensagem de exemplo</div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="avisoModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="avisoModalTitle"><i class="bi bi-megaphone me-2"></i>Novo Aviso</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="avisoForm">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="avisoTitulo" class="form-label">Título (Opcional)</label>
-                                <input type="text" class="form-control" id="avisoTitulo" placeholder="Título do aviso">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="avisoImagem" class="form-label">Imagem (Opcional)</label>
-                                <input type="file" class="form-control" id="avisoImagem" accept="image/*">
-                                <div id="imagemPreview" class="mt-2"></div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3 mt-3">
-                            <label for="avisoConteudo" class="form-label">Conteúdo (Markdown)</label>
-                            <textarea class="form-control" id="avisoConteudo" rows="5" placeholder="Digite o conteúdo do aviso em Markdown..." required></textarea>
-                            <small class="form-text text-muted" style="font-size:11.5px;line-height:1.6;display:block;margin-top:6px">
-                                <b>Títulos:</b> # Título 1, ## Título 2 &nbsp;|&nbsp;
-                                <b>Negrito:</b> **texto** &nbsp;|&nbsp;
-                                <b>Itálico:</b> *texto* &nbsp;|&nbsp;
-                                <b>Links:</b> [texto](url)
-                            </small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Pré-visualização</label>
-                            <div class="markdown-preview" id="previewConteudo">O conteúdo aparecerá aqui...</div>
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label for="avisoInicio" class="form-label">Data/Hora de Início</label>
-                                <input type="datetime-local" class="form-control" id="avisoInicio" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="avisoFim" class="form-label">Data/Hora de Término</label>
-                                <input type="datetime-local" class="form-control" id="avisoFim" required>
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="avisoGritar">
-                                    <label class="form-check-label" for="avisoGritar" style="font-size:13px">Texto em Maiúsculas</label>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="avisoContagem">
-                                    <label class="form-check-label" for="avisoContagem" style="font-size:13px">Contagem Regressiva</label>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="avisoAtivo">
-                                    <label class="form-check-label" for="avisoAtivo" style="font-size:13px">Ativar Imediatamente</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="avisoLink" class="form-label">Link de Redirecionamento (Opcional)</label>
-                                <input type="url" class="form-control" id="avisoLink" placeholder="https://exemplo.com">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="avisoTamanhoImagem" class="form-label">Tamanho da Imagem</label>
-                                <select class="form-select" id="avisoTamanhoImagem">
-                                    <option value="small">Pequeno</option>
-                                    <option value="medium" selected>Médio</option>
-                                    <option value="large">Grande</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="salvarAvisoBtn">
-                        <i class="bi bi-check-circle me-2"></i>Salvar Aviso
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade file-viewer-modal" id="fileViewerModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="fileViewerTitle">Visualizar Arquivo</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-0">
-                    <div class="file-viewer-content" id="fileViewerContent">
-                        <div class="text-center p-5">
-                            <div class="loading"></div>
-                            <p class="mt-2">Carregando...</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a href="#" id="fileDownloadLink" class="btn btn-primary" download>
-                        <i class="bi bi-download me-2"></i>Baixar Arquivo
-                    </a>
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="false" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Acesso ao Painel Admin</h5></div><div class="modal-body"><form id="loginForm"><div class="mb-3"><label for="username" class="form-label">Usuário</label><input type="text" class="form-control" id="username" required placeholder="Seu usuário"></div><div class="mb-3"><label for="password" class="form-label">Senha</label><input type="password" class="form-control" id="password" required placeholder="Sua senha"></div><div class="mb-3 form-check"><input type="checkbox" class="form-check-input" id="rememberMe"><label class="form-check-label" for="rememberMe">Lembrar de mim</label></div><div class="alert alert-danger d-none" id="loginError"></div></form></div><div class="modal-footer"><button type="button" class="btn btn-primary w-100" id="loginBtn"><i class="bi bi-arrow-right-circle me-2"></i>Entrar</button></div></div></div></div>
+    <div class="modal fade" id="confirmModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title" id="confirmModalTitle">Confirmação</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmModalBody">Tem certeza que deseja realizar esta ação?</div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="confirmModalBtn">Confirmar</button></div></div></div></div>
+    <div class="modal fade" id="messageModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title" id="messageModalTitle">Mensagem</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="messageModalBody">Mensagem de exemplo</div><div class="modal-footer"><button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button></div></div></div></div>
+    <div class="modal fade" id="avisoModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title" id="avisoModalTitle"><i class="bi bi-megaphone me-2"></i>Novo Aviso</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="avisoForm"><div class="row g-3"><div class="col-md-6"><label for="avisoTitulo" class="form-label">Título (Opcional)</label><input type="text" class="form-control" id="avisoTitulo" placeholder="Título do aviso"></div><div class="col-md-6"><label for="avisoImagem" class="form-label">Imagem (Opcional)</label><input type="file" class="form-control" id="avisoImagem" accept="image/*"><div id="imagemPreview" class="mt-2"></div></div></div><div class="mb-3 mt-3"><label for="avisoConteudo" class="form-label">Conteúdo (Markdown)</label><textarea class="form-control" id="avisoConteudo" rows="5" placeholder="Digite o conteúdo do aviso em Markdown..." required></textarea><small class="form-text text-muted"><b>Títulos:</b> # Título 1, ## Título 2 | <b>Negrito:</b> **texto** | <b>Itálico:</b> *texto* | <b>Links:</b> [texto](url)</small></div><div class="mb-3"><label class="form-label">Pré-visualização</label><div class="markdown-preview" id="previewConteudo">O conteúdo aparecerá aqui...</div></div><div class="row g-3 mb-3"><div class="col-md-6"><label for="avisoInicio" class="form-label">Data/Hora de Início</label><input type="datetime-local" class="form-control" id="avisoInicio" required></div><div class="col-md-6"><label for="avisoFim" class="form-label">Data/Hora de Término</label><input type="datetime-local" class="form-control" id="avisoFim" required></div></div><div class="row g-3 mb-3"><div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="avisoGritar"><label class="form-check-label" for="avisoGritar">Texto em Maiúsculas</label></div></div><div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="avisoContagem"><label class="form-check-label" for="avisoContagem">Contagem Regressiva</label></div></div><div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="avisoAtivo"><label class="form-check-label" for="avisoAtivo">Ativar Imediatamente</label></div></div></div><div class="row g-3"><div class="col-md-6"><label for="avisoLink" class="form-label">Link de Redirecionamento (Opcional)</label><input type="url" class="form-control" id="avisoLink" placeholder="https://exemplo.com"></div><div class="col-md-6"><label for="avisoTamanhoImagem" class="form-label">Tamanho da Imagem</label><select class="form-select" id="avisoTamanhoImagem"><option value="small">Pequeno</option><option value="medium" selected>Médio</option><option value="large">Grande</option></select></div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="salvarAvisoBtn"><i class="bi bi-check-circle me-2"></i>Salvar Aviso</button></div></div></div></div>
+    <div class="modal fade file-viewer-modal" id="fileViewerModal"><div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title" id="fileViewerTitle">Visualizar Arquivo</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><div class="file-viewer-content" id="fileViewerContent"><div class="text-center p-5"><div class="loading"></div><p class="mt-2">Carregando...</p></div></div></div><div class="modal-footer"><a href="#" id="fileDownloadLink" class="btn btn-primary" download><i class="bi bi-download me-2"></i>Baixar Arquivo</a><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script>
-        // ============================================
-        // CONFIGURAÇÕES INICIAIS
-        // ============================================
-        
-        const API_URL = 'https://erickmth.pythonanywhere.com';
-        let currentTurmaEscala = '';
-        let lastActionId = 0;
-        let turmasList = [];
-        let lastUpdateTime = null;
-        let currentAvisoId = null;
-        let uploadedImagePath = null;
+    // Configurações iniciais
+    const API_URL = 'https://erickmth.pythonanywhere.com';
+    let currentTurmaEscala = '';
+    let turmasList = [];
+    let currentAvisoId = null;
+    let uploadedImagePath = null;
 
-        function converterUTCparaBrasil(dataUTC) {
-            try {
-                if (dataUTC instanceof Date) {
-                    return new Date(dataUTC.getTime());
-                }
-                const data = new Date(dataUTC + 'Z');
-                return data;
-            } catch (error) {
-                console.error('Erro ao converter data:', error);
-                return new Date();
-            }
-        }
+    // Elementos do DOM
+    const elements = {
+        loginModal: new bootstrap.Modal('#loginModal'),
+        confirmModal: new bootstrap.Modal('#confirmModal'),
+        messageModal: new bootstrap.Modal('#messageModal'),
+        avisoModal: new bootstrap.Modal('#avisoModal'),
+        fileViewerModal: new bootstrap.Modal('#fileViewerModal'),
+        loginBtn: document.getElementById('loginBtn'),
+        loginError: document.getElementById('loginError'),
+        logoutBtn: document.getElementById('logoutBtn'),
+        refreshDashboard: document.getElementById('refreshDashboard'),
+        refreshUploadsBtn: document.getElementById('refreshUploadsBtn'),
+        refreshAlunosBtn: document.getElementById('refreshAlunosBtn'),
+        totalTurmas: document.getElementById('totalTurmas'),
+        totalAlunos: document.getElementById('totalAlunos'),
+        connectionStatus: document.getElementById('connectionStatus'),
+        lastUpdate: document.getElementById('lastUpdate'),
+        lastActions: document.getElementById('lastActions'),
+        newActionsBadge: document.getElementById('newActionsBadge'),
+        addAlunoForm: document.getElementById('addAlunoForm'),
+        turmaAluno: document.getElementById('turmaAluno'),
+        edvAluno: document.getElementById('edvAluno'),
+        nomeAluno: document.getElementById('nomeAluno'),
+        isAdmin: document.getElementById('isAdmin'),
+        turmaLista: document.getElementById('turmaLista'),
+        listarAlunosBtn: document.getElementById('listarAlunosBtn'),
+        alunosList: document.getElementById('alunosList'),
+        turmaEscala: document.getElementById('turmaEscala'),
+        carregarEscalaBtn: document.getElementById('carregarEscalaBtn'),
+        semanaAtual: document.getElementById('semanaAtual'),
+        escalaItems: document.getElementById('escalaItems'),
+        addItemEscalaBtn: document.getElementById('addItemEscalaBtn'),
+        salvarEscalaBtn: document.getElementById('salvarEscalaBtn'),
+        exportAlunosBtn: document.getElementById('exportAlunosBtn'),
+        exportEscalasBtn: document.getElementById('exportEscalasBtn'),
+        exportFullBackupBtn: document.getElementById('exportFullBackupBtn'),
+        backupFile: document.getElementById('backupFile'),
+        importBackupBtn: document.getElementById('importBackupBtn'),
+        alunosDataPreview: document.getElementById('alunosDataPreview'),
+        escalasDataPreview: document.getElementById('escalasDataPreview'),
+        confirmModalTitle: document.getElementById('confirmModalTitle'),
+        confirmModalBody: document.getElementById('confirmModalBody'),
+        confirmModalBtn: document.getElementById('confirmModalBtn'),
+        messageModalTitle: document.getElementById('messageModalTitle'),
+        messageModalBody: document.getElementById('messageModalBody'),
+        mobileMenuToggle: document.getElementById('mobileMenuToggle'),
+        sidebar: document.getElementById('sidebar'),
+        sidebarOverlay: document.getElementById('sidebarOverlay'),
+        novoAvisoBtn: document.getElementById('novoAvisoBtn'),
+        avisosAtivos: document.getElementById('avisosAtivos'),
+        todosAvisos: document.getElementById('todosAvisos'),
+        avisoForm: document.getElementById('avisoForm'),
+        avisoTitulo: document.getElementById('avisoTitulo'),
+        avisoConteudo: document.getElementById('avisoConteudo'),
+        avisoImagem: document.getElementById('avisoImagem'),
+        avisoInicio: document.getElementById('avisoInicio'),
+        avisoFim: document.getElementById('avisoFim'),
+        avisoGritar: document.getElementById('avisoGritar'),
+        avisoContagem: document.getElementById('avisoContagem'),
+        avisoAtivo: document.getElementById('avisoAtivo'),
+        avisoLink: document.getElementById('avisoLink'),
+        avisoTamanhoImagem: document.getElementById('avisoTamanhoImagem'),
+        previewConteudo: document.getElementById('previewConteudo'),
+        imagemPreview: document.getElementById('imagemPreview'),
+        salvarAvisoBtn: document.getElementById('salvarAvisoBtn'),
+        avisoModalTitle: document.getElementById('avisoModalTitle'),
+        uploadsGrid: document.getElementById('uploadsGrid'),
+        uploadCount: document.getElementById('uploadCount'),
+        importTurma: document.getElementById('importTurma'),
+        importFile: document.getElementById('importFile'),
+        importAlunosBtn: document.getElementById('importAlunosBtn')
+    };
 
-        function formatarDataBrasil(data) {
-            return data.toLocaleString('pt-BR', {
-                day: '2-digit', month: '2-digit', year: 'numeric',
-                hour: '2-digit', minute: '2-digit', second: '2-digit'
-            });
-        }
+    function getAuthHeader() {
+        const token = sessionStorage.getItem('adminToken');
+        if (token) return { 'Authorization': 'Bearer ' + token };
+        return {};
+    }
 
-        function converterEFormatarData(dataUTC) {
-            const dataBrasil = converterUTCparaBrasil(dataUTC);
-            return formatarDataBrasil(dataBrasil);
-        }
-
-        const elements = {
-            loginModal: new bootstrap.Modal('#loginModal'),
-            confirmModal: new bootstrap.Modal('#confirmModal'),
-            messageModal: new bootstrap.Modal('#messageModal'),
-            avisoModal: new bootstrap.Modal('#avisoModal'),
-            fileViewerModal: new bootstrap.Modal('#fileViewerModal'),
-            loginForm: document.getElementById('loginForm'),
-            loginBtn: document.getElementById('loginBtn'),
-            loginError: document.getElementById('loginError'),
-            logoutBtn: document.getElementById('logoutBtn'),
-            refreshDashboard: document.getElementById('refreshDashboard'),
-            refreshUploadsBtn: document.getElementById('refreshUploadsBtn'),
-            refreshAlunosBtn: document.getElementById('refreshAlunosBtn'),
-            totalTurmas: document.getElementById('totalTurmas'),
-            totalAlunos: document.getElementById('totalAlunos'),
-            connectionStatus: document.getElementById('connectionStatus'),
-            lastUpdate: document.getElementById('lastUpdate'),
-            lastActions: document.getElementById('lastActions'),
-            newActionsBadge: document.getElementById('newActionsBadge'),
-            addAlunoForm: document.getElementById('addAlunoForm'),
-            turmaAluno: document.getElementById('turmaAluno'),
-            edvAluno: document.getElementById('edvAluno'),
-            nomeAluno: document.getElementById('nomeAluno'),
-            isAdmin: document.getElementById('isAdmin'),
-            turmaLista: document.getElementById('turmaLista'),
-            listarAlunosBtn: document.getElementById('listarAlunosBtn'),
-            alunosList: document.getElementById('alunosList'),
-            turmaEscala: document.getElementById('turmaEscala'),
-            carregarEscalaBtn: document.getElementById('carregarEscalaBtn'),
-            semanaAtual: document.getElementById('semanaAtual'),
-            escalaItems: document.getElementById('escalaItems'),
-            addItemEscalaBtn: document.getElementById('addItemEscalaBtn'),
-            salvarEscalaBtn: document.getElementById('salvarEscalaBtn'),
-            exportAlunosBtn: document.getElementById('exportAlunosBtn'),
-            exportEscalasBtn: document.getElementById('exportEscalasBtn'),
-            exportFullBackupBtn: document.getElementById('exportFullBackupBtn'),
-            backupFile: document.getElementById('backupFile'),
-            importBackupBtn: document.getElementById('importBackupBtn'),
-            alunosDataPreview: document.getElementById('alunosDataPreview'),
-            escalasDataPreview: document.getElementById('escalasDataPreview'),
-            confirmModalTitle: document.getElementById('confirmModalTitle'),
-            confirmModalBody: document.getElementById('confirmModalBody'),
-            confirmModalBtn: document.getElementById('confirmModalBtn'),
-            messageModalTitle: document.getElementById('messageModalTitle'),
-            messageModalBody: document.getElementById('messageModalBody'),
-            mobileMenuToggle: document.getElementById('mobileMenuToggle'),
-            sidebar: document.getElementById('sidebar'),
-            sidebarOverlay: document.getElementById('sidebarOverlay'),
-            novoAvisoBtn: document.getElementById('novoAvisoBtn'),
-            avisosAtivos: document.getElementById('avisosAtivos'),
-            todosAvisos: document.getElementById('todosAvisos'),
-            avisoForm: document.getElementById('avisoForm'),
-            avisoTitulo: document.getElementById('avisoTitulo'),
-            avisoConteudo: document.getElementById('avisoConteudo'),
-            avisoImagem: document.getElementById('avisoImagem'),
-            avisoInicio: document.getElementById('avisoInicio'),
-            avisoFim: document.getElementById('avisoFim'),
-            avisoGritar: document.getElementById('avisoGritar'),
-            avisoContagem: document.getElementById('avisoContagem'),
-            avisoAtivo: document.getElementById('avisoAtivo'),
-            avisoLink: document.getElementById('avisoLink'),
-            avisoTamanhoImagem: document.getElementById('avisoTamanhoImagem'),
-            previewConteudo: document.getElementById('previewConteudo'),
-            imagemPreview: document.getElementById('imagemPreview'),
-            salvarAvisoBtn: document.getElementById('salvarAvisoBtn'),
-            avisoModalTitle: document.getElementById('avisoModalTitle'),
-            uploadsGrid: document.getElementById('uploadsGrid'),
-            uploadCount: document.getElementById('uploadCount'),
-            importFile: document.getElementById('importFile'),
-            selectFileBtn: document.getElementById('selectFileBtn'),
-            importProgress: document.getElementById('importProgress'),
-            importResult: document.getElementById('importResult'),
-            downloadTemplate: document.getElementById('downloadTemplate')
-        };
-
-        // ============================================
-        // FUNÇÕES DE AUTENTICAÇÃO
-        // ============================================
-        
-        function getAuthHeader() {
-            const token = sessionStorage.getItem('adminToken');
-            if (token) {
-                return { 'Authorization': 'Bearer ' + token };
-            }
-            return {};
-        }
-
-        async function checkSession() {
-            const token = sessionStorage.getItem('adminToken');
-            if (!token) return false;
-            
-            try {
-                const response = await fetch(`${API_URL}/api/admin/backup`, {
-                    headers: getAuthHeader()
-                });
-                return response.ok;
-            } catch (error) {
-                console.error('Erro ao verificar sessão:', error);
+    async function checkSession() {
+        const token = sessionStorage.getItem('adminToken');
+        if (!token) return false;
+        try {
+            const response = await fetch(`${API_URL}/api/admin/backup`, { headers: getAuthHeader() });
+            if (response.status === 401) {
+                sessionStorage.removeItem('adminToken');
+                sessionStorage.removeItem('adminName');
                 return false;
             }
-        }
+            return response.ok;
+        } catch (error) { return false; }
+    }
 
-        document.addEventListener('DOMContentLoaded', async function () {
-            const hasSession = await checkSession();
-            
-            if (hasSession) {
-                enableUIElements(true);
-                loadDashboard();
-                loadTurmas();
-            } else {
-                enableUIElements(false);
-                elements.loginModal.show();
-            }
-
-            setupEventListeners();
-            setupAvisosEventListeners();
-            setupDefaultDates();
-            setupImportListeners();
-        });
-
-        function setupEventListeners() {
-            document.querySelectorAll('.sidebar .nav-link[data-bs-toggle="tab"]').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    if (this.classList.contains('disabled')) { e.preventDefault(); return; }
-                    const tabId = this.getAttribute('data-bs-target');
-                    activateTab(tabId);
-                    if (window.innerWidth <= 992) toggleMobileMenu();
-                });
-            });
-
-            document.querySelector('.sidebar .logo').addEventListener('click', function(e) {
-                e.preventDefault();
-                activateTab('#dashboard');
-                if (window.innerWidth <= 992) toggleMobileMenu();
-            });
-
-            elements.loginBtn.addEventListener('click', handleLogin);
-            elements.logoutBtn.addEventListener('click', handleLogout);
-            elements.refreshDashboard.addEventListener('click', loadDashboard);
-            elements.refreshUploadsBtn.addEventListener('click', loadUploads);
-            elements.refreshAlunosBtn.addEventListener('click', function() {
-                loadTurmas().then(() => { listarAlunos(); });
-            });
-            elements.addAlunoForm.addEventListener('submit', addAluno);
-            elements.listarAlunosBtn.addEventListener('click', listarAlunos);
-            elements.turmaLista.addEventListener('change', listarAlunos);
-            elements.carregarEscalaBtn.addEventListener('click', carregarEscala);
-            elements.addItemEscalaBtn.addEventListener('click', adicionarItemEscala);
-            elements.salvarEscalaBtn.addEventListener('click', salvarEscala);
-            elements.exportAlunosBtn.addEventListener('click', exportAlunos);
-            elements.exportEscalasBtn.addEventListener('click', exportEscalas);
-            elements.exportFullBackupBtn.addEventListener('click', exportFullBackup);
-            elements.importBackupBtn.addEventListener('click', importBackup);
-            elements.mobileMenuToggle.addEventListener('click', toggleMobileMenu);
-            elements.sidebarOverlay.addEventListener('click', toggleMobileMenu);
-        }
-
-        function setupAvisosEventListeners() {
-            elements.novoAvisoBtn.addEventListener('click', abrirModalAviso);
-            elements.avisoConteudo.addEventListener('input', atualizarPreview);
-            elements.avisoImagem.addEventListener('change', previewImagem);
-            elements.salvarAvisoBtn.addEventListener('click', salvarAviso);
-            elements.avisoGritar.addEventListener('change', atualizarPreview);
-        }
-
-        function setupImportListeners() {
-            elements.selectFileBtn.addEventListener('click', () => {
-                elements.importFile.click();
-            });
-
-            elements.importFile.addEventListener('change', handleFileImport);
-
-            elements.downloadTemplate.addEventListener('click', (e) => {
-                e.preventDefault();
-                downloadTemplate();
-            });
-
-            const importArea = document.getElementById('importArea');
-            importArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                importArea.style.borderColor = 'var(--primary)';
-                importArea.style.background = 'rgba(236, 51, 51, 0.02)';
-            });
-
-            importArea.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-                importArea.style.borderColor = 'var(--border)';
-                importArea.style.background = '';
-            });
-
-            importArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                importArea.style.borderColor = 'var(--border)';
-                importArea.style.background = '';
-                
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    elements.importFile.files = files;
-                    handleFileImport({ target: { files } });
-                }
-            });
-        }
-
-        function downloadTemplate() {
-            const wsData = [
-                ['EDV', 'Nome'],
-                ['12345', 'João Silva'],
-                ['12346', 'Maria Santos'],
-                ['12347', 'Pedro Oliveira']
-            ];
-            
-            const ws = XLSX.utils.aoa_to_sheet(wsData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Alunos');
-            
-            XLSX.writeFile(wb, 'modelo_importacao_alunos.xlsx');
-        }
-
-        async function handleFileImport(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const turma = elements.turmaAluno.value;
-            if (!turma) {
-                showMessage('Aviso', 'Selecione uma turma antes de importar', 'warning');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('turma', turma);
-
-            elements.importProgress.style.display = 'block';
-            elements.importResult.style.display = 'none';
-
-            try {
-                const response = await fetch(`${API_URL}/api/admin/alunos/import`, {
-                    method: 'POST',
-                    headers: getAuthHeader(),
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                elements.importProgress.style.display = 'none';
-                elements.importResult.style.display = 'block';
-
-                if (result.success) {
-                    let message = `<div class="alert alert-success">✅ ${result.message}</div>`;
-                    if (result.erros && result.erros.length > 0) {
-                        message += `<div class="alert alert-warning mt-2">
-                            <strong>⚠️ ${result.erros.length} erro(s) encontrado(s):</strong><br>
-                            ${result.erros.join('<br>')}
-                        </div>`;
-                    }
-                    elements.importResult.innerHTML = message;
-                    listarAlunos();
-                    loadDashboard();
-                } else {
-                    elements.importResult.innerHTML = `<div class="alert alert-danger">❌ ${result.error || 'Erro ao importar arquivo'}</div>`;
-                }
-            } catch (error) {
-                elements.importProgress.style.display = 'none';
-                elements.importResult.style.display = 'block';
-                elements.importResult.innerHTML = `<div class="alert alert-danger">❌ Erro ao importar: ${error.message}</div>`;
-            } finally {
-                elements.importFile.value = '';
-            }
-        }
-
-        function setupDefaultDates() {
-            const now = new Date();
-            const startDate = new Date(now.getTime() + 60 * 60 * 1000);
-            const endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);
-            const formatDateForInput = (date) => date.toISOString().slice(0, 16);
-            window.defaultStartDate = formatDateForInput(startDate);
-            window.defaultEndDate = formatDateForInput(endDate);
-        }
-
-        function activateTab(tabId) {
-            document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('show', 'active'));
-            document.querySelectorAll('.sidebar .nav-link').forEach(link => link.classList.remove('active'));
-
-            const targetTab = document.querySelector(tabId);
-            const targetLink = document.querySelector(`[data-bs-target="${tabId}"]`);
-
-            if (targetTab) {
-                targetTab.classList.add('show', 'active');
-                if (tabId === '#avisos') carregarAvisos();
-                if (tabId === '#uploads') loadUploads();
-            }
-            if (targetLink) targetLink.classList.add('active');
-        }
-
-        function toggleMobileMenu() {
-            elements.sidebar.classList.toggle('show');
-            elements.sidebarOverlay.classList.toggle('show');
-            document.body.style.overflow = elements.sidebar.classList.contains('show') ? 'hidden' : '';
-        }
-
-        function enableUIElements(enable) {
-            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-                if (enable) {
-                    link.classList.remove('disabled');
-                    link.removeAttribute('tabindex');
-                } else {
-                    link.classList.add('disabled');
-                    link.setAttribute('tabindex', '-1');
-                }
-            });
-
-            const mainButtons = [
-                elements.refreshDashboard, elements.refreshUploadsBtn, elements.refreshAlunosBtn, elements.listarAlunosBtn,
-                elements.carregarEscalaBtn, elements.salvarEscalaBtn, elements.exportAlunosBtn,
-                elements.exportEscalasBtn, elements.exportFullBackupBtn, elements.importBackupBtn,
-                elements.addItemEscalaBtn, elements.novoAvisoBtn, elements.selectFileBtn
-            ];
-            mainButtons.forEach(button => { if (button) button.disabled = !enable; });
-
-            const formElements = [
-                elements.turmaAluno, elements.edvAluno, elements.nomeAluno, elements.isAdmin,
-                elements.turmaLista, elements.turmaEscala, elements.semanaAtual, elements.backupFile,
-                elements.importFile
-            ];
-            formElements.forEach(element => { if (element) element.disabled = !enable; });
-            elements.logoutBtn.disabled = false;
-        }
-
-        async function handleLogin() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
-
-            try {
-                showLoading(elements.loginBtn);
-                
-                const response = await fetch(`${API_URL}/api/admin/token`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    sessionStorage.setItem('adminToken', data.token);
-                    sessionStorage.setItem('adminName', data.admin);
-                    
-                    if (rememberMe) {
-                        localStorage.setItem('adminUsername', username);
-                        localStorage.setItem('adminPassword', password);
-                    }
-                    
-                    elements.loginModal.hide();
-                    enableUIElements(true);
-                    loadDashboard();
-                    loadTurmas();
-                    showMessage('Bem-vindo!', `Login realizado como ${data.admin}`, 'success');
-                } else {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Credenciais inválidas');
-                }
-            } catch (error) {
-                elements.loginError.textContent = 'Erro ao fazer login: ' + error.message;
-                elements.loginError.classList.remove('d-none');
-            } finally {
-                hideLoading(elements.loginBtn, '<i class="bi bi-arrow-right-circle me-2"></i>Entrar');
-            }
-        }
-
-        async function handleLogout() {
-            sessionStorage.removeItem('adminToken');
-            sessionStorage.removeItem('adminName');
-            
-            if (eventSource) { eventSource.close(); eventSource = null; }
-            
+    document.addEventListener('DOMContentLoaded', async function () {
+        if (await checkSession()) {
+            enableUIElements(true);
+            await loadDashboard();
+            await loadTurmas();
+            setInterval(async () => { if (!await checkSession()) { showMessage('Sessão expirada', 'Faça login novamente.', 'warning'); handleLogout(); } }, 5 * 60 * 1000);
+        } else {
             enableUIElements(false);
             elements.loginModal.show();
-            
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('rememberMe').checked = false;
-            elements.loginError.classList.add('d-none');
         }
+        setupEventListeners();
+        setupAvisosEventListeners();
+        setupDefaultDates();
+    });
 
-        async function loadDashboard() {
-            try {
-                showLoading(elements.refreshDashboard);
-                const conectado = await testarConexaoAPI();
+    function setupEventListeners() {
+        document.querySelectorAll('.sidebar .nav-link[data-bs-toggle="tab"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.classList.contains('disabled')) { e.preventDefault(); return; }
+                activateTab(this.getAttribute('data-bs-target'));
+                if (window.innerWidth <= 992) toggleMobileMenu();
+            });
+        });
+        document.querySelector('.sidebar .logo').addEventListener('click', e => { e.preventDefault(); activateTab('#dashboard'); if (window.innerWidth <= 992) toggleMobileMenu(); });
+        elements.loginBtn.addEventListener('click', handleLogin);
+        elements.logoutBtn.addEventListener('click', handleLogout);
+        elements.refreshDashboard.addEventListener('click', loadDashboard);
+        elements.refreshUploadsBtn.addEventListener('click', loadUploads);
+        elements.refreshAlunosBtn.addEventListener('click', () => { loadTurmas().then(() => listarAlunos()); });
+        elements.addAlunoForm.addEventListener('submit', addAluno);
+        elements.listarAlunosBtn.addEventListener('click', listarAlunos);
+        elements.turmaLista.addEventListener('change', listarAlunos);
+        elements.carregarEscalaBtn.addEventListener('click', carregarEscala);
+        elements.addItemEscalaBtn.addEventListener('click', () => addEscalaItem());
+        elements.salvarEscalaBtn.addEventListener('click', salvarEscala);
+        elements.exportAlunosBtn.addEventListener('click', exportAlunos);
+        elements.exportEscalasBtn.addEventListener('click', exportEscalas);
+        elements.exportFullBackupBtn.addEventListener('click', exportFullBackup);
+        elements.importBackupBtn.addEventListener('click', importBackup);
+        elements.mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        elements.sidebarOverlay.addEventListener('click', toggleMobileMenu);
+        if (elements.importAlunosBtn) elements.importAlunosBtn.addEventListener('click', importarAlunos);
+    }
 
-                if (conectado) {
-                    const backupResponse = await fetch(`${API_URL}/api/admin/backup`, { 
-                        headers: getAuthHeader()
-                    });
-                    if (backupResponse.ok) {
-                        const backupData = await backupResponse.json();
-                        elements.totalTurmas.textContent = Object.keys(backupData.alunos).length;
-                        let totalAlunos = 0;
-                        for (const turma in backupData.alunos) {
-                            totalAlunos += Object.keys(backupData.alunos[turma]).length;
-                        }
-                        elements.totalAlunos.textContent = totalAlunos;
-                    }
-                }
+    function setupAvisosEventListeners() {
+        elements.novoAvisoBtn.addEventListener('click', () => abrirModalAviso());
+        elements.avisoConteudo.addEventListener('input', atualizarPreview);
+        elements.avisoImagem.addEventListener('change', previewImagem);
+        elements.salvarAvisoBtn.addEventListener('click', salvarAviso);
+        elements.avisoGritar.addEventListener('change', atualizarPreview);
+    }
 
-                const historico = await carregarHistorico();
+    function setupDefaultDates() {
+        const now = new Date();
+        const startDate = new Date(now.getTime() + 60 * 60 * 1000);
+        const endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);
+        window.defaultStartDate = startDate.toISOString().slice(0, 16);
+        window.defaultEndDate = endDate.toISOString().slice(0, 16);
+    }
+
+    function activateTab(tabId) {
+        document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('show', 'active'));
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => link.classList.remove('active'));
+        const targetTab = document.querySelector(tabId);
+        const targetLink = document.querySelector(`[data-bs-target="${tabId}"]`);
+        if (targetTab) { targetTab.classList.add('show', 'active'); if (tabId === '#avisos') carregarAvisos(); if (tabId === '#uploads') loadUploads(); }
+        if (targetLink) targetLink.classList.add('active');
+    }
+
+    function toggleMobileMenu() {
+        elements.sidebar.classList.toggle('show');
+        elements.sidebarOverlay.classList.toggle('show');
+        document.body.style.overflow = elements.sidebar.classList.contains('show') ? 'hidden' : '';
+    }
+
+    function enableUIElements(enable) {
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            if (enable) { link.classList.remove('disabled'); link.removeAttribute('tabindex'); }
+            else { link.classList.add('disabled'); link.setAttribute('tabindex', '-1'); }
+        });
+        const btns = [elements.refreshDashboard, elements.refreshUploadsBtn, elements.refreshAlunosBtn, elements.listarAlunosBtn, elements.carregarEscalaBtn, elements.salvarEscalaBtn, elements.exportAlunosBtn, elements.exportEscalasBtn, elements.exportFullBackupBtn, elements.importBackupBtn, elements.addItemEscalaBtn, elements.novoAvisoBtn, elements.importAlunosBtn];
+        btns.forEach(btn => { if (btn) btn.disabled = !enable; });
+        const inputs = [elements.turmaAluno, elements.edvAluno, elements.nomeAluno, elements.isAdmin, elements.turmaLista, elements.turmaEscala, elements.semanaAtual, elements.backupFile, elements.importTurma, elements.importFile];
+        inputs.forEach(inp => { if (inp) inp.disabled = !enable; });
+        if (elements.logoutBtn) elements.logoutBtn.disabled = false;
+    }
+
+    async function handleLogin() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        try {
+            showLoading(elements.loginBtn);
+            const response = await fetch(`${API_URL}/api/admin/token`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
+            if (response.ok) {
+                const data = await response.json();
+                sessionStorage.setItem('adminToken', data.token);
+                sessionStorage.setItem('adminName', data.admin);
+                elements.loginModal.hide();
+                enableUIElements(true);
+                await loadDashboard();
+                await loadTurmas();
+                showMessage('Bem-vindo!', `Login realizado como ${data.admin}`, 'success');
+            } else { const error = await response.json(); throw new Error(error.error || 'Credenciais inválidas'); }
+        } catch (error) { elements.loginError.textContent = 'Erro: ' + error.message; elements.loginError.classList.remove('d-none'); }
+        finally { hideLoading(elements.loginBtn, '<i class="bi bi-arrow-right-circle me-2"></i>Entrar'); }
+    }
+
+    async function handleLogout() {
+        sessionStorage.removeItem('adminToken');
+        sessionStorage.removeItem('adminName');
+        enableUIElements(false);
+        elements.loginModal.show();
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('rememberMe').checked = false;
+        if (elements.loginError) elements.loginError.classList.add('d-none');
+    }
+
+    async function loadDashboard() {
+        try {
+            showLoading(elements.refreshDashboard);
+            if (!sessionStorage.getItem('adminToken')) { handleLogout(); return; }
+            const backupResponse = await fetch(`${API_URL}/api/admin/backup`, { headers: getAuthHeader() });
+            if (backupResponse.status === 401) { handleLogout(); return; }
+            if (backupResponse.ok) {
+                const backupData = await backupResponse.json();
+                elements.totalTurmas.textContent = Object.keys(backupData.alunos).length;
+                let totalAlunos = 0;
+                for (const turma in backupData.alunos) totalAlunos += Object.keys(backupData.alunos[turma]).length;
+                elements.totalAlunos.textContent = totalAlunos;
+            }
+            const historico = await carregarHistorico();
+            if (elements.lastActions) {
                 elements.lastActions.innerHTML = '';
-                historico.forEach(acao => addActionToUI(acao, false));
-
-                const now = new Date();
-                elements.lastUpdate.textContent = `Última atualização: ${now.toLocaleString()}`;
-                lastUpdateTime = now;
-                elements.newActionsBadge.style.display = 'none';
-            } catch (error) {
-                showMessage('Erro', `Erro ao carregar dashboard: ${error.message}`, 'error');
-            } finally {
-                hideLoading(elements.refreshDashboard, '<i class="bi bi-arrow-clockwise me-1"></i> Atualizar');
+                if (historico && Array.isArray(historico)) historico.forEach(acao => addActionToUI(acao, false));
             }
-        }
+            if (elements.lastUpdate) elements.lastUpdate.textContent = `Última atualização: ${new Date().toLocaleString()}`;
+            if (elements.newActionsBadge) elements.newActionsBadge.style.display = 'none';
+        } catch (error) { console.error(error); }
+        finally { hideLoading(elements.refreshDashboard, '<i class="bi bi-arrow-clockwise me-1"></i> Atualizar'); }
+    }
 
-        async function testarConexaoAPI() {
-            const token = sessionStorage.getItem('adminToken');
-            if (!token) return false;
-            
-            try {
-                const response = await fetch(`${API_URL}/api/admin/backup`, {
-                    headers: getAuthHeader()
-                });
-                if (response.ok) {
-                    const adminName = sessionStorage.getItem('adminName');
-                    elements.connectionStatus.textContent = `Conectado como ${adminName || 'Admin'}`;
-                    return true;
-                }
-            } catch (error) { console.error("Erro na conexão com API:", error); }
-            elements.connectionStatus.textContent = "Modo demonstração (offline)";
-            return false;
-        }
+    async function carregarHistorico() {
+        try {
+            const response = await fetch(`${API_URL}/api/admin/historico/recente?dias=5`, { headers: getAuthHeader() });
+            if (!response.ok) return [];
+            return await response.json();
+        } catch (error) { return []; }
+    }
 
-        async function carregarHistorico() {
-            try {
-                const response = await fetch(`${API_URL}/api/admin/historico/recente?dias=5`, { 
-                    headers: getAuthHeader()
-                });
-                if (!response.ok) {
-                    const testeResponse = await fetch(`${API_URL}/api/historico/teste?dias=5`);
-                    if (!testeResponse.ok) throw new Error('Erro ao carregar histórico');
-                    return await testeResponse.json();
-                }
-                return await response.json();
-            } catch (error) {
-                console.error("Erro ao carregar histórico:", error);
-                return [];
-            }
-        }
+    function addActionToUI(acao, isNew) {
+        const row = document.createElement('tr');
+        if (isNew) row.classList.add('table-info');
+        const data = new Date(acao.data_hora).toLocaleString('pt-BR');
+        row.innerHTML = `<td>${data}</td><td><span class="badge" style="background:var(--primary-glow);color:var(--primary)">${acao.acao}</span></td><td>${acao.detalhes || ''}</td><td>${acao.usuario || 'Sistema'}</td>`;
+        if (isNew && elements.lastActions) elements.lastActions.prepend(row);
+        else if (elements.lastActions) elements.lastActions.appendChild(row);
+        if (elements.lastActions && elements.lastActions.children.length > 50) elements.lastActions.removeChild(elements.lastActions.lastChild);
+    }
 
-        function addActionToUI(acao, isNew = false) {
-            const row = document.createElement('tr');
-            if (isNew) {
-                row.classList.add('table-info');
-                setTimeout(() => row.classList.remove('table-info'), 3000);
-            }
-            const dataFormatada = converterEFormatarData(acao.data_hora);
-            row.innerHTML = `
-                <td><span style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:var(--text-muted)">${dataFormatada}</span>
-                <td><span class="badge" style="background:var(--primary-glow);color:var(--primary)">${acao.acao}</span>
-                <td>${acao.detalhes}
-                <td>${acao.usuario}
-            `;
-            if (isNew) elements.lastActions.prepend(row);
-            else elements.lastActions.appendChild(row);
-            if (elements.lastActions.children.length > 50) elements.lastActions.removeChild(elements.lastActions.lastChild);
-        }
-
-        async function loadTurmas() {
-            try {
-                const response = await fetch(`${API_URL}/api/admin/backup`, { 
-                    headers: getAuthHeader()
-                });
-                if (response.ok) {
-                    const backupData = await response.json();
-                    turmasList = Object.keys(backupData.alunos);
-                } else {
-                    turmasList = [
-                        'Formare 2026',
-                        'Aprender A+ (Terça-Feira)',
-                        'Aprender A+ (Quarta-Feira)',
-                        'Aprender A+ (Quinta-Feira)',
-                        'Informática (Atividade complementar)',
-                        'Inglês (Atividade complementar)'
-                    ];
-                }
-
-                const selects = [elements.turmaAluno, elements.turmaLista, elements.turmaEscala];
-                selects.forEach(select => {
-                    select.innerHTML = '';
-                    if (select !== elements.turmaLista) {
-                        const defaultOption = document.createElement('option');
-                        defaultOption.value = ''; defaultOption.textContent = 'Selecione a turma';
-                        defaultOption.disabled = true; defaultOption.selected = true;
-                        select.appendChild(defaultOption);
-                    } else {
-                        const allOption = document.createElement('option');
-                        allOption.value = ''; allOption.textContent = 'Todas as turmas';
-                        select.appendChild(allOption);
-                    }
-                    turmasList.forEach(turma => {
-                        const option = document.createElement('option');
-                        option.value = turma; option.textContent = turma;
-                        select.appendChild(option);
-                    });
-                });
-                return turmasList;
-            } catch (error) {
-                showMessage('Erro', `Erro ao carregar turmas: ${error.message}`, 'error');
-                return [];
-            }
-        }
-
-        // ============================================
-        // FUNÇÕES DA GALERIA DE UPLOADS
-        // ============================================
-        
-        async function loadUploads() {
-            try {
-                showLoading(elements.refreshUploadsBtn);
-                elements.uploadsGrid.innerHTML = '<div class="empty-uploads"><div class="loading"></div><p class="mt-2">Carregando arquivos...</p></div>';
-                
-                const response = await fetch(`${API_URL}/api/admin/uploads/list`, { 
-                    headers: getAuthHeader()
-                });
-                if (!response.ok) throw new Error('Erro ao carregar lista de uploads');
-                
-                const data = await response.json();
-                const files = data.files || [];
-                
-                if (files.length === 0) {
-                    elements.uploadsGrid.innerHTML = `
-                        <div class="empty-uploads">
-                            <i class="bi bi-cloud-upload" style="font-size:48px;opacity:0.5"></i>
-                            <p class="mt-2">Nenhum arquivo enviado ainda</p>
-                            <small class="text-muted">Os arquivos aparecerão aqui quando forem enviados nos avisos</small>
-                        </div>
-                    `;
-                    elements.uploadCount.textContent = '0 arquivos';
-                    return;
-                }
-                
-                elements.uploadCount.textContent = `${files.length} arquivo${files.length !== 1 ? 's' : ''}`;
-                elements.uploadsGrid.innerHTML = '';
-                
-                files.forEach(file => {
-                    const card = document.createElement('div');
-                    card.className = 'upload-card';
-                    card.setAttribute('data-url', file.url);
-                    card.setAttribute('data-name', file.name);
-                    card.setAttribute('data-type', file.type);
-                    card.setAttribute('data-thumbnail', file.thumbnail_url || '');
-                    card.setAttribute('data-icon', file.icon || '📄');
-                    
-                    const fileType = file.type.split('/')[0];
-                    const isImage = fileType === 'image';
-                    
-                    card.innerHTML = `
-                        <div class="upload-thumbnail">
-                            ${isImage && file.thumbnail_url ? 
-                                `<img src="${API_URL}${file.thumbnail_url}" alt="${file.name}" loading="lazy">` : 
-                                `<i class="bi ${getIconClass(file.icon)} upload-icon"></i>`
-                            }
-                            <span class="upload-type-badge">${file.type.split('/')[1]?.toUpperCase() || 'ARQUIVO'}</span>
-                        </div>
-                        <div class="upload-info">
-                            <div class="upload-name" title="${file.name}">${file.name}</div>
-                            <div class="upload-meta">
-                                <span>${file.size_formatted}</span>
-                                <span>${file.modified_formatted?.split(' ')[0] || ''}</span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    card.addEventListener('click', () => openFileViewer(file));
-                    elements.uploadsGrid.appendChild(card);
-                });
-                
-            } catch (error) {
-                console.error('Erro ao carregar uploads:', error);
-                elements.uploadsGrid.innerHTML = `
-                    <div class="empty-uploads">
-                        <i class="bi bi-exclamation-triangle" style="font-size:48px;color:var(--warning)"></i>
-                        <p class="mt-2">Erro ao carregar arquivos</p>
-                        <button class="btn btn-sm btn-outline-primary mt-2" onclick="loadUploads()">Tentar novamente</button>
-                    </div>
-                `;
-            } finally {
-                hideLoading(elements.refreshUploadsBtn, '<i class="bi bi-arrow-repeat me-1"></i> Atualizar Galeria');
-            }
-        }
-        
-        function getIconClass(icon) {
-            const iconMap = {
-                '🖼️': 'bi-image',
-                '🎬': 'bi-film',
-                '🎵': 'bi-music-note-beamed',
-                '📄': 'bi-file-pdf',
-                '📝': 'bi-file-word',
-                '📊': 'bi-file-spreadsheet',
-                '📽️': 'bi-file-slides',
-                '📃': 'bi-file-text',
-                '🗜️': 'bi-file-zip',
-                '💻': 'bi-file-code',
-                '📁': 'bi-folder'
-            };
-            return iconMap[icon] || 'bi-file';
-        }
-        
-        function openFileViewer(file) {
-            const viewerTitle = document.getElementById('fileViewerTitle');
-            const viewerContent = document.getElementById('fileViewerContent');
-            const downloadLink = document.getElementById('fileDownloadLink');
-            
-            viewerTitle.textContent = `Visualizar: ${file.name}`;
-            downloadLink.href = `${API_URL}${file.url}`;
-            downloadLink.download = file.name;
-            
-            const fileType = file.type.split('/')[0];
-            const isImage = fileType === 'image';
-            
-            viewerContent.innerHTML = '';
-            
-            if (isImage) {
-                viewerContent.innerHTML = `
-                    <img src="${API_URL}${file.url}" alt="${file.name}" style="max-width:100%;max-height:70vh;object-fit:contain">
-                `;
-            } else {
-                viewerContent.innerHTML = `
-                    <div class="file-info">
-                        <i class="bi ${getIconClass(file.icon)}" style="font-size:64px;color:var(--text-muted)"></i>
-                        <h5 class="mt-3">${file.name}</h5>
-                        <p class="text-muted">${file.type} • ${file.size_formatted}</p>
-                        <p>Este tipo de arquivo não pode ser visualizado diretamente.</p>
-                        <p>Clique no botão abaixo para baixar.</p>
-                    </div>
-                `;
-            }
-            
-            elements.fileViewerModal.show();
-        }
-
-        // ============================================
-        // FUNÇÕES DE ALUNOS
-        // ============================================
-        
-        async function addAluno(e) {
-            e.preventDefault();
-            const turma = elements.turmaAluno.value;
-            const edv = elements.edvAluno.value;
-            const nome = elements.nomeAluno.value;
-            const isAdmin = elements.isAdmin.checked;
-
-            try {
-                showLoading(elements.addAlunoForm.querySelector('button[type="submit"]'));
-                
-                const response = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
-                    body: JSON.stringify({ edv, nome, is_admin: isAdmin ? 1 : 0 })
-                });
-                
-                if (!response.ok) { const error = await response.json(); throw new Error(error.error || 'Erro ao adicionar aluno'); }
-                
-                if (isAdmin) {
-                    showMessage('Sucesso', `Administrador criado!\nUsuário: ${nome}\nSenha: ${edv}`, 'success');
-                } else {
-                    showMessage('Sucesso', 'Aluno adicionado com sucesso', 'success');
-                }
-                
-                elements.edvAluno.value = '';
-                elements.nomeAluno.value = '';
-                elements.isAdmin.checked = false;
-                listarAlunos();
-                loadDashboard();
-                
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.addAlunoForm.querySelector('button[type="submit"]'), '<i class="bi bi-plus-circle me-2"></i> Adicionar Aluno');
-            }
-        }
-
-        async function listarAlunos() {
-            try {
-                showLoading(elements.listarAlunosBtn);
-                const turma = elements.turmaLista.value;
-                let alunos = {};
-
-                if (turma) {
-                    const response = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(turma)}/alunos/all`, { 
-                        headers: getAuthHeader()
-                    });
-                    if (!response.ok) throw new Error('Erro ao carregar alunos');
-                    alunos[turma] = await response.json();
-                } else {
-                    for (const t of turmasList) {
-                        const response = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(t)}/alunos/all`, { 
-                            headers: getAuthHeader()
-                        });
-                        if (response.ok) alunos[t] = await response.json();
-                    }
-                }
-
-                elements.alunosList.innerHTML = '';
-                for (const [turma, alunosTurma] of Object.entries(alunos)) {
-                    for (const [edv, nome] of Object.entries(alunosTurma)) {
-                        const row = document.createElement('tr');
-                        const isAdmin = nome.includes('👩‍🏫') || nome.includes('👨‍🏫');
-                        const nomeDisplay = isAdmin ? nome.replace(/👩‍🏫|👨‍🏫/g, '') : nome;
-                        row.innerHTML = `
-                            <td><span class="badge" style="background:var(--surface-3);color:var(--text);font-weight:600;font-size:11px">${turma}</span>
-                            <td><span style="font-family:\'JetBrains Mono\',monospace;font-size:12px">${edv}</span>
-                            <td>${nomeDisplay} ${isAdmin ? '<span class="badge bg-warning text-dark">Admin</span>' : ''}
-                            <td class="action-buttons">
-                                <button class="btn btn-sm btn-danger btn-remove-aluno" data-turma="${turma}" data-edv="${edv}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        `;
-                        elements.alunosList.appendChild(row);
-                    }
-                }
-
-                document.querySelectorAll('.btn-remove-aluno').forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        const turma = this.getAttribute('data-turma');
-                        const edv = this.getAttribute('data-edv');
-                        confirmAction('Remover Aluno', `Tem certeza que deseja remover o aluno ${edv} da turma ${turma}?`, () => removerAluno(turma, edv));
-                    });
-                });
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.listarAlunosBtn, '<i class="bi bi-arrow-repeat me-1"></i> Atualizar');
-            }
-        }
-
-        async function removerAluno(turma, edv) {
-            try {
-                const response = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(turma)}/alunos?edv=${edv}`, {
-                    method: 'DELETE',
-                    headers: getAuthHeader()
-                });
-                if (!response.ok) { const error = await response.json(); throw new Error(error.error || 'Erro ao remover aluno'); }
-                showMessage('Sucesso', 'Aluno removido com sucesso', 'success');
-                listarAlunos();
-                loadDashboard();
-            } catch (error) { showMessage('Erro', error.message, 'error'); }
-        }
-
-        // ============================================
-        // FUNÇÕES DE ESCALAS
-        // ============================================
-        
-        async function carregarEscala() {
-            const turma = elements.turmaEscala.value;
-            currentTurmaEscala = turma;
-            if (!turma) { showMessage('Aviso', 'Selecione uma turma primeiro', 'warning'); return; }
-
-            try {
-                showLoading(elements.carregarEscalaBtn);
-                const response = await fetch(`${API_URL}/api/admin/escalas/${encodeURIComponent(turma)}`, { 
-                    headers: getAuthHeader()
-                });
-                if (!response.ok) throw new Error('Erro ao carregar escala');
-                const escala = await response.json();
-                elements.semanaAtual.value = escala.semana_atual || '';
-                elements.escalaItems.innerHTML = '';
-                if (escala.duplas && escala.duplas.length > 0) {
-                    escala.duplas.forEach(item => addEscalaItem(item.semana, item.dupla));
-                } else {
-                    showMessage('Info', 'Nenhum item de escala encontrado para esta turma', 'info');
-                }
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.carregarEscalaBtn, '<i class="bi bi-arrow-down-circle me-2"></i> Carregar Escala');
-            }
-        }
-
-        function addEscalaItem(semana = '', dupla = '') {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'escala-item';
-            itemDiv.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-md-5">
-                        <label class="form-label">Semana</label>
-                        <input type="text" class="form-control semana-input" value="${semana}" placeholder="Ex: Semana 01: 22/04 - 25/04">
-                    </div>
-                    <div class="col-md-5">
-                        <label class="form-label">Dupla</label>
-                        <input type="text" class="form-control dupla-input" value="${dupla}" placeholder="Ex: Aluno 1 e Aluno 2">
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button type="button" class="btn btn-sm btn-danger btn-remove-item w-100">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-            itemDiv.querySelector('.btn-remove-item').addEventListener('click', function () { itemDiv.remove(); });
-            elements.escalaItems.appendChild(itemDiv);
-        }
-
-        function adicionarItemEscala() { addEscalaItem(); }
-
-        async function salvarEscala() {
-            const turma = currentTurmaEscala;
-            if (!turma) { showMessage('Aviso', 'Selecione uma turma primeiro', 'warning'); return; }
-
-            try {
-                showLoading(elements.salvarEscalaBtn);
-                const semanaAtual = elements.semanaAtual.value;
-                const items = elements.escalaItems.querySelectorAll('.escala-item');
-                const duplas = [];
-                items.forEach(item => {
-                    const semana = item.querySelector('.semana-input').value;
-                    const dupla = item.querySelector('.dupla-input').value;
-                    if (semana && dupla) duplas.push({ semana, dupla });
-                });
-
-                const response = await fetch(`${API_URL}/api/admin/escalas/${encodeURIComponent(turma)}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
-                    body: JSON.stringify({ semana_atual: semanaAtual, duplas: duplas })
-                });
-                if (!response.ok) { const error = await response.json(); throw new Error(error.error || 'Erro ao salvar escala'); }
-                showMessage('Sucesso', 'Escala salva com sucesso', 'success');
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.salvarEscalaBtn, '<i class="bi bi-check-circle me-2"></i> Salvar Escala');
-            }
-        }
-
-        // ============================================
-        // FUNÇÕES DE BACKUP
-        // ============================================
-        
-        async function exportAlunos() {
-            try {
-                showLoading(elements.exportAlunosBtn);
-                const response = await fetch(`${API_URL}/api/admin/backup`, { 
-                    headers: getAuthHeader()
-                });
-                if (!response.ok) throw new Error('Erro ao exportar alunos');
-                const data = await response.json();
-                const alunosData = JSON.stringify(data.alunos, null, 2);
-                elements.alunosDataPreview.textContent = alunosData;
-                downloadFile(`alunos_${new Date().toISOString().slice(0, 10)}.json`, alunosData);
-                showMessage('Sucesso', 'Alunos exportados com sucesso', 'success');
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.exportAlunosBtn, '<i class="bi bi-download me-2"></i> Exportar Alunos (JSON)');
-            }
-        }
-
-        async function exportEscalas() {
-            try {
-                showLoading(elements.exportEscalasBtn);
-                const response = await fetch(`${API_URL}/api/admin/backup`, { 
-                    headers: getAuthHeader()
-                });
-                if (!response.ok) throw new Error('Erro ao exportar escalas');
-                const data = await response.json();
-                const escalasData = JSON.stringify(data.escalas, null, 2);
-                elements.escalasDataPreview.textContent = escalasData;
-                downloadFile(`escalas_${new Date().toISOString().slice(0, 10)}.json`, escalasData);
-                showMessage('Sucesso', 'Escalas exportadas com sucesso', 'success');
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.exportEscalasBtn, '<i class="bi bi-download me-2"></i> Exportar Escalas (JSON)');
-            }
-        }
-
-        async function exportFullBackup() {
-            try {
-                showLoading(elements.exportFullBackupBtn);
-                const response = await fetch(`${API_URL}/api/admin/backup`, { 
-                    headers: getAuthHeader()
-                });
-                if (!response.ok) throw new Error('Erro ao exportar backup completo');
-                const data = await response.json();
-                const backupData = JSON.stringify(data, null, 2);
-                elements.alunosDataPreview.textContent = JSON.stringify(data.alunos, null, 2);
-                elements.escalasDataPreview.textContent = JSON.stringify(data.escalas, null, 2);
-                downloadFile(`backup_completo_${new Date().toISOString().slice(0, 10)}.json`, backupData);
-                showMessage('Sucesso', 'Backup completo exportado com sucesso', 'success');
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.exportFullBackupBtn, '<i class="bi bi-database me-2"></i> Exportar Backup Completo');
-            }
-        }
-
-        async function importBackup() {
-            const fileInput = elements.backupFile;
-            if (!fileInput.files || fileInput.files.length === 0) {
-                showMessage('Aviso', 'Selecione um arquivo de backup primeiro', 'warning');
-                return;
-            }
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            reader.onload = async function (e) {
-                try {
-                    showLoading(elements.importBackupBtn);
-                    const backupData = JSON.parse(e.target.result);
-                    if (!backupData.alunos || !backupData.escalas) throw new Error('Arquivo de backup inválido');
-                    confirmAction('Importar Backup', 'Tem certeza que deseja importar este backup? Todos os dados atuais serão substituídos!', async () => {
-                        try {
-                            const response = await fetch(`${API_URL}/api/admin/backup`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
-                                body: JSON.stringify(backupData)
-                            });
-                            if (!response.ok) { const error = await response.json(); throw new Error(error.error || 'Erro ao importar backup'); }
-                            showMessage('Sucesso', 'Backup importado com sucesso', 'success');
-                            loadDashboard(); loadTurmas(); listarAlunos();
-                        } catch (error) {
-                            showMessage('Erro', error.message, 'error');
-                        } finally {
-                            hideLoading(elements.importBackupBtn, '<i class="bi bi-upload me-2"></i> Importar Backup');
-                        }
-                    });
-                } catch (error) {
-                    showMessage('Erro', error.message, 'error');
-                    hideLoading(elements.importBackupBtn, '<i class="bi bi-upload me-2"></i> Importar Backup');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // ============================================
-        // FUNÇÕES DE AVISOS
-        // ============================================
-        
-        function abrirModalAviso(aviso = null) {
-            currentAvisoId = aviso ? aviso.id : null;
-            uploadedImagePath = null;
-            elements.avisoForm.reset();
-            elements.imagemPreview.innerHTML = '';
-            elements.previewConteudo.innerHTML = 'O conteúdo aparecerá aqui...';
-            elements.avisoInicio.value = window.defaultStartDate;
-            elements.avisoFim.value = window.defaultEndDate;
-
-            if (aviso && aviso.id) {
-                elements.avisoModalTitle.textContent = 'Editar Aviso';
-                elements.avisoTitulo.value = aviso.title || '';
-                elements.avisoConteudo.value = aviso.body_markdown || '';
-                if (aviso.start_at) { try { elements.avisoInicio.value = aviso.start_at.slice(0, 16); } catch (e) {} }
-                if (aviso.end_at) { try { elements.avisoFim.value = aviso.end_at.slice(0, 16); } catch (e) {} }
-                elements.avisoGritar.checked = Boolean(aviso.is_shouting);
-                elements.avisoContagem.checked = Boolean(aviso.has_countdown);
-                elements.avisoAtivo.checked = Boolean(aviso.active);
-                elements.avisoLink.value = aviso.redirect_link || '';
-                elements.avisoTamanhoImagem.value = aviso.image_size || 'medium';
-                if (aviso.image_path) {
-                    uploadedImagePath = aviso.image_path;
-                    elements.imagemPreview.innerHTML = `
-                        <img src="${API_URL}${aviso.image_path}" class="alert-image-preview" alt="Preview">
-                        <div class="form-text">Imagem atual - <button type="button" class="btn btn-sm btn-outline-danger" onclick="removerImagem()">Remover</button></div>
-                    `;
-                }
-                atualizarPreview();
-            } else {
-                elements.avisoModalTitle.textContent = 'Novo Aviso';
-                elements.avisoTitulo.value = '';
-                elements.avisoConteudo.value = '';
-                elements.avisoGritar.checked = false;
-                elements.avisoContagem.checked = false;
-                elements.avisoAtivo.checked = false;
-                elements.avisoLink.value = '';
-                elements.avisoTamanhoImagem.value = 'medium';
-                elements.avisoImagem.value = '';
-            }
-            elements.avisoModal.show();
-        }
-
-        window.removerImagem = function() {
-            uploadedImagePath = null;
-            elements.imagemPreview.innerHTML = '';
-            elements.avisoImagem.value = '';
-        }
-
-        function atualizarPreview() {
-            const markdown = elements.avisoConteudo.value;
-            if (!markdown.trim()) { elements.previewConteudo.innerHTML = 'O conteúdo aparecerá aqui...'; return; }
-            let html = markdown
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/\n/g, '<br>');
-            if (elements.avisoGritar.checked) html = html.toUpperCase();
-            elements.previewConteudo.innerHTML = html;
-        }
-
-        function previewImagem() {
-            const file = elements.avisoImagem.files[0];
-            if (file) {
-                uploadImagem(file).then(result => {
-                    if (result.success) {
-                        uploadedImagePath = result.filepath;
-                        elements.imagemPreview.innerHTML = `
-                            <img src="${API_URL}${result.filepath}" class="alert-image-preview" alt="Preview">
-                            <div class="form-text">Imagem carregada com sucesso!</div>
-                        `;
-                    } else {
-                        elements.imagemPreview.innerHTML = `<div class="alert alert-danger">Erro ao carregar imagem: ${result.error}</div>`;
-                    }
-                });
-            } else { elements.imagemPreview.innerHTML = ''; }
-        }
-
-        async function uploadImagem(file) {
-            try {
-                const formData = new FormData();
-                formData.append('image', file);
-                const response = await fetch(`${API_URL}/api/admin/alerts/upload-image`, {
-                    method: 'POST',
-                    headers: getAuthHeader(),
-                    body: formData
-                });
-                if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.error || 'Erro ao fazer upload da imagem'); }
-                return await response.json();
-            } catch (error) {
-                console.error('Erro no upload da imagem:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        async function salvarAviso() {
-            try {
-                showLoading(elements.salvarAvisoBtn);
-                const inicio = new Date(elements.avisoInicio.value);
-                const fim = new Date(elements.avisoFim.value);
-                if (inicio >= fim) throw new Error('A data de início deve ser anterior à data de término');
-
-                const avisoData = {
-                    title: elements.avisoTitulo.value,
-                    body_markdown: elements.avisoConteudo.value,
-                    start_at: elements.avisoInicio.value + ':00',
-                    end_at: elements.avisoFim.value + ':00',
-                    is_shouting: elements.avisoGritar.checked,
-                    has_countdown: elements.avisoContagem.checked,
-                    active: elements.avisoAtivo.checked,
-                    redirect_link: elements.avisoLink.value,
-                    image_size: elements.avisoTamanhoImagem.value,
-                    image_path: uploadedImagePath
-                };
-
-                let response;
-                if (currentAvisoId) {
-                    response = await fetch(`${API_URL}/api/admin/alerts/${currentAvisoId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
-                        body: JSON.stringify(avisoData)
-                    });
-                } else {
-                    response = await fetch(`${API_URL}/api/admin/alerts`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
-                        body: JSON.stringify(avisoData)
-                    });
-                }
-                if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.error || 'Erro ao salvar aviso'); }
-                showMessage('Sucesso', 'Aviso salvo com sucesso', 'success');
-                elements.avisoModal.hide();
-                carregarAvisos();
-            } catch (error) {
-                showMessage('Erro', error.message, 'error');
-            } finally {
-                hideLoading(elements.salvarAvisoBtn, '<i class="bi bi-check-circle me-2"></i>Salvar Aviso');
-            }
-        }
-
-        async function carregarAvisos() {
-            try {
-                const response = await fetch(`${API_URL}/api/admin/alerts`, { 
-                    headers: getAuthHeader()
-                });
-                if (!response.ok) throw new Error('Erro ao carregar avisos');
-                const avisos = await response.json();
-                exibirAvisosAtivos(avisos);
-                exibirTodosAvisos(avisos);
-            } catch (error) {
-                showMessage('Erro', 'Não foi possível carregar os avisos', 'error');
-            }
-        }
-
-        function exibirAvisosAtivos(avisos) {
-            const agora = new Date();
-            const avisosAtivos = avisos.filter(aviso => {
-                if (!aviso.active || aviso.deleted_at) return false;
-                try { return new Date(aviso.start_at) <= agora && new Date(aviso.end_at) >= agora; }
-                catch (e) { return false; }
+    async function loadTurmas() {
+        try {
+            const response = await fetch(`${API_URL}/api/turmas`, { headers: getAuthHeader() });
+            if (!response.ok) throw new Error();
+            const data = await response.json();
+            if (data.success && data.turmas) turmasList = data.turmas.map(t => t.nome);
+            else turmasList = ['Formare 2026', 'Aprender A+ (Terça-Feira)', 'Aprender A+ (Quarta-Feira)', 'Aprender A+ (Quinta-Feira)', 'Informática (Atividade complementar)', 'Inglês (Atividade complementar)'];
+            [elements.turmaAluno, elements.turmaLista, elements.turmaEscala, elements.importTurma].forEach(select => {
+                if (!select) return;
+                select.innerHTML = '';
+                const opt = document.createElement('option');
+                if (select === elements.turmaLista) { opt.value = ''; opt.textContent = 'Todas as turmas'; }
+                else { opt.value = ''; opt.textContent = 'Selecione a turma'; opt.disabled = true; opt.selected = true; }
+                select.appendChild(opt);
+                turmasList.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; select.appendChild(o); });
             });
+            if (elements.totalTurmas) elements.totalTurmas.textContent = turmasList.length;
+            return turmasList;
+        } catch (error) { return turmasList; }
+    }
+
+    async function addAluno(e) {
+        e.preventDefault();
+        const turma = elements.turmaAluno.value, edv = elements.edvAluno.value, nome = elements.nomeAluno.value, admin = elements.isAdmin.checked;
+        if (!turma || !edv || !nome) { showMessage('Aviso', 'Preencha todos os campos', 'warning'); return; }
+        try {
+            const submitBtn = elements.addAlunoForm.querySelector('button[type="submit"]');
+            showLoading(submitBtn);
+            const response = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify({ edv, nome })
+            });
+            if (!response.ok) { const err = await response.json(); throw new Error(err.error || 'Erro ao adicionar'); }
+            showMessage('Sucesso', 'Aluno adicionado com sucesso', 'success');
+            elements.edvAluno.value = ''; elements.nomeAluno.value = ''; elements.isAdmin.checked = false;
+            listarAlunos();
+        } catch (error) { showMessage('Erro', error.message, 'error'); }
+        finally { hideLoading(elements.addAlunoForm.querySelector('button[type="submit"]'), '<i class="bi bi-plus-circle me-2"></i> Adicionar Aluno'); }
+    }
+
+    async function importarAlunos() {
+        const turma = elements.importTurma?.value, file = elements.importFile?.files[0];
+        if (!turma) { showMessage('Aviso', 'Selecione uma turma', 'warning'); return; }
+        if (!file) { showMessage('Aviso', 'Selecione um arquivo', 'warning'); return; }
+        const formData = new FormData();
+        formData.append('turma', turma); formData.append('file', file);
+        try {
+            showLoading(elements.importAlunosBtn);
+            const response = await fetch(`${API_URL}/api/admin/alunos/import`, { method: 'POST', headers: getAuthHeader(), body: formData });
+            const result = await response.json();
+            if (response.ok && result.success) {
+                let msg = result.message;
+                if (result.erros?.length) msg += `\n\n⚠️ Erros:\n${result.erros.slice(0, 5).join('\n')}`;
+                showMessage('Importação Concluída', msg, 'success');
+                if (elements.importFile) elements.importFile.value = '';
+                await listarAlunos(); await loadDashboard();
+            } else { showMessage('Erro', result.error || 'Erro ao importar', 'error'); }
+        } catch (error) { showMessage('Erro', 'Erro ao conectar', 'error'); }
+        finally { hideLoading(elements.importAlunosBtn, '<i class="bi bi-upload me-2"></i> Importar Alunos'); }
+    }
+
+    async function listarAlunos() {
+        try {
+            showLoading(elements.listarAlunosBtn);
+            const turma = elements.turmaLista.value;
+            let alunos = {};
+            if (turma) {
+                const res = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(turma)}/alunos`, { headers: getAuthHeader() });
+                if (res.ok) alunos[turma] = await res.json();
+            } else {
+                for (const t of turmasList) {
+                    const res = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(t)}/alunos`, { headers: getAuthHeader() });
+                    if (res.ok) alunos[t] = await res.json();
+                }
+            }
+            if (elements.alunosList) elements.alunosList.innerHTML = '';
+            for (const [turma, turmaAlunos] of Object.entries(alunos)) {
+                for (const [edv, nome] of Object.entries(turmaAlunos)) {
+                    const isAdmin = nome.includes('👩‍🏫') || nome.includes('👨‍🏫');
+                    const nomeDisplay = isAdmin ? nome.replace(/👩‍🏫|👨‍🏫/g, '') : nome;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td><span class="badge" style="background:var(--surface-3);color:var(--text)">${turma}</span></td><td><span style="font-family:monospace">${edv}</span></td><td>${nomeDisplay} ${isAdmin ? '<span class="badge bg-warning text-dark">Admin</span>' : ''}</td><td class="action-buttons"><button class="btn btn-sm btn-danger btn-remove-aluno" data-turma="${turma}" data-edv="${edv}"><i class="bi bi-trash"></i></button></td>`;
+                    if (elements.alunosList) elements.alunosList.appendChild(row);
+                }
+            }
+            document.querySelectorAll('.btn-remove-aluno').forEach(btn => {
+                btn.addEventListener('click', () => confirmAction('Remover Aluno', `Remover aluno?`, () => removerAluno(btn.dataset.turma, btn.dataset.edv)));
+            });
+        } catch (error) { showMessage('Erro', error.message, 'error'); }
+        finally { hideLoading(elements.listarAlunosBtn, '<i class="bi bi-arrow-repeat me-1"></i> Atualizar'); }
+    }
+
+    async function removerAluno(turma, edv) {
+        try {
+            const res = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(turma)}/alunos?edv=${edv}`, { method: 'DELETE', headers: getAuthHeader() });
+            if (!res.ok) throw new Error('Erro ao remover');
+            showMessage('Sucesso', 'Aluno removido', 'success');
+            listarAlunos();
+        } catch (error) { showMessage('Erro', error.message, 'error'); }
+    }
+
+    async function loadUploads() {
+        try {
+            showLoading(elements.refreshUploadsBtn);
+            const res = await fetch(`${API_URL}/api/admin/uploads/list`, { headers: getAuthHeader() });
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+            const files = data.files || [];
+            if (elements.uploadsGrid) {
+                if (files.length === 0) elements.uploadsGrid.innerHTML = '<div class="empty-uploads"><i class="bi bi-cloud-upload"></i><p>Nenhum arquivo</p></div>';
+                else {
+                    elements.uploadsGrid.innerHTML = '';
+                    files.forEach(f => {
+                        const card = document.createElement('div');
+                        card.className = 'upload-card';
+                        card.innerHTML = `<div class="upload-thumbnail"><i class="bi bi-file-earmark upload-icon"></i><span class="upload-type-badge">${f.type?.split('/')[1]?.toUpperCase() || 'FILE'}</span></div><div class="upload-info"><div class="upload-name">${f.name}</div><div class="upload-meta"><span>${f.size_formatted}</span></div></div>`;
+                        card.onclick = () => { if (document.getElementById('fileDownloadLink')) document.getElementById('fileDownloadLink').href = `${API_URL}${f.url}`; elements.fileViewerModal.show(); };
+                        elements.uploadsGrid.appendChild(card);
+                    });
+                }
+                if (elements.uploadCount) elements.uploadCount.textContent = `${files.length} arquivo${files.length !== 1 ? 's' : ''}`;
+            }
+        } catch (error) { console.error(error); }
+        finally { hideLoading(elements.refreshUploadsBtn, '<i class="bi bi-arrow-repeat me-1"></i> Atualizar Galeria'); }
+    }
+
+    async function carregarEscala() {
+        const turma = elements.turmaEscala?.value;
+        if (!turma) { showMessage('Aviso', 'Selecione uma turma', 'warning'); return; }
+        currentTurmaEscala = turma;
+        try {
+            showLoading(elements.carregarEscalaBtn);
+            const res = await fetch(`${API_URL}/api/admin/escalas/${encodeURIComponent(turma)}`, { headers: getAuthHeader() });
+            if (!res.ok) throw new Error();
+            const escala = await res.json();
+            if (elements.semanaAtual) elements.semanaAtual.value = escala.semana_atual || '';
+            if (elements.escalaItems) elements.escalaItems.innerHTML = '';
+            if (escala.duplas?.length) escala.duplas.forEach(i => addEscalaItem(i.semana, i.dupla));
+        } catch (error) { showMessage('Erro', error.message, 'error'); }
+        finally { hideLoading(elements.carregarEscalaBtn, '<i class="bi bi-arrow-down-circle me-2"></i> Carregar Escala'); }
+    }
+
+    function addEscalaItem(semana = '', dupla = '') {
+        if (!elements.escalaItems) return;
+        const div = document.createElement('div');
+        div.className = 'escala-item';
+        div.innerHTML = `<div class="row g-3"><div class="col-md-5"><label class="form-label">Semana</label><input type="text" class="form-control semana-input" value="${semana.replace(/"/g, '&quot;')}" placeholder="Semana 01: 22/04 - 25/04"></div><div class="col-md-5"><label class="form-label">Dupla</label><input type="text" class="form-control dupla-input" value="${dupla.replace(/"/g, '&quot;')}" placeholder="Aluno 1 e Aluno 2"></div><div class="col-md-2 d-flex align-items-end"><button type="button" class="btn btn-sm btn-danger btn-remove-item w-100"><i class="bi bi-trash"></i></button></div></div>`;
+        div.querySelector('.btn-remove-item').onclick = () => div.remove();
+        elements.escalaItems.appendChild(div);
+    }
+
+    async function salvarEscala() {
+        if (!currentTurmaEscala) { showMessage('Aviso', 'Selecione uma turma', 'warning'); return; }
+        try {
+            showLoading(elements.salvarEscalaBtn);
+            const duplas = [];
+            document.querySelectorAll('.escala-item').forEach(item => {
+                const semana = item.querySelector('.semana-input').value;
+                const dupla = item.querySelector('.dupla-input').value;
+                if (semana && dupla) duplas.push({ semana, dupla });
+            });
+            const res = await fetch(`${API_URL}/api/admin/escalas/${encodeURIComponent(currentTurmaEscala)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify({ duplas }) });
+            if (!res.ok) throw new Error();
+            showMessage('Sucesso', 'Escala salva', 'success');
+        } catch (error) { showMessage('Erro', error.message, 'error'); }
+        finally { hideLoading(elements.salvarEscalaBtn, '<i class="bi bi-check-circle me-2"></i> Salvar Escala'); }
+    }
+
+    async function exportAlunos() {
+        try {
+            showLoading(elements.exportAlunosBtn);
+            const res = await fetch(`${API_URL}/api/admin/backup`, { headers: getAuthHeader() });
+            const data = await res.json();
+            downloadFile(`alunos_${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(data.alunos, null, 2));
+            showMessage('Sucesso', 'Alunos exportados', 'success');
+        } catch (error) { showMessage('Erro', error.message, 'error'); }
+        finally { hideLoading(elements.exportAlunosBtn, '<i class="bi bi-download me-2"></i> Exportar Alunos (JSON)'); }
+    }
+
+    async function exportEscalas() {
+        try {
+            showLoading(elements.exportEscalasBtn);
+            const res = await fetch(`${API_URL}/api/admin/backup`, { headers: getAuthHeader() });
+            const data = await res.json();
+            downloadFile(`escalas_${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(data.escalas, null, 2));
+            showMessage('Sucesso', 'Escalas exportadas', 'success');
+        } catch (error) { showMessage('Erro', error.message, 'error'); }
+        finally { hideLoading(elements.exportEscalasBtn, '<i class="bi bi-download me-2"></i> Exportar Escalas (JSON)'); }
+    }
+
+    async function exportFullBackup() {
+        try {
+            showLoading(elements.exportFullBackupBtn);
+            const res = await fetch(`${API_URL}/api/admin/backup`, { headers: getAuthHeader() });
+            const data = await res.json();
+            downloadFile(`backup_${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(data, null, 2));
+            showMessage('Sucesso', 'Backup exportado', 'success');
+        } catch (error) { showMessage('Erro', error.message, 'error'); }
+        finally { hideLoading(elements.exportFullBackupBtn, '<i class="bi bi-database me-2"></i> Exportar Backup Completo'); }
+    }
+
+    async function importBackup() {
+        if (!elements.backupFile?.files?.length) { showMessage('Aviso', 'Selecione um arquivo', 'warning'); return; }
+        const file = elements.backupFile.files[0];
+        const reader = new FileReader();
+        reader.onload = async e => {
+            try {
+                showLoading(elements.importBackupBtn);
+                const backup = JSON.parse(e.target.result);
+                confirmAction('Importar Backup', 'Isso substituirá todos os dados!', async () => {
+                    const res = await fetch(`${API_URL}/api/admin/backup`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify(backup) });
+                    if (!res.ok) throw new Error();
+                    showMessage('Sucesso', 'Backup importado', 'success');
+                    await loadDashboard(); await loadTurmas(); await listarAlunos();
+                });
+            } catch (error) { showMessage('Erro', error.message, 'error'); }
+            finally { hideLoading(elements.importBackupBtn, '<i class="bi bi-upload me-2"></i> Importar Backup'); }
+        };
+        reader.readAsText(file);
+    }
+
+    // AVISOS
+    function abrirModalAviso(aviso = null) {
+        currentAvisoId = aviso?.id || null;
+        uploadedImagePath = null;
+        if (elements.avisoForm) elements.avisoForm.reset();
+        if (elements.previewConteudo) elements.previewConteudo.innerHTML = 'O conteúdo aparecerá aqui...';
+        if (elements.avisoInicio) elements.avisoInicio.value = window.defaultStartDate;
+        if (elements.avisoFim) elements.avisoFim.value = window.defaultEndDate;
+        if (aviso) {
+            if (elements.avisoModalTitle) elements.avisoModalTitle.textContent = 'Editar Aviso';
+            if (elements.avisoTitulo) elements.avisoTitulo.value = aviso.title || '';
+            if (elements.avisoConteudo) elements.avisoConteudo.value = aviso.body_markdown || '';
+            if (aviso.start_at && elements.avisoInicio) elements.avisoInicio.value = aviso.start_at.slice(0,16);
+            if (aviso.end_at && elements.avisoFim) elements.avisoFim.value = aviso.end_at.slice(0,16);
+            if (elements.avisoGritar) elements.avisoGritar.checked = Boolean(aviso.is_shouting);
+            if (elements.avisoContagem) elements.avisoContagem.checked = Boolean(aviso.has_countdown);
+            if (elements.avisoAtivo) elements.avisoAtivo.checked = Boolean(aviso.active);
+            if (elements.avisoLink) elements.avisoLink.value = aviso.redirect_link || '';
+            if (elements.avisoTamanhoImagem) elements.avisoTamanhoImagem.value = aviso.image_size || 'medium';
+            if (aviso.image_path && elements.imagemPreview) {
+                uploadedImagePath = aviso.image_path;
+                elements.imagemPreview.innerHTML = `<img src="${API_URL}${aviso.image_path}" class="alert-image-preview">`;
+            }
+            atualizarPreview();
+        } else { if (elements.avisoModalTitle) elements.avisoModalTitle.textContent = 'Novo Aviso'; }
+        elements.avisoModal.show();
+    }
+
+    function atualizarPreview() {
+        if (!elements.avisoConteudo || !elements.previewConteudo) return;
+        let html = elements.avisoConteudo.value.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
+        if (elements.avisoGritar?.checked) html = html.toUpperCase();
+        elements.previewConteudo.innerHTML = html || 'O conteúdo aparecerá aqui...';
+    }
+
+    function previewImagem() {
+        const file = elements.avisoImagem?.files[0];
+        if (file) {
+            uploadImagem(file).then(r => { if (r.success && elements.imagemPreview) { uploadedImagePath = r.filepath; elements.imagemPreview.innerHTML = `<img src="${API_URL}${r.filepath}" class="alert-image-preview">`; } });
+        }
+    }
+
+    async function uploadImagem(file) {
+        const fd = new FormData(); fd.append('image', file);
+        try {
+            const res = await fetch(`${API_URL}/api/admin/alerts/upload-image`, { method: 'POST', headers: getAuthHeader(), body: fd });
+            return await res.json();
+        } catch (error) { return { success: false }; }
+    }
+
+    async function salvarAviso() {
+        try {
+            showLoading(elements.salvarAvisoBtn);
+            const data = {
+                title: elements.avisoTitulo?.value || '',
+                body_markdown: elements.avisoConteudo?.value || '',
+                start_at: (elements.avisoInicio?.value || '') + ':00',
+                end_at: (elements.avisoFim?.value || '') + ':00',
+                is_shouting: elements.avisoGritar?.checked || false,
+                has_countdown: elements.avisoContagem?.checked || false,
+                active: elements.avisoAtivo?.checked || false,
+                redirect_link: elements.avisoLink?.value || '',
+                image_size: elements.avisoTamanhoImagem?.value || 'medium',
+                image_path: uploadedImagePath
+            };
+            let res;
+            if (currentAvisoId) res = await fetch(`${API_URL}/api/admin/alerts/${currentAvisoId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify(data) });
+            else res = await fetch(`${API_URL}/api/admin/alerts`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify(data) });
+            if (!res.ok) throw new Error();
+            showMessage('Sucesso', 'Aviso salvo', 'success');
+            elements.avisoModal.hide();
+            carregarAvisos();
+        } catch (error) { showMessage('Erro', error.message, 'error'); }
+        finally { hideLoading(elements.salvarAvisoBtn, '<i class="bi bi-check-circle me-2"></i>Salvar Aviso'); }
+    }
+
+    async function carregarAvisos() {
+        try {
+            const res = await fetch(`${API_URL}/api/admin/alerts`, { headers: getAuthHeader() });
+            const avisos = await res.json();
+            exibirAvisosAtivos(avisos);
+            exibirTodosAvisos(avisos);
+        } catch (error) { console.error(error); }
+    }
+
+    function exibirAvisosAtivos(avisos) {
+        const agora = new Date();
+        const ativos = avisos.filter(a => a.active && !a.deleted_at && new Date(a.start_at) <= agora && new Date(a.end_at) >= agora);
+        if (elements.avisosAtivos) {
             elements.avisosAtivos.innerHTML = '';
-            if (avisosAtivos.length === 0) {
-                elements.avisosAtivos.innerHTML = `<div class="col-12 text-center py-3"><p class="text-muted mb-0"><i class="bi bi-bell-slash me-2"></i>Nenhum aviso ativo no momento</p></div>`;
-                return;
-            }
-            avisosAtivos.forEach(aviso => elements.avisosAtivos.appendChild(criarCardAviso(aviso, true)));
+            if (!ativos.length) elements.avisosAtivos.innerHTML = '<div class="col-12 text-center py-3"><p class="text-muted"><i class="bi bi-bell-slash"></i> Nenhum aviso ativo</p></div>';
+            else ativos.forEach(a => elements.avisosAtivos.appendChild(criarCardAviso(a, true)));
         }
+    }
 
-        function exibirTodosAvisos(avisos) {
-            elements.todosAvisos.innerHTML = '';
-            const avisosValidos = avisos.filter(aviso => !aviso.deleted_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            if (avisosValidos.length === 0) {
-                elements.todosAvisos.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-inbox me-2"></i>Nenhum aviso cadastrado</td></tr>`;
-                return;
-            }
-            avisosValidos.forEach(aviso => {
-                const row = document.createElement('tr');
-                const inicio = converterEFormatarData(aviso.start_at);
-                const fim = converterEFormatarData(aviso.end_at);
-                const agora = new Date();
-                const inicioDate = new Date(aviso.start_at);
-                const fimDate = new Date(aviso.end_at);
-                let status = 'Agendado', statusClass = 'warning';
-                if (aviso.active && inicioDate <= agora && fimDate >= agora) { status = 'Ativo'; statusClass = 'success'; }
-                else if (fimDate < agora) { status = 'Expirado'; statusClass = 'secondary'; }
-                else if (!aviso.active) { status = 'Inativo'; statusClass = 'secondary'; }
+    function exibirTodosAvisos(avisos) {
+        if (!elements.todosAvisos) return;
+        elements.todosAvisos.innerHTML = '';
+        const validos = avisos.filter(a => !a.deleted_at).sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+        if (!validos.length) { elements.todosAvisos.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Nenhum aviso</td></tr>'; return; }
+        validos.forEach(a => {
+            const row = document.createElement('tr');
+            const inicio = new Date(a.start_at).toLocaleString('pt-BR');
+            const fim = new Date(a.end_at).toLocaleString('pt-BR');
+            let status = 'Agendado', statusClass = 'warning';
+            if (a.active && new Date(a.start_at) <= new Date() && new Date(a.end_at) >= new Date()) { status = 'Ativo'; statusClass = 'success'; }
+            else if (new Date(a.end_at) < new Date()) { status = 'Expirado'; statusClass = 'secondary'; }
+            else if (!a.active) { status = 'Inativo'; statusClass = 'secondary'; }
+            row.innerHTML = `<td><strong>${a.title || 'Sem título'}</strong></td><td><span class="badge bg-${statusClass}">${status}</span></td><td><small>${inicio}</small></td><td><small>${fim}</small></td><td>${a.stats?.view || 0}</td><td class="action-buttons"><button class="btn btn-sm btn-primary btn-editar-aviso" data-id="${a.id}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-danger btn-excluir-aviso" data-id="${a.id}"><i class="bi bi-trash"></i></button>${!a.active ? `<button class="btn btn-sm btn-success btn-ativar-aviso" data-id="${a.id}"><i class="bi bi-play"></i></button>` : ''}</td>`;
+            elements.todosAvisos.appendChild(row);
+        });
+        document.querySelectorAll('.btn-editar-aviso').forEach(btn => btn.onclick = () => abrirModalAviso(avisos.find(a => a.id == btn.dataset.id)));
+        document.querySelectorAll('.btn-excluir-aviso').forEach(btn => btn.onclick = () => confirmAction('Excluir', 'Excluir aviso?', () => excluirAviso(btn.dataset.id)));
+        document.querySelectorAll('.btn-ativar-aviso').forEach(btn => btn.onclick = () => ativarAviso(btn.dataset.id));
+    }
 
-                row.innerHTML = `
-                    <td><strong>${aviso.title || 'Sem título'}</strong>
-                    <td><span class="badge bg-${statusClass}">${status}</span>
-                    <td><span style="font-size:12px;color:var(--text-muted)">${inicio}</span>
-                    <td><span style="font-size:12px;color:var(--text-muted)">${fim}</span>
-                    <td>${aviso.stats?.view || 0}
-                    <td class="action-buttons">
-                        <button class="btn btn-sm btn-primary btn-editar-aviso" data-id="${aviso.id}"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger btn-excluir-aviso" data-id="${aviso.id}"><i class="bi bi-trash"></i></button>
-                        ${!aviso.active ? `<button class="btn btn-sm btn-success btn-ativar-aviso" data-id="${aviso.id}"><i class="bi bi-play"></i></button>` : ''}
-                    </td>
-                `;
-                elements.todosAvisos.appendChild(row);
-            });
+    function criarCardAviso(aviso, isActive) {
+        const div = document.createElement('div');
+        div.className = 'col-md-6 mb-3';
+        div.innerHTML = `<div class="card alert-card" style="border-left:4px solid ${isActive ? '#10b981' : 'var(--primary)'}"><div class="card-body">${aviso.title ? `<h5 class="card-title">${aviso.title}</h5>` : ''}${aviso.image_path ? `<img src="${API_URL}${aviso.image_path}" class="alert-image-preview">` : ''}<div class="card-text">${aviso.body_html}</div><div class="mt-2"><small class="text-muted">Visualizações: ${aviso.stats?.view || 0} | ${new Date(aviso.start_at).toLocaleString('pt-BR')} - ${new Date(aviso.end_at).toLocaleString('pt-BR')}</small></div><div class="mt-2"><button class="btn btn-sm btn-outline-primary btn-editar-aviso" data-id="${aviso.id}"><i class="bi bi-pencil"></i> Editar</button>${aviso.active ? `<button class="btn btn-sm btn-outline-warning btn-desativar-aviso" data-id="${aviso.id}"><i class="bi bi-pause"></i> Desativar</button>` : ''}</div></div></div>`;
+        div.querySelector('.btn-editar-aviso')?.addEventListener('click', () => abrirModalAviso(aviso));
+        div.querySelector('.btn-desativar-aviso')?.addEventListener('click', () => desativarAviso(aviso.id));
+        return div;
+    }
 
-            document.querySelectorAll('.btn-editar-aviso').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const avisoId = parseInt(this.getAttribute('data-id'));
-                    const aviso = avisos.find(a => a.id === avisoId);
-                    if (aviso) abrirModalAviso(aviso);
-                });
-            });
-            document.querySelectorAll('.btn-excluir-aviso').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const avisoId = this.getAttribute('data-id');
-                    confirmAction('Excluir Aviso', 'Tem certeza que deseja excluir este aviso?', () => excluirAviso(avisoId));
-                });
-            });
-            document.querySelectorAll('.btn-ativar-aviso').forEach(btn => {
-                btn.addEventListener('click', function() { ativarAviso(this.getAttribute('data-id')); });
-            });
-        }
+    async function excluirAviso(id) {
+        await fetch(`${API_URL}/api/admin/alerts/${id}`, { method: 'DELETE', headers: getAuthHeader() });
+        showMessage('Sucesso', 'Aviso excluído', 'success');
+        carregarAvisos();
+    }
+    async function desativarAviso(id) {
+        await fetch(`${API_URL}/api/admin/alerts/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify({ active: false }) });
+        carregarAvisos();
+    }
+    async function ativarAviso(id) {
+        await fetch(`${API_URL}/api/admin/alerts/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify({ active: true }) });
+        carregarAvisos();
+    }
 
-        function criarCardAviso(aviso, isActive = false) {
-            const div = document.createElement('div');
-            div.className = 'col-md-6 mb-3';
-            const agora = new Date();
-            const fim = new Date(aviso.end_at);
-            const expirado = fim < agora;
-            div.innerHTML = `
-                <div class="card alert-card" style="border-left:4px solid ${expirado ? '#6c757d' : (isActive ? '#10b981' : 'var(--primary)')}">
-                    <div class="card-body">
-                        ${aviso.title ? `<h5 class="card-title" style="font-size:15px;font-weight:700">${aviso.title}</h5>` : ''}
-                        ${aviso.image_path ? `<img src="${API_URL}${aviso.image_path}" class="alert-image-preview" alt="Imagem do aviso">` : ''}
-                        <div class="card-text" style="font-size:13.5px;margin-top:8px">${aviso.body_html}</div>
-                        ${aviso.has_countdown && !expirado ? `<div class="mt-2" style="font-size:13px;color:var(--text-muted)">⏰ <span id="countdown-${aviso.id}">Carregando...</span></div>` : ''}
-                        <div class="mt-2">
-                            <small class="text-muted">Visualizações: ${aviso.stats?.view || 0} | ${converterEFormatarData(aviso.start_at)} - ${converterEFormatarData(aviso.end_at)}</small>
-                        </div>
-                        <div class="mt-2 d-flex gap-2">
-                            <button class="btn btn-sm btn-outline-primary btn-editar-aviso" data-id="${aviso.id}"><i class="bi bi-pencil me-1"></i> Editar</button>
-                            ${aviso.active ? `<button class="btn btn-sm btn-outline-warning btn-desativar-aviso" data-id="${aviso.id}"><i class="bi bi-pause me-1"></i> Desativar</button>` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            const editBtn = div.querySelector('.btn-editar-aviso');
-            if (editBtn) editBtn.addEventListener('click', () => abrirModalAviso(aviso));
-            
-            const desativarBtn = div.querySelector('.btn-desativar-aviso');
-            if (desativarBtn) desativarBtn.addEventListener('click', () => desativarAviso(aviso.id));
-            
-            if (aviso.has_countdown && !expirado) iniciarContagemRegressiva(aviso.id, aviso.end_at);
-            return div;
-        }
-
-        function iniciarContagemRegressiva(avisoId, endTime) {
-            function updateCountdown() {
-                const diferenca = new Date(endTime) - new Date();
-                if (diferenca <= 0) { const el = document.getElementById(`countdown-${avisoId}`); if (el) el.textContent = 'Expirado'; return; }
-                const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
-                const horas = Math.floor((diferenca % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutos = Math.floor((diferenca % (1000 * 60 * 60)) / (1000 * 60));
-                const segundos = Math.floor((diferenca % (1000 * 60)) / 1000);
-                let texto = '';
-                if (dias > 0) texto += `${dias}d `;
-                if (horas > 0 || dias > 0) texto += `${horas}h `;
-                if (minutos > 0 || horas > 0 || dias > 0) texto += `${minutos}m `;
-                texto += `${segundos}s`;
-                const el = document.getElementById(`countdown-${avisoId}`);
-                if (el) el.textContent = texto;
-            }
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
-        }
-
-        async function excluirAviso(avisoId) {
-            try {
-                const response = await fetch(`${API_URL}/api/admin/alerts/${avisoId}`, { 
-                    method: 'DELETE',
-                    headers: getAuthHeader()
-                });
-                if (!response.ok) throw new Error('Erro ao excluir aviso');
-                showMessage('Sucesso', 'Aviso excluído com sucesso', 'success');
-                carregarAvisos();
-            } catch (error) { showMessage('Erro', error.message, 'error'); }
-        }
-
-        async function desativarAviso(avisoId) {
-            try {
-                const response = await fetch(`${API_URL}/api/admin/alerts/${avisoId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
-                    body: JSON.stringify({ active: false })
-                });
-                if (!response.ok) throw new Error('Erro ao desativar aviso');
-                showMessage('Sucesso', 'Aviso desativado com sucesso', 'success');
-                carregarAvisos();
-            } catch (error) { showMessage('Erro', error.message, 'error'); }
-        }
-
-        async function ativarAviso(avisoId) {
-            try {
-                const response = await fetch(`${API_URL}/api/admin/alerts/${avisoId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
-                    body: JSON.stringify({ active: true })
-                });
-                if (!response.ok) throw new Error('Erro ao ativar aviso');
-                showMessage('Sucesso', 'Aviso ativado com sucesso', 'success');
-                carregarAvisos();
-            } catch (error) { showMessage('Erro', error.message, 'error'); }
-        }
-
-        // ============================================
-        // FUNÇÕES AUXILIARES
-        // ============================================
-        
-        function downloadFile(filename, content) {
-            const blob = new Blob([content], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = filename;
-            document.body.appendChild(a); a.click();
-            document.body.removeChild(a); URL.revokeObjectURL(url);
-        }
-
-        function showLoading(element) {
-            element.disabled = true;
-            element.setAttribute('data-original-content', element.innerHTML);
-            element.innerHTML = '<span class="loading"></span>';
-        }
-
-        function hideLoading(element, content = null) {
-            element.disabled = false;
-            if (content) { element.innerHTML = content; }
-            else { const orig = element.getAttribute('data-original-content'); if (orig) element.innerHTML = orig; }
-        }
-
-        function showMessage(title, message, type = 'info') {
-            elements.messageModalTitle.textContent = title;
-            elements.messageModalBody.textContent = message;
-            const header = elements.messageModal._element.querySelector('.modal-header');
-            header.className = 'modal-header';
-            switch (type) {
-                case 'success': header.classList.add('bg-success', 'text-white'); break;
-                case 'error': header.classList.add('bg-danger', 'text-white'); break;
-                case 'warning': header.classList.add('bg-warning', 'text-dark'); break;
-                default: header.classList.add('bg-primary', 'text-white');
-            }
-            elements.messageModal.show();
-        }
-
-        function confirmAction(title, message, callback) {
-            elements.confirmModalTitle.textContent = title;
-            elements.confirmModalBody.textContent = message;
-            elements.confirmModalBtn.onclick = function () { elements.confirmModal.hide(); callback(); };
-            elements.confirmModal.show();
-        }
+    function downloadFile(name, content) {
+        const a = document.createElement('a'), blob = new Blob([content], { type: 'application/json' });
+        a.href = URL.createObjectURL(blob); a.download = name; a.click(); URL.revokeObjectURL(a.href);
+    }
+    function showLoading(btn) { if (!btn) return; btn.disabled = true; btn.setAttribute('data-original', btn.innerHTML); btn.innerHTML = '<span class="loading"></span>'; }
+    function hideLoading(btn, text) { if (!btn) return; btn.disabled = false; btn.innerHTML = text || btn.getAttribute('data-original') || btn.innerHTML; }
+    function showMessage(title, msg, type) { if (elements.messageModalTitle) elements.messageModalTitle.textContent = title; if (elements.messageModalBody) elements.messageModalBody.textContent = msg; elements.messageModal.show(); }
+    function confirmAction(title, msg, cb) { if (elements.confirmModalTitle) elements.confirmModalTitle.textContent = title; if (elements.confirmModalBody) elements.confirmModalBody.textContent = msg; elements.confirmModalBtn.onclick = () => { elements.confirmModal.hide(); cb(); }; elements.confirmModal.show(); }
     </script>
 </body>
 </html>
