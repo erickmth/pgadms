@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Sistema de Chamada - Formare 2026</title>
+    <title>Registro de Presença - Formare 2026</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -16,140 +17,234 @@
         :root {
             --primary: #ec3333;
             --primary-dark: #c82333;
-            --success: #2ecc71;
-            --danger: #e74c3c;
-            --info: #3498db;
-            --warning: #f39c12;
-            --gray-100: #f8f9fa;
-            --gray-200: #e9ecef;
-            --gray-600: #6c757d;
-            --gray-800: #343a40;
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-            --radius: 12px;
+            --primary-light: #ffebeb;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --info: #3b82f6;
+            --info-light: #dbeafe;
+            --warning: #f59e0b;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 32px 24px;
         }
 
-        .app-header {
+        .header {
+            max-width: 1200px;
+            margin: 0 auto 32px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
+            justify-content: space-between;
             flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
         .logo {
-            height: 70px;
+            height: 64px;
             width: auto;
+            transition: transform 0.2s ease;
         }
 
-        .header-title {
-            font-size: 1.8rem;
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        .title-area h1 {
+            font-size: 1.75rem;
             font-weight: 700;
-            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
         }
 
-        .user-info {
+        .title-area p {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        .user-card {
             background: white;
-            border-radius: var(--radius);
+            border-radius: var(--radius-lg);
             padding: 12px 20px;
-            margin-bottom: 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--gray-200);
         }
 
-        .user-name {
-            font-weight: 600;
-            color: var(--primary);
-            background: rgba(236, 51, 51, 0.1);
-            padding: 5px 12px;
-            border-radius: 20px;
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .turma-name {
-            background: var(--gray-100);
-            padding: 5px 12px;
-            border-radius: 20px;
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--gray-800);
             font-size: 0.9rem;
         }
 
+        .turma-badge {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            background: var(--gray-100);
+            padding: 2px 8px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
         .logout-link {
-            color: var(--gray-600);
+            color: var(--gray-400);
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            padding: 8px 12px;
+            border-radius: var(--radius-md);
         }
 
-        .logout-link:hover { color: var(--primary); }
+        .logout-link:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
 
-        .container {
-            max-width: 900px;
+        .main-container {
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
         }
 
         .legend {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 16px 24px;
+            margin-bottom: 24px;
             display: flex;
             justify-content: center;
-            gap: 25px;
-            padding: 15px 20px;
-            background: var(--gray-100);
-            border-bottom: 1px solid var(--gray-200);
+            gap: 32px;
             flex-wrap: wrap;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
+            gap: 10px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-600);
         }
 
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 6px;
+        .legend-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 10px;
         }
 
         .date-section {
-            padding: 20px;
-            border-bottom: 1px solid var(--gray-200);
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            margin-bottom: 24px;
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
             align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
         }
 
-        .date-input {
+        .date-control {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .date-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .date-picker-wrapper {
+            position: relative;
+        }
+
+        .date-picker-input {
             padding: 12px 20px;
             border: 2px solid var(--gray-200);
-            border-radius: 40px;
-            font-size: 1rem;
-            min-width: 250px;
-            text-align: center;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-family: 'Inter', monospace;
             background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 200px;
+            font-weight: 500;
+            color: var(--gray-700);
         }
 
-        .date-input:focus {
+        .date-picker-input:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(236, 51, 51, 0.1);
         }
 
         .quick-btn {
@@ -157,107 +252,235 @@
             background: var(--success);
             color: white;
             border: none;
-            border-radius: 40px;
-            font-size: 0.9rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .quick-btn:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
-            box-shadow: var(--shadow-sm);
+            background: #0e9f6e;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .attendance-meta {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 12px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-600);
+        }
+
+        .meta-item i {
+            color: var(--primary);
+            font-size: 0.85rem;
+        }
+
+        .meta-value {
+            font-weight: 500;
+            color: var(--gray-700);
         }
 
         .attendance-list {
-            padding: 0 20px;
+            background: white;
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+
+        .list-header {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            padding: 16px 24px;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-500);
+        }
+
+        .students-container {
             max-height: 55vh;
             overflow-y: auto;
         }
 
+        .students-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .students-container::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+
+        .students-container::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
         .person-card {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 200px;
             align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px;
-            margin: 8px 0;
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius);
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--gray-200);
             transition: all 0.2s;
         }
 
         .person-card:hover {
-            border-color: var(--primary);
+            background: var(--gray-50);
         }
 
         .person-name {
             font-weight: 500;
             font-size: 0.95rem;
             color: var(--gray-800);
-            flex: 1;
         }
 
         .status-group {
             display: flex;
-            gap: 6px;
+            gap: 8px;
+            justify-content: flex-end;
         }
 
         .status-btn {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border: none;
-            border-radius: 10px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             font-size: 1rem;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0.6;
+            opacity: 0.5;
+            background: var(--gray-100);
+            color: var(--gray-600);
         }
 
         .status-btn.active {
             opacity: 1;
             transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            box-shadow: var(--shadow-sm);
         }
 
-        .status-btn:hover {
+        .status-btn.btn-present.active {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-btn.btn-absent.active {
+            background: var(--danger);
+            color: white;
+        }
+
+        .status-btn.btn-certificate.active {
+            background: var(--info);
+            color: white;
+        }
+
+        .status-btn:not(.active):hover {
+            opacity: 0.8;
             transform: translateY(-2px);
-            opacity: 0.9;
         }
 
-        .btn-present { background: var(--success); color: white; }
-        .btn-absent { background: var(--danger); color: white; }
-        .btn-certificate { background: var(--info); color: white; }
+        .stats-info {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+        }
+
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .stat-icon.total { background: var(--gray-200); color: var(--gray-600); }
+        .stat-icon.present { background: var(--success-light); color: var(--success); }
+        .stat-icon.absent { background: var(--danger-light); color: var(--danger); }
+        .stat-icon.certificate { background: var(--info-light); color: var(--info); }
+        .stat-icon.pending { background: #fef3c7; color: var(--warning); }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
         .actions {
-            padding: 20px;
             display: flex;
-            gap: 15px;
+            gap: 16px;
             flex-wrap: wrap;
-            border-top: 1px solid var(--gray-200);
-            background: var(--gray-100);
         }
 
         .btn {
             flex: 1;
-            padding: 12px 20px;
+            padding: 14px 24px;
             border: none;
-            border-radius: 40px;
-            font-size: 0.95rem;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            font-family: 'Inter', sans-serif;
         }
 
         .btn-primary {
@@ -268,6 +491,7 @@
         .btn-primary:hover:not(:disabled) {
             background: var(--primary-dark);
             transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
         .btn-success {
@@ -276,22 +500,22 @@
         }
 
         .btn-success:hover:not(:disabled) {
-            background: #27ae60;
+            background: #0e9f6e;
             transform: translateY(-2px);
         }
 
         .btn-report {
-            background: #9b59b6;
+            background: #8b5cf6;
             color: white;
         }
 
         .btn-report:hover:not(:disabled) {
-            background: #8e44ad;
+            background: #7c3aed;
             transform: translateY(-2px);
         }
 
         .btn:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
@@ -315,43 +539,18 @@
             to { transform: rotate(360deg); }
         }
 
-        .notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--success);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 2000;
-            box-shadow: var(--shadow-md);
-            animation: slideDown 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .notification.error { background: var(--danger); }
-        .notification.warning { background: var(--warning); }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateX(-50%) translateY(-100%); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1500;
+            z-index: 2000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s;
@@ -364,12 +563,13 @@
 
         .modal-container {
             background: white;
-            border-radius: 24px;
+            border-radius: var(--radius-xl);
             width: 90%;
             max-width: 450px;
-            padding: 24px;
-            transform: scale(0.9);
+            padding: 28px;
+            transform: scale(0.95);
             transition: transform 0.3s;
+            box-shadow: var(--shadow-lg);
         }
 
         .modal-overlay.active .modal-container {
@@ -380,7 +580,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
         }
 
         .modal-close {
@@ -388,102 +594,162 @@
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
+            color: var(--gray-400);
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--gray-600);
         }
 
         .month-select {
             width: 100%;
-            padding: 12px;
+            padding: 12px 16px;
             border: 2px solid var(--gray-200);
-            border-radius: 12px;
-            font-size: 1rem;
-            margin-bottom: 20px;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 24px;
+            transition: all 0.2s;
         }
 
-        .stats-info {
-            padding: 10px 20px;
-            background: var(--gray-100);
-            border-top: 1px solid var(--gray-200);
-            font-size: 0.8rem;
-            color: var(--gray-600);
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
+        .month-select:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
         .empty-message {
             text-align: center;
-            padding: 40px;
-            color: var(--gray-600);
+            padding: 60px 20px;
+            color: var(--gray-500);
         }
 
-        @media (max-width: 600px) {
-            body { padding: 12px; }
-            .header-title { font-size: 1.3rem; }
-            .logo { height: 50px; }
-            .person-card { flex-direction: column; align-items: stretch; gap: 10px; }
-            .person-name { text-align: center; }
+        .notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: white;
+            color: var(--gray-800);
+            padding: 14px 24px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 2100;
+            box-shadow: var(--shadow-lg);
+            animation: slideInRight 0.3s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.error { border-left-color: var(--danger); }
+        .notification.warning { border-left-color: var(--warning); }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 20px 16px; }
+            .logo { height: 48px; }
+            .title-area h1 { font-size: 1.25rem; }
+            .person-card { grid-template-columns: 1fr; gap: 12px; }
+            .list-header { display: none; }
             .status-group { justify-content: center; }
-            .btn { padding: 10px; font-size: 0.85rem; }
-            .quick-btn { padding: 8px 16px; font-size: 0.8rem; }
-        }
-
-        .attendance-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .attendance-list::-webkit-scrollbar-track {
-            background: var(--gray-200);
-            border-radius: 10px;
-        }
-
-        .attendance-list::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
+            .person-name { text-align: center; }
+            .stat-card { flex: 1; min-width: 100px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="app-header">
-        <a href="index.html">
+    <div class="header">
+        <div class="logo-area">
             <img src="logu-black.svg" alt="Logo" class="logo" onerror="this.src='logu.svg'">
-        </a>
-        <h1 class="header-title">Sistema de Chamada</h1>
+            <div class="title-area">
+                <h1>Registro de Presença</h1>
+                <p>Controle de frequência diário</p>
+            </div>
+        </div>
+        <div class="user-card">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-details">
+                    <span class="user-name" id="userName">Carregando...</span>
+                    <span class="turma-badge">Formare 2026</span>
+                </div>
+            </div>
+            <a href="#" class="logout-link" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
     </div>
 
-    <div class="container">
+    <div class="main-container">
         <div class="legend">
-            <div class="legend-item"><div class="legend-color" style="background: var(--success);"></div><span>Presente</span></div>
-            <div class="legend-item"><div class="legend-color" style="background: var(--danger);"></div><span>Ausente</span></div>
-            <div class="legend-item"><div class="legend-color" style="background: var(--info);"></div><span>Atestado</span></div>
-        </div>
-
-        <div class="user-info">
-            <div class="user-details">
-                <span class="user-name" id="userName">Carregando...</span>
-                <span class="turma-name">Formare 2026</span>
-            </div>
-            <a href="#" class="logout-link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            <div class="legend-item"><div class="legend-dot" style="background: var(--success);"></div><span>Presente</span></div>
+            <div class="legend-item"><div class="legend-dot" style="background: var(--danger);"></div><span>Ausente</span></div>
+            <div class="legend-item"><div class="legend-dot" style="background: var(--info);"></div><span>Atestado</span></div>
         </div>
 
         <div class="date-section">
-            <input type="date" id="datePicker" class="date-input">
-            <button class="quick-btn" id="markAllPresent">
-                <i class="fas fa-check-double"></i> Todos Presente
-            </button>
+            <div class="date-control">
+                <div class="date-label">
+                    <i class="fas fa-calendar-alt" style="color: var(--primary);"></i>
+                    <span>Data da Chamada</span>
+                </div>
+                <div class="date-picker-wrapper">
+                    <input type="date" id="datePicker" class="date-picker-input">
+                </div>
+                <button class="quick-btn" id="markAllPresent">
+                    <i class="fas fa-check-double"></i> Marcar Todos Presente
+                </button>
+            </div>
         </div>
 
-        <div class="attendance-list" id="attendanceList">
-            <div class="empty-message">Carregando lista de alunos...</div>
+        <div id="attendanceMeta" class="attendance-meta" style="display: none;">
+            <div class="meta-item">
+                <i class="fas fa-user-plus"></i>
+                <span>Criado por:</span>
+                <span class="meta-value" id="createdBy">-</span>
+            </div>
+            <div class="meta-item" id="updatedByContainer" style="display: none;">
+                <i class="fas fa-user-edit"></i>
+                <span>Atualizado por:</span>
+                <span class="meta-value" id="updatedBy">-</span>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-clock"></i>
+                <span>Última atualização:</span>
+                <span class="meta-value" id="lastUpdated">-</span>
+            </div>
+        </div>
+
+        <div class="attendance-list">
+            <div class="list-header">
+                <span>Aluno</span>
+                <span>Status</span>
+            </div>
+            <div class="students-container" id="attendanceList">
+                <div class="empty-message">Carregando lista de alunos...</div>
+            </div>
         </div>
 
         <div class="stats-info" id="statsInfo">
-            <span><i class="fas fa-users"></i> Total: 0</span>
-            <span><i class="fas fa-check-circle" style="color: var(--success);"></i> Presente: 0</span>
-            <span><i class="fas fa-times-circle" style="color: var(--danger);"></i> Ausente: 0</span>
-            <span><i class="fas fa-file-medical" style="color: var(--info);"></i> Atestado: 0</span>
-            <span><i class="fas fa-clock"></i> Pendente: 0</span>
+            <div class="stat-card"><div class="stat-icon total"><i class="fas fa-users"></i></div><div class="stat-info"><span class="stat-value" id="totalCount">0</span><span class="stat-label">Total</span></div></div>
+            <div class="stat-card"><div class="stat-icon present"><i class="fas fa-check-circle"></i></div><div class="stat-info"><span class="stat-value" id="presentCount">0</span><span class="stat-label">Presente</span></div></div>
+            <div class="stat-card"><div class="stat-icon absent"><i class="fas fa-times-circle"></i></div><div class="stat-info"><span class="stat-value" id="absentCount">0</span><span class="stat-label">Ausente</span></div></div>
+            <div class="stat-card"><div class="stat-icon certificate"><i class="fas fa-file-medical"></i></div><div class="stat-info"><span class="stat-value" id="certificateCount">0</span><span class="stat-label">Atestado</span></div></div>
+            <div class="stat-card"><div class="stat-icon pending"><i class="fas fa-clock"></i></div><div class="stat-info"><span class="stat-value" id="pendingCount">0</span><span class="stat-label">Pendente</span></div></div>
         </div>
 
         <div class="actions">
@@ -511,24 +777,30 @@
                 </select>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-report" id="generateReportBtn" disabled>Baixar Relatório</button>
+                <button class="btn btn-report" id="generateReportBtn" style="width: 100%;" disabled>Baixar Relatório</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ============================================
-        // CONFIGURAÇÕES
-        // ============================================
-        
+        // Configurações
         const API_BASE = 'https://erickmth.pythonanywhere.com/api';
         const TURMA_NOME = 'Formare 2026';
         
         let students = [];
         let currentAttendance = {};
         let selectedDate = '';
+        
+        let attendanceMetadata = { 
+            createdBy: null,
+            updatedBy: null,
+            createdAt: null,
+            updatedAt: null 
+        };
 
-        // Elementos DOM
+        const ADMIN_NAMES = ['Erick Matheus Leguisamon', 'Marineide Maia dos Santos', 'Eduardo Oliveira Silva'];
+
+        // DOM Elements
         const datePicker = document.getElementById('datePicker');
         const attendanceList = document.getElementById('attendanceList');
         const submitBtn = document.getElementById('submitBtn');
@@ -539,13 +811,21 @@
         const generateReportBtn = document.getElementById('generateReportBtn');
         const monthSelect = document.getElementById('monthSelect');
         const userNameSpan = document.getElementById('userName');
+        const userAvatar = document.getElementById('userAvatar');
         const logoutBtn = document.getElementById('logoutBtn');
-        const statsInfo = document.getElementById('statsInfo');
         const markAllPresentBtn = document.getElementById('markAllPresent');
-
-        // Lista de nomes de administradores para filtrar
-        const ADMIN_NAMES = ['Erick Matheus Leguisamon', 'Marineide Maia dos Santos', 'Eduardo Oliveira Silva'];
+        const attendanceMeta = document.getElementById('attendanceMeta');
+        const createdBySpan = document.getElementById('createdBy');
+        const updatedBySpan = document.getElementById('updatedBy');
+        const updatedByContainer = document.getElementById('updatedByContainer');
+        const lastUpdatedSpan = document.getElementById('lastUpdated');
         
+        const totalCountSpan = document.getElementById('totalCount');
+        const presentCountSpan = document.getElementById('presentCount');
+        const absentCountSpan = document.getElementById('absentCount');
+        const certificateCountSpan = document.getElementById('certificateCount');
+        const pendingCountSpan = document.getElementById('pendingCount');
+
         // Helper Functions
         function showNotification(message, type = 'success') {
             const notif = document.createElement('div');
@@ -556,13 +836,16 @@
         }
 
         function showLoading(btn) {
+            if (!btn) return;
             btn.disabled = true;
             btn.classList.add('loading');
         }
 
-        function hideLoading(btn) {
+        function hideLoading(btn, originalText = null) {
+            if (!btn) return;
             btn.disabled = false;
             btn.classList.remove('loading');
+            if (originalText) btn.innerHTML = originalText;
         }
 
         function formatDate(date) {
@@ -573,6 +856,12 @@
         function formatDisplayDate(dateStr) {
             const [year, month, day] = dateStr.split('-');
             return `${day}/${month}/${year}`;
+        }
+
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleString('pt-BR');
         }
 
         function escapeHtml(text) {
@@ -589,9 +878,7 @@
             return {};
         }
 
-        // Verificar se é um administrador (pelo nome)
         function isAdminByName(nome) {
-            // Remove emojis antes de comparar
             const nomeLimpo = nome.replace(/👩‍🏫|👨‍🏫/g, '').trim();
             return ADMIN_NAMES.some(admin => admin === nomeLimpo);
         }
@@ -608,13 +895,31 @@
                 else pendente++;
             });
             
-            statsInfo.innerHTML = `
-                <span><i class="fas fa-users"></i> Total: ${students.length}</span>
-                <span><i class="fas fa-check-circle" style="color: var(--success);"></i> Presente: ${presente}</span>
-                <span><i class="fas fa-times-circle" style="color: var(--danger);"></i> Ausente: ${ausente}</span>
-                <span><i class="fas fa-file-medical" style="color: var(--info);"></i> Atestado: ${atestado}</span>
-                <span><i class="fas fa-clock"></i> Pendente: ${pendente}</span>
-            `;
+            totalCountSpan.textContent = students.length;
+            presentCountSpan.textContent = presente;
+            absentCountSpan.textContent = ausente;
+            certificateCountSpan.textContent = atestado;
+            pendingCountSpan.textContent = pendente;
+        }
+
+        function updateMetadataDisplay() {
+            if (attendanceMetadata.createdBy) {
+                attendanceMeta.style.display = 'flex';
+                createdBySpan.textContent = attendanceMetadata.createdBy;
+                
+                if (attendanceMetadata.updatedBy && attendanceMetadata.updatedBy !== attendanceMetadata.createdBy) {
+                    updatedBySpan.textContent = attendanceMetadata.updatedBy;
+                    updatedByContainer.style.display = 'flex';
+                } else {
+                    updatedByContainer.style.display = 'none';
+                }
+                
+                lastUpdatedSpan.textContent = attendanceMetadata.updatedAt 
+                    ? formatDateTime(attendanceMetadata.updatedAt) 
+                    : formatDateTime(attendanceMetadata.createdAt);
+            } else {
+                attendanceMeta.style.display = 'none';
+            }
         }
 
         function markAllPresent() {
@@ -633,10 +938,17 @@
             
             renderStudentList();
             updateStats();
+            
+            const currentUser = sessionStorage.getItem('adminName') || 'Sistema';
+            if (attendanceMetadata.createdBy) {
+                attendanceMetadata.updatedBy = currentUser;
+                attendanceMetadata.updatedAt = new Date().toISOString();
+            }
+            updateMetadataDisplay();
+            
             showNotification('Todos os alunos marcados como PRESENTE!', 'success');
         }
 
-        // Buscar lista de alunos da API e filtrar admins
         async function fetchStudents() {
             try {
                 const response = await fetch(`${API_BASE}/admin/turmas/${encodeURIComponent(TURMA_NOME)}/alunos`, {
@@ -644,15 +956,11 @@
                 });
                 
                 if (!response.ok) {
-                    if (response.status === 401) {
-                        throw new Error('Não autorizado');
-                    }
+                    if (response.status === 401) throw new Error('Não autorizado');
                     throw new Error('Erro ao carregar alunos');
                 }
                 
                 const data = await response.json();
-                
-                // Filtrar alunos: remove administradores pelo nome
                 students = Object.entries(data)
                     .map(([edv, nome]) => ({
                         edv,
@@ -661,18 +969,14 @@
                     }))
                     .filter(student => !isAdminByName(student.nome));
                 
-                console.log('Alunos carregados (excluindo admins):', students.length);
-                
                 renderStudentList();
                 updateStats();
                 return students;
             } catch (error) {
-                console.error('Erro ao carregar alunos:', error);
+                console.error('Erro:', error);
                 if (error.message === 'Não autorizado') {
                     showNotification('Sessão expirada, redirecionando...', 'error');
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1500);
+                    setTimeout(() => window.location.href = 'index.html', 1500);
                 } else {
                     showNotification('Erro ao carregar lista de alunos', 'error');
                     attendanceList.innerHTML = '<div class="empty-message">❌ Erro ao carregar alunos</div>';
@@ -681,7 +985,6 @@
             }
         }
 
-        // Renderizar lista de alunos (apenas alunos comuns)
         function renderStudentList() {
             if (!students.length) {
                 attendanceList.innerHTML = '<div class="empty-message">📭 Nenhum aluno cadastrado nesta turma.</div>';
@@ -725,9 +1028,7 @@
             const status = btn.dataset.status;
             const card = document.querySelector(`.person-card[data-edv="${edv}"]`);
             
-            card.querySelectorAll('.status-btn').forEach(b => {
-                b.classList.remove('active');
-            });
+            card.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
             if (!currentAttendance[selectedDate]) {
@@ -735,42 +1036,57 @@
             }
             currentAttendance[selectedDate][edv] = status;
             updateStats();
+            
+            const currentUser = sessionStorage.getItem('adminName') || 'Sistema';
+            if (attendanceMetadata.createdBy) {
+                attendanceMetadata.updatedBy = currentUser;
+                attendanceMetadata.updatedAt = new Date().toISOString();
+                updateMetadataDisplay();
+            }
         }
 
-        // Buscar chamada existente (rota pública)
-        async function fetchAttendance(date) {
+        async function fetchAttendanceWithMetadata(date) {
             try {
                 const response = await fetch(`${API_BASE}/presenca/obter/${date}?turma=${encodeURIComponent(TURMA_NOME)}`);
                 
                 if (response.status === 404) {
+                    attendanceMetadata = { 
+                        createdBy: null, 
+                        updatedBy: null, 
+                        createdAt: null, 
+                        updatedAt: null 
+                    };
                     return null;
                 }
                 
-                if (!response.ok) {
-                    throw new Error('Erro ao carregar chamada');
-                }
+                if (!response.ok) throw new Error('Erro ao carregar chamada');
                 
                 const data = await response.json();
+                
+                attendanceMetadata = {
+                    createdBy: data.created_by || null,
+                    updatedBy: data.updated_by || null,
+                    createdAt: data.created_at,
+                    updatedAt: data.updated_at
+                };
+                updateMetadataDisplay();
+                
                 if (data.registros && Array.isArray(data.registros)) {
                     const statusMap = {};
                     data.registros.forEach(r => {
-                        // Encontrar aluno pelo nome (ignorando emojis)
                         const nomeLimpo = r.name.replace(/👩‍🏫|👨‍🏫/g, '').trim();
                         const student = students.find(s => s.nome === nomeLimpo);
-                        if (student) {
-                            statusMap[student.edv] = r.status;
-                        }
+                        if (student) statusMap[student.edv] = r.status;
                     });
                     return statusMap;
                 }
                 return null;
             } catch (error) {
-                console.error('Erro ao buscar chamada:', error);
+                console.error('Erro:', error);
                 return null;
             }
         }
 
-        // Salvar chamada
         async function saveAttendance(isUpdate = false) {
             if (!selectedDate) {
                 showNotification('Selecione uma data primeiro', 'warning');
@@ -795,6 +1111,7 @@
             };
             
             const btn = isUpdate ? saveChangesBtn : submitBtn;
+            const originalText = btn.innerHTML;
             showLoading(btn);
             
             try {
@@ -812,21 +1129,41 @@
                     throw new Error(error.error || 'Erro ao salvar');
                 }
                 
+                const result = await response.json();
+                const currentUser = sessionStorage.getItem('adminName') || 'Sistema';
+                const now = new Date().toISOString();
+                
+                if (isUpdate) {
+                    if (!attendanceMetadata.createdBy) {
+                        attendanceMetadata.createdBy = currentUser;
+                        attendanceMetadata.createdAt = now;
+                    }
+                    attendanceMetadata.updatedBy = currentUser;
+                    attendanceMetadata.updatedAt = now;
+                } else {
+                    attendanceMetadata.createdBy = result.created_by || currentUser;
+                    attendanceMetadata.createdAt = now;
+                    attendanceMetadata.updatedBy = null;
+                    attendanceMetadata.updatedAt = null;
+                }
+                
+                updateMetadataDisplay();
+                
                 showNotification(`Chamada ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`);
                 submitBtn.style.display = 'none';
                 saveChangesBtn.style.display = 'block';
                 
             } catch (error) {
-                console.error('Erro ao salvar:', error);
+                console.error('Erro:', error);
                 showNotification(error.message || 'Erro ao salvar chamada', 'error');
             } finally {
-                hideLoading(btn);
+                hideLoading(btn, originalText);
             }
         }
 
         function setupDates() {
             const today = new Date();
-            const minDate = new Date(2026, 2, 30);
+            const minDate = new Date(2026, 2, 31);
             const maxDate = new Date(2026, 11, 31);
             
             datePicker.min = formatDate(minDate);
@@ -849,7 +1186,7 @@
             
             selectedDate = date;
             
-            const savedStatus = await fetchAttendance(date);
+            const savedStatus = await fetchAttendanceWithMetadata(date);
             if (savedStatus && Object.keys(savedStatus).length > 0) {
                 currentAttendance[date] = savedStatus;
                 submitBtn.style.display = 'none';
@@ -859,6 +1196,13 @@
                 currentAttendance[date] = {};
                 submitBtn.style.display = 'block';
                 saveChangesBtn.style.display = 'none';
+                attendanceMetadata = { 
+                    createdBy: null, 
+                    updatedBy: null, 
+                    createdAt: null, 
+                    updatedAt: null 
+                };
+                updateMetadataDisplay();
             }
             
             renderStudentList();
@@ -901,7 +1245,7 @@
                 });
                 
             } catch (error) {
-                console.error('Erro ao carregar meses:', error);
+                console.error('Erro:', error);
                 monthSelect.innerHTML = '<option value="">Erro ao carregar meses</option>';
             }
         }
@@ -926,14 +1270,11 @@
             window.location.href = 'index.html';
         }
 
-        // Verificar autenticação
         function checkAuth() {
             const token = sessionStorage.getItem('adminToken');
             if (!token) {
                 showNotification('Faça login primeiro', 'warning');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
+                setTimeout(() => window.location.href = 'index.html', 1500);
                 return false;
             }
             return true;
@@ -948,47 +1289,29 @@
 
         submitBtn.addEventListener('click', () => saveAttendance(false));
         saveChangesBtn.addEventListener('click', () => saveAttendance(true));
-        logoutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            handleLogout();
-        });
-
-        reportBtn.addEventListener('click', () => {
-            loadAvailableMonths();
-            reportModal.classList.add('active');
-        });
-
+        logoutBtn.addEventListener('click', (e) => { e.preventDefault(); handleLogout(); });
+        reportBtn.addEventListener('click', () => { loadAvailableMonths(); reportModal.classList.add('active'); });
         closeReportModal.addEventListener('click', () => reportModal.classList.remove('active'));
         generateReportBtn.addEventListener('click', downloadReport);
         markAllPresentBtn.addEventListener('click', markAllPresent);
+        reportModal.addEventListener('click', (e) => { if (e.target === reportModal) reportModal.classList.remove('active'); });
 
-        reportModal.addEventListener('click', (e) => {
-            if (e.target === reportModal) reportModal.classList.remove('active');
-        });
-
-        // ============================================
-        // INICIALIZAÇÃO
-        // ============================================
-        
+        // Initialization
         async function init() {
-            console.log('🚀 Inicializando presenca.html...');
-            
             if (!checkAuth()) return;
             
-            const adminName = sessionStorage.getItem('adminName');
-            userNameSpan.textContent = adminName || 'Administrador';
+            const adminName = sessionStorage.getItem('adminName') || 'Administrador';
+            userNameSpan.textContent = adminName;
+            userAvatar.textContent = adminName.charAt(0).toUpperCase();
             
             setupDates();
             await fetchStudents();
             if (students.length) {
                 await loadAttendanceForDate(datePicker.value);
             }
-            
-            console.log('✅ Página carregada com sucesso!');
         }
         
         init();
     </script>
-
 </body>
 </html>
