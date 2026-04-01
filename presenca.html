@@ -886,84 +886,64 @@
         const certificateCountSpan = document.getElementById('certificateCount');
         const pendingCountSpan = document.getElementById('pendingCount');
 
-        // Helper Functions
-        function showNotification(message, type = 'success') {
-            const notif = document.createElement('div');
-            notif.className = `notification ${type}`;
-            notif.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i><span>${message}</span>`;
-            document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), 3000);
+        // ==================== FUNÇÕES CORRIGIDAS COM UTC-3 ====================
+        
+        // Converte string YYYY-MM-DD para Date object no fuso de Brasília (UTC-3)
+        function parseDateToBrasilia(dateStr) {
+            if (!dateStr) return null;
+            const [year, month, day] = dateStr.split('-').map(Number);
+            // Cria data no UTC-3 (horário de Brasília) com hora 12 para evitar problemas de DST
+            return new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
         }
-
-        function showLoading(btn) {
-            if (!btn) return;
-            btn.disabled = true;
-            btn.classList.add('loading');
-        }
-
-        function hideLoading(btn, originalText = null) {
-            if (!btn) return;
-            btn.disabled = false;
-            btn.classList.remove('loading');
-            if (originalText) btn.innerHTML = originalText;
-        }
-
-        function formatDate(date) {
-            const d = new Date(date);
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
+        
+        // Formata uma data para string YYYY-MM-DD considerando UTC
+        function formatDateUTC(date) {
+            const year = date.getUTCFullYear();
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(date.getUTCDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
-
-        function formatDisplayDate(dateStr) {
-            const [year, month, day] = dateStr.split('-');
-            return `${day}/${month}/${year}`;
+        
+        // Função para formatar data atual (usando UTC)
+        function formatDate(date) {
+            if (!date) return '';
+            const year = date.getUTCFullYear();
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
-
-        function formatDateTime(dateStr) {
-            if (!dateStr) return '-';
-            const date = new Date(dateStr);
-            return date.toLocaleString('pt-BR');
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function getAuthHeader() {
-            const token = sessionStorage.getItem('adminToken');
-            if (token) {
-                return { 'Authorization': 'Bearer ' + token };
-            }
-            return {};
-        }
-
-        function isAdminByName(nome) {
-            const nomeLimpo = nome.replace(/👩‍🏫|👨‍🏫/g, '').trim();
-            return ADMIN_NAMES.some(admin => admin === nomeLimpo);
-        }
-
-        // FUNÇÃO CORRIGIDA: Bloqueia SOMENTE Sábado (6) e Domingo (0)
-        // 0 = Domingo, 1 = Segunda, 2 = Terça, 3 = Quarta, 4 = Quinta, 5 = Sexta, 6 = Sábado
+        
+        // FUNÇÃO CORRIGIDA: Verifica se é final de semana usando UTC-3
         function isWeekend(dateStr) {
             if (!dateStr) return false;
-            const date = new Date(dateStr);
-            const dayOfWeek = date.getDay();
-            // SÓ BLOQUEIA SÁBADO (6) E DOMINGO (0)
+            const date = parseDateToBrasilia(dateStr);
+            if (!date) return false;
+            const dayOfWeek = date.getUTCDay();
+            // 0 = Domingo, 6 = Sábado
             return dayOfWeek === 0 || dayOfWeek === 6;
         }
-
-        // Função para obter o nome do dia da semana
+        
+        // Função para obter o nome do dia da semana (usando UTC-3)
         function getDayName(dateStr) {
             if (!dateStr) return '';
-            const date = new Date(dateStr);
+            const date = parseDateToBrasilia(dateStr);
+            if (!date) return '';
             const days = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-            return days[date.getDay()];
+            return days[date.getUTCDay()];
         }
-
+        
+        // Encontra o próximo dia útil (segunda a sexta)
+        function getNextWeekday(dateStr) {
+            const [year, month, day] = dateStr.split('-').map(Number);
+            let date = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+            
+            while (date.getUTCDay() === 0 || date.getUTCDay() === 6) {
+                date.setUTCDate(date.getUTCDate() + 1);
+            }
+            
+            return formatDateUTC(date);
+        }
+        
         // Atualiza o indicador visual do dia da semana
         function updateDayInfo(dateStr) {
             if (!dateStr) return;
@@ -980,7 +960,14 @@
                 dayInfo.innerHTML = `<i class="fas fa-calendar-check"></i><span>${dayName} - Liberado</span>`;
             }
         }
-
+        
+        // Formata data para exibição (DD/MM/YYYY)
+        function formatDisplayDate(dateStr) {
+            if (!dateStr) return '';
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}/${year}`;
+        }
+        
         // Função que força a correção da data para evitar finais de semana
         function enforceValidDate() {
             let currentValue = datePicker.value;
@@ -988,11 +975,16 @@
             // Se não há data selecionada, define para hoje ou próximo dia útil
             if (!currentValue) {
                 const today = new Date();
-                let validDate = new Date(today);
-                while (isWeekend(formatDate(validDate))) {
-                    validDate.setDate(validDate.getDate() + 1);
+                const year = today.getUTCFullYear();
+                const month = String(today.getUTCMonth() + 1).padStart(2, '0');
+                const day = String(today.getUTCDate()).padStart(2, '0');
+                let validDate = `${year}-${month}-${day}`;
+                
+                while (isWeekend(validDate)) {
+                    validDate = getNextWeekday(validDate);
                 }
-                datePicker.value = formatDate(validDate);
+                
+                datePicker.value = validDate;
                 selectedDate = datePicker.value;
                 updateDayInfo(selectedDate);
                 return;
@@ -1003,13 +995,7 @@
             
             // Verifica se a data atual é sábado ou domingo
             if (isWeekend(currentValue)) {
-                // Encontra o próximo dia útil (segunda a sexta)
-                let nextValidDate = new Date(currentValue);
-                nextValidDate.setDate(nextValidDate.getDate() + 1);
-                while (isWeekend(formatDate(nextValidDate))) {
-                    nextValidDate.setDate(nextValidDate.getDate() + 1);
-                }
-                const newDate = formatDate(nextValidDate);
+                const newDate = getNextWeekday(currentValue);
                 
                 // Força a nova data
                 datePicker.value = newDate;
@@ -1039,8 +1025,55 @@
                 return true;
             }
         }
+        
+        // ==================== FIM DAS FUNÇÕES CORRIGIDAS ====================
+        
+        function showNotification(message, type = 'success') {
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i><span>${message}</span>`;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 3000);
+        }
 
-        // Validação antes de qualquer ação que possa enviar dados
+        function showLoading(btn) {
+            if (!btn) return;
+            btn.disabled = true;
+            btn.classList.add('loading');
+        }
+
+        function hideLoading(btn, originalText = null) {
+            if (!btn) return;
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            if (originalText) btn.innerHTML = originalText;
+        }
+
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleString('pt-BR');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function getAuthHeader() {
+            const token = sessionStorage.getItem('adminToken');
+            if (token) {
+                return { 'Authorization': 'Bearer ' + token };
+            }
+            return {};
+        }
+
+        function isAdminByName(nome) {
+            const nomeLimpo = nome.replace(/👩‍🏫|👨‍🏫/g, '').trim();
+            return ADMIN_NAMES.some(admin => admin === nomeLimpo);
+        }
+
         function validateAndGetDate(actionName = '') {
             const currentDate = datePicker.value;
             
@@ -1376,19 +1409,26 @@
             const minDate = new Date(2026, 2, 31);
             const maxDate = new Date(2026, 11, 31);
             
-            datePicker.min = formatDate(minDate);
-            datePicker.max = formatDate(maxDate);
+            // Formata as datas usando UTC
+            const minDateStr = formatDate(new Date(Date.UTC(2026, 2, 31, 12, 0, 0)));
+            const maxDateStr = formatDate(new Date(Date.UTC(2026, 11, 31, 12, 0, 0)));
             
-            let initialDate = new Date(today);
-            if (today < minDate) initialDate = new Date(minDate);
-            if (today > maxDate) initialDate = new Date(maxDate);
+            datePicker.min = minDateStr;
+            datePicker.max = maxDateStr;
+            
+            // Define data inicial
+            let initialDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 12, 0, 0));
+            if (today < minDate) initialDate = new Date(Date.UTC(2026, 2, 31, 12, 0, 0));
+            if (today > maxDate) initialDate = new Date(Date.UTC(2026, 11, 31, 12, 0, 0));
+            
+            let initialDateStr = formatDate(initialDate);
             
             // Pula finais de semana para a data inicial
-            while (isWeekend(formatDate(initialDate))) {
-                initialDate.setDate(initialDate.getDate() + 1);
+            while (isWeekend(initialDateStr)) {
+                initialDateStr = getNextWeekday(initialDateStr);
             }
             
-            datePicker.value = formatDate(initialDate);
+            datePicker.value = initialDateStr;
             selectedDate = datePicker.value;
             updateDayInfo(selectedDate);
         }
