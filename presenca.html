@@ -237,7 +237,7 @@
             background: white;
             cursor: pointer;
             transition: all 0.2s;
-            min-width: 200px;
+            min-width: 220px;
             font-weight: 500;
             color: var(--gray-700);
         }
@@ -264,6 +264,27 @@
             align-items: center;
             gap: 8px;
             font-weight: 600;
+        }
+
+        .day-info {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            background: var(--gray-100);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .day-info.weekend-day {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .day-info.weekday {
+            background: var(--success-light);
+            color: var(--success);
         }
 
         .quick-btn {
@@ -739,6 +760,10 @@
                 <div class="date-picker-wrapper">
                     <input type="date" id="datePicker" class="date-picker-input">
                 </div>
+                <div id="dayInfo" class="day-info">
+                    <i class="fas fa-calendar-day"></i>
+                    <span id="dayNameText">-</span>
+                </div>
                 <div id="weekendWarning" class="weekend-warning" style="display: none;">
                     <i class="fas fa-exclamation-triangle"></i> ⚠️ SÁBADOS E DOMINGOS NÃO SÃO PERMITIDOS!
                 </div>
@@ -852,6 +877,8 @@
         const updatedByContainer = document.getElementById('updatedByContainer');
         const lastUpdatedSpan = document.getElementById('lastUpdated');
         const weekendWarning = document.getElementById('weekendWarning');
+        const dayNameText = document.getElementById('dayNameText');
+        const dayInfo = document.getElementById('dayInfo');
         
         const totalCountSpan = document.getElementById('totalCount');
         const presentCountSpan = document.getElementById('presentCount');
@@ -919,22 +946,39 @@
             return ADMIN_NAMES.some(admin => admin === nomeLimpo);
         }
 
-        // CORRIGIDO: Função para verificar se é final de semana (SÁBADO ou DOMINGO)
+        // FUNÇÃO CORRIGIDA: Bloqueia SOMENTE Sábado (6) e Domingo (0)
         // 0 = Domingo, 1 = Segunda, 2 = Terça, 3 = Quarta, 4 = Quinta, 5 = Sexta, 6 = Sábado
         function isWeekend(dateStr) {
             if (!dateStr) return false;
             const date = new Date(dateStr);
             const dayOfWeek = date.getDay();
-            // Retorna true apenas para Sábado (6) ou Domingo (0)
+            // SÓ BLOQUEIA SÁBADO (6) E DOMINGO (0)
             return dayOfWeek === 0 || dayOfWeek === 6;
         }
 
-        // Função para obter o nome do dia da semana (apenas para debug)
+        // Função para obter o nome do dia da semana
         function getDayName(dateStr) {
             if (!dateStr) return '';
             const date = new Date(dateStr);
-            const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+            const days = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
             return days[date.getDay()];
+        }
+
+        // Atualiza o indicador visual do dia da semana
+        function updateDayInfo(dateStr) {
+            if (!dateStr) return;
+            const dayName = getDayName(dateStr);
+            const isWeekendDay = isWeekend(dateStr);
+            
+            dayNameText.textContent = dayName;
+            
+            if (isWeekendDay) {
+                dayInfo.className = 'day-info weekend-day';
+                dayInfo.innerHTML = `<i class="fas fa-ban"></i><span>${dayName} - BLOQUEADO!</span>`;
+            } else {
+                dayInfo.className = 'day-info weekday';
+                dayInfo.innerHTML = `<i class="fas fa-calendar-check"></i><span>${dayName} - Liberado</span>`;
+            }
         }
 
         // Função que força a correção da data para evitar finais de semana
@@ -950,15 +994,15 @@
                 }
                 datePicker.value = formatDate(validDate);
                 selectedDate = datePicker.value;
-                console.log('Data inicial definida:', selectedDate, getDayName(selectedDate));
+                updateDayInfo(selectedDate);
                 return;
             }
             
-            // Verifica se a data atual é sábado ou domingo
-            const isWeekendDate = isWeekend(currentValue);
-            console.log('Verificando data:', currentValue, getDayName(currentValue), 'é fim de semana?', isWeekendDate);
+            // Atualiza o indicador visual
+            updateDayInfo(currentValue);
             
-            if (isWeekendDate) {
+            // Verifica se a data atual é sábado ou domingo
+            if (isWeekend(currentValue)) {
                 // Encontra o próximo dia útil (segunda a sexta)
                 let nextValidDate = new Date(currentValue);
                 nextValidDate.setDate(nextValidDate.getDate() + 1);
@@ -967,11 +1011,10 @@
                 }
                 const newDate = formatDate(nextValidDate);
                 
-                console.log('Data inválida, alterando de', currentValue, 'para', newDate);
-                
                 // Força a nova data
                 datePicker.value = newDate;
                 selectedDate = newDate;
+                updateDayInfo(selectedDate);
                 
                 // Mostra aviso
                 datePicker.classList.add('weekend');
@@ -1347,14 +1390,13 @@
             
             datePicker.value = formatDate(initialDate);
             selectedDate = datePicker.value;
-            console.log('Data inicial configurada:', selectedDate, getDayName(selectedDate));
+            updateDayInfo(selectedDate);
         }
 
         async function loadAttendanceForDate(date) {
             if (!students.length) return;
             
             if (isWeekend(date)) {
-                console.log('Data de fim de semana, não carregando chamada:', date, getDayName(date));
                 currentAttendance[date] = {};
                 renderStudentList();
                 updateStats();
@@ -1469,7 +1511,6 @@
 
         // Event Listeners
         datePicker.addEventListener('change', async function() {
-            console.log('change event - data selecionada:', this.value);
             enforceValidDate();
             
             const currentDate = this.value;
@@ -1482,12 +1523,10 @@
         });
 
         datePicker.addEventListener('input', function() {
-            console.log('input event - digitando:', this.value);
             enforceValidDate();
         });
 
         datePicker.addEventListener('blur', function() {
-            console.log('blur event - campo perdeu foco:', this.value);
             enforceValidDate();
         });
 
