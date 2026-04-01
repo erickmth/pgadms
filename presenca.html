@@ -247,21 +247,22 @@
             box-shadow: 0 0 0 3px rgba(236, 51, 51, 0.1);
         }
 
-        .date-picker-input:disabled {
-            background-color: var(--gray-100);
-            cursor: not-allowed;
-            opacity: 0.7;
+        .date-picker-input.weekend {
+            border-color: var(--danger);
+            background-color: var(--danger-light);
+            color: var(--danger);
         }
 
         .weekend-warning {
-            font-size: 0.75rem;
-            color: var(--warning);
-            background: #fef3c7;
-            padding: 4px 12px;
-            border-radius: 20px;
+            font-size: 0.875rem;
+            color: var(--danger);
+            background: var(--danger-light);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            font-weight: 500;
         }
 
         .quick-btn {
@@ -279,10 +280,15 @@
             gap: 10px;
         }
 
-        .quick-btn:hover {
+        .quick-btn:hover:not(:disabled) {
             background: #0e9f6e;
             transform: translateY(-1px);
             box-shadow: var(--shadow-md);
+        }
+
+        .quick-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .attendance-meta {
@@ -416,7 +422,7 @@
             color: white;
         }
 
-        .status-btn:not(.active):hover {
+        .status-btn:not(.active):hover:not(:disabled) {
             opacity: 0.8;
             transform: translateY(-2px);
         }
@@ -732,9 +738,9 @@
                 <div class="date-picker-wrapper">
                     <input type="date" id="datePicker" class="date-picker-input">
                 </div>
-                <span id="weekendWarning" class="weekend-warning" style="display: none;">
-                    <i class="fas fa-exclamation-triangle"></i> Sábados e domingos não são permitidos
-                </span>
+                <div id="weekendWarning" class="weekend-warning" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i> ⚠️ SÁBADOS E DOMINGOS NÃO SÃO PERMITIDOS PARA CHAMADA!
+                </div>
                 <button class="quick-btn" id="markAllPresent">
                     <i class="fas fa-check-double"></i> Marcar Todos Presente
                 </button>
@@ -910,43 +916,58 @@
         }
 
         function isWeekend(dateStr) {
+            if (!dateStr) return false;
             const date = new Date(dateStr);
             const day = date.getDay();
             return day === 0 || day === 6;
         }
 
-        function validateAndAdjustDate(dateStr) {
-            if (isWeekend(dateStr)) {
-                let newDate = new Date(dateStr);
+        function getNextWeekday(dateStr) {
+            let newDate = new Date(dateStr);
+            newDate.setDate(newDate.getDate() + 1);
+            while (isWeekend(formatDate(newDate))) {
                 newDate.setDate(newDate.getDate() + 1);
-                while (isWeekend(formatDate(newDate))) {
-                    newDate.setDate(newDate.getDate() + 1);
+            }
+            return formatDate(newDate);
+        }
+
+        function blockWeekendSelection() {
+            const selectedValue = datePicker.value;
+            if (!selectedValue) return false;
+            
+            if (isWeekend(selectedValue)) {
+                // Bloqueia e mostra aviso
+                datePicker.classList.add('weekend');
+                weekendWarning.style.display = 'flex';
+                
+                // Desabilita todos os botões de ação
+                submitBtn.disabled = true;
+                saveChangesBtn.disabled = true;
+                markAllPresentBtn.disabled = true;
+                
+                // Desabilita os botões de status
+                disableAllStatusButtons(true);
+                
+                // Limpa qualquer status anterior
+                if (currentAttendance[selectedValue]) {
+                    delete currentAttendance[selectedValue];
                 }
-                const adjustedDate = formatDate(newDate);
-                showNotification(`Sábados e domingos não são permitidos. Data ajustada para ${formatDisplayDate(adjustedDate)}`, 'warning');
-                return adjustedDate;
-            }
-            return dateStr;
-        }
-
-        function updateDatePickerAvailability() {
-            const selectedDateValue = datePicker.value;
-            if (selectedDateValue && isWeekend(selectedDateValue)) {
-                const adjustedDate = validateAndAdjustDate(selectedDateValue);
-                datePicker.value = adjustedDate;
-                selectedDate = adjustedDate;
-                weekendWarning.style.display = 'inline-flex';
-                datePicker.classList.add('weekend-selected');
-                disableStatusButtons(true);
-                showNotification('Sábados e domingos não são permitidos para chamada!', 'error');
+                
+                showNotification('❌ SÁBADOS E DOMINGOS NÃO SÃO PERMITIDOS! Selecione um dia útil.', 'error');
+                return false;
             } else {
+                // Data válida - habilita tudo
+                datePicker.classList.remove('weekend');
                 weekendWarning.style.display = 'none';
-                datePicker.classList.remove('weekend-selected');
-                disableStatusButtons(false);
+                submitBtn.disabled = false;
+                saveChangesBtn.disabled = false;
+                markAllPresentBtn.disabled = false;
+                disableAllStatusButtons(false);
+                return true;
             }
         }
 
-        function disableStatusButtons(disabled) {
+        function disableAllStatusButtons(disabled) {
             const allStatusBtns = document.querySelectorAll('.status-btn');
             allStatusBtns.forEach(btn => {
                 if (disabled) {
@@ -955,6 +976,18 @@
                     btn.disabled = false;
                 }
             });
+        }
+
+        function forceValidDate() {
+            if (isWeekend(datePicker.value)) {
+                const nextValidDate = getNextWeekday(datePicker.value);
+                datePicker.value = nextValidDate;
+                selectedDate = nextValidDate;
+                showNotification(`Data ajustada para o próximo dia útil: ${formatDisplayDate(nextValidDate)}`, 'warning');
+                blockWeekendSelection();
+                return true;
+            }
+            return false;
         }
 
         function updateStats() {
@@ -1002,8 +1035,9 @@
                 return;
             }
             
+            // Verificação CRÍTICA: não permitir em finais de semana
             if (isWeekend(selectedDate)) {
-                showNotification('Não é possível marcar presença em finais de semana!', 'error');
+                showNotification('❌ NÃO É PERMITIDO MARCAR PRESENÇA EM FINAIS DE SEMANA!', 'error');
                 return;
             }
             
@@ -1175,8 +1209,9 @@
                 return;
             }
             
+            // BLOQUEIO TOTAL - NÃO PERMITE ENVIAR EM FINAIS DE SEMANA
             if (isWeekend(selectedDate)) {
-                showNotification('Não é possível salvar chamada em finais de semana!', 'error');
+                showNotification('❌ NÃO É PERMITIDO SALVAR CHAMADA EM SÁBADOS OU DOMINGOS!', 'error');
                 return;
             }
             
@@ -1260,6 +1295,7 @@
             if (today < minDate) initialDate = minDate;
             if (today > maxDate) initialDate = maxDate;
             
+            // Pula finais de semana na data inicial
             while (initialDate.getDay() === 0 || initialDate.getDay() === 6) {
                 initialDate.setDate(initialDate.getDate() + 1);
             }
@@ -1271,11 +1307,14 @@
         async function loadAttendanceForDate(date) {
             if (!students.length) return;
             
+            // Se for fim de semana, não carrega chamada
             if (isWeekend(date)) {
+                currentAttendance[date] = {};
                 renderStudentList();
                 updateStats();
-                submitBtn.style.display = 'block';
-                saveChangesBtn.style.display = 'none';
+                submitBtn.disabled = true;
+                saveChangesBtn.disabled = true;
+                markAllPresentBtn.disabled = true;
                 attendanceMetadata = { 
                     createdBy: null, 
                     updatedBy: null, 
@@ -1283,7 +1322,6 @@
                     updatedAt: null 
                 };
                 updateMetadataDisplay();
-                showNotification('Finais de semana não têm chamada registrada!', 'warning');
                 return;
             }
             
@@ -1386,9 +1424,15 @@
         // Event Listeners
         datePicker.addEventListener('change', async () => {
             if (datePicker.value) {
-                updateDatePickerAvailability();
-                if (students.length) {
-                    await loadAttendanceForDate(selectedDate);
+                // Primeiro bloqueia se for fim de semana
+                const isValid = blockWeekendSelection();
+                
+                if (isValid && students.length) {
+                    await loadAttendanceForDate(datePicker.value);
+                } else if (!isValid) {
+                    // Se for fim de semana, limpa a lista e desabilita
+                    renderStudentList();
+                    updateStats();
                 }
             }
         });
@@ -1411,7 +1455,7 @@
             userAvatar.textContent = adminName.charAt(0).toUpperCase();
             
             setupDates();
-            updateDatePickerAvailability();
+            blockWeekendSelection(); // Bloqueia imediatamente se a data inicial for fim de semana
             await fetchStudents();
             if (students.length) {
                 await loadAttendanceForDate(selectedDate);
