@@ -652,6 +652,39 @@
             color: var(--gray-600);
         }
 
+        .modal-body {
+            margin-bottom: 24px;
+            line-height: 1.5;
+            color: var(--gray-600);
+            text-align: center;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
         .month-select {
             width: 100%;
             padding: 12px 16px;
@@ -822,6 +855,24 @@
         </div>
     </div>
 
+    <!-- Modal de Aviso de Final de Semana -->
+    <div class="modal-overlay" id="weekendModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> Data Inválida</h3>
+                <button class="modal-close" id="closeWeekendModal">&times;</button>
+            </div>
+            <div class="modal-body" id="weekendModalBody">
+                <strong>Sábados e domingos não são permitidos!</strong><br><br>
+                A data selecionada será alterada para o próximo dia útil.
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-primary" id="confirmWeekendModal">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Relatório -->
     <div class="modal-overlay" id="reportModal">
         <div class="modal-container">
             <div class="modal-header">
@@ -847,6 +898,7 @@
         let students = [];
         let currentAttendance = {};
         let selectedDate = '';
+        let pendingDateChange = null; // Armazena a data pendente para confirmação
         
         let attendanceMetadata = { 
             createdBy: null,
@@ -880,19 +932,24 @@
         const dayNameText = document.getElementById('dayNameText');
         const dayInfo = document.getElementById('dayInfo');
         
+        // Modal Elements
+        const weekendModal = document.getElementById('weekendModal');
+        const weekendModalBody = document.getElementById('weekendModalBody');
+        const closeWeekendModal = document.getElementById('closeWeekendModal');
+        const confirmWeekendModal = document.getElementById('confirmWeekendModal');
+        
         const totalCountSpan = document.getElementById('totalCount');
         const presentCountSpan = document.getElementById('presentCount');
         const absentCountSpan = document.getElementById('absentCount');
         const certificateCountSpan = document.getElementById('certificateCount');
         const pendingCountSpan = document.getElementById('pendingCount');
 
-        // ==================== FUNÇÕES CORRIGIDAS COM UTC-3 ====================
+        // ==================== FUNÇÕES COM UTC-3 ====================
         
         // Converte string YYYY-MM-DD para Date object no fuso de Brasília (UTC-3)
         function parseDateToBrasilia(dateStr) {
             if (!dateStr) return null;
             const [year, month, day] = dateStr.split('-').map(Number);
-            // Cria data no UTC-3 (horário de Brasília) com hora 12 para evitar problemas de DST
             return new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
         }
         
@@ -913,13 +970,12 @@
             return `${year}-${month}-${day}`;
         }
         
-        // FUNÇÃO CORRIGIDA: Verifica se é final de semana usando UTC-3
+        // Verifica se é final de semana usando UTC-3
         function isWeekend(dateStr) {
             if (!dateStr) return false;
             const date = parseDateToBrasilia(dateStr);
             if (!date) return false;
             const dayOfWeek = date.getUTCDay();
-            // 0 = Domingo, 6 = Sábado
             return dayOfWeek === 0 || dayOfWeek === 6;
         }
         
@@ -968,11 +1024,68 @@
             return `${day}/${month}/${year}`;
         }
         
-        // Função que força a correção da data para evitar finais de semana
-        function enforceValidDate() {
+        // Mostra o modal de aviso de final de semana
+        function showWeekendModal(originalDate, newDate) {
+            const originalDayName = getDayName(originalDate);
+            const newDayName = getDayName(newDate);
+            const originalDateFormatted = formatDisplayDate(originalDate);
+            const newDateFormatted = formatDisplayDate(newDate);
+            
+            weekendModalBody.innerHTML = `
+                <div style="text-align: center;">
+                    <i class="fas fa-calendar-times" style="font-size: 48px; color: var(--warning); margin-bottom: 16px; display: block;"></i>
+                    <strong style="font-size: 1.1rem;">${originalDayName.toUpperCase()} não é permitido!</strong><br><br>
+                    <span style="color: var(--danger);">📅 Data selecionada: ${originalDateFormatted} (${originalDayName})</span><br><br>
+                    ⚠️ Sábados e domingos não são permitidos para registro de chamada.<br><br>
+                    <span style="color: var(--success);">✅ A data será alterada para: <strong>${newDateFormatted} (${newDayName})</strong></span>
+                </div>
+            `;
+            weekendModal.classList.add('active');
+            
+            // Armazena a nova data para aplicar após confirmação
+            pendingDateChange = newDate;
+        }
+        
+        // Fecha o modal e aplica a mudança de data
+        function confirmWeekendChange() {
+            if (pendingDateChange) {
+                datePicker.value = pendingDateChange;
+                selectedDate = pendingDateChange;
+                updateDayInfo(selectedDate);
+                
+                // Remove o aviso visual
+                datePicker.classList.remove('weekend');
+                weekendWarning.style.display = 'none';
+                
+                // Habilita os botões
+                submitBtn.disabled = false;
+                saveChangesBtn.disabled = false;
+                markAllPresentBtn.disabled = false;
+                disableAllStatusButtons(false);
+                
+                // Recarrega a chamada para a nova data
+                if (students.length && !isWeekend(selectedDate)) {
+                    loadAttendanceForDate(selectedDate);
+                } else if (students.length && isWeekend(selectedDate)) {
+                    renderStudentList();
+                    updateStats();
+                }
+                
+                pendingDateChange = null;
+            }
+            weekendModal.classList.remove('active');
+        }
+        
+        // Fecha o modal sem aplicar mudança (mantém a data original)
+        function closeWeekendModalWithoutChange() {
+            pendingDateChange = null;
+            weekendModal.classList.remove('active');
+        }
+        
+        // Função que valida e mostra modal se for final de semana
+        function validateDateWithModal() {
             let currentValue = datePicker.value;
             
-            // Se não há data selecionada, define para hoje ou próximo dia útil
             if (!currentValue) {
                 const today = new Date();
                 const year = today.getUTCFullYear();
@@ -985,29 +1098,19 @@
                 }
                 
                 datePicker.value = validDate;
-                selectedDate = datePicker.value;
+                selectedDate = validDate;
                 updateDayInfo(selectedDate);
                 return;
             }
             
-            // Atualiza o indicador visual
             updateDayInfo(currentValue);
             
-            // Verifica se a data atual é sábado ou domingo
             if (isWeekend(currentValue)) {
                 const newDate = getNextWeekday(currentValue);
+                // Mostra o modal com a mensagem
+                showWeekendModal(currentValue, newDate);
                 
-                // Força a nova data
-                datePicker.value = newDate;
-                selectedDate = newDate;
-                updateDayInfo(selectedDate);
-                
-                // Mostra aviso
-                datePicker.classList.add('weekend');
-                weekendWarning.style.display = 'flex';
-                showNotification(`⚠️ ${getDayName(currentValue)} não é permitido! Data alterada para ${formatDisplayDate(newDate)} (${getDayName(newDate)})`, 'warning');
-                
-                // Desabilita todas as ações
+                // Desabilita os botões até confirmação
                 submitBtn.disabled = true;
                 saveChangesBtn.disabled = true;
                 markAllPresentBtn.disabled = true;
@@ -1026,7 +1129,7 @@
             }
         }
         
-        // ==================== FIM DAS FUNÇÕES CORRIGIDAS ====================
+        // ==================== FIM DAS FUNÇÕES ====================
         
         function showNotification(message, type = 'success') {
             const notif = document.createElement('div');
@@ -1085,7 +1188,7 @@
             if (isWeekend(currentDate)) {
                 const dayName = getDayName(currentDate);
                 showNotification(`❌ ${actionName ? actionName + ': ' : ''}${dayName.toUpperCase()} NÃO É PERMITIDO! Apenas dias úteis (segunda a sexta).`, 'error');
-                enforceValidDate();
+                validateDateWithModal();
                 return null;
             }
             
@@ -1154,7 +1257,7 @@
             if (isWeekend(selectedDate)) {
                 const dayName = getDayName(selectedDate);
                 showNotification(`❌ NÃO É PERMITIDO MARCAR PRESENÇA EM ${dayName.toUpperCase()}!`, 'error');
-                enforceValidDate();
+                validateDateWithModal();
                 return;
             }
             
@@ -1332,7 +1435,7 @@
             if (isWeekend(selectedDate)) {
                 const dayName = getDayName(selectedDate);
                 showNotification(`❌ NÃO É PERMITIDO SALVAR CHAMADA EM ${dayName.toUpperCase()}!`, 'error');
-                enforceValidDate();
+                validateDateWithModal();
                 return;
             }
             
@@ -1551,7 +1654,7 @@
 
         // Event Listeners
         datePicker.addEventListener('change', async function() {
-            enforceValidDate();
+            validateDateWithModal();
             
             const currentDate = this.value;
             if (currentDate && !isWeekend(currentDate) && students.length) {
@@ -1563,11 +1666,20 @@
         });
 
         datePicker.addEventListener('input', function() {
-            enforceValidDate();
+            validateDateWithModal();
         });
 
         datePicker.addEventListener('blur', function() {
-            enforceValidDate();
+            validateDateWithModal();
+        });
+
+        // Modal event listeners
+        confirmWeekendModal.addEventListener('click', confirmWeekendChange);
+        closeWeekendModal.addEventListener('click', closeWeekendModalWithoutChange);
+        weekendModal.addEventListener('click', (e) => {
+            if (e.target === weekendModal) {
+                closeWeekendModalWithoutChange();
+            }
         });
 
         submitBtn.addEventListener('click', () => saveAttendance(false));
@@ -1588,7 +1700,7 @@
             userAvatar.textContent = adminName.charAt(0).toUpperCase();
             
             setupDates();
-            enforceValidDate();
+            validateDateWithModal();
             await fetchStudents();
             if (students.length && !isWeekend(selectedDate)) {
                 await loadAttendanceForDate(selectedDate);
