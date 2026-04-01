@@ -247,6 +247,23 @@
             box-shadow: 0 0 0 3px rgba(236, 51, 51, 0.1);
         }
 
+        .date-picker-input:disabled {
+            background-color: var(--gray-100);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .weekend-warning {
+            font-size: 0.75rem;
+            color: var(--warning);
+            background: #fef3c7;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         .quick-btn {
             padding: 12px 24px;
             background: var(--success);
@@ -402,6 +419,11 @@
         .status-btn:not(.active):hover {
             opacity: 0.8;
             transform: translateY(-2px);
+        }
+
+        .status-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
         }
 
         .stats-info {
@@ -710,6 +732,9 @@
                 <div class="date-picker-wrapper">
                     <input type="date" id="datePicker" class="date-picker-input">
                 </div>
+                <span id="weekendWarning" class="weekend-warning" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i> Sábados e domingos não são permitidos
+                </span>
                 <button class="quick-btn" id="markAllPresent">
                     <i class="fas fa-check-double"></i> Marcar Todos Presente
                 </button>
@@ -819,6 +844,7 @@
         const updatedBySpan = document.getElementById('updatedBy');
         const updatedByContainer = document.getElementById('updatedByContainer');
         const lastUpdatedSpan = document.getElementById('lastUpdated');
+        const weekendWarning = document.getElementById('weekendWarning');
         
         const totalCountSpan = document.getElementById('totalCount');
         const presentCountSpan = document.getElementById('presentCount');
@@ -883,6 +909,54 @@
             return ADMIN_NAMES.some(admin => admin === nomeLimpo);
         }
 
+        function isWeekend(dateStr) {
+            const date = new Date(dateStr);
+            const day = date.getDay();
+            return day === 0 || day === 6;
+        }
+
+        function validateAndAdjustDate(dateStr) {
+            if (isWeekend(dateStr)) {
+                let newDate = new Date(dateStr);
+                newDate.setDate(newDate.getDate() + 1);
+                while (isWeekend(formatDate(newDate))) {
+                    newDate.setDate(newDate.getDate() + 1);
+                }
+                const adjustedDate = formatDate(newDate);
+                showNotification(`Sábados e domingos não são permitidos. Data ajustada para ${formatDisplayDate(adjustedDate)}`, 'warning');
+                return adjustedDate;
+            }
+            return dateStr;
+        }
+
+        function updateDatePickerAvailability() {
+            const selectedDateValue = datePicker.value;
+            if (selectedDateValue && isWeekend(selectedDateValue)) {
+                const adjustedDate = validateAndAdjustDate(selectedDateValue);
+                datePicker.value = adjustedDate;
+                selectedDate = adjustedDate;
+                weekendWarning.style.display = 'inline-flex';
+                datePicker.classList.add('weekend-selected');
+                disableStatusButtons(true);
+                showNotification('Sábados e domingos não são permitidos para chamada!', 'error');
+            } else {
+                weekendWarning.style.display = 'none';
+                datePicker.classList.remove('weekend-selected');
+                disableStatusButtons(false);
+            }
+        }
+
+        function disableStatusButtons(disabled) {
+            const allStatusBtns = document.querySelectorAll('.status-btn');
+            allStatusBtns.forEach(btn => {
+                if (disabled) {
+                    btn.disabled = true;
+                } else {
+                    btn.disabled = false;
+                }
+            });
+        }
+
         function updateStats() {
             const statusMap = currentAttendance[selectedDate] || {};
             let presente = 0, ausente = 0, atestado = 0, pendente = 0;
@@ -925,6 +999,11 @@
         function markAllPresent() {
             if (!selectedDate || !students.length) {
                 showNotification('Aguardando carregamento dos alunos...', 'warning');
+                return;
+            }
+            
+            if (isWeekend(selectedDate)) {
+                showNotification('Não é possível marcar presença em finais de semana!', 'error');
                 return;
             }
             
@@ -991,6 +1070,7 @@
                 return;
             }
             
+            const isWeekendDate = isWeekend(selectedDate);
             const statusMap = currentAttendance[selectedDate] || {};
             
             attendanceList.innerHTML = students.map(student => {
@@ -1003,13 +1083,13 @@
                     <div class="person-card" data-edv="${student.edv}">
                         <div class="person-name">${escapeHtml(student.nome)}</div>
                         <div class="status-group">
-                            <button class="status-btn btn-present ${isPresent ? 'active' : ''}" data-status="PRESENTE" data-edv="${student.edv}">
+                            <button class="status-btn btn-present ${isPresent ? 'active' : ''}" data-status="PRESENTE" data-edv="${student.edv}" ${isWeekendDate ? 'disabled' : ''}>
                                 <i class="fas fa-check"></i>
                             </button>
-                            <button class="status-btn btn-absent ${isAbsent ? 'active' : ''}" data-status="AUSENTE" data-edv="${student.edv}">
+                            <button class="status-btn btn-absent ${isAbsent ? 'active' : ''}" data-status="AUSENTE" data-edv="${student.edv}" ${isWeekendDate ? 'disabled' : ''}>
                                 <i class="fas fa-times"></i>
                             </button>
-                            <button class="status-btn btn-certificate ${isCertificate ? 'active' : ''}" data-status="ATESTADO" data-edv="${student.edv}">
+                            <button class="status-btn btn-certificate ${isCertificate ? 'active' : ''}" data-status="ATESTADO" data-edv="${student.edv}" ${isWeekendDate ? 'disabled' : ''}>
                                 <i class="fas fa-file-medical"></i>
                             </button>
                         </div>
@@ -1018,7 +1098,9 @@
             }).join('');
             
             document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.addEventListener('click', handleStatusClick);
+                if (!btn.disabled) {
+                    btn.addEventListener('click', handleStatusClick);
+                }
             });
         }
 
@@ -1090,6 +1172,11 @@
         async function saveAttendance(isUpdate = false) {
             if (!selectedDate) {
                 showNotification('Selecione uma data primeiro', 'warning');
+                return;
+            }
+            
+            if (isWeekend(selectedDate)) {
+                showNotification('Não é possível salvar chamada em finais de semana!', 'error');
                 return;
             }
             
@@ -1183,6 +1270,22 @@
 
         async function loadAttendanceForDate(date) {
             if (!students.length) return;
+            
+            if (isWeekend(date)) {
+                renderStudentList();
+                updateStats();
+                submitBtn.style.display = 'block';
+                saveChangesBtn.style.display = 'none';
+                attendanceMetadata = { 
+                    createdBy: null, 
+                    updatedBy: null, 
+                    createdAt: null, 
+                    updatedAt: null 
+                };
+                updateMetadataDisplay();
+                showNotification('Finais de semana não têm chamada registrada!', 'warning');
+                return;
+            }
             
             selectedDate = date;
             
@@ -1282,8 +1385,11 @@
 
         // Event Listeners
         datePicker.addEventListener('change', async () => {
-            if (datePicker.value && students.length) {
-                await loadAttendanceForDate(datePicker.value);
+            if (datePicker.value) {
+                updateDatePickerAvailability();
+                if (students.length) {
+                    await loadAttendanceForDate(selectedDate);
+                }
             }
         });
 
@@ -1305,9 +1411,10 @@
             userAvatar.textContent = adminName.charAt(0).toUpperCase();
             
             setupDates();
+            updateDatePickerAvailability();
             await fetchStudents();
             if (students.length) {
-                await loadAttendanceForDate(datePicker.value);
+                await loadAttendanceForDate(selectedDate);
             }
         }
         
