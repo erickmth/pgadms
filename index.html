@@ -233,77 +233,6 @@
             padding: 28px 32px;
         }
 
-        /* Banner de admin global */
-        .admin-global-banner {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px 20px;
-            margin: 0 32px 20px 32px;
-            border-radius: var(--radius);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
-            animation: slideDown 0.5s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .admin-global-banner i {
-            font-size: 24px;
-            margin-right: 10px;
-        }
-
-        .admin-global-banner .banner-text {
-            flex: 1;
-        }
-
-        .admin-global-banner .banner-text strong {
-            font-size: 14px;
-            display: block;
-        }
-
-        .admin-global-banner .banner-text small {
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
-        .turma-selector-wrapper {
-            background: rgba(255,255,255,0.2);
-            border-radius: var(--radius-sm);
-            padding: 8px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .turma-selector-wrapper label {
-            margin: 0;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .turma-selector-wrapper select {
-            background: white;
-            border: none;
-            border-radius: var(--radius-sm);
-            padding: 6px 12px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text);
-            cursor: pointer;
-        }
-
         .card {
             border: 1px solid var(--border);
             border-radius: var(--radius);
@@ -900,12 +829,6 @@
             }
 
             .upload-thumbnail { height: 120px; }
-            
-            .admin-global-banner {
-                margin: 0 16px 16px 16px;
-                flex-direction: column;
-                text-align: center;
-            }
         }
 
         @media (max-width: 576px) {
@@ -954,23 +877,6 @@
     </div>
 
     <div class="main-content">
-        <!-- Banner para Admin Global (aparece quando usuário logado é admin) -->
-        <div id="adminGlobalBanner" class="admin-global-banner" style="display: none;">
-            <div class="d-flex align-items-center">
-                <i class="bi bi-globe2"></i>
-                <div class="banner-text">
-                    <strong><i class="bi bi-shield-shielded"></i> Acesso de Administrador Global</strong>
-                    <small>Você tem acesso a todas as turmas do sistema</small>
-                </div>
-            </div>
-            <div class="turma-selector-wrapper">
-                <label><i class="bi bi-building"></i> Turma atual:</label>
-                <select id="globalTurmaSelector">
-                    <option value="">Selecione uma turma</option>
-                </select>
-            </div>
-        </div>
-
         <div class="tab-content">
 
             <!-- DASHBOARD -->
@@ -985,7 +891,7 @@
                         <div class="col-md-4"><div class="stat-card stat-card-blue"><i class="bi bi-collection stat-card-icon"></i><div class="stat-card-value" id="totalTurmas">0</div><div class="stat-card-label">Total de Turmas</div></div></div>
                         <div class="col-md-4"><div class="stat-card stat-card-red"><i class="bi bi-mortarboard stat-card-icon"></i><div class="stat-card-value" id="totalAlunos">0</div><div class="stat-card-label">Total de Alunos</div></div></div>
                     </div>
-                    <div class="card"><div class="card-header"><h5><i class="bi bi-clock-history"></i> Últimas Ações</h5><span class="badge bg-danger" id="newActionsBadge" style="display:none">Novo</span></div><div class="card-body p-0"><div class="table-responsive"><table class="table mb-0"><thead><th>Data/Hora</th><th>Ação</th><th>Detalhes</th><th>Usuário</th> </thead><tbody id="lastActions"></tbody> </table></div></div></div>
+                    <div class="card"><div class="card-header"><h5><i class="bi bi-clock-history"></i> Últimas Ações</h5><span class="badge bg-danger" id="newActionsBadge" style="display:none">Novo</span></div><div class="card-body p-0"><div class="table-responsive"><table class="table mb-0"><thead><tr><th>Data/Hora</th><th>Ação</th><th>Detalhes</th><th>Usuário</th></tr></thead><tbody id="lastActions"></tbody></table></div></div></div>
                 </div>
             </div>
 
@@ -995,7 +901,7 @@
                 <div class="page-body"><div class="card"><div class="card-header"><h5><i class="bi bi-grid-3x3-gap-fill"></i> Todos os Arquivos</h5><span class="badge bg-primary" id="uploadCount">0 arquivos</span></div><div class="card-body"><div id="uploadsGrid" class="upload-grid"><div class="empty-uploads"><i class="bi bi-cloud-upload" style="font-size:48px;opacity:0.5"></i><p class="mt-2">Carregando arquivos...</p></div></div></div></div></div>
             </div>
 
-            <!-- ALUNOS -->
+            <!-- ALUNOS - COM ADICIONAR INDIVIDUAL + IMPORTAR EXCEL -->
             <div class="tab-pane fade" id="alunos">
                 <div class="page-header">
                     <div><h1><i class="bi bi-people-fill me-2" style="color:var(--primary)"></i>Gerenciar Alunos</h1><div class="breadcrumb-text">Cadastro individual e importação em lote</div></div>
@@ -1003,6 +909,7 @@
                 </div>
                 <div class="page-body">
                     <div class="row g-4">
+                        <!-- CARD: ADICIONAR ALUNO INDIVIDUAL -->
                         <div class="col-md-5">
                             <div class="card">
                                 <div class="card-header"><h5><i class="bi bi-person-plus-fill"></i> Adicionar Aluno</h5></div>
@@ -1011,22 +918,24 @@
                                         <div class="mb-3"><label for="turmaAluno" class="form-label">Turma</label><select class="form-select" id="turmaAluno" required><option value="" selected disabled>Selecione a turma</option></select></div>
                                         <div class="mb-3"><label for="edvAluno" class="form-label">EDV</label><input type="text" class="form-control" id="edvAluno" required placeholder="Número EDV"></div>
                                         <div class="mb-3"><label for="nomeAluno" class="form-label">Nome Completo</label><input type="text" class="form-control" id="nomeAluno" required placeholder="Nome do aluno"></div>
-                                        <div class="form-check mb-4"><input class="form-check-input" type="checkbox" id="isAdmin"><label class="form-check-label" for="isAdmin" style="font-size:13px;font-weight:500">É administrador? (Acesso a todas turmas)</label></div>
+                                        <div class="form-check mb-4"><input class="form-check-input" type="checkbox" id="isAdmin"><label class="form-check-label" for="isAdmin" style="font-size:13px;font-weight:500">É administrador?</label></div>
                                         <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-circle me-2"></i> Adicionar Aluno</button>
                                     </form>
                                 </div>
                             </div>
                             
+                            <!-- CARD: IMPORTAÇÃO EXCEL/CSV -->
                             <div class="card mt-4">
                                 <div class="card-header"><h5><i class="bi bi-file-excel"></i> Importar Alunos em Lote</h5></div>
                                 <div class="card-body">
                                     <div class="mb-3"><label for="importTurma" class="form-label">Turma</label><select class="form-select" id="importTurma" required><option value="" selected disabled>Selecione a turma</option></select></div>
-                                    <div class="mb-3"><label for="importFile" class="form-label">Arquivo (CSV ou Excel)</label><input type="file" class="form-control" id="importFile" accept=".csv,.xlsx,.xls"><small class="form-text text-muted mt-2 d-block"><i class="bi bi-info-circle me-1"></i> Formato esperado: coluna A = EDV, coluna B = Nome</small></div>
+                                    <div class="mb-3"><label for="importFile" class="form-label">Arquivo (CSV ou Excel)</label><input type="file" class="form-control" id="importFile" accept=".csv,.xlsx,.xls"><small class="form-text text-muted mt-2 d-block"><i class="bi bi-info-circle me-1"></i> Formato esperado: coluna A = EDV, coluna B = Nome (primeira linha ignorada como cabeçalho)</small><small class="form-text text-muted d-block mt-1"><i class="bi bi-file-earmark-excel me-1"></i> Exemplo: <code>EDV,Nome<br>12345,João Silva</code></small></div>
                                     <button class="btn btn-success w-100" id="importAlunosBtn"><i class="bi bi-upload me-2"></i> Importar Alunos</button>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- CARD: LISTA DE ALUNOS -->
                         <div class="col-md-7">
                             <div class="card">
                                 <div class="card-header"><h5><i class="bi bi-list-ul"></i> Lista de Alunos</h5></div>
@@ -1035,7 +944,7 @@
                                         <div class="col"><label for="turmaLista" class="form-label">Filtrar por Turma</label><select class="form-select" id="turmaLista"><option value="">Todas as turmas</option></select></div>
                                         <div class="col-auto d-flex align-items-end"><button class="btn btn-primary" id="listarAlunosBtn"><i class="bi bi-arrow-repeat me-1"></i> Atualizar</button></div>
                                     </div>
-                                    <div class="table-responsive"><table class="table mb-0"><thead><th>Turma</th><th>EDV</th><th>Nome</th><th>Ações</th> </thead><tbody id="alunosList"></tbody> </table></div>
+                                    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Turma</th><th>EDV</th><th>Nome</th><th>Ações</th></tr></thead><tbody id="alunosList"></tbody></table></div>
                                 </div>
                             </div>
                         </div>
@@ -1108,8 +1017,6 @@
     let turmasList = [];
     let currentAvisoId = null;
     let uploadedImagePath = null;
-    let currentUserIsAdmin = false;
-    let currentSelectedTurma = '';
 
     // Elementos do DOM
     const elements = {
@@ -1181,9 +1088,7 @@
         uploadCount: document.getElementById('uploadCount'),
         importTurma: document.getElementById('importTurma'),
         importFile: document.getElementById('importFile'),
-        importAlunosBtn: document.getElementById('importAlunosBtn'),
-        adminGlobalBanner: document.getElementById('adminGlobalBanner'),
-        globalTurmaSelector: document.getElementById('globalTurmaSelector')
+        importAlunosBtn: document.getElementById('importAlunosBtn')
     };
 
     function getAuthHeader() {
@@ -1202,68 +1107,8 @@
                 sessionStorage.removeItem('adminName');
                 return false;
             }
-            
-            // Verificar se o usuário é admin
-            const meResponse = await fetch(`${API_URL}/api/me`, { headers: getAuthHeader() });
-            if (meResponse.ok) {
-                const userData = await meResponse.json();
-                currentUserIsAdmin = userData.is_admin;
-                
-                // Se for admin, mostrar banner e carregar seletor de turmas
-                if (currentUserIsAdmin && elements.adminGlobalBanner) {
-                    elements.adminGlobalBanner.style.display = 'flex';
-                    await carregarTodasTurmasParaAdmin();
-                }
-            }
-            
             return response.ok;
         } catch (error) { return false; }
-    }
-    
-    async function carregarTodasTurmasParaAdmin() {
-        try {
-            const response = await fetch(`${API_URL}/api/turmas`, { headers: getAuthHeader() });
-            if (response.ok) {
-                const data = await response.json();
-                const turmas = data.turmas;
-                
-                if (elements.globalTurmaSelector) {
-                    elements.globalTurmaSelector.innerHTML = '<option value="">Selecione uma turma</option>';
-                    turmas.forEach(turma => {
-                        const option = document.createElement('option');
-                        option.value = turma.nome;
-                        option.textContent = turma.nome;
-                        elements.globalTurmaSelector.appendChild(option);
-                    });
-                    
-                    // Evento de mudança de turma
-                    elements.globalTurmaSelector.addEventListener('change', function(e) {
-                        if (e.target.value) {
-                            currentSelectedTurma = e.target.value;
-                            atualizarSelectsTurma(currentSelectedTurma);
-                            carregarDadosDaTurma(currentSelectedTurma);
-                        }
-                    });
-                }
-            }
-        } catch (error) {
-            console.error('Erro ao carregar turmas para admin:', error);
-        }
-    }
-    
-    function atualizarSelectsTurma(turmaNome) {
-        if (elements.turmaAluno) elements.turmaAluno.value = turmaNome;
-        if (elements.turmaLista) elements.turmaLista.value = turmaNome;
-        if (elements.turmaEscala) elements.turmaEscala.value = turmaNome;
-        if (elements.importTurma) elements.importTurma.value = turmaNome;
-    }
-    
-    async function carregarDadosDaTurma(turmaNome) {
-        showMessage('Turma Alterada', `Visualizando dados da turma: ${turmaNome}`, 'info');
-        await listarAlunos();
-        if (document.getElementById('escalas').classList.contains('active')) {
-            await carregarEscala();
-        }
     }
 
     document.addEventListener('DOMContentLoaded', async function () {
@@ -1367,7 +1212,6 @@
                 enableUIElements(true);
                 await loadDashboard();
                 await loadTurmas();
-                await checkSession(); // Verificar se é admin global
                 showMessage('Bem-vindo!', `Login realizado como ${data.admin}`, 'success');
             } else { const error = await response.json(); throw new Error(error.error || 'Credenciais inválidas'); }
         } catch (error) { elements.loginError.textContent = 'Erro: ' + error.message; elements.loginError.classList.remove('d-none'); }
@@ -1377,8 +1221,6 @@
     async function handleLogout() {
         sessionStorage.removeItem('adminToken');
         sessionStorage.removeItem('adminName');
-        currentUserIsAdmin = false;
-        if (elements.adminGlobalBanner) elements.adminGlobalBanner.style.display = 'none';
         enableUIElements(false);
         elements.loginModal.show();
         document.getElementById('username').value = '';
@@ -1458,7 +1300,7 @@
             const submitBtn = elements.addAlunoForm.querySelector('button[type="submit"]');
             showLoading(submitBtn);
             const response = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(turma)}/alunos`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify({ edv, nome, is_admin: admin ? 1 : 0 })
+                method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify({ edv, nome })
             });
             if (!response.ok) { const err = await response.json(); throw new Error(err.error || 'Erro ao adicionar'); }
             showMessage('Sucesso', 'Aluno adicionado com sucesso', 'success');
@@ -1492,15 +1334,7 @@
     async function listarAlunos() {
         try {
             showLoading(elements.listarAlunosBtn);
-            let turma = elements.turmaLista.value;
-            
-            // Se for admin e não selecionou turma, não listar nada
-            if (currentUserIsAdmin && !turma) {
-                if (elements.alunosList) elements.alunosList.innerHTML = '<tr><td colspan="4" class="text-center">Selecione uma turma para visualizar</td></tr>';
-                hideLoading(elements.listarAlunosBtn, '<i class="bi bi-arrow-repeat me-1"></i> Atualizar');
-                return;
-            }
-            
+            const turma = elements.turmaLista.value;
             let alunos = {};
             if (turma) {
                 const res = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(turma)}/alunos`, { headers: getAuthHeader() });
@@ -1512,10 +1346,12 @@
                 }
             }
             if (elements.alunosList) elements.alunosList.innerHTML = '';
-            for (const [turmaNome, turmaAlunos] of Object.entries(alunos)) {
+            for (const [turma, turmaAlunos] of Object.entries(alunos)) {
                 for (const [edv, nome] of Object.entries(turmaAlunos)) {
+                    const isAdmin = nome.includes('👩‍🏫') || nome.includes('👨‍🏫');
+                    const nomeDisplay = isAdmin ? nome.replace(/👩‍🏫|👨‍🏫/g, '') : nome;
                     const row = document.createElement('tr');
-                    row.innerHTML = `<td><span class="badge" style="background:var(--surface-3);color:var(--text)">${turmaNome}</span></td><td><span style="font-family:monospace">${edv}</span></td><td>${nome}</td><td class="action-buttons"><button class="btn btn-sm btn-danger btn-remove-aluno" data-turma="${turmaNome}" data-edv="${edv}"><i class="bi bi-trash"></i></button></td>`;
+                    row.innerHTML = `<td><span class="badge" style="background:var(--surface-3);color:var(--text)">${turma}</span></td><td><span style="font-family:monospace">${edv}</span></td><td>${nomeDisplay} ${isAdmin ? '<span class="badge bg-warning text-dark">Admin</span>' : ''}</td><td class="action-buttons"><button class="btn btn-sm btn-danger btn-remove-aluno" data-turma="${turma}" data-edv="${edv}"><i class="bi bi-trash"></i></button></td>`;
                     if (elements.alunosList) elements.alunosList.appendChild(row);
                 }
             }
@@ -1561,14 +1397,7 @@
     }
 
     async function carregarEscala() {
-        let turma = elements.turmaEscala?.value;
-        
-        // Se for admin e não selecionou turma, usar a selecionada no banner
-        if (currentUserIsAdmin && !turma && currentSelectedTurma) {
-            turma = currentSelectedTurma;
-            if (elements.turmaEscala) elements.turmaEscala.value = turma;
-        }
-        
+        const turma = elements.turmaEscala?.value;
         if (!turma) { showMessage('Aviso', 'Selecione uma turma', 'warning'); return; }
         currentTurmaEscala = turma;
         try {
@@ -1662,7 +1491,7 @@
         reader.readAsText(file);
     }
 
-    // AVISOS (mantido igual ao original)
+    // AVISOS
     function abrirModalAviso(aviso = null) {
         currentAvisoId = aviso?.id || null;
         uploadedImagePath = null;
