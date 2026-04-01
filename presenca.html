@@ -740,7 +740,7 @@
                     <input type="date" id="datePicker" class="date-picker-input">
                 </div>
                 <div id="weekendWarning" class="weekend-warning" style="display: none;">
-                    <i class="fas fa-exclamation-triangle"></i> ⚠️ SÁBADOS E DOMINGOS NÃO SÃO PERMITIDOS PARA CHAMADA!
+                    <i class="fas fa-exclamation-triangle"></i> ⚠️ SÁBADOS E DOMINGOS NÃO SÃO PERMITIDOS!
                 </div>
                 <button class="quick-btn" id="markAllPresent">
                     <i class="fas fa-check-double"></i> Marcar Todos Presente
@@ -937,34 +937,36 @@
             return formatDate(newDate);
         }
 
-        function blockWeekendSelection() {
-            const selectedValue = datePicker.value;
-            if (!selectedValue) return false;
+        // Função que BLOQUEIA e CORRIGE a seleção de finais de semana
+        function enforceValidDate() {
+            let currentValue = datePicker.value;
+            if (!currentValue) return false;
             
-            const isWeekendDate = isWeekend(selectedValue);
-            
-            if (isWeekendDate) {
-                // Bloqueia e mostra aviso
+            if (isWeekend(currentValue)) {
+                // Se for fim de semana, força para a próxima segunda-feira
+                let nextValidDate = new Date(currentValue);
+                nextValidDate.setDate(nextValidDate.getDate() + 1);
+                while (isWeekend(formatDate(nextValidDate))) {
+                    nextValidDate.setDate(nextValidDate.getDate() + 1);
+                }
+                const newDate = formatDate(nextValidDate);
+                datePicker.value = newDate;
+                selectedDate = newDate;
+                
+                // Mostra aviso
                 datePicker.classList.add('weekend');
                 weekendWarning.style.display = 'flex';
+                showNotification(`⚠️ Sábados e domingos não são permitidos! Data alterada para ${formatDisplayDate(newDate)}`, 'warning');
                 
-                // Desabilita todos os botões de ação
+                // Desabilita botões
                 submitBtn.disabled = true;
                 saveChangesBtn.disabled = true;
                 markAllPresentBtn.disabled = true;
-                
-                // Desabilita os botões de status
                 disableAllStatusButtons(true);
                 
-                // Limpa qualquer status anterior
-                if (currentAttendance[selectedValue]) {
-                    delete currentAttendance[selectedValue];
-                }
-                
-                showNotification('❌ SÁBADOS E DOMINGOS NÃO SÃO PERMITIDOS! Selecione um dia útil.', 'error');
                 return false;
             } else {
-                // Data válida - habilita tudo
+                // Data válida
                 datePicker.classList.remove('weekend');
                 weekendWarning.style.display = 'none';
                 submitBtn.disabled = false;
@@ -1419,18 +1421,21 @@
 
         // Event Listeners
         datePicker.addEventListener('change', async function() {
-            if (this.value) {
-                // Primeiro bloqueia se for fim de semana
-                const isValid = blockWeekendSelection();
-                
-                if (isValid && students.length) {
-                    await loadAttendanceForDate(this.value);
-                } else if (!isValid) {
-                    // Se for fim de semana, limpa a lista e desabilita
-                    renderStudentList();
-                    updateStats();
-                }
+            // Força a correção da data se for fim de semana
+            enforceValidDate();
+            
+            const currentDate = this.value;
+            if (currentDate && !isWeekend(currentDate) && students.length) {
+                await loadAttendanceForDate(currentDate);
+            } else if (isWeekend(currentDate)) {
+                renderStudentList();
+                updateStats();
             }
+        });
+
+        // Intercepta o evento de input também para bloquear enquanto digita
+        datePicker.addEventListener('input', function() {
+            enforceValidDate();
         });
 
         submitBtn.addEventListener('click', () => saveAttendance(false));
@@ -1451,10 +1456,13 @@
             userAvatar.textContent = adminName.charAt(0).toUpperCase();
             
             setupDates();
-            blockWeekendSelection(); // Bloqueia imediatamente se a data inicial for fim de semana
+            enforceValidDate(); // Força a validação da data inicial
             await fetchStudents();
-            if (students.length) {
+            if (students.length && !isWeekend(selectedDate)) {
                 await loadAttendanceForDate(selectedDate);
+            } else if (students.length && isWeekend(selectedDate)) {
+                renderStudentList();
+                updateStats();
             }
         }
         
