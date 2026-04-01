@@ -25,7 +25,7 @@
             --info: #3b82f6;
             --info-light: #dbeafe;
             --warning: #f59e0b;
-            --gray-50: #f9fafb;
+            --gray-50: #f9fafc;
             --gray-100: #f3f4f6;
             --gray-200: #e5e7eb;
             --gray-300: #d1d5db;
@@ -919,13 +919,22 @@
             return ADMIN_NAMES.some(admin => admin === nomeLimpo);
         }
 
-        // CORRIGIDO: Agora bloqueia SÁBADOS (6) e DOMINGOS (0) corretamente
+        // CORRIGIDO: Função para verificar se é final de semana (SÁBADO ou DOMINGO)
+        // 0 = Domingo, 1 = Segunda, 2 = Terça, 3 = Quarta, 4 = Quinta, 5 = Sexta, 6 = Sábado
         function isWeekend(dateStr) {
             if (!dateStr) return false;
             const date = new Date(dateStr);
             const dayOfWeek = date.getDay();
-            // 0 = Domingo, 6 = Sábado
+            // Retorna true apenas para Sábado (6) ou Domingo (0)
             return dayOfWeek === 0 || dayOfWeek === 6;
+        }
+
+        // Função para obter o nome do dia da semana (apenas para debug)
+        function getDayName(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+            return days[date.getDay()];
         }
 
         // Função que força a correção da data para evitar finais de semana
@@ -935,17 +944,21 @@
             // Se não há data selecionada, define para hoje ou próximo dia útil
             if (!currentValue) {
                 const today = new Date();
-                let validDate = today;
+                let validDate = new Date(today);
                 while (isWeekend(formatDate(validDate))) {
                     validDate.setDate(validDate.getDate() + 1);
                 }
                 datePicker.value = formatDate(validDate);
                 selectedDate = datePicker.value;
+                console.log('Data inicial definida:', selectedDate, getDayName(selectedDate));
                 return;
             }
             
             // Verifica se a data atual é sábado ou domingo
-            if (isWeekend(currentValue)) {
+            const isWeekendDate = isWeekend(currentValue);
+            console.log('Verificando data:', currentValue, getDayName(currentValue), 'é fim de semana?', isWeekendDate);
+            
+            if (isWeekendDate) {
                 // Encontra o próximo dia útil (segunda a sexta)
                 let nextValidDate = new Date(currentValue);
                 nextValidDate.setDate(nextValidDate.getDate() + 1);
@@ -954,6 +967,8 @@
                 }
                 const newDate = formatDate(nextValidDate);
                 
+                console.log('Data inválida, alterando de', currentValue, 'para', newDate);
+                
                 // Força a nova data
                 datePicker.value = newDate;
                 selectedDate = newDate;
@@ -961,7 +976,7 @@
                 // Mostra aviso
                 datePicker.classList.add('weekend');
                 weekendWarning.style.display = 'flex';
-                showNotification(`⚠️ Sábados e domingos não são permitidos! Data alterada para ${formatDisplayDate(newDate)}`, 'warning');
+                showNotification(`⚠️ ${getDayName(currentValue)} não é permitido! Data alterada para ${formatDisplayDate(newDate)} (${getDayName(newDate)})`, 'warning');
                 
                 // Desabilita todas as ações
                 submitBtn.disabled = true;
@@ -992,7 +1007,8 @@
             }
             
             if (isWeekend(currentDate)) {
-                showNotification(`❌ ${actionName ? actionName + ': ' : ''}SÁBADOS E DOMINGOS NÃO SÃO PERMITIDOS! Por favor, selecione um dia útil.`, 'error');
+                const dayName = getDayName(currentDate);
+                showNotification(`❌ ${actionName ? actionName + ': ' : ''}${dayName.toUpperCase()} NÃO É PERMITIDO! Apenas dias úteis (segunda a sexta).`, 'error');
                 enforceValidDate();
                 return null;
             }
@@ -1060,7 +1076,8 @@
             }
             
             if (isWeekend(selectedDate)) {
-                showNotification('❌ NÃO É PERMITIDO MARCAR PRESENÇA EM SÁBADOS OU DOMINGOS!', 'error');
+                const dayName = getDayName(selectedDate);
+                showNotification(`❌ NÃO É PERMITIDO MARCAR PRESENÇA EM ${dayName.toUpperCase()}!`, 'error');
                 enforceValidDate();
                 return;
             }
@@ -1237,7 +1254,8 @@
             }
             
             if (isWeekend(selectedDate)) {
-                showNotification('❌ NÃO É PERMITIDO SALVAR CHAMADA EM SÁBADOS OU DOMINGOS!', 'error');
+                const dayName = getDayName(selectedDate);
+                showNotification(`❌ NÃO É PERMITIDO SALVAR CHAMADA EM ${dayName.toUpperCase()}!`, 'error');
                 enforceValidDate();
                 return;
             }
@@ -1318,9 +1336,9 @@
             datePicker.min = formatDate(minDate);
             datePicker.max = formatDate(maxDate);
             
-            let initialDate = today;
-            if (today < minDate) initialDate = minDate;
-            if (today > maxDate) initialDate = maxDate;
+            let initialDate = new Date(today);
+            if (today < minDate) initialDate = new Date(minDate);
+            if (today > maxDate) initialDate = new Date(maxDate);
             
             // Pula finais de semana para a data inicial
             while (isWeekend(formatDate(initialDate))) {
@@ -1329,12 +1347,14 @@
             
             datePicker.value = formatDate(initialDate);
             selectedDate = datePicker.value;
+            console.log('Data inicial configurada:', selectedDate, getDayName(selectedDate));
         }
 
         async function loadAttendanceForDate(date) {
             if (!students.length) return;
             
             if (isWeekend(date)) {
+                console.log('Data de fim de semana, não carregando chamada:', date, getDayName(date));
                 currentAttendance[date] = {};
                 renderStudentList();
                 updateStats();
@@ -1449,6 +1469,7 @@
 
         // Event Listeners
         datePicker.addEventListener('change', async function() {
+            console.log('change event - data selecionada:', this.value);
             enforceValidDate();
             
             const currentDate = this.value;
@@ -1461,10 +1482,12 @@
         });
 
         datePicker.addEventListener('input', function() {
+            console.log('input event - digitando:', this.value);
             enforceValidDate();
         });
 
         datePicker.addEventListener('blur', function() {
+            console.log('blur event - campo perdeu foco:', this.value);
             enforceValidDate();
         });
 
