@@ -919,20 +919,20 @@
             return ADMIN_NAMES.some(admin => admin === nomeLimpo);
         }
 
-        // CRITICAL: Keep your existing isWeekend function - it's correct
+        // CORRIGIDO: Agora bloqueia SÁBADOS (6) e DOMINGOS (0) corretamente
         function isWeekend(dateStr) {
             if (!dateStr) return false;
             const date = new Date(dateStr);
             const dayOfWeek = date.getDay();
-            // 0 = Sunday, 6 = Saturday
+            // 0 = Domingo, 6 = Sábado
             return dayOfWeek === 0 || dayOfWeek === 6;
         }
 
-        // IMPROVED: Stricter enforcement that immediately corrects weekend dates
+        // Função que força a correção da data para evitar finais de semana
         function enforceValidDate() {
             let currentValue = datePicker.value;
             
-            // If no date is selected, set to today or next valid day
+            // Se não há data selecionada, define para hoje ou próximo dia útil
             if (!currentValue) {
                 const today = new Date();
                 let validDate = today;
@@ -944,9 +944,9 @@
                 return;
             }
             
-            // Check if the current date is a weekend
+            // Verifica se a data atual é sábado ou domingo
             if (isWeekend(currentValue)) {
-                // Find the next valid weekday
+                // Encontra o próximo dia útil (segunda a sexta)
                 let nextValidDate = new Date(currentValue);
                 nextValidDate.setDate(nextValidDate.getDate() + 1);
                 while (isWeekend(formatDate(nextValidDate))) {
@@ -954,16 +954,16 @@
                 }
                 const newDate = formatDate(nextValidDate);
                 
-                // Force the new date
+                // Força a nova data
                 datePicker.value = newDate;
                 selectedDate = newDate;
                 
-                // Show warning
+                // Mostra aviso
                 datePicker.classList.add('weekend');
                 weekendWarning.style.display = 'flex';
                 showNotification(`⚠️ Sábados e domingos não são permitidos! Data alterada para ${formatDisplayDate(newDate)}`, 'warning');
                 
-                // Disable all actions
+                // Desabilita todas as ações
                 submitBtn.disabled = true;
                 saveChangesBtn.disabled = true;
                 markAllPresentBtn.disabled = true;
@@ -971,7 +971,7 @@
                 
                 return false;
             } else {
-                // Valid date - enable everything
+                // Data válida - habilita tudo
                 datePicker.classList.remove('weekend');
                 weekendWarning.style.display = 'none';
                 submitBtn.disabled = false;
@@ -982,7 +982,7 @@
             }
         }
 
-        // HARD FALLBACK: Validation that runs on any action that might submit data
+        // Validação antes de qualquer ação que possa enviar dados
         function validateAndGetDate(actionName = '') {
             const currentDate = datePicker.value;
             
@@ -993,7 +993,6 @@
             
             if (isWeekend(currentDate)) {
                 showNotification(`❌ ${actionName ? actionName + ': ' : ''}SÁBADOS E DOMINGOS NÃO SÃO PERMITIDOS! Por favor, selecione um dia útil.`, 'error');
-                // Force correction
                 enforceValidDate();
                 return null;
             }
@@ -1052,7 +1051,6 @@
         }
 
         function markAllPresent() {
-            // HARD FALLBACK: Validate before any action
             const validDate = validateAndGetDate('Marcar todos presentes');
             if (!validDate) return;
             
@@ -1061,7 +1059,6 @@
                 return;
             }
             
-            // Final verification
             if (isWeekend(selectedDate)) {
                 showNotification('❌ NÃO É PERMITIDO MARCAR PRESENÇA EM SÁBADOS OU DOMINGOS!', 'error');
                 enforceValidDate();
@@ -1231,7 +1228,6 @@
         }
 
         async function saveAttendance(isUpdate = false) {
-            // HARD FALLBACK: First validation before anything else
             const validDate = validateAndGetDate(isUpdate ? 'Salvar alterações' : 'Enviar chamada');
             if (!validDate) return;
             
@@ -1240,7 +1236,6 @@
                 return;
             }
             
-            // Final verification before sending
             if (isWeekend(selectedDate)) {
                 showNotification('❌ NÃO É PERMITIDO SALVAR CHAMADA EM SÁBADOS OU DOMINGOS!', 'error');
                 enforceValidDate();
@@ -1327,7 +1322,7 @@
             if (today < minDate) initialDate = minDate;
             if (today > maxDate) initialDate = maxDate;
             
-            // Skip weekends for initial date
+            // Pula finais de semana para a data inicial
             while (isWeekend(formatDate(initialDate))) {
                 initialDate.setDate(initialDate.getDate() + 1);
             }
@@ -1339,7 +1334,6 @@
         async function loadAttendanceForDate(date) {
             if (!students.length) return;
             
-            // If it's a weekend, don't load attendance
             if (isWeekend(date)) {
                 currentAttendance[date] = {};
                 renderStudentList();
@@ -1455,7 +1449,6 @@
 
         // Event Listeners
         datePicker.addEventListener('change', async function() {
-            // Force validation and correction
             enforceValidDate();
             
             const currentDate = this.value;
@@ -1467,12 +1460,10 @@
             }
         });
 
-        // Intercept input events to block while typing
         datePicker.addEventListener('input', function() {
             enforceValidDate();
         });
 
-        // Additional safety: blur event to validate when leaving the field
         datePicker.addEventListener('blur', function() {
             enforceValidDate();
         });
@@ -1495,7 +1486,7 @@
             userAvatar.textContent = adminName.charAt(0).toUpperCase();
             
             setupDates();
-            enforceValidDate(); // Force validation on initial date
+            enforceValidDate();
             await fetchStudents();
             if (students.length && !isWeekend(selectedDate)) {
                 await loadAttendanceForDate(selectedDate);
