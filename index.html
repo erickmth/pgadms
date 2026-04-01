@@ -1101,7 +1101,7 @@
     <div class="modal fade file-viewer-modal" id="fileViewerModal"><div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title" id="fileViewerTitle">Visualizar Arquivo</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><div class="file-viewer-content" id="fileViewerContent"><div class="text-center p-5"><div class="loading"></div><p class="mt-2">Carregando...</p></div></div></div><div class="modal-footer"><a href="#" id="fileDownloadLink" class="btn btn-primary" download><i class="bi bi-download me-2"></i>Baixar Arquivo</a><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-   <script>
+    <script>
     // Configurações iniciais
     const API_URL = 'https://erickmth.pythonanywhere.com';
     let currentTurmaEscala = '';
@@ -1194,48 +1194,30 @@
 
     async function checkSession() {
         const token = sessionStorage.getItem('adminToken');
-        if (!token) {
-            console.log('Sem token');
-            return false;
-        }
-        
+        if (!token) return false;
         try {
-            // PRIMEIRO: Verificar se o token é de ADMIN
-            const adminCheck = await fetch(`${API_URL}/api/admin/check`, { 
-                headers: getAuthHeader() 
-            });
+            const response = await fetch(`${API_URL}/api/admin/backup`, { headers: getAuthHeader() });
+            if (response.status === 401) {
+                sessionStorage.removeItem('adminToken');
+                sessionStorage.removeItem('adminName');
+                return false;
+            }
             
-            if (adminCheck.ok) {
-                const adminData = await adminCheck.json();
-                console.log('Admin check response:', adminData);
+            // Verificar se o usuário é admin
+            const meResponse = await fetch(`${API_URL}/api/me`, { headers: getAuthHeader() });
+            if (meResponse.ok) {
+                const userData = await meResponse.json();
+                currentUserIsAdmin = userData.is_admin;
                 
-                if (adminData.is_admin) {
-                    // É admin! Pode acessar tudo
-                    currentUserIsAdmin = true;
-                    if (elements.adminGlobalBanner) {
-                        elements.adminGlobalBanner.style.display = 'flex';
-                        await carregarTodasTurmasParaAdmin();
-                    }
-                    return true;
-                } else {
-                    // Token existe mas NÃO é admin
-                    console.error('Token não pertence a um administrador');
-                    showMessage('Acesso Negado', 'Você não tem permissão de administrador', 'error');
-                    handleLogout();
-                    return false;
+                // Se for admin, mostrar banner e carregar seletor de turmas
+                if (currentUserIsAdmin && elements.adminGlobalBanner) {
+                    elements.adminGlobalBanner.style.display = 'flex';
+                    await carregarTodasTurmasParaAdmin();
                 }
             }
             
-            // Se chegou aqui, token inválido
-            console.error('Token inválido ou expirado');
-            handleLogout();
-            return false;
-            
-        } catch (error) {
-            console.error('Erro ao verificar sessão:', error);
-            handleLogout();
-            return false;
-        }
+            return response.ok;
+        } catch (error) { return false; }
     }
     
     async function carregarTodasTurmasParaAdmin() {
@@ -1289,12 +1271,7 @@
             enableUIElements(true);
             await loadDashboard();
             await loadTurmas();
-            setInterval(async () => { 
-                if (!await checkSession()) { 
-                    showMessage('Sessão expirada', 'Faça login novamente.', 'warning'); 
-                    handleLogout(); 
-                } 
-            }, 5 * 60 * 1000);
+            setInterval(async () => { if (!await checkSession()) { showMessage('Sessão expirada', 'Faça login novamente.', 'warning'); handleLogout(); } }, 5 * 60 * 1000);
         } else {
             enableUIElements(false);
             elements.loginModal.show();
@@ -1354,11 +1331,7 @@
         document.querySelectorAll('.sidebar .nav-link').forEach(link => link.classList.remove('active'));
         const targetTab = document.querySelector(tabId);
         const targetLink = document.querySelector(`[data-bs-target="${tabId}"]`);
-        if (targetTab) { 
-            targetTab.classList.add('show', 'active'); 
-            if (tabId === '#avisos') carregarAvisos(); 
-            if (tabId === '#uploads') loadUploads(); 
-        }
+        if (targetTab) { targetTab.classList.add('show', 'active'); if (tabId === '#avisos') carregarAvisos(); if (tabId === '#uploads') loadUploads(); }
         if (targetLink) targetLink.classList.add('active');
     }
 
@@ -1370,23 +1343,12 @@
 
     function enableUIElements(enable) {
         document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-            if (enable) { 
-                link.classList.remove('disabled'); 
-                link.removeAttribute('tabindex'); 
-            }
-            else { 
-                link.classList.add('disabled'); 
-                link.setAttribute('tabindex', '-1'); 
-            }
+            if (enable) { link.classList.remove('disabled'); link.removeAttribute('tabindex'); }
+            else { link.classList.add('disabled'); link.setAttribute('tabindex', '-1'); }
         });
-        const btns = [elements.refreshDashboard, elements.refreshUploadsBtn, elements.refreshAlunosBtn, 
-                      elements.listarAlunosBtn, elements.carregarEscalaBtn, elements.salvarEscalaBtn, 
-                      elements.exportAlunosBtn, elements.exportEscalasBtn, elements.exportFullBackupBtn, 
-                      elements.importBackupBtn, elements.addItemEscalaBtn, elements.novoAvisoBtn, elements.importAlunosBtn];
+        const btns = [elements.refreshDashboard, elements.refreshUploadsBtn, elements.refreshAlunosBtn, elements.listarAlunosBtn, elements.carregarEscalaBtn, elements.salvarEscalaBtn, elements.exportAlunosBtn, elements.exportEscalasBtn, elements.exportFullBackupBtn, elements.importBackupBtn, elements.addItemEscalaBtn, elements.novoAvisoBtn, elements.importAlunosBtn];
         btns.forEach(btn => { if (btn) btn.disabled = !enable; });
-        const inputs = [elements.turmaAluno, elements.edvAluno, elements.nomeAluno, elements.isAdmin, 
-                        elements.turmaLista, elements.turmaEscala, elements.semanaAtual, elements.backupFile, 
-                        elements.importTurma, elements.importFile];
+        const inputs = [elements.turmaAluno, elements.edvAluno, elements.nomeAluno, elements.isAdmin, elements.turmaLista, elements.turmaEscala, elements.semanaAtual, elements.backupFile, elements.importTurma, elements.importFile];
         inputs.forEach(inp => { if (inp) inp.disabled = !enable; });
         if (elements.logoutBtn) elements.logoutBtn.disabled = false;
     }
@@ -1396,11 +1358,7 @@
         const password = document.getElementById('password').value;
         try {
             showLoading(elements.loginBtn);
-            const response = await fetch(`${API_URL}/api/admin/token`, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ username, password }) 
-            });
+            const response = await fetch(`${API_URL}/api/admin/token`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
             if (response.ok) {
                 const data = await response.json();
                 sessionStorage.setItem('adminToken', data.token);
@@ -1411,17 +1369,9 @@
                 await loadTurmas();
                 await checkSession(); // Verificar se é admin global
                 showMessage('Bem-vindo!', `Login realizado como ${data.admin}`, 'success');
-            } else { 
-                const error = await response.json(); 
-                throw new Error(error.error || 'Credenciais inválidas'); 
-            }
-        } catch (error) { 
-            elements.loginError.textContent = 'Erro: ' + error.message; 
-            elements.loginError.classList.remove('d-none'); 
-        }
-        finally { 
-            hideLoading(elements.loginBtn, '<i class="bi bi-arrow-right-circle me-2"></i>Entrar'); 
-        }
+            } else { const error = await response.json(); throw new Error(error.error || 'Credenciais inválidas'); }
+        } catch (error) { elements.loginError.textContent = 'Erro: ' + error.message; elements.loginError.classList.remove('d-none'); }
+        finally { hideLoading(elements.loginBtn, '<i class="bi bi-arrow-right-circle me-2"></i>Entrar'); }
     }
 
     async function handleLogout() {
@@ -1544,17 +1494,9 @@
             showLoading(elements.listarAlunosBtn);
             let turma = elements.turmaLista.value;
             
-            // Se for admin e não selecionou turma, usar a selecionada no banner
-            if (currentUserIsAdmin && !turma && currentSelectedTurma) {
-                turma = currentSelectedTurma;
-                if (elements.turmaLista) elements.turmaLista.value = turma;
-            }
-            
-            // Se for admin e ainda não tem turma, mostrar mensagem
+            // Se for admin e não selecionou turma, não listar nada
             if (currentUserIsAdmin && !turma) {
-                if (elements.alunosList) {
-                    elements.alunosList.innerHTML = '<tr><td colspan="4" class="text-center">Selecione uma turma para visualizar</td></tr>';
-                }
+                if (elements.alunosList) elements.alunosList.innerHTML = '<tr><td colspan="4" class="text-center">Selecione uma turma para visualizar</td></tr>';
                 hideLoading(elements.listarAlunosBtn, '<i class="bi bi-arrow-repeat me-1"></i> Atualizar');
                 return;
             }
@@ -1720,7 +1662,7 @@
         reader.readAsText(file);
     }
 
-    // AVISOS
+    // AVISOS (mantido igual ao original)
     function abrirModalAviso(aviso = null) {
         currentAvisoId = aviso?.id || null;
         uploadedImagePath = null;
@@ -1819,7 +1761,7 @@
         if (!elements.todosAvisos) return;
         elements.todosAvisos.innerHTML = '';
         const validos = avisos.filter(a => !a.deleted_at).sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-        if (!validos.length) { elements.todosAvisos.innerHTML = '欺<td colspan="6" class="text-center text-muted">Nenhum aviso</td>'; return; }
+        if (!validos.length) { elements.todosAvisos.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Nenhum aviso</td></tr>'; return; }
         validos.forEach(a => {
             const row = document.createElement('tr');
             const inicio = new Date(a.start_at).toLocaleString('pt-BR');
@@ -1867,6 +1809,6 @@
     function hideLoading(btn, text) { if (!btn) return; btn.disabled = false; btn.innerHTML = text || btn.getAttribute('data-original') || btn.innerHTML; }
     function showMessage(title, msg, type) { if (elements.messageModalTitle) elements.messageModalTitle.textContent = title; if (elements.messageModalBody) elements.messageModalBody.textContent = msg; elements.messageModal.show(); }
     function confirmAction(title, msg, cb) { if (elements.confirmModalTitle) elements.confirmModalTitle.textContent = title; if (elements.confirmModalBody) elements.confirmModalBody.textContent = msg; elements.confirmModalBtn.onclick = () => { elements.confirmModal.hide(); cb(); }; elements.confirmModal.show(); }
-</script>
+    </script>
 </body>
 </html>
