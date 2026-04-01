@@ -919,46 +919,51 @@
             return ADMIN_NAMES.some(admin => admin === nomeLimpo);
         }
 
-        // Função corrigida para verificar sábado (6) e domingo (0)
+        // CRITICAL: Keep your existing isWeekend function - it's correct
         function isWeekend(dateStr) {
             if (!dateStr) return false;
             const date = new Date(dateStr);
             const dayOfWeek = date.getDay();
-            // 0 = Domingo, 6 = Sábado
+            // 0 = Sunday, 6 = Saturday
             return dayOfWeek === 0 || dayOfWeek === 6;
         }
 
-        function getNextWeekday(dateStr) {
-            let newDate = new Date(dateStr);
-            newDate.setDate(newDate.getDate() + 1);
-            while (isWeekend(formatDate(newDate))) {
-                newDate.setDate(newDate.getDate() + 1);
-            }
-            return formatDate(newDate);
-        }
-
-        // Função que BLOQUEIA e CORRIGE a seleção de finais de semana
+        // IMPROVED: Stricter enforcement that immediately corrects weekend dates
         function enforceValidDate() {
             let currentValue = datePicker.value;
-            if (!currentValue) return false;
             
+            // If no date is selected, set to today or next valid day
+            if (!currentValue) {
+                const today = new Date();
+                let validDate = today;
+                while (isWeekend(formatDate(validDate))) {
+                    validDate.setDate(validDate.getDate() + 1);
+                }
+                datePicker.value = formatDate(validDate);
+                selectedDate = datePicker.value;
+                return;
+            }
+            
+            // Check if the current date is a weekend
             if (isWeekend(currentValue)) {
-                // Se for fim de semana, força para a próxima segunda-feira
+                // Find the next valid weekday
                 let nextValidDate = new Date(currentValue);
                 nextValidDate.setDate(nextValidDate.getDate() + 1);
                 while (isWeekend(formatDate(nextValidDate))) {
                     nextValidDate.setDate(nextValidDate.getDate() + 1);
                 }
                 const newDate = formatDate(nextValidDate);
+                
+                // Force the new date
                 datePicker.value = newDate;
                 selectedDate = newDate;
                 
-                // Mostra aviso
+                // Show warning
                 datePicker.classList.add('weekend');
                 weekendWarning.style.display = 'flex';
                 showNotification(`⚠️ Sábados e domingos não são permitidos! Data alterada para ${formatDisplayDate(newDate)}`, 'warning');
                 
-                // Desabilita botões
+                // Disable all actions
                 submitBtn.disabled = true;
                 saveChangesBtn.disabled = true;
                 markAllPresentBtn.disabled = true;
@@ -966,7 +971,7 @@
                 
                 return false;
             } else {
-                // Data válida
+                // Valid date - enable everything
                 datePicker.classList.remove('weekend');
                 weekendWarning.style.display = 'none';
                 submitBtn.disabled = false;
@@ -975,6 +980,25 @@
                 disableAllStatusButtons(false);
                 return true;
             }
+        }
+
+        // HARD FALLBACK: Validation that runs on any action that might submit data
+        function validateAndGetDate(actionName = '') {
+            const currentDate = datePicker.value;
+            
+            if (!currentDate) {
+                showNotification('Data não selecionada', 'error');
+                return null;
+            }
+            
+            if (isWeekend(currentDate)) {
+                showNotification(`❌ ${actionName ? actionName + ': ' : ''}SÁBADOS E DOMINGOS NÃO SÃO PERMITIDOS! Por favor, selecione um dia útil.`, 'error');
+                // Force correction
+                enforceValidDate();
+                return null;
+            }
+            
+            return currentDate;
         }
 
         function disableAllStatusButtons(disabled) {
@@ -1028,14 +1052,19 @@
         }
 
         function markAllPresent() {
+            // HARD FALLBACK: Validate before any action
+            const validDate = validateAndGetDate('Marcar todos presentes');
+            if (!validDate) return;
+            
             if (!selectedDate || !students.length) {
                 showNotification('Aguardando carregamento dos alunos...', 'warning');
                 return;
             }
             
-            // Verificação CRÍTICA: não permitir em finais de semana
+            // Final verification
             if (isWeekend(selectedDate)) {
                 showNotification('❌ NÃO É PERMITIDO MARCAR PRESENÇA EM SÁBADOS OU DOMINGOS!', 'error');
+                enforceValidDate();
                 return;
             }
             
@@ -1202,14 +1231,19 @@
         }
 
         async function saveAttendance(isUpdate = false) {
+            // HARD FALLBACK: First validation before anything else
+            const validDate = validateAndGetDate(isUpdate ? 'Salvar alterações' : 'Enviar chamada');
+            if (!validDate) return;
+            
             if (!selectedDate) {
                 showNotification('Selecione uma data primeiro', 'warning');
                 return;
             }
             
-            // BLOQUEIO TOTAL - NÃO PERMITE ENVIAR EM SÁBADOS OU DOMINGOS
+            // Final verification before sending
             if (isWeekend(selectedDate)) {
                 showNotification('❌ NÃO É PERMITIDO SALVAR CHAMADA EM SÁBADOS OU DOMINGOS!', 'error');
+                enforceValidDate();
                 return;
             }
             
@@ -1293,7 +1327,7 @@
             if (today < minDate) initialDate = minDate;
             if (today > maxDate) initialDate = maxDate;
             
-            // Pula finais de semana (sábado e domingo) na data inicial
+            // Skip weekends for initial date
             while (isWeekend(formatDate(initialDate))) {
                 initialDate.setDate(initialDate.getDate() + 1);
             }
@@ -1305,7 +1339,7 @@
         async function loadAttendanceForDate(date) {
             if (!students.length) return;
             
-            // Se for fim de semana, não carrega chamada
+            // If it's a weekend, don't load attendance
             if (isWeekend(date)) {
                 currentAttendance[date] = {};
                 renderStudentList();
@@ -1421,7 +1455,7 @@
 
         // Event Listeners
         datePicker.addEventListener('change', async function() {
-            // Força a correção da data se for fim de semana
+            // Force validation and correction
             enforceValidDate();
             
             const currentDate = this.value;
@@ -1433,8 +1467,13 @@
             }
         });
 
-        // Intercepta o evento de input também para bloquear enquanto digita
+        // Intercept input events to block while typing
         datePicker.addEventListener('input', function() {
+            enforceValidDate();
+        });
+
+        // Additional safety: blur event to validate when leaving the field
+        datePicker.addEventListener('blur', function() {
             enforceValidDate();
         });
 
@@ -1456,7 +1495,7 @@
             userAvatar.textContent = adminName.charAt(0).toUpperCase();
             
             setupDates();
-            enforceValidDate(); // Força a validação da data inicial
+            enforceValidDate(); // Force validation on initial date
             await fetchStudents();
             if (students.length && !isWeekend(selectedDate)) {
                 await loadAttendanceForDate(selectedDate);
