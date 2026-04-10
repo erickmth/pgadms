@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="favicon.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- Chart.js para gráfico de pizza no desktop -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -65,6 +67,7 @@
             display: flex;
             align-items: center;
             gap: 16px;
+            flex-wrap: wrap;
         }
 
         .logo {
@@ -102,6 +105,7 @@
             gap: 20px;
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--gray-200);
+            flex-wrap: wrap;
         }
 
         .user-info {
@@ -164,6 +168,217 @@
         .main-container {
             max-width: 1200px;
             margin: 0 auto;
+        }
+
+        /* DASHBOARD - Container principal */
+        .dashboard-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+
+        .dashboard-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dashboard-title i {
+            color: var(--primary);
+        }
+
+        /* GRÁFICO DE PIZZA (Desktop - padrão) */
+        .pie-chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pie-chart-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        canvas#attendancePieChart {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* BARRA HORIZONTAL (Mobile - escondida por padrão) */
+        .horizontal-bar-container {
+            display: none;
+            width: 100%;
+        }
+
+        .horizontal-bar {
+            width: 100%;
+            height: 48px;
+            background-color: var(--gray-200);
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            margin: 16px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .bar-present {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 20px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: width 0.5s ease;
+            min-width: 40px;
+        }
+
+        .bar-not-present {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 20px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: width 0.5s ease;
+            min-width: 40px;
+        }
+
+        .bar-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .bar-stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+        }
+
+        .bar-stat-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .bar-stat-color.present { background: var(--success); }
+        .bar-stat-color.not-present { background: var(--danger); }
+
+        .dashboard-stats {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .dashboard-stat-card {
+            text-align: center;
+            padding: 8px 20px;
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+        }
+
+        .dashboard-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .dashboard-stat-label {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+        }
+
+        .month-selector {
+            margin-top: 20px;
+            text-align: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .month-selector select {
+            padding: 8px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .month-selector select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .chart-loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-500);
+        }
+
+        .empty-chart {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-500);
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+        }
+
+        /* RESPONSIVIDADE: Em telas menores, esconde o gráfico de pizza e mostra a barra horizontal */
+        @media (max-width: 768px) {
+            .pie-chart-container {
+                display: none;
+            }
+            .horizontal-bar-container {
+                display: block;
+            }
+            .dashboard-stats {
+                gap: 16px;
+            }
+            .dashboard-stat-value {
+                font-size: 1.2rem;
+            }
+            .bar-present {
+                font-size: 0.75rem;
+                padding-left: 12px;
+            }
+            .bar-not-present {
+                font-size: 0.75rem;
+                padding-right: 12px;
+            }
+        }
+
+        /* Desktop: mostra o gráfico de pizza */
+        @media (min-width: 769px) {
+            .pie-chart-container {
+                display: flex;
+            }
+            .horizontal-bar-container {
+                display: none;
+            }
         }
 
         .legend {
@@ -724,6 +939,7 @@
             font-size: 0.875rem;
             font-weight: 500;
             border-left: 4px solid var(--success);
+            max-width: 90%;
         }
 
         .notification.error { border-left-color: var(--danger); }
@@ -749,6 +965,57 @@
             .status-group { justify-content: center; }
             .person-name { text-align: center; }
             .stat-card { flex: 1; min-width: 100px; }
+            .date-control { flex-direction: column; align-items: stretch; }
+            .quick-btn { justify-content: center; }
+        }
+                /* Melhorias visuais para a lista de alunos - borda e sombra */
+        .attendance-list {
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        /* Borda inferior no último aluno para dar sensação de fim */
+        .students-container .person-card:last-child {
+            border-bottom: 2px solid var(--primary-light);
+        }
+
+        /* Sombra suave no fundo da lista para indicar que acabou */
+        .students-container::after {
+            content: '';
+            display: block;
+            height: 8px;
+            background: linear-gradient(to bottom, transparent, var(--gray-100));
+            pointer-events: none;
+        }
+
+        /* Efeito de profundidade no container da lista */
+        .attendance-list {
+            position: relative;
+        }
+
+        /* Sombra interna no topo e fundo para dar efeito de scroll */
+        .students-container {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--gray-200);
+        }
+
+        .students-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .students-container::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 10px;
+        }
+
+        .students-container::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .students-container::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
         }
     </style>
 </head>
@@ -782,6 +1049,62 @@
             <div class="legend-item"><div class="legend-dot" style="background: var(--success);"></div><span>Presente</span></div>
             <div class="legend-item"><div class="legend-dot" style="background: var(--danger);"></div><span>Ausente</span></div>
             <div class="legend-item"><div class="legend-dot" style="background: var(--info);"></div><span>Atestado</span></div>
+        </div>
+
+        <!-- NOVO: DASHBOARD DE FREQUÊNCIA MENSAL -->
+        <div class="dashboard-container">
+            <div class="dashboard-title">
+                <i class="fas fa-chart-line"></i>
+                Frequência Mensal
+            </div>
+            
+            <!-- Gráfico de Pizza (Desktop) -->
+            <div class="pie-chart-container">
+                <div class="pie-chart-wrapper">
+                    <canvas id="attendancePieChart" width="280" height="280"></canvas>
+                </div>
+            </div>
+            
+            <!-- Barra Horizontal (Mobile) -->
+            <div class="horizontal-bar-container">
+                <div class="horizontal-bar">
+                    <div class="bar-present" id="barPresent" style="width: 0%;">0%</div>
+                    <div class="bar-not-present" id="barNotPresent" style="width: 0%;">0%</div>
+                </div>
+                <div class="bar-stats">
+                    <div class="bar-stat-item">
+                        <div class="bar-stat-color present"></div>
+                        <span>Presente: <strong id="mobilePresentPercent">0%</strong></span>
+                    </div>
+                    <div class="bar-stat-item">
+                        <div class="bar-stat-color not-present"></div>
+                        <span>Não presente: <strong id="mobileNotPresentPercent">0%</strong></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estatísticas do Dashboard -->
+            <div class="dashboard-stats">
+                <div class="dashboard-stat-card">
+                    <div class="dashboard-stat-value" id="dashboardPresentPercent">0%</div>
+                    <div class="dashboard-stat-label">Presente</div>
+                </div>
+                <div class="dashboard-stat-card">
+                    <div class="dashboard-stat-value" id="dashboardNotPresentPercent">0%</div>
+                    <div class="dashboard-stat-label">Não presente</div>
+                </div>
+                <div class="dashboard-stat-card">
+                    <div class="dashboard-stat-value" id="dashboardTotalRecords">0</div>
+                    <div class="dashboard-stat-label">Total de registros</div>
+                </div>
+            </div>
+            
+            <!-- Seletor de Mês -->
+            <div class="month-selector">
+                <select id="dashboardMonthSelect">
+                    <option value="">Carregando meses...</option>
+                </select>
+            </div>
         </div>
 
         <div class="date-section">
@@ -891,14 +1214,15 @@
     </div>
 
     <script>
-        // Configurações
+        // ==================== CONFIGURAÇÕES ====================
         const API_BASE = 'https://erickmth.pythonanywhere.com/api';
         const TURMA_NOME = 'Formare 2026';
         
         let students = [];
         let currentAttendance = {};
         let selectedDate = '';
-        let pendingDateChange = null; // Armazena a data pendente para confirmação
+        let pendingDateChange = null;
+        let attendanceChart = null;
         
         let attendanceMetadata = { 
             createdBy: null,
@@ -909,7 +1233,7 @@
 
         const ADMIN_NAMES = ['Erick Matheus Leguisamon', 'Marineide Maia dos Santos', 'Eduardo Oliveira Silva'];
 
-        // DOM Elements
+        // ==================== DOM ELEMENTS ====================
         const datePicker = document.getElementById('datePicker');
         const attendanceList = document.getElementById('attendanceList');
         const submitBtn = document.getElementById('submitBtn');
@@ -919,6 +1243,7 @@
         const closeReportModal = document.getElementById('closeReportModal');
         const generateReportBtn = document.getElementById('generateReportBtn');
         const monthSelect = document.getElementById('monthSelect');
+        const dashboardMonthSelect = document.getElementById('dashboardMonthSelect');
         const userNameSpan = document.getElementById('userName');
         const userAvatar = document.getElementById('userAvatar');
         const logoutBtn = document.getElementById('logoutBtn');
@@ -932,7 +1257,6 @@
         const dayNameText = document.getElementById('dayNameText');
         const dayInfo = document.getElementById('dayInfo');
         
-        // Modal Elements
         const weekendModal = document.getElementById('weekendModal');
         const weekendModalBody = document.getElementById('weekendModalBody');
         const closeWeekendModal = document.getElementById('closeWeekendModal');
@@ -944,16 +1268,22 @@
         const certificateCountSpan = document.getElementById('certificateCount');
         const pendingCountSpan = document.getElementById('pendingCount');
 
-        // ==================== FUNÇÕES COM UTC-3 ====================
-        
-        // Converte string YYYY-MM-DD para Date object no fuso de Brasília (UTC-3)
+        // Dashboard elements
+        const dashboardPresentPercent = document.getElementById('dashboardPresentPercent');
+        const dashboardNotPresentPercent = document.getElementById('dashboardNotPresentPercent');
+        const dashboardTotalRecords = document.getElementById('dashboardTotalRecords');
+        const mobilePresentPercent = document.getElementById('mobilePresentPercent');
+        const mobileNotPresentPercent = document.getElementById('mobileNotPresentPercent');
+        const barPresent = document.getElementById('barPresent');
+        const barNotPresent = document.getElementById('barNotPresent');
+
+        // ==================== FUNÇÕES DE DATA (UTC-3) ====================
         function parseDateToBrasilia(dateStr) {
             if (!dateStr) return null;
             const [year, month, day] = dateStr.split('-').map(Number);
             return new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
         }
         
-        // Formata uma data para string YYYY-MM-DD considerando UTC
         function formatDateUTC(date) {
             const year = date.getUTCFullYear();
             const month = String(date.getUTCMonth() + 1).padStart(2, '0');
@@ -961,7 +1291,6 @@
             return `${year}-${month}-${day}`;
         }
         
-        // Função para formatar data atual (usando UTC)
         function formatDate(date) {
             if (!date) return '';
             const year = date.getUTCFullYear();
@@ -970,7 +1299,6 @@
             return `${year}-${month}-${day}`;
         }
         
-        // Verifica se é final de semana usando UTC-3
         function isWeekend(dateStr) {
             if (!dateStr) return false;
             const date = parseDateToBrasilia(dateStr);
@@ -979,7 +1307,6 @@
             return dayOfWeek === 0 || dayOfWeek === 6;
         }
         
-        // Função para obter o nome do dia da semana (usando UTC-3)
         function getDayName(dateStr) {
             if (!dateStr) return '';
             const date = parseDateToBrasilia(dateStr);
@@ -988,26 +1315,20 @@
             return days[date.getUTCDay()];
         }
         
-        // Encontra o próximo dia útil (segunda a sexta)
         function getNextWeekday(dateStr) {
             const [year, month, day] = dateStr.split('-').map(Number);
             let date = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
-            
             while (date.getUTCDay() === 0 || date.getUTCDay() === 6) {
                 date.setUTCDate(date.getUTCDate() + 1);
             }
-            
             return formatDateUTC(date);
         }
         
-        // Atualiza o indicador visual do dia da semana
         function updateDayInfo(dateStr) {
             if (!dateStr) return;
             const dayName = getDayName(dateStr);
             const isWeekendDay = isWeekend(dateStr);
-            
             dayNameText.textContent = dayName;
-            
             if (isWeekendDay) {
                 dayInfo.className = 'day-info weekend-day';
                 dayInfo.innerHTML = `<i class="fas fa-ban"></i><span>${dayName} - BLOQUEADO!</span>`;
@@ -1017,20 +1338,17 @@
             }
         }
         
-        // Formata data para exibição (DD/MM/YYYY)
         function formatDisplayDate(dateStr) {
             if (!dateStr) return '';
             const [year, month, day] = dateStr.split('-');
             return `${day}/${month}/${year}`;
         }
         
-        // Mostra o modal de aviso de final de semana
         function showWeekendModal(originalDate, newDate) {
             const originalDayName = getDayName(originalDate);
             const newDayName = getDayName(newDate);
             const originalDateFormatted = formatDisplayDate(originalDate);
             const newDateFormatted = formatDisplayDate(newDate);
-            
             weekendModalBody.innerHTML = `
                 <div style="text-align: center;">
                     <i class="fas fa-calendar-times" style="font-size: 48px; color: var(--warning); margin-bottom: 16px; display: block;"></i>
@@ -1041,84 +1359,60 @@
                 </div>
             `;
             weekendModal.classList.add('active');
-            
-            // Armazena a nova data para aplicar após confirmação
             pendingDateChange = newDate;
         }
         
-        // Fecha o modal e aplica a mudança de data
         function confirmWeekendChange() {
             if (pendingDateChange) {
                 datePicker.value = pendingDateChange;
                 selectedDate = pendingDateChange;
                 updateDayInfo(selectedDate);
-                
-                // Remove o aviso visual
                 datePicker.classList.remove('weekend');
                 weekendWarning.style.display = 'none';
-                
-                // Habilita os botões
                 submitBtn.disabled = false;
                 saveChangesBtn.disabled = false;
                 markAllPresentBtn.disabled = false;
                 disableAllStatusButtons(false);
-                
-                // Recarrega a chamada para a nova data
                 if (students.length && !isWeekend(selectedDate)) {
                     loadAttendanceForDate(selectedDate);
                 } else if (students.length && isWeekend(selectedDate)) {
                     renderStudentList();
                     updateStats();
                 }
-                
                 pendingDateChange = null;
             }
             weekendModal.classList.remove('active');
         }
         
-        // Fecha o modal sem aplicar mudança (mantém a data original)
         function closeWeekendModalWithoutChange() {
             pendingDateChange = null;
             weekendModal.classList.remove('active');
         }
         
-        // Função que valida e mostra modal se for final de semana
         function validateDateWithModal() {
             let currentValue = datePicker.value;
-            
             if (!currentValue) {
                 const today = new Date();
                 const year = today.getUTCFullYear();
                 const month = String(today.getUTCMonth() + 1).padStart(2, '0');
                 const day = String(today.getUTCDate()).padStart(2, '0');
                 let validDate = `${year}-${month}-${day}`;
-                
-                while (isWeekend(validDate)) {
-                    validDate = getNextWeekday(validDate);
-                }
-                
+                while (isWeekend(validDate)) validDate = getNextWeekday(validDate);
                 datePicker.value = validDate;
                 selectedDate = validDate;
                 updateDayInfo(selectedDate);
                 return;
             }
-            
             updateDayInfo(currentValue);
-            
             if (isWeekend(currentValue)) {
                 const newDate = getNextWeekday(currentValue);
-                // Mostra o modal com a mensagem
                 showWeekendModal(currentValue, newDate);
-                
-                // Desabilita os botões até confirmação
                 submitBtn.disabled = true;
                 saveChangesBtn.disabled = true;
                 markAllPresentBtn.disabled = true;
                 disableAllStatusButtons(true);
-                
                 return false;
             } else {
-                // Data válida - habilita tudo
                 datePicker.classList.remove('weekend');
                 weekendWarning.style.display = 'none';
                 submitBtn.disabled = false;
@@ -1129,14 +1423,172 @@
             }
         }
         
-        // ==================== FIM DAS FUNÇÕES ====================
+        // ==================== FUNÇÕES DE VALIDAÇÃO ====================
+        function validateAllStudentsStatus() {
+            if (!selectedDate) {
+                showNotification('Selecione uma data primeiro', 'warning');
+                return false;
+            }
+            if (isWeekend(selectedDate)) {
+                const dayName = getDayName(selectedDate);
+                showNotification(`❌ ${dayName.toUpperCase()} NÃO É PERMITIDO! Apenas dias úteis.`, 'error');
+                validateDateWithModal();
+                return false;
+            }
+            const statusMap = currentAttendance[selectedDate] || {};
+            let pendingStudents = [];
+            for (const student of students) {
+                if (!statusMap[student.edv]) pendingStudents.push(student.nome);
+            }
+            if (pendingStudents.length > 0) {
+                const pendingList = pendingStudents.slice(0, 5).join(', ');
+                const message = pendingStudents.length > 5 
+                    ? `Selecione o status de todos os alunos antes de enviar. (${pendingStudents.length} alunos pendentes: ${pendingList} e mais ${pendingStudents.length - 5})`
+                    : `Selecione o status de todos os alunos antes de enviar. Pendentes: ${pendingList}`;
+                showNotification(message, 'warning');
+                return false;
+            }
+            return true;
+        }
         
+        // ==================== DASHBOARD: ESTATÍSTICAS MENSAIS ====================
+        async function fetchMonthlyStats(year, month) {
+            const mesStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+            try {
+                const response = await fetch(
+                    `${API_BASE}/presenca/estatisticas_mensais?mes=${mesStr}&turma=${encodeURIComponent(TURMA_NOME)}`,
+                    { headers: getAuthHeader() }
+                );
+                if (!response.ok) throw new Error('Erro ao buscar estatísticas');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Erro ao buscar estatísticas mensais:', error);
+                return null;
+            }
+        }
+        
+        async function updateDashboard(year, month) {
+            const stats = await fetchMonthlyStats(year, month);
+            
+            if (stats && stats.success) {
+                const presentPercent = stats.percentual_presente;
+                const notPresentPercent = stats.percentual_nao_presente;
+                
+                // Atualizar textos
+                dashboardPresentPercent.textContent = `${presentPercent}%`;
+                dashboardNotPresentPercent.textContent = `${notPresentPercent}%`;
+                dashboardTotalRecords.textContent = stats.total_registros;
+                
+                // Atualizar mobile
+                mobilePresentPercent.textContent = `${presentPercent}%`;
+                mobileNotPresentPercent.textContent = `${notPresentPercent}%`;
+                
+                // Atualizar barra horizontal
+                barPresent.style.width = `${presentPercent}%`;
+                barPresent.textContent = `${presentPercent}%`;
+                barNotPresent.style.width = `${notPresentPercent}%`;
+                barNotPresent.textContent = `${notPresentPercent}%`;
+                
+                // Atualizar gráfico de pizza
+                const ctx = document.getElementById('attendancePieChart').getContext('2d');
+                if (attendanceChart) {
+                    attendanceChart.data.datasets[0].data = [presentPercent, notPresentPercent];
+                    attendanceChart.update();
+                } else {
+                    attendanceChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Presente', 'Não presente'],
+                            datasets: [{
+                                data: [presentPercent, notPresentPercent],
+                                backgroundColor: ['#10b981', '#ef4444'],
+                                borderWidth: 0,
+                                hoverOffset: 8
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { font: { size: 11 } } },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `${context.label}: ${context.raw}%`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                if (stats.total_registros === 0) {
+                    showNotification(`Nenhum registro de presença encontrado para ${getMonthName(month)}/${year}`, 'warning');
+                }
+            } else {
+                dashboardPresentPercent.textContent = '0%';
+                dashboardNotPresentPercent.textContent = '0%';
+                dashboardTotalRecords.textContent = '0';
+                mobilePresentPercent.textContent = '0%';
+                mobileNotPresentPercent.textContent = '0%';
+                barPresent.style.width = '0%';
+                barPresent.textContent = '0%';
+                barNotPresent.style.width = '0%';
+                barNotPresent.textContent = '0%';
+            }
+        }
+        
+        function getMonthName(month) {
+            const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            return months[month];
+        }
+        
+        function initDashboardMonthSelector() {
+            const currentDate = new Date();
+            const currentYear = currentDate.getUTCFullYear();
+            const currentMonth = currentDate.getUTCMonth();
+            
+            dashboardMonthSelect.innerHTML = '';
+            
+            const startYear = 2026, startMonth = 2;
+            const endYear = 2026, endMonth = 11;
+            
+            for (let year = startYear; year <= endYear; year++) {
+                const monthStart = (year === startYear) ? startMonth : 0;
+                const monthEnd = (year === endYear) ? endMonth : 11;
+                for (let month = monthStart; month <= monthEnd; month++) {
+                    const option = document.createElement('option');
+                    option.value = `${year}-${String(month + 1).padStart(2, '0')}`;
+                    option.textContent = `${getMonthName(month)} ${year}`;
+                    dashboardMonthSelect.appendChild(option);
+                }
+            }
+            
+            if (currentYear >= startYear && currentYear <= endYear && 
+                currentMonth >= (currentYear === startYear ? startMonth : 0) && 
+                currentMonth <= (currentYear === endYear ? endMonth : 11)) {
+                dashboardMonthSelect.value = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+                updateDashboard(currentYear, currentMonth);
+            } else {
+                dashboardMonthSelect.value = '2026-03';
+                updateDashboard(2026, 2);
+            }
+            
+            dashboardMonthSelect.addEventListener('change', () => {
+                const [year, month] = dashboardMonthSelect.value.split('-').map(Number);
+                updateDashboard(year, month - 1);
+            });
+        }
+        
+        // ==================== FUNÇÕES DE SUPORTE ====================
         function showNotification(message, type = 'success') {
             const notif = document.createElement('div');
             notif.className = `notification ${type}`;
             notif.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i><span>${message}</span>`;
             document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), 3000);
+            setTimeout(() => notif.remove(), 4000);
         }
 
         function showLoading(btn) {
@@ -1166,9 +1618,7 @@
 
         function getAuthHeader() {
             const token = sessionStorage.getItem('adminToken');
-            if (token) {
-                return { 'Authorization': 'Bearer ' + token };
-            }
+            if (token) return { 'Authorization': 'Bearer ' + token };
             return {};
         }
 
@@ -1179,37 +1629,26 @@
 
         function validateAndGetDate(actionName = '') {
             const currentDate = datePicker.value;
-            
             if (!currentDate) {
                 showNotification('Data não selecionada', 'error');
                 return null;
             }
-            
             if (isWeekend(currentDate)) {
                 const dayName = getDayName(currentDate);
                 showNotification(`❌ ${actionName ? actionName + ': ' : ''}${dayName.toUpperCase()} NÃO É PERMITIDO! Apenas dias úteis (segunda a sexta).`, 'error');
                 validateDateWithModal();
                 return null;
             }
-            
             return currentDate;
         }
 
         function disableAllStatusButtons(disabled) {
-            const allStatusBtns = document.querySelectorAll('.status-btn');
-            allStatusBtns.forEach(btn => {
-                if (disabled) {
-                    btn.disabled = true;
-                } else {
-                    btn.disabled = false;
-                }
-            });
+            document.querySelectorAll('.status-btn').forEach(btn => btn.disabled = disabled);
         }
 
         function updateStats() {
             const statusMap = currentAttendance[selectedDate] || {};
             let presente = 0, ausente = 0, atestado = 0, pendente = 0;
-            
             students.forEach(student => {
                 const status = statusMap[student.edv];
                 if (status === 'PRESENTE') presente++;
@@ -1217,7 +1656,6 @@
                 else if (status === 'ATESTADO') atestado++;
                 else pendente++;
             });
-            
             totalCountSpan.textContent = students.length;
             presentCountSpan.textContent = presente;
             absentCountSpan.textContent = ausente;
@@ -1229,14 +1667,12 @@
             if (attendanceMetadata.createdBy) {
                 attendanceMeta.style.display = 'flex';
                 createdBySpan.textContent = attendanceMetadata.createdBy;
-                
                 if (attendanceMetadata.updatedBy && attendanceMetadata.updatedBy !== attendanceMetadata.createdBy) {
                     updatedBySpan.textContent = attendanceMetadata.updatedBy;
                     updatedByContainer.style.display = 'flex';
                 } else {
                     updatedByContainer.style.display = 'none';
                 }
-                
                 lastUpdatedSpan.textContent = attendanceMetadata.updatedAt 
                     ? formatDateTime(attendanceMetadata.updatedAt) 
                     : formatDateTime(attendanceMetadata.createdAt);
@@ -1248,51 +1684,36 @@
         function markAllPresent() {
             const validDate = validateAndGetDate('Marcar todos presentes');
             if (!validDate) return;
-            
             if (!selectedDate || !students.length) {
                 showNotification('Aguardando carregamento dos alunos...', 'warning');
                 return;
             }
-            
             if (isWeekend(selectedDate)) {
                 const dayName = getDayName(selectedDate);
                 showNotification(`❌ NÃO É PERMITIDO MARCAR PRESENÇA EM ${dayName.toUpperCase()}!`, 'error');
                 validateDateWithModal();
                 return;
             }
-            
-            if (!currentAttendance[selectedDate]) {
-                currentAttendance[selectedDate] = {};
-            }
-            
-            students.forEach(student => {
-                currentAttendance[selectedDate][student.edv] = 'PRESENTE';
-            });
-            
+            if (!currentAttendance[selectedDate]) currentAttendance[selectedDate] = {};
+            students.forEach(student => currentAttendance[selectedDate][student.edv] = 'PRESENTE');
             renderStudentList();
             updateStats();
-            
             const currentUser = sessionStorage.getItem('adminName') || 'Sistema';
             if (attendanceMetadata.createdBy) {
                 attendanceMetadata.updatedBy = currentUser;
                 attendanceMetadata.updatedAt = new Date().toISOString();
             }
             updateMetadataDisplay();
-            
             showNotification('Todos os alunos marcados como PRESENTE!', 'success');
         }
 
         async function fetchStudents() {
             try {
-                const response = await fetch(`${API_BASE}/admin/turmas/${encodeURIComponent(TURMA_NOME)}/alunos`, {
-                    headers: getAuthHeader()
-                });
-                
+                const response = await fetch(`${API_BASE}/admin/turmas/${encodeURIComponent(TURMA_NOME)}/alunos`, { headers: getAuthHeader() });
                 if (!response.ok) {
                     if (response.status === 401) throw new Error('Não autorizado');
                     throw new Error('Erro ao carregar alunos');
                 }
-                
                 const data = await response.json();
                 students = Object.entries(data)
                     .map(([edv, nome]) => ({
@@ -1301,7 +1722,6 @@
                         nomeOriginal: nome
                     }))
                     .filter(student => !isAdminByName(student.nome));
-                
                 renderStudentList();
                 updateStats();
                 return students;
@@ -1323,38 +1743,29 @@
                 attendanceList.innerHTML = '<div class="empty-message">📭 Nenhum aluno cadastrado nesta turma.</div>';
                 return;
             }
-            
             const isWeekendDate = isWeekend(selectedDate);
             const statusMap = currentAttendance[selectedDate] || {};
-            
             attendanceList.innerHTML = students.map(student => {
                 const currentStatus = statusMap[student.edv] || '';
-                const isPresent = currentStatus === 'PRESENTE';
-                const isAbsent = currentStatus === 'AUSENTE';
-                const isCertificate = currentStatus === 'ATESTADO';
-                
                 return `
                     <div class="person-card" data-edv="${student.edv}">
                         <div class="person-name">${escapeHtml(student.nome)}</div>
                         <div class="status-group">
-                            <button class="status-btn btn-present ${isPresent ? 'active' : ''}" data-status="PRESENTE" data-edv="${student.edv}" ${isWeekendDate ? 'disabled' : ''}>
+                            <button class="status-btn btn-present ${currentStatus === 'PRESENTE' ? 'active' : ''}" data-status="PRESENTE" data-edv="${student.edv}" ${isWeekendDate ? 'disabled' : ''}>
                                 <i class="fas fa-check"></i>
                             </button>
-                            <button class="status-btn btn-absent ${isAbsent ? 'active' : ''}" data-status="AUSENTE" data-edv="${student.edv}" ${isWeekendDate ? 'disabled' : ''}>
+                            <button class="status-btn btn-absent ${currentStatus === 'AUSENTE' ? 'active' : ''}" data-status="AUSENTE" data-edv="${student.edv}" ${isWeekendDate ? 'disabled' : ''}>
                                 <i class="fas fa-times"></i>
                             </button>
-                            <button class="status-btn btn-certificate ${isCertificate ? 'active' : ''}" data-status="ATESTADO" data-edv="${student.edv}" ${isWeekendDate ? 'disabled' : ''}>
+                            <button class="status-btn btn-certificate ${currentStatus === 'ATESTADO' ? 'active' : ''}" data-status="ATESTADO" data-edv="${student.edv}" ${isWeekendDate ? 'disabled' : ''}>
                                 <i class="fas fa-file-medical"></i>
                             </button>
                         </div>
                     </div>
                 `;
             }).join('');
-            
             document.querySelectorAll('.status-btn').forEach(btn => {
-                if (!btn.disabled) {
-                    btn.addEventListener('click', handleStatusClick);
-                }
+                if (!btn.disabled) btn.addEventListener('click', handleStatusClick);
             });
         }
 
@@ -1363,16 +1774,11 @@
             const edv = btn.dataset.edv;
             const status = btn.dataset.status;
             const card = document.querySelector(`.person-card[data-edv="${edv}"]`);
-            
             card.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
-            if (!currentAttendance[selectedDate]) {
-                currentAttendance[selectedDate] = {};
-            }
+            if (!currentAttendance[selectedDate]) currentAttendance[selectedDate] = {};
             currentAttendance[selectedDate][edv] = status;
             updateStats();
-            
             const currentUser = sessionStorage.getItem('adminName') || 'Sistema';
             if (attendanceMetadata.createdBy) {
                 attendanceMetadata.updatedBy = currentUser;
@@ -1384,21 +1790,12 @@
         async function fetchAttendanceWithMetadata(date) {
             try {
                 const response = await fetch(`${API_BASE}/presenca/obter/${date}?turma=${encodeURIComponent(TURMA_NOME)}`);
-                
                 if (response.status === 404) {
-                    attendanceMetadata = { 
-                        createdBy: null, 
-                        updatedBy: null, 
-                        createdAt: null, 
-                        updatedAt: null 
-                    };
+                    attendanceMetadata = { createdBy: null, updatedBy: null, createdAt: null, updatedAt: null };
                     return null;
                 }
-                
                 if (!response.ok) throw new Error('Erro ao carregar chamada');
-                
                 const data = await response.json();
-                
                 attendanceMetadata = {
                     createdBy: data.created_by || null,
                     updatedBy: data.updated_by || null,
@@ -1406,7 +1803,6 @@
                     updatedAt: data.updated_at
                 };
                 updateMetadataDisplay();
-                
                 if (data.registros && Array.isArray(data.registros)) {
                     const statusMap = {};
                     data.registros.forEach(r => {
@@ -1424,61 +1820,45 @@
         }
 
         async function saveAttendance(isUpdate = false) {
+            if (!validateAllStudentsStatus()) return;
             const validDate = validateAndGetDate(isUpdate ? 'Salvar alterações' : 'Enviar chamada');
             if (!validDate) return;
-            
             if (!selectedDate) {
                 showNotification('Selecione uma data primeiro', 'warning');
                 return;
             }
-            
             if (isWeekend(selectedDate)) {
                 const dayName = getDayName(selectedDate);
                 showNotification(`❌ NÃO É PERMITIDO SALVAR CHAMADA EM ${dayName.toUpperCase()}!`, 'error');
                 validateDateWithModal();
                 return;
             }
-            
             const statusMap = currentAttendance[selectedDate] || {};
             const registros = students.map(student => ({
                 name: student.nome,
                 status: statusMap[student.edv] || ''
             })).filter(r => r.status);
-            
             if (registros.length === 0) {
                 showNotification('Selecione o status de pelo menos um aluno', 'warning');
                 return;
             }
-            
-            const payload = {
-                data: selectedDate,
-                turma: TURMA_NOME,
-                registros
-            };
-            
+            const payload = { data: selectedDate, turma: TURMA_NOME, registros };
             const btn = isUpdate ? saveChangesBtn : submitBtn;
             const originalText = btn.innerHTML;
             showLoading(btn);
-            
             try {
                 const response = await fetch(`${API_BASE}/presenca/salvar`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...getAuthHeader()
-                    },
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
                     body: JSON.stringify(payload)
                 });
-                
                 if (!response.ok) {
                     const error = await response.json();
                     throw new Error(error.error || 'Erro ao salvar');
                 }
-                
                 const result = await response.json();
                 const currentUser = sessionStorage.getItem('adminName') || 'Sistema';
                 const now = new Date().toISOString();
-                
                 if (isUpdate) {
                     if (!attendanceMetadata.createdBy) {
                         attendanceMetadata.createdBy = currentUser;
@@ -1492,13 +1872,13 @@
                     attendanceMetadata.updatedBy = null;
                     attendanceMetadata.updatedAt = null;
                 }
-                
                 updateMetadataDisplay();
-                
                 showNotification(`Chamada ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`);
                 submitBtn.style.display = 'none';
                 saveChangesBtn.style.display = 'block';
-                
+                // Atualizar dashboard após salvar
+                const [year, month] = dashboardMonthSelect.value.split('-').map(Number);
+                updateDashboard(year, month - 1);
             } catch (error) {
                 console.error('Erro:', error);
                 showNotification(error.message || 'Erro ao salvar chamada', 'error');
@@ -1509,28 +1889,15 @@
 
         function setupDates() {
             const today = new Date();
-            const minDate = new Date(2026, 2, 31);
-            const maxDate = new Date(2026, 11, 31);
-            
-            // Formata as datas usando UTC
             const minDateStr = formatDate(new Date(Date.UTC(2026, 2, 31, 12, 0, 0)));
             const maxDateStr = formatDate(new Date(Date.UTC(2026, 11, 31, 12, 0, 0)));
-            
             datePicker.min = minDateStr;
             datePicker.max = maxDateStr;
-            
-            // Define data inicial
             let initialDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 12, 0, 0));
-            if (today < minDate) initialDate = new Date(Date.UTC(2026, 2, 31, 12, 0, 0));
-            if (today > maxDate) initialDate = new Date(Date.UTC(2026, 11, 31, 12, 0, 0));
-            
+            if (today < new Date(2026, 2, 31)) initialDate = new Date(Date.UTC(2026, 2, 31, 12, 0, 0));
+            if (today > new Date(2026, 11, 31)) initialDate = new Date(Date.UTC(2026, 11, 31, 12, 0, 0));
             let initialDateStr = formatDate(initialDate);
-            
-            // Pula finais de semana para a data inicial
-            while (isWeekend(initialDateStr)) {
-                initialDateStr = getNextWeekday(initialDateStr);
-            }
-            
+            while (isWeekend(initialDateStr)) initialDateStr = getNextWeekday(initialDateStr);
             datePicker.value = initialDateStr;
             selectedDate = datePicker.value;
             updateDayInfo(selectedDate);
@@ -1538,7 +1905,6 @@
 
         async function loadAttendanceForDate(date) {
             if (!students.length) return;
-            
             if (isWeekend(date)) {
                 currentAttendance[date] = {};
                 renderStudentList();
@@ -1546,18 +1912,11 @@
                 submitBtn.disabled = true;
                 saveChangesBtn.disabled = true;
                 markAllPresentBtn.disabled = true;
-                attendanceMetadata = { 
-                    createdBy: null, 
-                    updatedBy: null, 
-                    createdAt: null, 
-                    updatedAt: null 
-                };
+                attendanceMetadata = { createdBy: null, updatedBy: null, createdAt: null, updatedAt: null };
                 updateMetadataDisplay();
                 return;
             }
-            
             selectedDate = date;
-            
             const savedStatus = await fetchAttendanceWithMetadata(date);
             if (savedStatus && Object.keys(savedStatus).length > 0) {
                 currentAttendance[date] = savedStatus;
@@ -1568,15 +1927,9 @@
                 currentAttendance[date] = {};
                 submitBtn.style.display = 'block';
                 saveChangesBtn.style.display = 'none';
-                attendanceMetadata = { 
-                    createdBy: null, 
-                    updatedBy: null, 
-                    createdAt: null, 
-                    updatedAt: null 
-                };
+                attendanceMetadata = { createdBy: null, updatedBy: null, createdAt: null, updatedAt: null };
                 updateMetadataDisplay();
             }
-            
             renderStudentList();
             updateStats();
         }
@@ -1585,25 +1938,16 @@
             try {
                 const response = await fetch(`${API_BASE}/presenca/meses_disponiveis`);
                 if (!response.ok) throw new Error('Erro ao carregar meses');
-                
                 const data = await response.json();
                 const availableMonths = data.meses || [];
-                
                 monthSelect.innerHTML = '<option value="">Selecione um mês</option>';
-                
                 const months = [
-                    { value: '2026-03', name: 'Março 2026' },
-                    { value: '2026-04', name: 'Abril 2026' },
-                    { value: '2026-05', name: 'Maio 2026' },
-                    { value: '2026-06', name: 'Junho 2026' },
-                    { value: '2026-07', name: 'Julho 2026' },
-                    { value: '2026-08', name: 'Agosto 2026' },
-                    { value: '2026-09', name: 'Setembro 2026' },
-                    { value: '2026-10', name: 'Outubro 2026' },
-                    { value: '2026-11', name: 'Novembro 2026' },
-                    { value: '2026-12', name: 'Dezembro 2026' }
+                    { value: '2026-03', name: 'Março 2026' }, { value: '2026-04', name: 'Abril 2026' },
+                    { value: '2026-05', name: 'Maio 2026' }, { value: '2026-06', name: 'Junho 2026' },
+                    { value: '2026-07', name: 'Julho 2026' }, { value: '2026-08', name: 'Agosto 2026' },
+                    { value: '2026-09', name: 'Setembro 2026' }, { value: '2026-10', name: 'Outubro 2026' },
+                    { value: '2026-11', name: 'Novembro 2026' }, { value: '2026-12', name: 'Dezembro 2026' }
                 ];
-                
                 months.forEach(month => {
                     const option = document.createElement('option');
                     option.value = month.value;
@@ -1611,28 +1955,69 @@
                     option.disabled = !availableMonths.includes(month.value);
                     monthSelect.appendChild(option);
                 });
-                
                 monthSelect.addEventListener('change', () => {
                     generateReportBtn.disabled = !monthSelect.value || monthSelect.selectedOptions[0]?.disabled;
                 });
-                
             } catch (error) {
                 console.error('Erro:', error);
                 monthSelect.innerHTML = '<option value="">Erro ao carregar meses</option>';
             }
         }
 
-        function downloadReport() {
+        // ==================== FUNÇÃO DE DOWNLOAD CORRIGIDA ====================
+        async function downloadReport() {
             const mes = monthSelect.value;
             if (!mes) {
                 showNotification('Selecione um mês', 'warning');
                 return;
             }
             
-            const url = `${API_BASE}/presenca/relatorio_excel/${mes}?turma=${encodeURIComponent(TURMA_NOME)}`;
-            window.open(url, '_blank');
-            reportModal.classList.remove('active');
-            showNotification('Relatório gerado com sucesso!', 'success');
+            // Mostrar loading no botão
+            const originalText = generateReportBtn.innerHTML;
+            showLoading(generateReportBtn);
+            
+            try {
+                const response = await fetch(`${API_BASE}/presenca/relatorio_excel/${mes}?turma=${encodeURIComponent(TURMA_NOME)}`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showNotification('Sessão expirada. Faça login novamente.', 'error');
+                        setTimeout(() => window.location.href = 'index.html', 1500);
+                        return;
+                    }
+                    const error = await response.json();
+                    throw new Error(error.error || 'Erro ao gerar relatório');
+                }
+                
+                // Converter resposta para blob (arquivo Excel)
+                const blob = await response.blob();
+                
+                // Verificar se o blob é um arquivo Excel válido
+                if (blob.size === 0) {
+                    throw new Error('Arquivo vazio gerado');
+                }
+                
+                // Criar link para download
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `relatorio_chamadas_${mes}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                showNotification('Relatório gerado com sucesso!', 'success');
+                reportModal.classList.remove('active');
+                
+            } catch (error) {
+                console.error('Erro ao baixar relatório:', error);
+                showNotification(error.message || 'Erro ao gerar relatório. Tente novamente.', 'error');
+            } finally {
+                hideLoading(generateReportBtn, originalText);
+            }
         }
 
         function handleLogout() {
@@ -1652,35 +2037,19 @@
             return true;
         }
 
-        // Event Listeners
+        // ==================== EVENT LISTENERS ====================
         datePicker.addEventListener('change', async function() {
             validateDateWithModal();
-            
             const currentDate = this.value;
-            if (currentDate && !isWeekend(currentDate) && students.length) {
-                await loadAttendanceForDate(currentDate);
-            } else if (isWeekend(currentDate)) {
-                renderStudentList();
-                updateStats();
-            }
+            if (currentDate && !isWeekend(currentDate) && students.length) await loadAttendanceForDate(currentDate);
+            else if (isWeekend(currentDate)) { renderStudentList(); updateStats(); }
         });
+        datePicker.addEventListener('input', () => validateDateWithModal());
+        datePicker.addEventListener('blur', () => validateDateWithModal());
 
-        datePicker.addEventListener('input', function() {
-            validateDateWithModal();
-        });
-
-        datePicker.addEventListener('blur', function() {
-            validateDateWithModal();
-        });
-
-        // Modal event listeners
         confirmWeekendModal.addEventListener('click', confirmWeekendChange);
         closeWeekendModal.addEventListener('click', closeWeekendModalWithoutChange);
-        weekendModal.addEventListener('click', (e) => {
-            if (e.target === weekendModal) {
-                closeWeekendModalWithoutChange();
-            }
-        });
+        weekendModal.addEventListener('click', (e) => { if (e.target === weekendModal) closeWeekendModalWithoutChange(); });
 
         submitBtn.addEventListener('click', () => saveAttendance(false));
         saveChangesBtn.addEventListener('click', () => saveAttendance(true));
@@ -1691,25 +2060,19 @@
         markAllPresentBtn.addEventListener('click', markAllPresent);
         reportModal.addEventListener('click', (e) => { if (e.target === reportModal) reportModal.classList.remove('active'); });
 
-        // Initialization
+        // ==================== INITIALIZATION ====================
         async function init() {
             if (!checkAuth()) return;
-            
             const adminName = sessionStorage.getItem('adminName') || 'Administrador';
             userNameSpan.textContent = adminName;
             userAvatar.textContent = adminName.charAt(0).toUpperCase();
-            
             setupDates();
             validateDateWithModal();
             await fetchStudents();
-            if (students.length && !isWeekend(selectedDate)) {
-                await loadAttendanceForDate(selectedDate);
-            } else if (students.length && isWeekend(selectedDate)) {
-                renderStudentList();
-                updateStats();
-            }
+            initDashboardMonthSelector();
+            if (students.length && !isWeekend(selectedDate)) await loadAttendanceForDate(selectedDate);
+            else if (students.length && isWeekend(selectedDate)) { renderStudentList(); updateStats(); }
         }
-        
         init();
     </script>
 </body>
