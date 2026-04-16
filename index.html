@@ -806,6 +806,47 @@
             padding: 20px;
         }
 
+        /* Modal de seleção de turma para presença */
+        .class-selector-modal .modal-content {
+            max-width: 500px;
+        }
+        
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .class-card {
+            background: var(--surface-2);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .class-card:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .class-card i {
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .class-card span {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
         @media (max-width: 992px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -829,6 +870,10 @@
             }
 
             .upload-thumbnail { height: 120px; }
+            
+            .class-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 576px) {
@@ -840,9 +885,27 @@
             
             .upload-name { font-size: 11px; }
         }
+        
+        .nav-link.disabled {
+            opacity: 0.5;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+        
+        /* Badge de tipo de admin no header */
+        .admin-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 12px;
+        }
     </style>
 </head>
 <body>
+    
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="bi bi-list"></i></button>
@@ -855,20 +918,20 @@
         <nav class="sidebar-nav">
             <div class="nav-section-label">Geral</div>
             <ul class="nav flex-column mb-3">
-                <li class="nav-item"><a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#uploads"><i class="bi bi-images"></i> Galeria de Uploads</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#dashboard" id="navDashboard"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                <li class="nav-item" id="navUploadsContainer"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#uploads" id="navUploads"><i class="bi bi-images"></i> Galeria de Uploads</a></li>
             </ul>
             <div class="nav-section-label">Gerenciamento</div>
             <ul class="nav flex-column mb-3">
-                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#alunos"><i class="bi bi-people-fill"></i> Alunos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#escalas"><i class="bi bi-calendar-check"></i> Escalas</a></li>
-                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#avisos"><i class="bi bi-megaphone"></i> Avisos</a></li>
+                <li class="nav-item" id="navAlunosContainer"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#alunos" id="navAlunos"><i class="bi bi-people-fill"></i> Alunos</a></li>
+                <li class="nav-item" id="navEscalasContainer"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#escalas" id="navEscalas"><i class="bi bi-calendar-check"></i> Escalas</a></li>
+                <li class="nav-item" id="navAvisosContainer"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#avisos" id="navAvisos"><i class="bi bi-megaphone"></i> Avisos</a></li>
             </ul>
             <div class="nav-section-label">Sistema</div>
             <ul class="nav flex-column mb-3">
-                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#backup"><i class="bi bi-cloud-arrow-down"></i> Backup</a></li>
+                <li class="nav-item" id="navBackupContainer"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#backup" id="navBackup"><i class="bi bi-cloud-arrow-down"></i> Backup</a></li>
                 <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#sobre"><i class="bi bi-person-badge"></i> Sobre</a></li>
-                <li class="nav-item"><a class="nav-link" href="presenca.html"><i class="bi bi-brush"></i> Lista de Presença</a></li>
+                <li class="nav-item" id="navPresencaContainer"><a class="nav-link" href="#" id="navPresenca"><i class="bi bi-brush"></i> Lista de Presença</a></li>
             </ul>
         </nav>
         <div class="sidebar-footer">
@@ -882,7 +945,7 @@
             <!-- DASHBOARD -->
             <div class="tab-pane fade show active" id="dashboard">
                 <div class="page-header">
-                    <div><h1><i class="bi bi-speedometer2 me-2" style="color:var(--primary)"></i>Dashboard</h1><div class="breadcrumb-text">Visão geral do sistema</div></div>
+                    <div><h1><i class="bi bi-speedometer2 me-2" style="color:var(--primary)"></i>Dashboard<span id="adminTypeBadge" class="admin-badge"></span></h1><div class="breadcrumb-text">Visão geral do sistema</div></div>
                     <button type="button" class="btn btn-outline-secondary btn-sm" id="refreshDashboard"><i class="bi bi-arrow-clockwise me-1"></i> Atualizar</button>
                 </div>
                 <div class="page-body">
@@ -997,7 +1060,7 @@
             <!-- SOBRE -->
             <div class="tab-pane fade" id="sobre">
                 <div class="page-header"><div><h1><i class="bi bi-person-badge me-2" style="color:var(--primary)"></i>Sobre o Desenvolvedor</h1><div class="breadcrumb-text">Créditos e informações</div></div></div>
-                <div class="page-body"><div class="card"><div class="card-body"><div class="text-center mb-5 pt-2"><img src="dev.png" alt="Foto do Desenvolvedor" class="dev-avatar mb-3"><h3 style="font-weight:700;letter-spacing:-0.5px;font-size:22px">Erick Matheus Leguisamon</h3><span class="badge" style="background:var(--primary-glow);color:var(--primary);font-size:12px;padding:6px 14px">Desenvolvedor do Sistema</span></div><div class="row g-4"><div class="col-md-6"><div class="card" style="background:var(--surface-2)"><div class="card-body"><h4 style="font-size:15px;font-weight:700;margin-bottom:12px"><i class="bi bi-info-circle text-primary me-2"></i> Sobre o Projeto</h4><p style="font-size:13.5px;color:var(--text-muted);line-height:1.7">Este sistema foi desenvolvido para gerenciar as escalas de limpeza do Formare, proporcionando uma solução eficiente e organizada para a divisão de tarefas entre os alunos.</p><h4 style="font-size:15px;font-weight:700;margin-bottom:12px;margin-top:20px"><i class="bi bi-code-slash text-primary me-2"></i> Tecnologias Utilizadas</h4><div class="d-flex flex-wrap gap-2"><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">HTML5 / CSS3</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">JavaScript</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">Bootstrap 5</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">Python / Flask</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">SQLite</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">PythonAnywhere</span></div></div></div></div><div class="col-md-6"><div class="card" style="background:var(--surface-2)"><div class="card-body"><h4 style="font-size:15px;font-weight:700;margin-bottom:14px"><i class="bi bi-person-lines-fill text-primary me-2"></i> Contato</h4><div class="list-group mb-4"><a href="mailto:erickleguisamon@gmail.com" class="list-group-item list-group-item-action" style="font-size:13px"><i class="bi bi-envelope-fill me-2" style="color:var(--primary)"></i> erickleguisamon@gmail.com</a><a href="https://wa.me/+5541998239031" class="list-group-item list-group-item-action" style="font-size:13px"><i class="bi bi-whatsapp me-2" style="color:#25d366"></i> (41) 99823-9031</a><a href="https://www.linkedin.com/in/erickleguisamon/" class="list-group-item list-group-item-action" style="font-size:13px"><i class="bi bi-linkedin me-2" style="color:#0077b5"></i> linkedin.com/in/erickleguisamon</a></div><h4 style="font-size:15px;font-weight:700;margin-bottom:10px"><i class="bi bi-heart-fill me-2" style="color:var(--primary)"></i> Agradecimentos</h4><p style="font-size:13.5px;color:var(--text-muted);line-height:1.7;margin:0">Agradeço especialmente aos professores e colegas do Formare pelo apoio e contribuições.</p></div></div></div></div><div class="alert alert-info mt-4 mb-0"><i class="bi bi-lightbulb me-2"></i> Este projeto foi desenvolvido para o Curso Formare do Instituto Robert Bosch. — Turma 2026</div></div></div></div>
+                <div class="page-body"><div class="card"><div class="card-body"><div class="text-center mb-5 pt-2"><img src="dev.png" alt="Foto do Desenvolvedor" class="dev-avatar mb-3"><h3 style="font-weight:700;letter-spacing:-0.5px;font-size:22px">Erick Matheus Leguisamon</h3><span class="badge" style="background:var(--primary-glow);color:var(--primary);font-size:12px;padding:6px 14px">Desenvolvedor do Sistema</span></div><div class="row g-4"><div class="col-md-6"><div class="card" style="background:var(--surface-2)"><div class="card-body"><h4 style="font-size:15px;font-weight:700;margin-bottom:12px"><i class="bi bi-info-circle text-primary me-2"></i> Sobre o Projeto</h4><p style="font-size:13.5px;color:var(--text-muted);line-height:1.7">Este sistema foi desenvolvido para gerenciar as escalas de limpeza do Formare, proporcionando uma solução eficiente e organizada para a divisão de tarefas entre os alunos.</p><h4 style="font-size:15px;font-weight:700;margin-bottom:12px;margin-top:20px"><i class="bi bi-code-slash text-primary me-2"></i> Tecnologias Utilizadas</h4><div class="d-flex flex-wrap gap-2"><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">HTML5 / CSS3</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">JavaScript</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">Bootstrap 5</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">Python / Flask</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">SQLite</span><span class="badge" style="background:#fff;color:#374151;border:1px solid var(--border);font-size:12px;padding:5px 10px">PythonAnywhere</span></div></div></div></div><div class="col-md-6"><div class="card" style="background:var(--surface-2)"><div class="card-body"><h4 style="font-size:15px;font-weight:700;margin-bottom:14px"><i class="bi bi-person-lines-fill text-primary me-2"></i> Contato</h4><div class="list-group mb-4"><a href="mailto:erickleguisamon@gmail.com" class="list-group-item list-group-item-action" style="font-size:13px"><i class="bi bi-envelope-fill me-2" style="color:var(--primary)"></i> erickleguisamon@gmail.com</a><a href="https://wa.me/+5541998239031" class="list-group-item list-group-item-action" style="font-size:13px"><i class="bi bi-whatsapp me-2" style="color:#25d366"></i> (41) 99823-9031</a><a href="https://www.linkedin.com/in/erickleguisamon/" class="list-group-item list-group-item-action" style="font-size:13px"><i class="bi bi-linkedin me-2" style="color:#0077b5"></i> linkedin.com/in/erickleguisamon</a></div><h4 style="font-size:15px;font-weight:700;margin-bottom:10px"><i class="bi bi-heart-fill me-2" style="color:var(--primary)"></i> Agradecimentos</h4><p style="font-size:13.5px;color:var(--text-muted);line-height:1.7;margin:0">Agradeço especialmente aos professores e colegas do Formare pelo apoio e contribuições.</p></div></div></div></div><div class="alert alert-info mt-4 mb-0"><i class="bi bi-lightbulb me-2"></i> Este projeto foi desenvolvido para o Curso Formare do Instituto Robert Bosch. — Turma 2025</div></div></div></div>
             </div>
         </div>
     </div>
@@ -1008,15 +1071,65 @@
     <div class="modal fade" id="messageModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title" id="messageModalTitle">Mensagem</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="messageModalBody">Mensagem de exemplo</div><div class="modal-footer"><button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button></div></div></div></div>
     <div class="modal fade" id="avisoModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title" id="avisoModalTitle"><i class="bi bi-megaphone me-2"></i>Novo Aviso</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="avisoForm"><div class="row g-3"><div class="col-md-6"><label for="avisoTitulo" class="form-label">Título (Opcional)</label><input type="text" class="form-control" id="avisoTitulo" placeholder="Título do aviso"></div><div class="col-md-6"><label for="avisoImagem" class="form-label">Imagem (Opcional)</label><input type="file" class="form-control" id="avisoImagem" accept="image/*"><div id="imagemPreview" class="mt-2"></div></div></div><div class="mb-3 mt-3"><label for="avisoConteudo" class="form-label">Conteúdo (Markdown)</label><textarea class="form-control" id="avisoConteudo" rows="5" placeholder="Digite o conteúdo do aviso em Markdown..." required></textarea><small class="form-text text-muted"><b>Títulos:</b> # Título 1, ## Título 2 | <b>Negrito:</b> **texto** | <b>Itálico:</b> *texto* | <b>Links:</b> [texto](url)</small></div><div class="mb-3"><label class="form-label">Pré-visualização</label><div class="markdown-preview" id="previewConteudo">O conteúdo aparecerá aqui...</div></div><div class="row g-3 mb-3"><div class="col-md-6"><label for="avisoInicio" class="form-label">Data/Hora de Início</label><input type="datetime-local" class="form-control" id="avisoInicio" required></div><div class="col-md-6"><label for="avisoFim" class="form-label">Data/Hora de Término</label><input type="datetime-local" class="form-control" id="avisoFim" required></div></div><div class="row g-3 mb-3"><div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="avisoGritar"><label class="form-check-label" for="avisoGritar">Texto em Maiúsculas</label></div></div><div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="avisoContagem"><label class="form-check-label" for="avisoContagem">Contagem Regressiva</label></div></div><div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="avisoAtivo"><label class="form-check-label" for="avisoAtivo">Ativar Imediatamente</label></div></div></div><div class="row g-3"><div class="col-md-6"><label for="avisoLink" class="form-label">Link de Redirecionamento (Opcional)</label><input type="url" class="form-control" id="avisoLink" placeholder="https://exemplo.com"></div><div class="col-md-6"><label for="avisoTamanhoImagem" class="form-label">Tamanho da Imagem</label><select class="form-select" id="avisoTamanhoImagem"><option value="small">Pequeno</option><option value="medium" selected>Médio</option><option value="large">Grande</option></select></div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="salvarAvisoBtn"><i class="bi bi-check-circle me-2"></i>Salvar Aviso</button></div></div></div></div>
     <div class="modal fade file-viewer-modal" id="fileViewerModal"><div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title" id="fileViewerTitle">Visualizar Arquivo</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><div class="file-viewer-content" id="fileViewerContent"><div class="text-center p-5"><div class="loading"></div><p class="mt-2">Carregando...</p></div></div></div><div class="modal-footer"><a href="#" id="fileDownloadLink" class="btn btn-primary" download><i class="bi bi-download me-2"></i>Baixar Arquivo</a><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button></div></div></div></div>
+    
+    <!-- Modal de Seleção de Turma para Presença (Admin Global) -->
+    <div class="modal fade class-selector-modal" id="classSelectorModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="bi bi-building"></i> Selecionar Turma</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-3">Selecione a turma para acessar a lista de presença:</p>
+                    <div id="classGrid" class="class-grid"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    // Configurações iniciais
+        // No início do index.html
+if (window.location.hostname !== 'localhost') {
+    console.log = function() {};
+    console.warn = function() {};
+    console.error = function() {};
+}
+    // ==================== CONFIGURAÇÕES E VARIÁVEIS GLOBAIS ====================
     const API_URL = 'https://erickmth.pythonanywhere.com';
     let currentTurmaEscala = '';
     let turmasList = [];
     let currentAvisoId = null;
     let uploadedImagePath = null;
+    
+    // Variáveis de permissão do usuário
+    let userPermissions = {
+        tipo_admin: null,
+        turmas_permitidas: [],
+        permissoes: [],
+        pode_ver_uploads: false,
+        pode_ver_alunos: false,
+        pode_ver_escalas: false,
+        pode_ver_avisos: false,
+        pode_ver_backup: false,
+        pode_ver_presenca: false,
+        turma_unica: null
+    };
+
+    // Mapeamento de turmas para seus arquivos HTML
+    const turmaArquivos = {
+        'Formare 2026': 'presenca/presenca_formare.html',
+        'Aprender A+ (Terça-Feira)': 'presenca/presenca_aprenderterca.html',
+        'Aprender A+ (Quarta-Feira)': 'presenca/presenca_aprenderquarta.html',
+        'Aprender A+ (Quinta-Feira)': 'presenca/presenca_aprenderquinta.html',
+        'Informática (Atividade complementar)': 'presenca/presenca_informatica.html',
+        'Inglês (Atividade complementar)': 'presenca/presenca_ingles.html',
+        'Informática II - Projeto Vida (Robótica)': 'presenca/presenca_robotica.html'
+    };
 
     // Elementos do DOM
     const elements = {
@@ -1025,6 +1138,7 @@
         messageModal: new bootstrap.Modal('#messageModal'),
         avisoModal: new bootstrap.Modal('#avisoModal'),
         fileViewerModal: new bootstrap.Modal('#fileViewerModal'),
+        classSelectorModal: new bootstrap.Modal('#classSelectorModal'),
         loginBtn: document.getElementById('loginBtn'),
         loginError: document.getElementById('loginError'),
         logoutBtn: document.getElementById('logoutBtn'),
@@ -1088,32 +1202,215 @@
         uploadCount: document.getElementById('uploadCount'),
         importTurma: document.getElementById('importTurma'),
         importFile: document.getElementById('importFile'),
-        importAlunosBtn: document.getElementById('importAlunosBtn')
+        importAlunosBtn: document.getElementById('importAlunosBtn'),
+        classGrid: document.getElementById('classGrid'),
+        adminTypeBadge: document.getElementById('adminTypeBadge')
     };
 
+    // ==================== FUNÇÕES DE PERMISSÃO ====================
+    async function loadUserPermissions() {
+    try {
+        const response = await fetch(`${API_URL}/api/admin/permissions`, { headers: getAuthHeader() });
+        if (!response.ok) throw new Error('Erro ao carregar permissões');
+        const data = await response.json();
+        
+        userPermissions.tipo_admin = data.tipo_admin;
+        userPermissions.turmas_permitidas = data.turmas_permitidas || [];
+        userPermissions.permissoes = data.permissoes || [];
+        
+        // Determinar permissões específicas
+        userPermissions.pode_ver_uploads = userPermissions.permissoes.includes('upload') || userPermissions.tipo_admin === 'global';
+        userPermissions.pode_ver_alunos = userPermissions.permissoes.includes('alunos') || userPermissions.tipo_admin === 'global';
+        userPermissions.pode_ver_escalas = userPermissions.permissoes.includes('escalas') || userPermissions.tipo_admin === 'global';
+        userPermissions.pode_ver_avisos = userPermissions.permissoes.includes('avisos') || userPermissions.tipo_admin === 'global';
+        userPermissions.pode_ver_backup = userPermissions.permissoes.includes('backup') || userPermissions.tipo_admin === 'global';
+        userPermissions.pode_ver_presenca = userPermissions.permissoes.includes('presenca') || userPermissions.tipo_admin === 'global' || userPermissions.tipo_admin === 'formare' || userPermissions.tipo_admin === 'turma';
+        
+        // Para admin de turma, pegar a turma única
+        if (userPermissions.tipo_admin === 'turma' && userPermissions.turmas_permitidas.length === 1) {
+            userPermissions.turma_unica = userPermissions.turmas_permitidas[0];
+        }
+        
+        // ========== ATUALIZAR BADGE COM O NOME DA TURMA ==========
+        if (elements.adminTypeBadge) {
+            let tipoTexto = '';
+            switch (userPermissions.tipo_admin) {
+                case 'global': 
+                    tipoTexto = '👑 Admin Global'; 
+                    break;
+                case 'formare': 
+                    tipoTexto = '⭐ Admin Formare'; 
+                    break;
+                case 'turma': 
+                    // Mostra o nome da turma específica
+                    if (userPermissions.turma_unica) {
+                        // Pega apenas a primeira parte do nome da turma (ex: "Formare 2026")
+                        let nomeTurma = userPermissions.turma_unica;
+                        // Se quiser encurtar nomes muito longos
+                        if (nomeTurma.length > 30) {
+                            nomeTurma = nomeTurma.substring(0, 27) + '...';
+                        }
+                        tipoTexto = `📚 Admin - ${nomeTurma}`;
+                    } else {
+                        tipoTexto = '📚 Admin de Turma';
+                    }
+                    break;
+                default: 
+                    tipoTexto = '';
+            }
+            elements.adminTypeBadge.textContent = tipoTexto;
+            elements.adminTypeBadge.style.display = tipoTexto ? 'inline-block' : 'none';
+        }
+        
+        // Aplicar visibilidade dos menus
+        applyPermissionsToUI();
+        
+        return data;
+    } catch (error) {
+        console.error('Erro ao carregar permissões:', error);
+        return null;
+    }
+}
+    
+    function applyPermissionsToUI() {
+        // Uploads
+        if (elements.navUploadsContainer) {
+            elements.navUploadsContainer.style.display = userPermissions.pode_ver_uploads ? 'block' : 'none';
+        }
+        
+        // Alunos
+        if (elements.navAlunosContainer) {
+            elements.navAlunosContainer.style.display = userPermissions.pode_ver_alunos ? 'block' : 'none';
+        }
+        
+        // Escalas
+        if (elements.navEscalasContainer) {
+            elements.navEscalasContainer.style.display = userPermissions.pode_ver_escalas ? 'block' : 'none';
+        }
+        
+        // Avisos
+        if (elements.navAvisosContainer) {
+            elements.navAvisosContainer.style.display = userPermissions.pode_ver_avisos ? 'block' : 'none';
+        }
+        
+        // Backup
+        if (elements.navBackupContainer) {
+            elements.navBackupContainer.style.display = userPermissions.pode_ver_backup ? 'block' : 'none';
+        }
+        
+        // Presença
+        if (elements.navPresencaContainer) {
+            elements.navPresencaContainer.style.display = userPermissions.pode_ver_presenca ? 'block' : 'none';
+        }
+    }
+    
+    function handlePresencaClick(e) {
+        if (e) e.preventDefault();
+        
+        if (userPermissions.tipo_admin === 'global') {
+            // Admin Global: mostrar modal com todas as turmas
+            showClassSelectorModal();
+        } else if (userPermissions.tipo_admin === 'formare') {
+            // Admin Formare: ir direto para Formare
+            window.location.href = 'presenca/presenca_formare.html';
+        } else if (userPermissions.tipo_admin === 'turma' && userPermissions.turma_unica) {
+            // Admin de turma específica: ir direto para sua turma
+            const arquivo = turmaArquivos[userPermissions.turma_unica];
+            if (arquivo) {
+                window.location.href = arquivo;
+            } else {
+                showMessage('Erro', 'Arquivo de presença não encontrado para sua turma.', 'error');
+            }
+        } else {
+            showMessage('Acesso Negado', 'Você não tem permissão para acessar a lista de presença.', 'warning');
+        }
+    }
+    
+    function showClassSelectorModal() {
+        if (!elements.classGrid) return;
+        
+        // Filtrar turmas que o admin pode acessar
+        let turmasParaMostrar = turmasList;
+        if (userPermissions.turmas_permitidas.length > 0 && userPermissions.tipo_admin !== 'global') {
+            turmasParaMostrar = turmasList.filter(t => userPermissions.turmas_permitidas.includes(t));
+        }
+        
+        if (turmasParaMostrar.length === 0) {
+            showMessage('Aviso', 'Nenhuma turma disponível para acesso.', 'warning');
+            return;
+        }
+        
+        elements.classGrid.innerHTML = '';
+        
+        turmasParaMostrar.forEach(turma => {
+            const arquivo = turmaArquivos[turma];
+            if (!arquivo) return;
+            
+            const card = document.createElement('div');
+            card.className = 'class-card';
+            
+            let icon = 'bi bi-building';
+            if (turma.includes('Formare')) icon = 'bi bi-star-fill';
+            else if (turma.includes('Aprender')) icon = 'bi bi-book-half';
+            else if (turma.includes('Informática')) icon = 'bi bi-pc-display';
+            else if (turma.includes('Inglês')) icon = 'bi bi-chat-dots';
+            else if (turma.includes('Robótica')) icon = 'bi bi-robot';
+            
+            card.innerHTML = `
+                <i class="${icon}"></i>
+                <span>${turma}</span>
+            `;
+            card.onclick = () => {
+                elements.classSelectorModal.hide();
+                window.location.href = arquivo;
+            };
+            elements.classGrid.appendChild(card);
+        });
+        
+        elements.classSelectorModal.show();
+    }
+
+    // ==================== FUNÇÕES DE AUTENTICAÇÃO ====================
     function getAuthHeader() {
         const token = sessionStorage.getItem('adminToken');
         if (token) return { 'Authorization': 'Bearer ' + token };
         return {};
     }
 
-    async function checkSession() {
-        const token = sessionStorage.getItem('adminToken');
-        if (!token) return false;
-        try {
-            const response = await fetch(`${API_URL}/api/admin/backup`, { headers: getAuthHeader() });
-            if (response.status === 401) {
-                sessionStorage.removeItem('adminToken');
-                sessionStorage.removeItem('adminName');
-                return false;
-            }
-            return response.ok;
-        } catch (error) { return false; }
+  async function checkSession() {
+    const token = sessionStorage.getItem('adminToken');
+    if (!token) return false;
+    
+    try {
+        // Em vez de testar com /backup (que dá 403 para não-globais),
+        // testar com um endpoint que TODOS os admins podem acessar
+        const response = await fetch(`${API_URL}/api/turmas`, { headers: getAuthHeader() });
+        
+        if (response.status === 401) {
+            // Token expirado ou inválido
+            sessionStorage.removeItem('adminToken');
+            sessionStorage.removeItem('adminName');
+            return false;
+        }
+        
+        if (response.status === 403) {
+            // Token é válido, mas usuário não tem permissão para este endpoint
+            // Isso é OK - o token ainda é válido!
+            return true;
+        }
+        
+        // Se chegou aqui, response.ok é true (200)
+        return response.ok;
+        
+    } catch (error) { 
+        console.error('Erro ao verificar sessão:', error);
+        return false; 
     }
-
+}
     document.addEventListener('DOMContentLoaded', async function () {
         if (await checkSession()) {
             enableUIElements(true);
+            await loadUserPermissions();
             await loadDashboard();
             await loadTurmas();
             setInterval(async () => { if (!await checkSession()) { showMessage('Sessão expirada', 'Faça login novamente.', 'warning'); handleLogout(); } }, 5 * 60 * 1000);
@@ -1124,6 +1421,12 @@
         setupEventListeners();
         setupAvisosEventListeners();
         setupDefaultDates();
+        
+        // Configurar evento de presença
+        const navPresenca = document.getElementById('navPresenca');
+        if (navPresenca) {
+            navPresenca.addEventListener('click', handlePresencaClick);
+        }
     });
 
     function setupEventListeners() {
@@ -1210,6 +1513,7 @@
                 sessionStorage.setItem('adminName', data.admin);
                 elements.loginModal.hide();
                 enableUIElements(true);
+                await loadUserPermissions();
                 await loadDashboard();
                 await loadTurmas();
                 showMessage('Bem-vindo!', `Login realizado como ${data.admin}`, 'success');
@@ -1230,28 +1534,118 @@
     }
 
     async function loadDashboard() {
-        try {
-            showLoading(elements.refreshDashboard);
-            if (!sessionStorage.getItem('adminToken')) { handleLogout(); return; }
-            const backupResponse = await fetch(`${API_URL}/api/admin/backup`, { headers: getAuthHeader() });
-            if (backupResponse.status === 401) { handleLogout(); return; }
-            if (backupResponse.ok) {
-                const backupData = await backupResponse.json();
-                elements.totalTurmas.textContent = Object.keys(backupData.alunos).length;
-                let totalAlunos = 0;
-                for (const turma in backupData.alunos) totalAlunos += Object.keys(backupData.alunos[turma]).length;
-                elements.totalAlunos.textContent = totalAlunos;
+    try {
+        showLoading(elements.refreshDashboard);
+        if (!sessionStorage.getItem('adminToken')) { handleLogout(); return; }
+        
+        // ========== VERIFICAR TIPO DE ADMIN PRIMEIRO ==========
+        const isGlobalAdmin = userPermissions.tipo_admin === 'global';
+        
+        // ========== PARTE 1: CARREGAR TOTAL DE TURMAS E ALUNOS ==========
+        if (isGlobalAdmin) {
+            // Só Admin Global tenta carregar backup
+            try {
+                const backupResponse = await fetch(`${API_URL}/api/admin/backup`, { headers: getAuthHeader() });
+                if (backupResponse.status === 401) { handleLogout(); return; }
+                if (backupResponse.ok) {
+                    const backupData = await backupResponse.json();
+                    elements.totalTurmas.textContent = Object.keys(backupData.alunos).length;
+                    let totalAlunos = 0;
+                    for (const turma in backupData.alunos) totalAlunos += Object.keys(backupData.alunos[turma]).length;
+                    elements.totalAlunos.textContent = totalAlunos;
+                }
+            } catch (backupError) {
+                console.warn('Erro ao carregar backup:', backupError);
+                await loadDashboardFromPermissions();
             }
-            const historico = await carregarHistorico();
-            if (elements.lastActions) {
+        } else {
+            // Admin Formare ou Turma: usa método alternativo
+            await loadDashboardFromPermissions();
+        }
+        
+        // ========== PARTE 2: CARREGAR HISTÓRICO (Só Admin Global) ==========
+        if (isGlobalAdmin && elements.lastActions) {
+            try {
+                const historico = await carregarHistorico();
                 elements.lastActions.innerHTML = '';
-                if (historico && Array.isArray(historico)) historico.forEach(acao => addActionToUI(acao, false));
+                if (historico && Array.isArray(historico) && historico.length > 0) {
+                    historico.forEach(acao => addActionToUI(acao, false));
+                } else if (historico && historico.length === 0) {
+                    elements.lastActions.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Nenhuma ação recente</td></tr>';
+                }
+            } catch (historyError) {
+                console.warn('Erro ao carregar histórico:', historyError);
+                elements.lastActions.innerHTML = '<tr><td colspan="4" class="text-center text-muted">📋 Histórico não disponível</td></tr>';
             }
-            if (elements.lastUpdate) elements.lastUpdate.textContent = `Última atualização: ${new Date().toLocaleString()}`;
-            if (elements.newActionsBadge) elements.newActionsBadge.style.display = 'none';
-        } catch (error) { console.error(error); }
-        finally { hideLoading(elements.refreshDashboard, '<i class="bi bi-arrow-clockwise me-1"></i> Atualizar'); }
+        } else if (elements.lastActions && !isGlobalAdmin) {
+            // Mensagem amigável para não-globais
+            elements.lastActions.innerHTML = '<tr><td colspan="4" class="text-center text-muted">🔒 Histórico disponível apenas para Administradores Globais</td></tr>';
+        }
+        
+        if (elements.lastUpdate) elements.lastUpdate.textContent = `Última atualização: ${new Date().toLocaleString()}`;
+        if (elements.newActionsBadge) elements.newActionsBadge.style.display = 'none';
+        
+    } catch (error) { 
+        console.error('Erro no dashboard:', error); 
     }
+    finally { 
+        hideLoading(elements.refreshDashboard, '<i class="bi bi-arrow-clockwise me-1"></i> Atualizar'); 
+    }
+}
+
+// ========== NOVA FUNÇÃO: Carregar dados baseado nas permissões ==========
+async function loadDashboardFromPermissions() {
+    try {
+        // Determinar quais turmas buscar
+        let turmasParaBuscar = [];
+        
+        if (userPermissions.turmas_permitidas && userPermissions.turmas_permitidas.length > 0) {
+            turmasParaBuscar = userPermissions.turmas_permitidas;
+        } else if (turmasList && turmasList.length > 0) {
+            turmasParaBuscar = turmasList;
+        } else {
+            // Fallback: lista padrão
+            turmasParaBuscar = ['Formare 2026', 'Aprender A+ (Terça-Feira)', 'Aprender A+ (Quarta-Feira)', 'Aprender A+ (Quinta-Feira)', 'Informática (Atividade complementar)', 'Inglês (Atividade complementar)', 'Informática II - Projeto Vida (Robótica)'];
+        }
+        
+        // Total de turmas
+        elements.totalTurmas.textContent = turmasParaBuscar.length;
+        
+        // Total de alunos (buscar turma por turma)
+        let totalAlunos = 0;
+        let turmasComErro = [];
+        
+        for (const turma of turmasParaBuscar) {
+            try {
+                const response = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(turma)}/alunos`, { 
+                    headers: getAuthHeader() 
+                });
+                
+                if (response.ok) {
+                    const alunos = await response.json();
+                    totalAlunos += Object.keys(alunos).length;
+                } else if (response.status === 403) {
+                    turmasComErro.push(turma);
+                }
+            } catch (e) {
+                console.warn(`Erro ao buscar alunos da turma ${turma}:`, e);
+                turmasComErro.push(turma);
+            }
+        }
+        
+        elements.totalAlunos.textContent = totalAlunos;
+        
+        // Se houver turmas com erro, mostrar aviso sutil (opcional)
+        if (turmasComErro.length > 0 && elements.connectionStatus) {
+            console.log(`⚠️ ${turmasComErro.length} turma(s) sem acesso: ${turmasComErro.join(', ')}`);
+        }
+        
+    } catch (error) {
+        console.error('Erro ao carregar dados por permissão:', error);
+        elements.totalTurmas.textContent = '?';
+        elements.totalAlunos.textContent = '?';
+    }
+}
 
     async function carregarHistorico() {
         try {
@@ -1277,7 +1671,14 @@
             if (!response.ok) throw new Error();
             const data = await response.json();
             if (data.success && data.turmas) turmasList = data.turmas.map(t => t.nome);
-            else turmasList = ['Formare 2026', 'Aprender A+ (Terça-Feira)', 'Aprender A+ (Quarta-Feira)', 'Aprender A+ (Quinta-Feira)', 'Informática (Atividade complementar)', 'Inglês (Atividade complementar)'];
+            else turmasList = ['Formare 2026', 'Aprender A+ (Terça-Feira)', 'Aprender A+ (Quarta-Feira)', 'Aprender A+ (Quinta-Feira)', 'Informática (Atividade complementar)', 'Inglês (Atividade complementar)', 'Informática II - Projeto Vida (Robótica)'];
+            
+            // Filtrar turmas baseado nas permissões do usuário
+            let turmasParaSelect = turmasList;
+            if (userPermissions.turmas_permitidas.length > 0 && userPermissions.tipo_admin !== 'global') {
+                turmasParaSelect = turmasList.filter(t => userPermissions.turmas_permitidas.includes(t));
+            }
+            
             [elements.turmaAluno, elements.turmaLista, elements.turmaEscala, elements.importTurma].forEach(select => {
                 if (!select) return;
                 select.innerHTML = '';
@@ -1285,7 +1686,7 @@
                 if (select === elements.turmaLista) { opt.value = ''; opt.textContent = 'Todas as turmas'; }
                 else { opt.value = ''; opt.textContent = 'Selecione a turma'; opt.disabled = true; opt.selected = true; }
                 select.appendChild(opt);
-                turmasList.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; select.appendChild(o); });
+                turmasParaSelect.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; select.appendChild(o); });
             });
             if (elements.totalTurmas) elements.totalTurmas.textContent = turmasList.length;
             return turmasList;
@@ -1336,22 +1737,26 @@
             showLoading(elements.listarAlunosBtn);
             const turma = elements.turmaLista.value;
             let alunos = {};
+            
+            // Filtrar turmas baseado nas permissões
+            let turmasParaBuscar = turmasList;
             if (turma) {
-                const res = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(turma)}/alunos`, { headers: getAuthHeader() });
-                if (res.ok) alunos[turma] = await res.json();
-            } else {
-                for (const t of turmasList) {
-                    const res = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(t)}/alunos`, { headers: getAuthHeader() });
-                    if (res.ok) alunos[t] = await res.json();
-                }
+                turmasParaBuscar = [turma];
+            } else if (userPermissions.turmas_permitidas.length > 0 && userPermissions.tipo_admin !== 'global') {
+                turmasParaBuscar = turmasList.filter(t => userPermissions.turmas_permitidas.includes(t));
+            }
+            
+            for (const t of turmasParaBuscar) {
+                const res = await fetch(`${API_URL}/api/admin/turmas/${encodeURIComponent(t)}/alunos`, { headers: getAuthHeader() });
+                if (res.ok) alunos[t] = await res.json();
             }
             if (elements.alunosList) elements.alunosList.innerHTML = '';
-            for (const [turma, turmaAlunos] of Object.entries(alunos)) {
+            for (const [turmaNome, turmaAlunos] of Object.entries(alunos)) {
                 for (const [edv, nome] of Object.entries(turmaAlunos)) {
                     const isAdmin = nome.includes('👩‍🏫') || nome.includes('👨‍🏫');
                     const nomeDisplay = isAdmin ? nome.replace(/👩‍🏫|👨‍🏫/g, '') : nome;
                     const row = document.createElement('tr');
-                    row.innerHTML = `<td><span class="badge" style="background:var(--surface-3);color:var(--text)">${turma}</span></td><td><span style="font-family:monospace">${edv}</span></td><td>${nomeDisplay} ${isAdmin ? '<span class="badge bg-warning text-dark">Admin</span>' : ''}</td><td class="action-buttons"><button class="btn btn-sm btn-danger btn-remove-aluno" data-turma="${turma}" data-edv="${edv}"><i class="bi bi-trash"></i></button></td>`;
+                    row.innerHTML = `<td><span class="badge" style="background:var(--surface-3);color:var(--text)">${turmaNome}</span></td><td><span style="font-family:monospace">${edv}</span></td><td>${nomeDisplay} ${isAdmin ? '<span class="badge bg-warning text-dark">Admin</span>' : ''}</td><td class="action-buttons"><button class="btn btn-sm btn-danger btn-remove-aluno" data-turma="${turmaNome}" data-edv="${edv}"><i class="bi bi-trash"></i></button></td>`;
                     if (elements.alunosList) elements.alunosList.appendChild(row);
                 }
             }
@@ -1373,6 +1778,10 @@
 
     async function loadUploads() {
         try {
+            if (!userPermissions.pode_ver_uploads) {
+                if (elements.uploadsGrid) elements.uploadsGrid.innerHTML = '<div class="empty-uploads"><i class="bi bi-lock"></i><p>Você não tem permissão para acessar esta área.</p></div>';
+                return;
+            }
             showLoading(elements.refreshUploadsBtn);
             const res = await fetch(`${API_URL}/api/admin/uploads/list`, { headers: getAuthHeader() });
             if (!res.ok) throw new Error();
@@ -1397,6 +1806,10 @@
     }
 
     async function carregarEscala() {
+        if (!userPermissions.pode_ver_escalas) {
+            showMessage('Acesso Negado', 'Você não tem permissão para acessar escalas.', 'warning');
+            return;
+        }
         const turma = elements.turmaEscala?.value;
         if (!turma) { showMessage('Aviso', 'Selecione uma turma', 'warning'); return; }
         currentTurmaEscala = turma;
@@ -1422,6 +1835,10 @@
     }
 
     async function salvarEscala() {
+        if (!userPermissions.pode_ver_escalas) {
+            showMessage('Acesso Negado', 'Você não tem permissão para salvar escalas.', 'warning');
+            return;
+        }
         if (!currentTurmaEscala) { showMessage('Aviso', 'Selecione uma turma', 'warning'); return; }
         try {
             showLoading(elements.salvarEscalaBtn);
@@ -1472,6 +1889,10 @@
     }
 
     async function importBackup() {
+        if (!userPermissions.pode_ver_backup) {
+            showMessage('Acesso Negado', 'Você não tem permissão para importar backup.', 'warning');
+            return;
+        }
         if (!elements.backupFile?.files?.length) { showMessage('Aviso', 'Selecione um arquivo', 'warning'); return; }
         const file = elements.backupFile.files[0];
         const reader = new FileReader();
@@ -1491,8 +1912,12 @@
         reader.readAsText(file);
     }
 
-    // AVISOS
+    // ==================== AVISOS ====================
     function abrirModalAviso(aviso = null) {
+        if (!userPermissions.pode_ver_avisos) {
+            showMessage('Acesso Negado', 'Você não tem permissão para gerenciar avisos.', 'warning');
+            return;
+        }
         currentAvisoId = aviso?.id || null;
         uploadedImagePath = null;
         if (elements.avisoForm) elements.avisoForm.reset();
@@ -1542,6 +1967,10 @@
     }
 
     async function salvarAviso() {
+        if (!userPermissions.pode_ver_avisos) {
+            showMessage('Acesso Negado', 'Você não tem permissão para salvar avisos.', 'warning');
+            return;
+        }
         try {
             showLoading(elements.salvarAvisoBtn);
             const data = {
@@ -1568,6 +1997,7 @@
     }
 
     async function carregarAvisos() {
+        if (!userPermissions.pode_ver_avisos) return;
         try {
             const res = await fetch(`${API_URL}/api/admin/alerts`, { headers: getAuthHeader() });
             const avisos = await res.json();
