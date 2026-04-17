@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Registro de Presença - Formare 2026</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
@@ -813,7 +813,7 @@
             <img src="logu-black.svg" alt="Logo" class="logo" onerror="this.src='logu.svg'">
             <div class="title-area">
                 <h1>Registro de Presença</h1>
-                <p>FORMARE 2026</p>
+                <p>Formare 2026</p>
             </div>
         </div>
         <div class="user-card">
@@ -821,7 +821,7 @@
                 <div class="user-avatar" id="userAvatar">A</div>
                 <div class="user-details">
                     <span class="user-name" id="userName">Carregando...</span>
-                    <span class="turma-badge">FORMARE 2026</span>
+                    <span class="turma-badge">Formare 2026</span>
                 </div>
             </div>
             <a href="#" class="logout-link" id="logoutBtn">
@@ -990,7 +990,7 @@
         let pendingDateChange = null;
         let attendanceChart = null;
         let attendanceMetadata = { createdBy: null, updatedBy: null, createdAt: null, updatedAt: null };
-        let adminNames = []; // Agora carregado dinamicamente do backend
+        let adminNames = [];
 
         // ==================== DOM ELEMENTS ====================
         const datePicker = document.getElementById('datePicker');
@@ -1365,13 +1365,11 @@
             return {};
         }
 
-        // Função para carregar nomes de admin do backend
         async function loadAdminNames() {
             try {
                 const response = await fetch(`${API_BASE}/admin/permissions`, { headers: getAuthHeader() });
                 if (response.ok) {
                     const data = await response.json();
-                    // Não armazenamos nomes específicos por segurança
                     return true;
                 }
             } catch (error) {
@@ -1381,8 +1379,6 @@
         }
 
         function isAdminByName(nome) {
-            // Admin não é mais identificado por nome hardcoded, mas pelo backend
-            // Apenas verifica se o usuário logado é admin baseado na sessão
             return sessionStorage.getItem('isAdmin') === 'true';
         }
 
@@ -1751,7 +1747,6 @@
                     throw new Error('Arquivo vazio gerado');
                 }
                 
-                // 🔥 CORREÇÃO: Construir nome do arquivo com o nome da turma
                 const turmaLimpa = TURMA_NOME
                     .replace(/ /g, '_')
                     .replace(/\(/g, '')
@@ -1812,6 +1807,59 @@
             return true;
         }
 
+        // ==================== VERIFICAÇÃO DE PERMISSÃO DE ACESSO ====================
+        async function verificarPermissaoAcesso() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/permissions`, {
+                    headers: getAuthHeader()
+                });
+                
+                if (!response.ok) {
+                    console.error('Erro ao carregar permissões');
+                    return false;
+                }
+                
+                const data = await response.json();
+                const tipoAdmin = data.tipo_admin;
+                const turmasPermitidas = data.turmas_permitidas || [];
+                
+                if (tipoAdmin === 'global') {
+                    console.log('✅ Admin global - acesso liberado');
+                    return true;
+                }
+                
+                if (tipoAdmin === 'formare') {
+                    if (TURMA_NOME !== 'Formare 2026') {
+                        showNotification('❌ Acesso negado! Administradores Formare só podem acessar a turma Formare.', 'error');
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 2000);
+                        return false;
+                    }
+                    console.log('✅ Admin Formare - acesso liberado para Formare');
+                    return true;
+                }
+                
+                if (tipoAdmin === 'turma') {
+                    if (!turmasPermitidas.includes(TURMA_NOME)) {
+                        showNotification(`❌ Acesso negado! Você só tem permissão para acessar sua própria turma.`, 'error');
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 2000);
+                        return false;
+                    }
+                    console.log('✅ Admin de turma - acesso liberado para sua turma');
+                    return true;
+                }
+                
+                return true;
+                
+            } catch (error) {
+                console.error('Erro ao verificar permissão:', error);
+                return false;
+            }
+        }
+
         // ==================== EVENT LISTENERS ====================
         datePicker.addEventListener('change', async function() {
             validateDateWithModal();
@@ -1838,6 +1886,10 @@
         // ==================== INITIALIZATION ====================
         async function init() {
             if (!checkAuth()) return;
+            
+            const temPermissao = await verificarPermissaoAcesso();
+            if (!temPermissao) return;
+            
             const adminName = sessionStorage.getItem('adminName') || 'Administrador';
             userNameSpan.textContent = adminName;
             userAvatar.textContent = adminName.charAt(0).toUpperCase();
