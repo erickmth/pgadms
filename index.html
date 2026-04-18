@@ -902,103 +902,95 @@
             padding: 20px;
         }
 
-        /* Modal de seleção de turma para presença */
+        /* ============================================ */
+        /* MODAL DE SELEÇÃO DE TURMA - SEM ROLAGEM */
+        /* ============================================ */
+        .class-selector-modal .modal-dialog {
+            margin: 1.75rem auto;
+            max-width: 700px;
+        }
+
         .class-selector-modal .modal-content {
-            max-width: 500px;
+            max-height: none;
+            overflow: visible;
+        }
+
+        .class-selector-modal .modal-body {
+            max-height: none;
+            overflow: visible;
+            padding: 20px 24px;
         }
 
         .class-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             margin-top: 16px;
+            max-height: none;
+            overflow: visible;
         }
 
         .class-card {
             background: var(--surface-2);
             border: 1.5px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
+            border-radius: var(--radius-sm);
+            padding: 14px 12px;
             text-align: center;
             cursor: pointer;
             transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
         }
 
         .class-card:hover {
             border-color: var(--primary);
-            background: var(--primary-light);
+            background: rgba(236, 51, 51, 0.05);
             transform: translateY(-2px);
         }
 
         .class-card i {
-            font-size: 28px;
+            font-size: 24px;
             color: var(--primary);
-            margin-bottom: 8px;
+            margin-bottom: 0;
             display: block;
         }
 
         .class-card span {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             color: var(--text);
-        }
-
-        @media (max-width: 992px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 280px;
-            }
-
-            .sidebar.show {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .mobile-menu-toggle {
-                display: flex;
-            }
-
-            .sidebar-overlay.show {
-                display: block;
-            }
-
-            .page-body {
-                padding: 20px 16px;
-            }
-
-            .page-header {
-                padding: 16px 20px;
-                padding-left: 64px;
-            }
-
-            .upload-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 12px;
-            }
-
-            .upload-thumbnail {
-                height: 120px;
-            }
-
-            .class-grid {
-                grid-template-columns: 1fr;
-            }
+            line-height: 1.3;
+            word-break: break-word;
         }
 
         @media (max-width: 576px) {
-            .upload-grid {
-                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            .class-selector-modal .modal-dialog {
+                max-width: 95%;
+                margin: 10px auto;
             }
-
-            .upload-thumbnail {
-                height: 100px;
+            
+            .class-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
             }
-
-            .upload-name {
-                font-size: 11px;
+            
+            .class-card {
+                padding: 12px;
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 12px;
+            }
+            
+            .class-card i {
+                font-size: 20px;
+                margin-bottom: 0;
+            }
+            
+            .class-card span {
+                font-size: 13px;
+                text-align: left;
             }
         }
 
@@ -1008,7 +1000,6 @@
             pointer-events: none;
         }
 
-        /* Badge de tipo de admin no header */
         .admin-badge {
             background: var(--primary-light);
             color: var(--primary);
@@ -1022,7 +1013,6 @@
 </head>
 
 <body>
-
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="bi bi-list"></i></button>
@@ -1156,7 +1146,7 @@
                 </div>
             </div>
 
-            <!-- ALUNOS - COM ADICIONAR INDIVIDUAL + IMPORTAR EXCEL -->
+            <!-- ALUNOS -->
             <div class="tab-pane fade" id="alunos">
                 <div class="page-header">
                     <div>
@@ -1168,7 +1158,6 @@
                 </div>
                 <div class="page-body">
                     <div class="row g-4">
-                        <!-- CARD: ADICIONAR ALUNO INDIVIDUAL -->
                         <div class="col-md-5">
                             <div class="card">
                                 <div class="card-header">
@@ -1195,8 +1184,6 @@
                                     </form>
                                 </div>
                             </div>
-
-                            <!-- CARD: IMPORTAÇÃO EXCEL/CSV -->
                             <div class="card mt-4">
                                 <div class="card-header">
                                     <h5><i class="bi bi-file-excel"></i> Importar Alunos em Lote</h5>
@@ -1210,17 +1197,12 @@
                                             Excel)</label><input type="file" class="form-control" id="importFile"
                                             accept=".csv,.xlsx,.xls"><small class="form-text text-muted mt-2 d-block"><i
                                                 class="bi bi-info-circle me-1"></i> Formato esperado: coluna A = EDV,
-                                            coluna B = Nome (primeira linha ignorada como cabeçalho)</small><small
-                                            class="form-text text-muted d-block mt-1"><i
-                                                class="bi bi-file-earmark-excel me-1"></i> Exemplo:
-                                            <code>EDV,Nome<br>12345,João Silva</code></small></div>
+                                            coluna B = Nome</small></div>
                                     <button class="btn btn-success w-100" id="importAlunosBtn"><i
                                             class="bi bi-upload me-2"></i> Importar Alunos</button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- CARD: LISTA DE ALUNOS -->
                         <div class="col-md-7">
                             <div class="card">
                                 <div class="card-header">
@@ -1283,8 +1265,7 @@
                                     type="text" class="form-control" id="semanaAtual"
                                     placeholder="Ex: Semana 02: 28/04 - 30/04" style="max-width:480px"></div>
                             <div class="d-flex align-items-center gap-2 mb-3">
-                                <h5
-                                    style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:0">
+                                <h5 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:0">
                                     Itens da Escala</h5>
                                 <div style="flex:1;height:1px;background:var(--border)"></div>
                             </div>
@@ -1410,7 +1391,7 @@
                 </div>
             </div>
 
-            <!-- SOBRE - ATUALIZADO -->
+            <!-- SOBRE -->
             <div class="tab-pane fade" id="sobre">
                 <div class="page-header">
                     <div>
@@ -1444,9 +1425,7 @@
                                                 múltiplas regiões no <strong>Sul do Brasil</strong> (Curitiba,
                                                 Joinville, Pomerode), com expansão planejada para outras localidades.
                                             </p>
-
-                                            <h4
-                                                style="font-size:15px;font-weight:700;margin-bottom:12px;margin-top:20px">
+                                            <h4 style="font-size:15px;font-weight:700;margin-bottom:12px;margin-top:20px">
                                                 <i class="bi bi-code-slash text-primary me-2"></i> Tecnologias
                                                 Utilizadas
                                             </h4>
@@ -1479,12 +1458,11 @@
                                             </h4>
                                             <p style="font-size:13.5px;color:var(--text-muted);line-height:1.7">
                                                 <strong>Erick Matheus</strong>, estudante do programa <strong>Formare
-                                                    (2025)</strong>. Ingressou na <strong>Bosch em 2026</strong> pela
-                                                Engeneering Technical School (meio oficial). É
-                                                voluntário ativo no <strong>Instituto Robert Bosch</strong>, fornecendo
-                                                suporte e evoluindo este sistema para beneficiar toda a comunidade.
+                                                    (2025)</strong>. Ingressou na <strong>Bosch em 2026</strong> como
+                                                ETS (meio oficial). É voluntário ativo no <strong>Instituto Robert
+                                                    Bosch</strong>, fornecendo suporte e evoluindo este sistema para
+                                                beneficiar toda a comunidade.
                                             </p>
-
                                             <h4 style="font-size:15px;font-weight:700;margin-bottom:14px"><i
                                                     class="bi bi-chat-dots text-primary me-2"></i> Contato & Suporte
                                             </h4>
@@ -1503,12 +1481,10 @@
                                                     style="font-size:13px"><i class="bi bi-linkedin me-2"
                                                         style="color:#0077b5"></i> linkedin.com/in/erickleguisamon</a>
                                             </div>
-
                                             <h4 style="font-size:15px;font-weight:700;margin-bottom:10px"><i
                                                     class="bi bi-heart-fill me-2" style="color:var(--primary)"></i>
                                                 Agradecimentos</h4>
-                                            <p
-                                                style="font-size:13.5px;color:var(--text-muted);line-height:1.7;margin:0">
+                                            <p style="font-size:13.5px;color:var(--text-muted);line-height:1.7;margin:0">
                                                 Agradecimento especial aos <strong>professores e colegas do
                                                     Formare</strong> pelo incentivo, à equipe do <strong>Instituto
                                                     Robert Bosch</strong> pela confiança e a todos que contribuíram com
@@ -1551,6 +1527,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="confirmModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -1565,6 +1542,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="messageModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -1578,6 +1556,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="avisoModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -1649,6 +1628,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade file-viewer-modal" id="fileViewerModal">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
@@ -1671,8 +1651,8 @@
         </div>
     </div>
 
-    <!-- Modal de Seleção de Turma para Presença (Admin Global) -->
-    <div class="modal fade class-selector-modal" id="classSelectorModal" tabindex="-1" data-bs-backdrop="static">
+    <!-- Modal de Seleção de Turma para Presença (SEM ROLAGEM) -->
+    <div class="modal fade class-selector-modal" id="classSelectorModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
@@ -1680,7 +1660,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="text-muted mb-3">Selecione a turma para acessar a lista de presença:</p>
+                    <p class="text-muted mb-2 text-center">Selecione a turma para acessar a lista de presença:</p>
                     <div id="classGrid" class="class-grid"></div>
                 </div>
                 <div class="modal-footer">
@@ -1692,12 +1672,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // No início do index.html
+        // Desabilita logs em produção
         if (window.location.hostname !== 'localhost') {
             console.log = function () { };
             console.warn = function () { };
             console.error = function () { };
         }
+
         // ==================== CONFIGURAÇÕES E VARIÁVEIS GLOBAIS ====================
         const API_URL = 'https://erickmth.pythonanywhere.com';
         let currentTurmaEscala = '';
@@ -1705,7 +1686,6 @@
         let currentAvisoId = null;
         let uploadedImagePath = null;
 
-        // Variáveis de permissão do usuário
         let userPermissions = {
             tipo_admin: null,
             turmas_permitidas: [],
@@ -1719,35 +1699,32 @@
             turma_unica: null
         };
 
-        // LISTA COMPLETA DAS 10 TURMAS (NOVOS NOMES - ATUALIZADO)
-        const TODAS_TURMAS = [
-            'Formare 2026',
-            'Aprender A+ (Terça-Feira)',
-            'Aprender A+ (Quarta-Feira)',
-            'Aprender A+ (Quinta-Feira)',
-            'Informática Básica (Curitiba)',
-            'Inglês Básico (Curitiba)',
-            'Informática II - Robótica (Curitiba)',
-            'Inglês Básico (Joinville)',
-            'Inglês Básico (Pomerode)',
-            'Informática Básica (Joinville)'
-        ];
+const TODAS_TURMAS = [
+    'Formare 2026',
+    'Aprender A+ (Terça-Feira)',
+    'Aprender A+ (Segunda-Feira)',  
+    'Aprender A+ (Quinta-Feira)',
+    'Informática Básica (Curitiba)',
+    'Inglês Básico (Curitiba)',
+    'Informática II - Robótica (Curitiba)',
+    'Inglês Básico (Joinville)',
+    'Inglês Básico (Pomerode)',
+    'Informática Básica (Joinville)'
+];
 
-        // Mapeamento de turmas para seus arquivos HTML (ATUALIZADO COM AS 10 TURMAS)
-        const turmaArquivos = {
-            'Formare 2026': 'presenca/presenca_formare.html',
-            'Aprender A+ (Terça-Feira)': 'presenca/presenca_aprenderterca.html',
-            'Aprender A+ (Quarta-Feira)': 'presenca/presenca_aprenderquarta.html',
-            'Aprender A+ (Quinta-Feira)': 'presenca/presenca_aprenderquinta.html',
-            'Informática Básica (Curitiba)': 'presenca/presenca_informatica.html',
-            'Inglês Básico (Curitiba)': 'presenca/presenca_ingles.html',
-            'Informática II - Robótica (Curitiba)': 'presenca/presenca_robotica.html',
-            'Inglês Básico (Joinville)': 'presenca/presenca_ingles_joinville.html',
-            'Inglês Básico (Pomerode)': 'presenca/presenca_ingles_pomerode.html',
-            'Informática Básica (Joinville)': 'presenca/presenca_informatica_joinville.html'
-        };
+const turmaArquivos = {
+    'Formare 2026': 'presenca/presenca_formare.html',
+    'Aprender A+ (Terça-Feira)': 'presenca/presenca_aprenderterca.html',
+    'Aprender A+ (Segunda-Feira)': 'presenca/presenca_aprendersegunda.html',  // ALTERADO: a chave mudou, mas o arquivo continua o mesmo
+    'Aprender A+ (Quinta-Feira)': 'presenca/presenca_aprenderquinta.html',
+    'Informática Básica (Curitiba)': 'presenca/presenca_informatica.html',
+    'Inglês Básico (Curitiba)': 'presenca/presenca_ingles.html',
+    'Informática II - Robótica (Curitiba)': 'presenca/presenca_robotica.html',
+    'Inglês Básico (Joinville)': 'presenca/presenca_ingles_joinville.html',
+    'Inglês Básico (Pomerode)': 'presenca/presenca_ingles_pomerode.html',
+    'Informática Básica (Joinville)': 'presenca/presenca_informatica_joinville.html'
+};
 
-        // Elementos do DOM
         const elements = {
             loginModal: new bootstrap.Modal('#loginModal'),
             confirmModal: new bootstrap.Modal('#confirmModal'),
@@ -1834,7 +1811,6 @@
                 userPermissions.turmas_permitidas = data.turmas_permitidas || [];
                 userPermissions.permissoes = data.permissoes || [];
 
-                // Determinar permissões específicas
                 userPermissions.pode_ver_uploads = userPermissions.permissoes.includes('upload') || userPermissions.tipo_admin === 'global';
                 userPermissions.pode_ver_alunos = userPermissions.permissoes.includes('alunos') || userPermissions.tipo_admin === 'global';
                 userPermissions.pode_ver_escalas = userPermissions.permissoes.includes('escalas') || userPermissions.tipo_admin === 'global';
@@ -1842,34 +1818,23 @@
                 userPermissions.pode_ver_backup = userPermissions.permissoes.includes('backup') || userPermissions.tipo_admin === 'global';
                 userPermissions.pode_ver_presenca = userPermissions.permissoes.includes('presenca') || userPermissions.tipo_admin === 'global' || userPermissions.tipo_admin === 'formare' || userPermissions.tipo_admin === 'turma';
 
-                // Para admin de turma, pegar a turma única
                 if (userPermissions.tipo_admin === 'turma' && userPermissions.turmas_permitidas.length === 1) {
                     userPermissions.turma_unica = userPermissions.turmas_permitidas[0];
                 }
 
-                // ========== ATUALIZAR BADGE COM O NOME DA TURMA ==========
                 if (elements.adminTypeBadge) {
                     let tipoTexto = '';
                     switch (userPermissions.tipo_admin) {
-                        case 'global':
-                            tipoTexto = '👑 Admin Global';
-                            break;
-                        case 'formare':
-                            tipoTexto = '⭐ Admin Formare';
-                            break;
+                        case 'global': tipoTexto = '👑 Admin Global'; break;
+                        case 'formare': tipoTexto = '⭐ Admin Formare'; break;
                         case 'turma':
                             if (userPermissions.turma_unica) {
                                 let nomeTurma = userPermissions.turma_unica;
-                                if (nomeTurma.length > 30) {
-                                    nomeTurma = nomeTurma.substring(0, 27) + '...';
-                                }
+                                if (nomeTurma.length > 30) nomeTurma = nomeTurma.substring(0, 27) + '...';
                                 tipoTexto = `📚 Admin - ${nomeTurma}`;
-                            } else {
-                                tipoTexto = '📚 Admin de Turma';
-                            }
+                            } else { tipoTexto = '📚 Admin de Turma'; }
                             break;
-                        default:
-                            tipoTexto = '';
+                        default: tipoTexto = '';
                     }
                     elements.adminTypeBadge.textContent = tipoTexto;
                     elements.adminTypeBadge.style.display = tipoTexto ? 'inline-block' : 'none';
@@ -1905,28 +1870,42 @@
 
         function showClassSelectorModal() {
             if (!elements.classGrid) return;
+            
             let turmasParaMostrar = turmasList.length > 0 ? turmasList : TODAS_TURMAS;
+            
             if (userPermissions.turmas_permitidas.length > 0 && userPermissions.tipo_admin !== 'global') {
                 turmasParaMostrar = turmasParaMostrar.filter(t => userPermissions.turmas_permitidas.includes(t));
             }
-            if (turmasParaMostrar.length === 0) { showMessage('Aviso', 'Nenhuma turma disponível para acesso.', 'warning'); return; }
+            
+            if (turmasParaMostrar.length === 0) { 
+                showMessage('Aviso', 'Nenhuma turma disponível para acesso.', 'warning'); 
+                return; 
+            }
 
             elements.classGrid.innerHTML = '';
+            
             turmasParaMostrar.forEach(turma => {
                 const arquivo = turmaArquivos[turma];
                 if (!arquivo) return;
+                
                 const card = document.createElement('div');
                 card.className = 'class-card';
+                
                 let icon = 'bi bi-building';
                 if (turma.includes('Formare')) icon = 'bi bi-star-fill';
                 else if (turma.includes('Aprender')) icon = 'bi bi-book-half';
                 else if (turma.includes('Informática')) icon = 'bi bi-pc-display';
                 else if (turma.includes('Inglês')) icon = 'bi bi-chat-dots';
                 else if (turma.includes('Robótica')) icon = 'bi bi-robot';
+                
                 card.innerHTML = `<i class="${icon}"></i><span>${turma}</span>`;
-                card.onclick = () => { elements.classSelectorModal.hide(); window.location.href = arquivo; };
+                card.onclick = () => { 
+                    elements.classSelectorModal.hide(); 
+                    window.location.href = arquivo; 
+                };
                 elements.classGrid.appendChild(card);
             });
+            
             elements.classSelectorModal.show();
         }
 
@@ -1945,7 +1924,7 @@
                 if (response.status === 401) { sessionStorage.removeItem('adminToken'); sessionStorage.removeItem('adminName'); return false; }
                 if (response.status === 403) return true;
                 return response.ok;
-            } catch (error) { console.error('Erro ao verificar sessão:', error); return false; }
+            } catch (error) { return false; }
         }
 
         document.addEventListener('DOMContentLoaded', async function () {
@@ -2519,7 +2498,7 @@
             if (!elements.todosAvisos) return;
             elements.todosAvisos.innerHTML = '';
             const validos = avisos.filter(a => !a.deleted_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            if (!validos.length) { elements.todosAvisos.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Nenhum aviso</td>'; return; }
+            if (!validos.length) { elements.todosAvisos.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Nenhum aviso</td></tr>'; return; }
             validos.forEach(a => {
                 const row = document.createElement('tr');
                 const inicio = new Date(a.start_at).toLocaleString('pt-BR');
