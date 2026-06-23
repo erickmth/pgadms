@@ -4063,6 +4063,128 @@ def maintenance_set():
         return jsonify({'error': 'Erro ao alterar modo manutenção'}), 500
 
 # ============================================================================
+# AVISO DO SITE (POPUP DE ATUALIZAÇÃO) - GERENCIADO PELO SUPER ADMIN
+# ============================================================================
+
+SITE_NOTICE_FILE = os.path.join(BASE_DIR, 'site_notice.json')
+
+def get_site_notice():
+    """Retorna o aviso do site salvo em arquivo JSON"""
+    try:
+        if os.path.exists(SITE_NOTICE_FILE):
+            with open(SITE_NOTICE_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+    except:
+        pass
+    return {
+        'active': False,
+        'title': '',
+        'body': '',
+        'version_key': '',
+        'start_at': None,
+        'end_at': None,
+        'updated_at': None,
+        'updated_by': None
+    }
+
+def save_site_notice(data):
+    """Salva o aviso do site em arquivo JSON"""
+    try:
+        with open(SITE_NOTICE_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False)
+        return True
+    except:
+        return False
+
+@app.route('/api/public/site-notice', methods=['GET'])
+def public_site_notice():
+    """Retorna o aviso do site para o frontend público (sem auth)"""
+    try:
+        notice = get_site_notice()
+        if not notice.get('active'):
+            return jsonify({'active': False})
+
+        # Verificar se está dentro do período de exibição
+        now = datetime.now().isoformat()
+        start_at = notice.get('start_at')
+        end_at = notice.get('end_at')
+
+        if start_at and now < start_at:
+            return jsonify({'active': False})
+        if end_at and now > end_at:
+            return jsonify({'active': False})
+
+        return jsonify({
+            'active': True,
+            'title': notice.get('title', ''),
+            'body': notice.get('body', ''),
+            'version_key': notice.get('version_key', ''),
+            'start_at': start_at,
+            'end_at': end_at
+        })
+    except Exception as e:
+        print(f"Erro em public_site_notice: {e}")
+        return jsonify({'active': False}), 200
+
+@app.route('/api/super/site-notice', methods=['GET'])
+@token_required
+def super_get_site_notice():
+    """Retorna o aviso do site completo para o Super Admin"""
+    if not is_super_admin(request.user):
+        return jsonify({'error': 'Acesso negado. Apenas Super Admin.'}), 403
+    try:
+        notice = get_site_notice()
+        return jsonify({'success': True, 'notice': notice})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/super/site-notice', methods=['POST'])
+@token_required
+def super_save_site_notice():
+    """Salva o aviso do site (apenas Super Admin)"""
+    if not is_super_admin(request.user):
+        return jsonify({'error': 'Acesso negado. Apenas Super Admin.'}), 403
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'Dados inválidos'}), 400
+
+        title = data.get('title', '').strip()
+        body = data.get('body', '').strip()
+        active = bool(data.get('active', False))
+        version_key = data.get('version_key', '').strip()
+        start_at = data.get('start_at')
+        end_at = data.get('end_at')
+
+        if not title:
+            return jsonify({'error': 'Título é obrigatório'}), 400
+        if not body:
+            return jsonify({'error': 'Conteúdo é obrigatório'}), 400
+        if not version_key:
+            return jsonify({'error': 'Chave de versão é obrigatória'}), 400
+
+        notice = {
+            'active': active,
+            'title': title,
+            'body': body,
+            'version_key': version_key,
+            'start_at': start_at,
+            'end_at': end_at,
+            'updated_at': datetime.now().isoformat(),
+            'updated_by': request.user
+        }
+
+        if save_site_notice(notice):
+            log_admin_action_db(request.user, 'site_notice', f'Aviso do site atualizado: {title} (ativo={active})')
+            return jsonify({'success': True, 'message': 'Aviso do site salvo com sucesso', 'notice': notice})
+        else:
+            return jsonify({'error': 'Erro ao salvar aviso'}), 500
+
+    except Exception as e:
+        print(f"Erro em super_save_site_notice: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# ============================================================================
 # SISTEMA DE MENTORIA COMPLETO - VERSÃO 8.2 PRODUÇÃO
 # COM CRUD COMPLETO E CORREÇÕES DE CORS
 # ============================================================================
@@ -6043,15 +6165,8 @@ def init_app():
         print("✅ Super admin padrão criado: erickdev / 030680901Erick$")
 
     print("=" * 50)
-    print("✅ SISTEMA DE ESCALA DE LIMPEZA - VERSÃO COM RBAC COMPLETO")
-    print("=" * 50)
-    print(f"📁 Banco de dados principal: {DATABASE}")
-    print(f"📁 Banco de dados de admins: {ADMINS_DB}")
-    print(f"📁 Diretório de uploads: {UPLOAD_DIR}")
-    print(f"📁 Diretório de miniaturas: {THUMBNAIL_DIR}")
-    print(f"📅 Data de início: {DATA_INICIO_ESCALA.strftime('%d/%m/%Y')}")
-    print(f"📅 Data limite: {DATA_LIMITE_AUTOMATICA.strftime('%d/%m/%Y')}")
-    print("=" * 50)
+    print("✅ SISTEMA DE ESCALA DE LIMPEZA - VERSÃO  COMPLETO")
+
 
 
 if __name__ == '__main__':
