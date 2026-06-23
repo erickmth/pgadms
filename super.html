@@ -1,0 +1,2765 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Super Admin — Sistema de Gestão</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --accent: #ef4444;
+            --accent-dim: rgba(0, 212, 255, 0.12);
+            --accent-glow: rgba(0, 212, 255, 0.35);
+            --accent-2: #7c3aed;
+            --success: #10d67a;
+            --danger: #ff4757;
+            --warning: #ffc947;
+            --info: #ef4444;
+            --bg: #060a12;
+            --bg-2: #0b1120;
+            --surface: #0f1929;
+            --surface-2: #162035;
+            --surface-3: #1c2840;
+            --border: rgba(255, 255, 255, 0.07);
+            --border-accent: rgba(0, 212, 255, 0.3);
+            --text: #e8edf5;
+            --text-sub: #a8bcd4;
+            --text-muted: #6b7f9e;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --sidebar-w: 272px;
+            --font-head: 'Syne', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--surface-3);
+            border-radius: 99px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-w);
+            height: 100%;
+            z-index: 1000;
+            background: linear-gradient(180deg, #0b1422 0%, #070d18 100%);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.35s cubic-bezier(.77, 0, .175, 1);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        .sidebar-logo-area {
+            padding: 32px 24px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .sidebar-logo-area .logo {
+            height: 44px;
+            transition: transform .3s;
+        }
+
+        .sidebar-logo-area .logo:hover {
+            transform: scale(1.06);
+        }
+
+        .sidebar-badge {
+            font-family: var(--font-head);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: var(--accent-dim);
+            border: 1px solid var(--border-accent);
+            border-radius: 99px;
+            padding: 3px 12px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .nav-section-label {
+            font-family: var(--font-head);
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 18px 24px 6px;
+        }
+
+        .sidebar-nav .nav-link {
+            color: var(--text-sub);
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all .25s;
+            border-left: 2px solid transparent;
+            position: relative;
+            margin: 1px 0;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+            border-left-color: var(--accent);
+        }
+
+        .sidebar-nav .nav-link.active {
+            color: var(--accent);
+            background: var(--accent-dim);
+            border-left-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .sidebar-nav .nav-link i {
+            width: 20px;
+            font-size: 1.05rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 20px 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 11px;
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.25);
+            color: var(--danger);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 13px;
+            transition: all .3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-logout:hover {
+            background: var(--danger);
+            color: #fff;
+            border-color: var(--danger);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-w);
+            padding: 32px 28px;
+            position: relative;
+            z-index: 1;
+            animation: fadeUp .5s ease both;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-title {
+            font-family: var(--font-head);
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title i {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .breadcrumb-text {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all .3s;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.025) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-3px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, .4), 0 0 0 1px var(--border-accent);
+        }
+
+        .stat-card-icon-wrap {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 18px;
+        }
+
+        .stat-card-value {
+            font-family: var(--font-head);
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -.5px;
+            line-height: 1;
+        }
+
+        .stat-card-label {
+            color: var(--text-sub);
+            font-size: 12.5px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .stat-card-sub {
+            color: var(--text-muted);
+            font-size: 11px;
+            margin-top: 6px;
+        }
+
+        .icon-primary {
+            background: rgba(0, 212, 255, .12);
+            color: var(--accent);
+        }
+
+        .icon-success {
+            background: rgba(16, 214, 122, .12);
+            color: var(--success);
+        }
+
+        .icon-warning {
+            background: rgba(255, 201, 71, .12);
+            color: var(--warning);
+        }
+
+        .icon-info {
+            background: rgba(0, 180, 216, .12);
+            color: var(--info);
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            background: var(--surface-2);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .card-header h5 {
+            font-family: var(--font-head);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-sub);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header h5 i {
+            color: var(--accent);
+        }
+
+        .card-body {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .table {
+            color: var(--text);
+            margin: 0;
+            background: var(--surface);
+        }
+
+        .table thead th {
+            background: var(--surface-2);
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            font-family: var(--font-head);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 13px 16px;
+            white-space: nowrap;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background .2s;
+            background: var(--surface);
+        }
+
+        .table tbody tr:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .table td {
+            padding: 13px 16px;
+            vertical-align: middle;
+            color: var(--text-sub);
+            font-size: 13px;
+            background: transparent;
+        }
+
+        .table td strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .badge {
+            font-family: var(--font-head);
+            font-size: 9.5px;
+            letter-spacing: .8px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 99px;
+        }
+
+        .badge-global {
+            background: rgba(124, 58, 237, .2);
+            color: #a78bfa;
+            border: 1px solid rgba(124, 58, 237, .3);
+        }
+
+        .badge-formare {
+            background: rgba(255, 201, 71, .15);
+            color: var(--warning);
+            border: 1px solid rgba(255, 201, 71, .3);
+        }
+
+        .badge-turma {
+            background: rgba(16, 214, 122, .15);
+            color: var(--success);
+            border: 1px solid rgba(16, 214, 122, .3);
+        }
+
+        .badge-maintenance {
+            background: rgba(255, 71, 87, .2);
+            color: var(--danger);
+            border: 1px solid rgba(255, 71, 87, .3);
+            animation: pulse 1.5s infinite;
+        }
+
+        .bg-success {
+            background: rgba(16, 214, 122, .2) !important;
+            color: var(--success) !important;
+            border: 1px solid rgba(16, 214, 122, .3);
+        }
+
+        .bg-secondary {
+            background: var(--surface-3) !important;
+            color: var(--text-sub) !important;
+        }
+
+        .bg-primary {
+            background: var(--accent-dim) !important;
+            color: var(--accent) !important;
+            border: 1px solid var(--border-accent);
+        }
+
+        .btn {
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 13px;
+            border-radius: var(--radius-sm);
+            transition: all .25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, #0099cc 100%);
+            border: none;
+            color: #010d18;
+            padding: 10px 20px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--accent-glow);
+            color: #010d18;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #cc0022 100%);
+            border: none;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 71, 87, .35);
+        }
+
+        .btn-outline-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--surface-2);
+            color: var(--text);
+            border-color: var(--border-accent);
+        }
+
+        .btn-info {
+            background: rgba(0, 180, 216, .15);
+            border: 1px solid rgba(0, 180, 216, .3);
+            color: var(--info);
+        }
+
+        .btn-info:hover {
+            background: var(--info);
+            color: #fff;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .form-control,
+        .form-select {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-family: var(--font-body);
+            font-size: 13.5px;
+            transition: all .25s;
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background: var(--surface-3);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-dim);
+            color: var(--text);
+            outline: none;
+        }
+
+        .form-select option {
+            background: var(--surface-3);
+            color: var(--text);
+        }
+
+        .form-label {
+            font-family: var(--font-head);
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 7px;
+            display: block;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-online {
+            background: var(--success);
+            box-shadow: 0 0 6px var(--success);
+            animation: pulse-green 2s infinite;
+        }
+
+        .status-maintenance {
+            background: var(--danger);
+            box-shadow: 0 0 6px var(--danger);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse-green {
+
+            0%,
+            100% {
+                box-shadow: 0 0 4px var(--success);
+            }
+
+            50% {
+                box-shadow: 0 0 10px var(--success);
+            }
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 11px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .status-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-row-label {
+            color: var(--text-muted);
+        }
+
+        .status-row-value {
+            display: flex;
+            align-items: center;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .maintenance-banner {
+            background: linear-gradient(135deg, rgba(255, 71, 87, .2), rgba(204, 0, 34, .15));
+            border: 1px solid rgba(255, 71, 87, .3);
+            border-radius: var(--radius);
+            padding: 14px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            animation: pulse .2s ease;
+        }
+
+        .maintenance-banner-icon {
+            font-size: 1.3rem;
+            color: var(--danger);
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border-accent);
+            border-radius: 20px;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border);
+            padding: 20px 24px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-header.bg-primary {
+            background: linear-gradient(135deg, rgba(0, 212, 255, .15), rgba(124, 58, 237, .1)) !important;
+            border-color: var(--border) !important;
+            color: var(--text) !important;
+        }
+
+        .modal-title {
+            font-family: var(--font-head);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .btn-close {
+            filter: invert(1) brightness(.6);
+        }
+
+        .btn-close-white {
+            filter: invert(1);
+        }
+
+        .modal-body {
+            padding: 24px;
+            background: var(--surface);
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: var(--surface-3);
+            transition: .35s;
+            border-radius: 99px;
+            border: 1px solid var(--border);
+        }
+
+        .slider:before {
+            content: '';
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: var(--text-sub);
+            transition: .35s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background: rgba(16, 214, 122, .2);
+            border-color: rgba(16, 214, 122, .4);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+            background: var(--success);
+        }
+
+        .alert {
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            padding: 12px 16px;
+        }
+
+        .alert-warning {
+            background: rgba(255, 201, 71, .1);
+            border: 1px solid rgba(255, 201, 71, .2);
+            color: #ffdd88;
+        }
+
+        .alert-danger {
+            background: rgba(255, 71, 87, .1);
+            border: 1px solid rgba(255, 71, 87, .2);
+            color: #ff8491;
+        }
+
+        .alert-info {
+            background: rgba(0, 212, 255, .1);
+            border: 1px solid rgba(0, 212, 255, .2);
+            color: var(--accent);
+        }
+
+        .tab-pane {
+            animation: fadeUp .35s ease both;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1200;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast-custom {
+            background: var(--surface-2);
+            border: 1px solid var(--border-accent);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 13px;
+            min-width: 260px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .5);
+        }
+
+        .maint-card {
+            border: 1px solid rgba(255, 201, 71, .3) !important;
+            background: linear-gradient(135deg, var(--surface) 0%, rgba(255, 201, 71, .03) 100%) !important;
+        }
+
+        .maint-card .card-header {
+            background: rgba(255, 201, 71, .05) !important;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, .2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin .6s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .55;
+            }
+        }
+
+        .db-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .db-row:last-child {
+            border-bottom: none;
+        }
+
+        .db-row-label {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .db-row-value {
+            font-weight: 700;
+            color: var(--text);
+            font-family: var(--font-head);
+            font-size: 14px;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 18px;
+            left: 16px;
+            z-index: 1100;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+                box-shadow: 0 0 60px rgba(0, 0, 0, .6);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px 16px;
+                padding-top: 64px;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+        }
+
+        code {
+            background: var(--surface-3);
+            color: var(--accent);
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(4px);
+            background: rgba(6, 10, 18, .7);
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        .text-white {
+            color: var(--text) !important;
+        }
+
+        p,
+        span,
+        div {
+            color: inherit;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="bi bi-list" style="font-size:1.2rem;"></i>
+    </button>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo-area">
+            <img src="logu-black.svg" alt="Logo" class="logo" onerror="this.src='logu.svg'">
+            <div class="sidebar-badge">SUPER ADMIN</div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Geral</div>
+            <ul class="nav flex-column mb-2">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-tab="dashboard">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+            </ul>
+
+            <div class="nav-section-label">Gerenciamento</div>
+            <ul class="nav flex-column mb-2">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-tab="admins">
+                        <i class="bi bi-people-fill"></i> Administradores
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-tab="blocked-ips">
+                        <i class="bi bi-shield-lock-fill"></i> IPs Bloqueados
+                    </a>
+                </li>
+            </ul>
+
+            <div class="nav-section-label">Sistema</div>
+            <ul class="nav flex-column mb-2">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-tab="logs">
+                        <i class="bi bi-file-text-fill"></i> Logs
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-tab="database">
+                        <i class="bi bi-database-fill"></i> Banco de Dados
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-tab="backup">
+                        <i class="bi bi-cloud-arrow-up-fill"></i> Backup
+                    </a>
+                </li>
+            </ul>
+
+            <div class="nav-section-label">Manutenção</div>
+            <ul class="nav flex-column mb-2">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-tab="maintenance">
+                        <i class="bi bi-tools"></i> Ferramentas
+                    </a>
+                </li>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-tab="site-notice">
+                        <i class="bi bi-megaphone-fill"></i> Aviso do Site
+                    </a>
+                </li>
+                <!-- Apagar Chamada removed -->
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="btn-logout" id="logoutBtn">
+                <i class="bi bi-box-arrow-left"></i> Encerrar Sessão
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div id="maintenanceAlert" style="display:none;"></div>
+
+        <div class="tab-content">
+
+            <!-- DASHBOARD -->
+            <div class="tab-pane fade show active" id="dashboard">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-speedometer2"></i>Dashboard</h1>
+                        <div class="breadcrumb-text">Visão geral do sistema em tempo real</div>
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm" id="refreshDashboard">
+                        <i class="bi bi-arrow-clockwise"></i> Atualizar
+                    </button>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-card-icon-wrap icon-primary">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div class="stat-card-value" id="totalAdmins">—</div>
+                            <div class="stat-card-label">Administradores</div>
+                            <div class="stat-card-sub" id="adminsDetail">Carregando...</div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-card-icon-wrap icon-success">
+                                <i class="bi bi-mortarboard"></i>
+                            </div>
+                            <div class="stat-card-value" id="totalAlunos">—</div>
+                            <div class="stat-card-label">Alunos Cadastrados</div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-card-icon-wrap icon-warning">
+                                <i class="bi bi-hdd-stack"></i>
+                            </div>
+                            <div class="stat-card-value" id="dbSize">—</div>
+                            <div class="stat-card-label">Uso do Banco de Dados</div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-card-icon-wrap icon-info">
+                                <i class="bi bi-file-text"></i>
+                            </div>
+                            <div class="stat-card-value" id="totalLogs">—</div>
+                            <div class="stat-card-label">Logs Registrados</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="bi bi-pie-chart-fill"></i> Distribuição por Tipo de Admin</h5>
+                            </div>
+                            <div class="card-body p-3"
+                                style="max-height:280px; display:flex; align-items:center; justify-content:center;">
+                                <canvas id="adminChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5><i class="bi bi-server"></i> Status do Servidor</h5>
+                            </div>
+                            <div class="card-body px-4 py-3">
+                                <div class="status-row">
+                                    <span class="status-row-label">API</span>
+                                    <span class="status-row-value">
+                                        <span class="status-dot" id="apiStatusDot"></span>
+                                        <span id="apiStatusText">Online</span>
+                                    </span>
+                                </div>
+                                <div class="status-row">
+                                    <span class="status-row-label">Banco Principal</span>
+                                    <span class="status-row-value">
+                                        <span class="status-dot status-online"></span> Conectado
+                                    </span>
+                                </div>
+                                <div class="status-row">
+                                    <span class="status-row-label">Banco de Admins</span>
+                                    <span class="status-row-value">
+                                        <span class="status-dot status-online"></span> Conectado
+                                    </span>
+                                </div>
+                                <div class="status-row">
+                                    <span class="status-row-label">Modo Manutenção</span>
+                                    <span id="maintenanceStatusBadge">
+                                        <span class="badge bg-secondary">Desativado</span>
+                                    </span>
+                                </div>
+                                <div class="status-row">
+                                    <span class="status-row-label">Última atualização</span>
+                                    <span class="status-row-value" style="font-size:12px;" id="lastUpdate">—</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5><i class="bi bi-clock-history"></i> Últimas Ações</h5>
+                        <button class="btn btn-sm btn-danger" id="clearHistoryBtn">
+                            <i class="bi bi-trash3"></i> Limpar Histórico
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Usuário</th>
+                                        <th>Ação</th>
+                                        <th>Detalhes</th>
+                                        <th>IP</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentActions">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4" style="color:var(--text-muted);">
+                                            Carregando...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMINS -->
+            <div class="tab-pane fade" id="admins">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-people-fill"></i>Administradores</h1>
+                        <div class="breadcrumb-text">Cadastro, edição e remoção de administradores</div>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAdminModal">
+                        <i class="bi bi-person-plus-fill"></i> Novo Admin
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-list-ul"></i> Lista de Administradores</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Usuário</th>
+                                        <th>Tipo</th>
+                                        <th>Turma</th>
+                                        <th>Criado por</th>
+                                        <th>Criado em</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminsList">
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4" style="color:var(--text-muted);">
+                                            Carregando...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IPs BLOQUEADOS -->
+            <div class="tab-pane fade" id="blocked-ips">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-shield-lock-fill"></i>IPs Bloqueados</h1>
+                        <div class="breadcrumb-text">Gerencie endereços IP bloqueados no sistema</div>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#blockIpModal">
+                        <i class="bi bi-plus-circle"></i> Bloquear IP
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-shield-slash"></i> Lista de IPs Bloqueados</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>IP</th>
+                                        <th>Motivo</th>
+                                        <th>Bloqueado por</th>
+                                        <th>Bloqueado em</th>
+                                        <th>Expira em</th>
+                                        <th>Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="blockedIpsList">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4" style="color:var(--text-muted);">
+                                            Carregando...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOGS -->
+            <div class="tab-pane fade" id="logs">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-file-text-fill"></i>Logs do Sistema</h1>
+                        <div class="breadcrumb-text">Histórico completo de ações e eventos</div>
+                    </div>
+                    <button class="btn btn-success" id="exportLogsBtn">
+                        <i class="bi bi-file-excel"></i> Exportar Excel
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-list-check"></i> Registros de Logs</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Data/Hora</th>
+                                        <th>Usuário</th>
+                                        <th>Ação</th>
+                                        <th>Detalhes</th>
+                                        <th>IP</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logsList">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4" style="color:var(--text-muted);">
+                                            Carregando...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BANCO DE DADOS -->
+            <div class="tab-pane fade" id="database">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-database-fill"></i>Banco de Dados</h1>
+                        <div class="breadcrumb-text">Estatísticas e informações detalhadas</div>
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm" id="refreshDbStats">
+                        <i class="bi bi-arrow-clockwise"></i> Atualizar
+                    </button>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="bi bi-database"></i> Banco Principal</h5>
+                            </div>
+                            <div class="card-body px-4 py-2">
+                                <div class="db-row"><span class="db-row-label">Tamanho</span><span class="db-row-value"
+                                        id="mainDbSize">—</span></div>
+                                <div class="db-row"><span class="db-row-label">Alunos</span><span class="db-row-value"
+                                        id="dbTotalAlunos">—</span></div>
+                                <div class="db-row"><span class="db-row-label">Turmas</span><span class="db-row-value"
+                                        id="dbTotalTurmas">—</span></div>
+                                <div class="db-row"><span class="db-row-label">Presenças</span><span
+                                        class="db-row-value" id="dbTotalPresencas">—</span></div>
+                                <div class="db-row"><span class="db-row-label">Avisos</span><span class="db-row-value"
+                                        id="dbTotalAvisos">—</span></div>
+                                <div class="db-row"><span class="db-row-label">Logs</span><span class="db-row-value"
+                                        id="dbTotalLogs">—</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="bi bi-shield-lock"></i> Banco de Admins</h5>
+                            </div>
+                            <div class="card-body px-4 py-2">
+                                <div class="db-row"><span class="db-row-label">Tamanho</span><span class="db-row-value"
+                                        id="adminsDbSizeDetail">—</span></div>
+                                <div class="db-row"><span class="db-row-label">Total de Admins</span><span
+                                        class="db-row-value" id="dbTotalAdmins">—</span></div>
+                                <div class="db-row"><span class="db-row-label">Globais</span><span class="db-row-value"
+                                        id="dbGlobalAdmins">—</span></div>
+                                <div class="db-row"><span class="db-row-label">Formare</span><span class="db-row-value"
+                                        id="dbFormareAdmins">—</span></div>
+                                <div class="db-row"><span class="db-row-label">Turma</span><span class="db-row-value"
+                                        id="dbTurmaAdmins">—</span></div>
+                                <div class="db-row"><span class="db-row-label">IPs Bloqueados</span><span
+                                        class="db-row-value" id="dbBlockedIps">—</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BACKUP -->
+            <div class="tab-pane fade" id="backup">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-cloud-arrow-up-fill"></i>Backup do Sistema</h1>
+                        <div class="breadcrumb-text">Exportar e importar dados completos</div>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="bi bi-download"></i> Exportar Backup</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <p class="mb-4" style="color:var(--text-sub); font-size:13px;">
+                                    Exporta todos os dados do sistema: alunos, escalas, presenças, avisos, logs e admins
+                                    em um único arquivo JSON.
+                                </p>
+                                <button class="btn btn-primary w-100" id="exportBackupBtn">
+                                    <i class="bi bi-cloud-arrow-down"></i> Baixar Backup Completo (JSON)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="bi bi-upload"></i> Importar Backup</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <p class="mb-3" style="color:var(--text-sub); font-size:13px;">
+                                    Restaura todos os dados a partir de um arquivo JSON exportado anteriormente.
+                                </p>
+                                <div class="mb-3">
+                                    <label class="form-label">Arquivo de Backup (.json)</label>
+                                    <input type="file" class="form-control" id="restoreBackupFile" accept=".json">
+                                </div>
+                                <button class="btn btn-warning w-100 mb-3" id="restoreBackupBtn">
+                                    <i class="bi bi-cloud-arrow-up"></i> Restaurar Backup
+                                </button>
+                                <div class="alert alert-danger mb-0" style="font-size:12px;">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <strong>ATENÇÃO:</strong> A restauração substituirá TODOS os dados atuais. Esta ação
+                                    não pode ser desfeita.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AVISO DO SITE -->
+            <div class="tab-pane fade" id="site-notice">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-megaphone-fill"></i>Aviso do Site</h1>
+                        <div class="breadcrumb-text">Gerencia o popup de novidade exibido aos administradores após login</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" id="refreshSiteNoticeBtn">
+                            <i class="bi bi-arrow-clockwise"></i> Atualizar
+                        </button>
+                        <button class="btn btn-primary" id="saveSiteNoticeBtn">
+                            <i class="bi bi-floppy-fill me-1"></i> Salvar Aviso
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Status atual -->
+                <div class="card mb-3" id="siteNoticeStatusCard" style="display:none;">
+                    <div class="card-body p-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="status-dot" id="siteNoticeStatusDot"></span>
+                            <span style="font-weight:600;" id="siteNoticeStatusText"></span>
+                            <span style="font-size:12px; color:var(--text-muted);" id="siteNoticeStatusMeta"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <!-- FORMULÁRIO DE EDIÇÃO -->
+                    <div class="col-lg-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5><i class="bi bi-pencil-square"></i> Editor do Aviso</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Título do Aviso</label>
+                                    <input type="text" class="form-control" id="siteNoticeTitle"
+                                        placeholder="Ex: Novidade — Atualização 15/06/2026 (v12.0.0)">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Conteúdo (HTML permitido: &lt;strong&gt;, &lt;em&gt;, &lt;p&gt;, &lt;br&gt;)</label>
+                                    <textarea class="form-control" id="siteNoticeBody" rows="6"
+                                        placeholder="Digite o conteúdo do aviso. Use <strong>negrito</strong> e <em>itálico</em>..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Chave de Versão <span style="color:var(--text-muted); font-weight:400; font-size:11px; text-transform:none; letter-spacing:0;">(usuários que já viram esta versão não verão novamente)</span></label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="siteNoticeVersionKey"
+                                            placeholder="Ex: v12_0_0_20260615">
+                                        <button class="btn btn-outline-secondary btn-sm" type="button" id="generateVersionKeyBtn" title="Gerar chave automática">
+                                            <i class="bi bi-magic"></i>
+                                        </button>
+                                    </div>
+                                    <div style="font-size:11px; color:var(--text-muted); margin-top:5px;">
+                                        Mude a chave toda vez que quiser exibir o aviso novamente para todos.
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label">Início da Exibição</label>
+                                        <input type="datetime-local" class="form-control" id="siteNoticeStartAt">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Fim da Exibição</label>
+                                        <input type="datetime-local" class="form-control" id="siteNoticeEndAt">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Duração Rápida</label>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button class="btn btn-sm btn-outline-secondary quick-duration-btn" data-days="1">1 dia</button>
+                                        <button class="btn btn-sm btn-outline-secondary quick-duration-btn" data-days="3">3 dias</button>
+                                        <button class="btn btn-sm btn-outline-secondary quick-duration-btn" data-days="7">7 dias</button>
+                                        <button class="btn btn-sm btn-outline-secondary quick-duration-btn" data-days="14">14 dias</button>
+                                        <button class="btn btn-sm btn-outline-secondary quick-duration-btn" data-days="30">30 dias</button>
+                                        <button class="btn btn-sm btn-outline-secondary quick-duration-btn" data-days="0">Sem prazo</button>
+                                    </div>
+                                    <div style="font-size:11px; color:var(--text-muted); margin-top:5px;">
+                                        Clique para definir automaticamente a data de início (agora) e fim.
+                                    </div>
+                                </div>
+
+                                <div class="d-flex align-items-center gap-3">
+                                    <label class="switch">
+                                        <input type="checkbox" id="siteNoticeActive">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span style="font-family:var(--font-head); font-size:13px; font-weight:700;">
+                                        Aviso Ativo
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PREVIEW -->
+                    <div class="col-lg-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5><i class="bi bi-eye"></i> Preview — Como aparece no site</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <!-- Simula o modal do index.html com as mesmas cores/estilos -->
+                                <div style="
+                                    background: var(--surface-2);
+                                    border: 1px solid var(--border-accent);
+                                    border-radius: 16px;
+                                    overflow: hidden;
+                                    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+                                ">
+                                    <div style="
+                                        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+                                        padding: 16px 20px;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: space-between;
+                                    ">
+                                        <h5 style="
+                                            margin: 0;
+                                            font-family: var(--font-head);
+                                            font-size: 14px;
+                                            font-weight: 700;
+                                            color: #fff;
+                                        " id="previewTitle">Título do aviso aparece aqui</h5>
+                                    </div>
+                                    <div style="
+                                        padding: 20px;
+                                        background: #fff;
+                                        min-height: 80px;
+                                        color: #212529;
+                                        font-size: 14px;
+                                        line-height: 1.6;
+                                    " id="previewBody">
+                                        <span style="color:#aaa; font-style:italic;">O conteúdo do aviso aparece aqui...</span>
+                                    </div>
+                                    <div style="
+                                        padding: 12px 20px;
+                                        background: #f8f9fa;
+                                        display: flex;
+                                        justify-content: flex-end;
+                                        border-top: 1px solid #dee2e6;
+                                    ">
+                                        <button style="
+                                            background: #0d6efd;
+                                            color: #fff;
+                                            border: none;
+                                            border-radius: 6px;
+                                            padding: 6px 18px;
+                                            font-size: 14px;
+                                            font-weight: 600;
+                                            cursor: default;
+                                        ">OK</button>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 p-3" style="background:var(--surface-2); border-radius:var(--radius-sm); border:1px solid var(--border);">
+                                    <div style="font-family:var(--font-head); font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Informações da exibição</div>
+                                    <div class="status-row">
+                                        <span class="status-row-label">Status</span>
+                                        <span id="previewStatus"><span class="badge bg-secondary">Inativo</span></span>
+                                    </div>
+                                    <div class="status-row">
+                                        <span class="status-row-label">Início</span>
+                                        <span class="status-row-value" style="font-size:12px;" id="previewStartAt">—</span>
+                                    </div>
+                                    <div class="status-row">
+                                        <span class="status-row-label">Fim</span>
+                                        <span class="status-row-value" style="font-size:12px;" id="previewEndAt">—</span>
+                                    </div>
+                                    <div class="status-row">
+                                        <span class="status-row-label">Chave da Versão</span>
+                                        <span class="status-row-value"><code id="previewVersionKey" style="font-size:11px;">—</code></span>
+                                    </div>
+                                    <div class="status-row" style="border:none;">
+                                        <span class="status-row-label">Última edição</span>
+                                        <span class="status-row-value" style="font-size:12px;" id="previewUpdatedAt">—</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MANUTENÇÃO -->
+            <div class="tab-pane fade" id="maintenance">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-tools"></i>Ferramentas de Manutenção</h1>
+                        <div class="breadcrumb-text">Ações críticas e controle do sistema</div>
+                    </div>
+                </div>
+
+                <div class="card maint-card mb-3">
+                    <div class="card-header">
+                        <h5 style="color: var(--warning) !important;">
+                            <i class="bi bi-exclamation-triangle-fill" style="color:var(--warning);"></i>
+                            Modo Manutenção
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="alert alert-warning mb-4">
+                            <i class="bi bi-shield-shaded me-2"></i>
+                            <strong>Quando ativado:</strong> O sistema fica em manutenção, bloqueando o acesso de todos
+                            os admins (exceto Super Admin).
+                        </div>
+                        <div class="d-flex align-items-center flex-wrap gap-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <label class="switch">
+                                    <input type="checkbox" id="maintenanceModeToggle">
+                                    <span class="slider"></span>
+                                </label>
+                                <span id="maintenanceToggleLabel" class="fw-bold" style="font-family:var(--font-head);">
+                                    Modo Manutenção: <span class="badge bg-secondary">Desativado</span>
+                                </span>
+                            </div>
+                            <div id="maintenanceMessageDiv" style="display:none; flex:1;">
+                                <input type="text" class="form-control" id="maintenanceMessage"
+                                    placeholder="Mensagem para usuários (opcional)" style="min-width:220px;">
+                            </div>
+                            <button class="btn btn-warning" id="applyMaintenanceBtn" style="display:none;">
+                                <i class="bi bi-check-lg"></i> Aplicar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card" style="border-color: rgba(255,71,87,.25);">
+                            <div class="card-header" style="background: rgba(255,71,87,.05);">
+                                <h5 style="color: var(--danger) !important;">
+                                    <i class="bi bi-exclamation-triangle-fill" style="color:var(--danger);"></i>
+                                    Limpeza de Dados
+                                </h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <p style="color:var(--text-sub); font-size:13px;" class="mb-3">
+                                    Esta ação irá LIMPAR TODOS OS DADOS do sistema de forma permanente e irreversível.
+                                </p>
+                                <div class="alert alert-danger mb-3">
+                                    <i class="bi bi-skull me-2"></i>
+                                    <strong>ATENÇÃO:</strong> Esta ação é IRREVERSÍVEL e não pode ser desfeita!
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Digite <code>CONFIRMAR_LIMPEZA_TOTAL</code> para
+                                        confirmar</label>
+                                    <input type="text" class="form-control" id="clearConfirmInput"
+                                        placeholder="CONFIRMAR_LIMPEZA_TOTAL">
+                                </div>
+                                <button class="btn btn-danger w-100" id="clearAllDataBtn" disabled>
+                                    <i class="bi bi-trash3"></i> Limpar Todos os Dados
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="bi bi-info-circle"></i> Informações da Sessão</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="db-row">
+                                    <span class="db-row-label"><i
+                                            class="bi bi-shield-check text-success me-2"></i>Logado como</span>
+                                    <strong id="currentUser" class="db-row-value"
+                                        style="color:var(--accent);">—</strong>
+                                </div>
+                                <div class="db-row">
+                                    <span class="db-row-label"><i class="bi bi-star-fill"
+                                            style="color:var(--warning);"></i> Nível de Acesso</span>
+                                    <strong class="db-row-value">Super Admin</strong>
+                                </div>
+                                <div class="db-row">
+                                    <span class="db-row-label"><i class="bi bi-database me-2"></i>Permissão</span>
+                                    <span class="db-row-value" style="color:var(--success);">Total sobre o
+                                        sistema</span>
+                                </div>
+                                <div class="mt-4 p-3"
+                                    style="background:var(--surface-2); border-radius:var(--radius-sm); border:1px solid var(--border);">
+                                    <p class="mb-0" style="color:var(--text-muted); font-size:12px;">
+                                        <i class="bi bi-lightbulb me-2" style="color:var(--warning);"></i>
+                                        Use o <strong style="color:var(--text-sub);">Modo Manutenção</strong> antes de
+                                        realizar alterações críticas no sistema para evitar conflitos.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        </div>
+    </main>
+
+    <!-- MODAL — NOVO ADMIN -->
+    <div class="modal fade" id="addAdminModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title"><i class="bi bi-person-plus-fill me-2" style="color:var(--accent);"></i>Novo
+                        Administrador</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addAdminForm">
+                        <div class="mb-3">
+                            <label class="form-label">Usuário *</label>
+                            <input type="text" class="form-control" id="newAdminUsername" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Senha *</label>
+                            <input type="password" class="form-control" id="newAdminPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Admin *</label>
+                            <select class="form-select" id="newAdminType" required>
+                                <option value="global">🌍 Admin Global</option>
+                                <option value="formare">⭐ Admin Formare</option>
+                                <option value="turma">📚 Admin de Turma</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="turmaSelectDiv" style="display:none;">
+                            <label class="form-label">Turma Permitida</label>
+                            <select class="form-select" id="newAdminTurma">
+                                <option value="Formare 2026">Formare 2026</option>
+                                <option value="Aprender A+ (Terça-Feira)">Aprender A+ (Terça-Feira)</option>
+                                <option value="Aprender A+ (Segunda-Feira)">Aprender A+ (Segunda-Feira)</option>
+                                <option value="Aprender A+ (Quinta-Feira)">Aprender A+ (Quinta-Feira)</option>
+                                <option value="Informática Básica (Curitiba)">Informática Básica (Curitiba)</option>
+                                <option value="Inglês Básico (Curitiba)">Inglês Básico (Curitiba)</option>
+                                <option value="Informática II - Robótica (Curitiba)">Informática II - Robótica
+                                    (Curitiba)</option>
+                                <option value="Inglês Básico (Joinville)">Inglês Básico (Joinville)</option>
+                                <option value="Inglês Básico (Pomerode)">Inglês Básico (Pomerode)</option>
+                                <option value="Informática Básica (Joinville)">Informática Básica (Joinville)</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveAdminBtn">
+                        <i class="bi bi-check-lg"></i> Salvar Admin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL — EDITAR ADMIN -->
+    <div class="modal fade" id="editAdminModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title"><i class="bi bi-pencil-square me-2" style="color:var(--accent);"></i>Editar
+                        Administrador</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-4 p-3"
+                        style="background:var(--surface-2); border-radius:var(--radius-sm); border:1px solid var(--border);">
+                        <span style="color:var(--text-muted); font-size:12px;">Editando:</span>
+                        <strong id="editAdminUsername"
+                            style="color:var(--accent); display:block; font-size:15px; margin-top:2px;"></strong>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Novo Nome de Usuário</label>
+                        <input type="text" class="form-control" id="editNewUsername"
+                            placeholder="Deixe em branco para não alterar" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nova Senha</label>
+                        <input type="password" class="form-control" id="editNewPassword"
+                            placeholder="Deixe em branco para não alterar">
+                    </div>
+                    <div class="alert alert-warning" style="font-size:12px;">
+                        <i class="bi bi-info-circle me-2"></i>Preencha pelo menos um dos campos acima para salvar as
+                        alterações.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirmEditAdminBtn">
+                        <i class="bi bi-check-lg"></i> Salvar Alterações
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL — BLOQUEAR IP -->
+    <div class="modal fade" id="blockIpModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title"><i class="bi bi-shield-lock me-2" style="color:var(--accent);"></i>Bloquear
+                        Endereço IP</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Endereço IP</label>
+                        <input type="text" class="form-control" id="blockIp" placeholder="Ex: 192.168.1.100">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Motivo do Bloqueio</label>
+                        <input type="text" class="form-control" id="blockReason"
+                            placeholder="Ex: Tentativas de invasão">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Duração (minutos)</label>
+                        <input type="number" class="form-control" id="blockDuration" value="60" min="1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmBlockIpBtn">
+                        <i class="bi bi-shield-fill-x"></i> Confirmar Bloqueio
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = 'https://erickmth.pythonanywhere.com';
+        let adminChart = null;
+        let currentEditUsername = null;
+        let loginUsername = null;
+        let loginPassword = null;
+        let timerInterval = null;
+
+        function getAuthHeader() { const token = sessionStorage.getItem('superAdminToken'); return token ? { 'Authorization': 'Bearer ' + token } : {}; }
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
+
+        function showMessage(title, msg, type) {
+            const colors = { success: '#10d67a', error: '#ff4757', info: '#00d4ff', warning: '#ffc947' };
+            const icons = { success: 'bi-check-circle-fill', error: 'bi-x-circle-fill', info: 'bi-info-circle-fill', warning: 'bi-exclamation-triangle-fill' };
+            const col = colors[type] || colors.info;
+            const icon = icons[type] || icons.info;
+            const el = document.createElement('div');
+            el.className = 'toast-custom toast align-items-center show';
+            el.style.cssText = `border-left: 3px solid ${col};`;
+            el.innerHTML = `<div class="d-flex align-items-center gap-3 p-3">
+                <i class="bi ${icon}" style="color:${col}; font-size:1.1rem; flex-shrink:0;"></i>
+                <div style="flex:1;">
+                    <div style="font-weight:600; font-size:13px; color:var(--text);">${escapeHtml(title)}</div>
+                    <div style="font-size:12px; color:var(--text-sub); margin-top:1px;">${escapeHtml(msg)}</div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" style="flex-shrink:0;" data-bs-dismiss="toast"></button>
+            </div>`;
+            document.querySelector('.toast-container').appendChild(el);
+            setTimeout(() => el.remove(), 4000);
+        }
+
+        function showErrorList(title, errors) {
+            const el = document.createElement('div');
+            el.className = 'toast-custom toast align-items-center show';
+            el.style.cssText = 'border-left: 3px solid #ff4757; max-width: 400px;';
+            let errorList = '';
+            if (Array.isArray(errors)) {
+                errorList = '<ul style="margin:0; padding-left:20px;">' + errors.map(e => `<li>${escapeHtml(e)}</li>`).join('') + '</ul>';
+            } else {
+                errorList = `<div>${escapeHtml(errors)}</div>`;
+            }
+            el.innerHTML = `<div class="d-flex align-items-start gap-3 p-3">
+                <i class="bi bi-x-circle-fill" style="color:#ff4757; font-size:1.1rem; flex-shrink:0;"></i>
+                <div style="flex:1;">
+                    <div style="font-weight:600; font-size:13px; color:var(--text);">${escapeHtml(title)}</div>
+                    <div style="font-size:12px; color:var(--text-sub); margin-top:5px;">${errorList}</div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" style="flex-shrink:0;" data-bs-dismiss="toast"></button>
+            </div>`;
+            document.querySelector('.toast-container').appendChild(el);
+            setTimeout(() => el.remove(), 8000);
+        }
+
+        function getAdminTypeBadge(type) {
+            const badges = { global: 'badge-global', formare: 'badge-formare', turma: 'badge-turma' };
+            const icons = { global: '🌍', formare: '⭐', turma: '📚' };
+            const labels = { global: 'Global', formare: 'Formare', turma: 'Turma' };
+            return `<span class="badge ${badges[type] || 'bg-secondary'}">${icons[type] || '❓'} ${labels[type] || type}</span>`;
+        }
+
+        // ==================== MANUTENÇÃO ====================
+        async function checkMaintenanceStatus() {
+            try {
+                const response = await fetch(`${API_URL}/api/maintenance/status`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const isMaintenance = data.maintenance_mode === true;
+                    const maintenanceMessage = data.message || '';
+
+                    const toggle = document.getElementById('maintenanceModeToggle');
+                    if (toggle) toggle.checked = isMaintenance;
+
+                    const label = document.getElementById('maintenanceToggleLabel');
+                    if (label) {
+                        label.innerHTML = isMaintenance
+                            ? 'Modo Manutenção: <span class="badge badge-maintenance">ATIVADO</span>'
+                            : 'Modo Manutenção: <span class="badge bg-secondary">Desativado</span>';
+                    }
+
+                    const statusBadge = document.getElementById('maintenanceStatusBadge');
+                    if (statusBadge) {
+                        statusBadge.innerHTML = isMaintenance
+                            ? '<span class="badge badge-maintenance">🔧 Em Manutenção</span>'
+                            : '<span class="badge bg-success">✅ Normal</span>';
+                    }
+
+                    const apiStatusDot = document.getElementById('apiStatusDot');
+                    const apiStatusText = document.getElementById('apiStatusText');
+                    if (apiStatusDot && apiStatusText) {
+                        if (isMaintenance) { apiStatusDot.className = 'status-dot status-maintenance'; apiStatusText.textContent = 'Manutenção'; }
+                        else { apiStatusDot.className = 'status-dot status-online'; apiStatusText.textContent = 'Online'; }
+                    }
+
+                    const alertDiv = document.getElementById('maintenanceAlert');
+                    if (alertDiv) {
+                        if (isMaintenance) {
+                            alertDiv.style.display = 'block';
+                            alertDiv.innerHTML = `<div class="maintenance-banner">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="bi bi-tools maintenance-banner-icon"></i>
+                                    <div>
+                                        <div style="font-weight:700; font-size:14px; color:var(--danger);">SISTEMA EM MANUTENÇÃO</div>
+                                        <div style="font-size:12px; color:var(--text-sub);">Apenas Super Admin tem acesso no momento</div>
+                                    </div>
+                                </div>
+                                <div style="font-size:12px; color:var(--text-sub);">${escapeHtml(maintenanceMessage) || 'Manutenção programada em andamento'}</div>
+                            </div>`;
+                        } else { alertDiv.style.display = 'none'; alertDiv.innerHTML = ''; }
+                    }
+                    return isMaintenance;
+                }
+            } catch (error) { console.error('Erro ao verificar status:', error); }
+            return false;
+        }
+
+        async function setMaintenanceMode(enable, message = '') {
+            try {
+                const response = await fetch(`${API_URL}/api/maintenance/set`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                    body: JSON.stringify({ maintenance_mode: enable, message })
+                });
+                const data = await response.json();
+                if (response.ok && data.success) { showMessage('Sucesso', data.message, 'success'); await checkMaintenanceStatus(); return true; }
+                else { showMessage('Erro', data.error || 'Erro ao alterar', 'error'); return false; }
+            } catch (error) { showMessage('Erro', error.message, 'error'); return false; }
+        }
+
+        // ==================== AUTENTICAÇÃO 2FA ====================
+        async function sendVerificationCode() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            if (!username || !password) { showMessage('Atenção', 'Digite usuário e senha', 'warning'); return; }
+
+            const btn = document.getElementById('sendCodeBtn');
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<span class="loading-spinner"></span> Enviando...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_URL}/api/super/send-code`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    loginUsername = username;
+                    loginPassword = password;
+                    document.getElementById('loginStep1').style.display = 'none';
+                    document.getElementById('loginStep1Footer').style.display = 'none';
+                    document.getElementById('loginStep2').style.display = 'block';
+                    document.getElementById('loginStep2Footer').style.display = 'block';
+                    document.getElementById('verificationCode').value = '';
+                    document.getElementById('verificationCode').focus();
+                    showMessage('Código enviado', 'Verifique seu email', 'success');
+                    startCodeTimer();
+                    setTimeout(() => { document.getElementById('resendCodeBtn').style.display = 'inline-flex'; }, 30000);
+                } else { showMessage('Erro', data.error || 'Erro ao enviar código', 'error'); }
+            } catch { showMessage('Erro', 'Não foi possível conectar ao servidor', 'error'); }
+            finally { btn.innerHTML = orig; btn.disabled = false; }
+        }
+
+        function startCodeTimer() {
+            let timeLeft = 300;
+            const timerEl = document.getElementById('codeTimer');
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) { clearInterval(timerInterval); timerEl.textContent = '0:00'; }
+                else {
+                    const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+                    timerEl.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+
+        async function verifyCode() {
+            const code = document.getElementById('verificationCode').value;
+            if (!code) { showMessage('Atenção', 'Digite o código de verificação', 'warning'); return; }
+
+            const btn = document.getElementById('verifyCodeBtn');
+            btn.innerHTML = '<span class="loading-spinner"></span> Verificando...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_URL}/api/super/verify-code`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: loginUsername, code })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    sessionStorage.setItem('superAdminToken', data.token);
+                    sessionStorage.setItem('superAdminName', data.admin);
+                    bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+                    clearInterval(timerInterval);
+                    document.getElementById('currentUser').textContent = data.admin;
+                    await loadDashboard();
+                    await loadAllData();
+                    await checkMaintenanceStatus();
+                    showMessage('Bem-vindo!', `Sessão iniciada como ${data.admin}`, 'success');
+                } else { showMessage('Erro', data.error || 'Código inválido ou expirado', 'error'); }
+            } catch { showMessage('Erro', 'Não foi possível verificar o código', 'error'); }
+            finally { btn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Verificar Código'; btn.disabled = false; }
+        }
+
+        function backToLogin() {
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('loginStep1').style.display = 'block';
+            document.getElementById('loginStep1Footer').style.display = 'block';
+            document.getElementById('loginStep2').style.display = 'none';
+            document.getElementById('loginStep2Footer').style.display = 'none';
+            document.getElementById('verificationCode').value = '';
+            document.getElementById('codeTimer').textContent = '5:00';
+        }
+
+        function resendCode() { document.getElementById('resendCodeBtn').style.display = 'none'; sendVerificationCode(); }
+        function handleLogout() { sessionStorage.removeItem('superAdminToken'); sessionStorage.removeItem('superAdminName'); location.reload(); }
+
+        // ==================== LIMPAR HISTÓRICO ====================
+        async function clearHistory() {
+            if (!confirm('⚠️ ATENÇÃO: Isso irá remover TODOS os registros de ações/logs permanentemente.\n\nEsta ação não pode ser desfeita. Deseja continuar?')) {
+                return;
+            }
+
+            const btn = document.getElementById('clearHistoryBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="loading-spinner"></span> Limpando...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_URL}/api/admin/historico`, {
+                    method: 'DELETE',
+                    headers: getAuthHeader()
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Erro ao limpar histórico');
+                }
+                
+                const result = await response.json();
+                showMessage('Sucesso', result.message || `${result.removidos} registros removidos`, 'success');
+                
+                // Recarregar a lista de ações
+                await loadDashboard();
+                
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // ==================== LOAD DATA ====================
+        async function loadDashboard() {
+            try {
+                const statsResp = await fetch(`${API_URL}/api/super/db-stats`, { headers: getAuthHeader() });
+                if (statsResp.ok) {
+                    const stats = await statsResp.json();
+                    if (stats.success) {
+                        document.getElementById('totalAdmins').textContent = stats.stats.total_admins || 0;
+                        document.getElementById('totalAlunos').textContent = stats.stats.total_alunos || 0;
+                        document.getElementById('dbSize').textContent = stats.stats.database_size_mb + ' MB';
+                        document.getElementById('totalLogs').textContent = stats.stats.total_logs || 0;
+                        document.getElementById('adminsDetail').textContent =
+                            `🌍 ${stats.stats.total_globals || 0} Global  ·  ⭐ ${stats.stats.total_formare || 0} Formare  ·  📚 ${stats.stats.total_turma || 0} Turma`;
+                    }
+                }
+
+                const logsResp = await fetch(`${API_URL}/api/super/admin-logs?limit=20`, { headers: getAuthHeader() });
+                if (logsResp.ok) {
+                    const logs = await logsResp.json();
+                    const tbody = document.getElementById('recentActions');
+                    if (logs.success && logs.logs?.length) {
+                        tbody.innerHTML = logs.logs.map(log => `<tr>
+                            <td style="white-space:nowrap;">${new Date(log.created_at).toLocaleString('pt-BR')}</td>
+                            <td><span class="badge bg-primary">${escapeHtml(log.username)}</span></td>
+                            <td>${escapeHtml(log.action)}</td>
+                            <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(log.details || '—')}</td>
+                            <td><code>${escapeHtml(log.ip || '—')}</code></td>
+                           `).join('');
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4" style="color:var(--text-muted);">Nenhum log encontrado</td></tr>';
+                    }
+                }
+
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('pt-BR');
+
+                if (adminChart) adminChart.destroy();
+                const ctx = document.getElementById('adminChart')?.getContext('2d');
+                if (ctx) {
+                    const adminsResp = await fetch(`${API_URL}/api/super/admins`, { headers: getAuthHeader() });
+                    if (adminsResp.ok) {
+                        const adminsData = await adminsResp.json();
+                        if (adminsData.success) {
+                            const globals = adminsData.admins.filter(a => a.admin_type === 'global').length;
+                            const formares = adminsData.admins.filter(a => a.admin_type === 'formare').length;
+                            const turmas = adminsData.admins.filter(a => a.admin_type === 'turma').length;
+                            adminChart = new Chart(ctx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: ['🌍 Globais', '⭐ Formare', '📚 Turma'],
+                                    datasets: [{
+                                        data: [globals, formares, turmas],
+                                        backgroundColor: ['#00d4ff', '#ffc947', '#10d67a'],
+                                        borderColor: ['rgba(0,212,255,.3)', 'rgba(255,201,71,.3)', 'rgba(16,214,122,.3)'],
+                                        borderWidth: 2, hoverOffset: 6
+                                    }]
+                                },
+                                options: {
+                                    responsive: true, maintainAspectRatio: true,
+                                    cutout: '68%',
+                                    plugins: {
+                                        legend: { position: 'bottom', labels: { color: '#a8bcd4', font: { family: 'DM Sans', size: 13 }, padding: 20, boxWidth: 12, boxHeight: 12 } }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            } catch (error) { console.error('Erro no dashboard:', error); }
+        }
+
+        async function loadAdmins() {
+            try {
+                const response = await fetch(`${API_URL}/api/super/admins`, { headers: getAuthHeader() });
+                if (response.ok) {
+                    const data = await response.json();
+                    const tbody = document.getElementById('adminsList');
+                    if (data.success && data.admins?.length) {
+                        tbody.innerHTML = data.admins.map(admin => `<tr>
+                            <td style="color:var(--text-muted);">#${admin.id}</td>
+                            <td><strong>${escapeHtml(admin.username)}</strong></td>
+                            <td>${getAdminTypeBadge(admin.admin_type)}</td>
+                            <td>${escapeHtml(admin.turma_permitida || '—')}</td>
+                            <td>${escapeHtml(admin.created_by || 'Sistema')}</td>
+                            <td style="white-space:nowrap;">${new Date(admin.created_at).toLocaleString('pt-BR')}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="openEditAdmin('${escapeHtml(admin.username)}')" title="Editar"><i class="bi bi-pencil-square"></i></button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteAdmin('${escapeHtml(admin.username)}')" title="Remover"><i class="bi bi-trash"></i></button>
+                            </td>
+                           `).join('');
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4" style="color:var(--text-muted);">Nenhum administrador cadastrado</td></tr>';
+                    }
+                }
+            } catch (error) { console.error('Erro ao carregar admins:', error); }
+        }
+
+        async function loadBlockedIps() {
+            try {
+                const response = await fetch(`${API_URL}/api/super/blocked-ips`, { headers: getAuthHeader() });
+                if (response.ok) {
+                    const data = await response.json();
+                    const tbody = document.getElementById('blockedIpsList');
+                    if (data.success && data.blocked_ips?.length) {
+                        tbody.innerHTML = data.blocked_ips.map(ip => `<tr>
+                            <td><code>${escapeHtml(ip.ip)}</code></td>
+                            <td>${escapeHtml(ip.reason || '—')}</td>
+                            <td>${escapeHtml(ip.blocked_by || 'Sistema')}</td>
+                            <td style="white-space:nowrap;">${new Date(ip.blocked_at).toLocaleString('pt-BR')}</td>
+                            <td style="white-space:nowrap;">${ip.expires_at ? new Date(ip.expires_at).toLocaleString('pt-BR') : '<span style="color:var(--danger);">Permanente</span>'}</td>
+                            <td><button class="btn btn-sm btn-success" onclick="unblockIp('${escapeHtml(ip.ip)}')"><i class="bi bi-unlock me-1"></i>Desbloquear</button></td>
+                           `).join('');
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">Nenhum IP bloqueado</td></tr>';
+                    }
+                }
+            } catch (error) { console.error('Erro ao carregar IPs:', error); }
+        }
+
+        async function loadLogs() {
+            try {
+                const response = await fetch(`${API_URL}/api/super/admin-logs?limit=100`, { headers: getAuthHeader() });
+                if (response.ok) {
+                    const data = await response.json();
+                    const tbody = document.getElementById('logsList');
+                    if (data.success && data.logs?.length) {
+                        tbody.innerHTML = data.logs.map(log => `</table>
+                            <td style="color:var(--text-muted);">#${log.id}</td>
+                            <td style="white-space:nowrap;">${new Date(log.created_at).toLocaleString('pt-BR')}</td>
+                            <td><span class="badge bg-primary">${escapeHtml(log.username)}</span></td>
+                            <td>${escapeHtml(log.action)}</td>
+                            <td style="max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(log.details || '—')}</td>
+                            <td><code>${escapeHtml(log.ip || '—')}</code></td>
+                           `).join('');
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">Nenhum log encontrado</td></tr>';
+                    }
+                }
+            } catch (error) { console.error('Erro ao carregar logs:', error); }
+        }
+
+        async function loadDbStats() {
+            try {
+                const response = await fetch(`${API_URL}/api/super/db-stats`, { headers: getAuthHeader() });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        const s = data.stats;
+                        document.getElementById('mainDbSize').textContent = s.database_size_mb + ' MB';
+                        document.getElementById('dbTotalAlunos').textContent = s.total_alunos || 0;
+                        document.getElementById('dbTotalTurmas').textContent = s.total_turmas || 0;
+                        document.getElementById('dbTotalPresencas').textContent = s.total_presencas || 0;
+                        document.getElementById('dbTotalAvisos').textContent = s.total_avisos || 0;
+                        document.getElementById('dbTotalLogs').textContent = s.total_logs || 0;
+                        document.getElementById('adminsDbSizeDetail').textContent = s.admins_db_size_mb + ' MB';
+                        document.getElementById('dbTotalAdmins').textContent = s.total_admins || 0;
+                        document.getElementById('dbGlobalAdmins').textContent = s.total_globals || 0;
+                        document.getElementById('dbFormareAdmins').textContent = s.total_formare || 0;
+                        document.getElementById('dbTurmaAdmins').textContent = s.total_turma || 0;
+                        document.getElementById('dbBlockedIps').textContent = s.total_blocked_ips || 0;
+                    }
+                }
+            } catch (error) { console.error('Erro ao carregar estatísticas:', error); }
+        }
+
+        async function loadAllData() {
+            await loadAdmins();
+            await loadBlockedIps();
+            await loadLogs();
+            await loadDbStats();
+        }
+
+        // ==================== CRUD ====================
+        async function createAdmin() {
+            const username = document.getElementById('newAdminUsername').value;
+            const password = document.getElementById('newAdminPassword').value;
+            const adminType = document.getElementById('newAdminType').value;
+            const turma = document.getElementById('newAdminTurma').value;
+            if (!username || !password) { showMessage('Atenção', 'Preencha usuário e senha', 'warning'); return; }
+            try {
+                const response = await fetch(`${API_URL}/api/super/admins`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                    body: JSON.stringify({ username, password, admin_type: adminType, turma_permitida: turma })
+                });
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    showMessage('Sucesso', data.message, 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('addAdminModal')).hide();
+                    document.getElementById('addAdminForm').reset();
+                    document.getElementById('turmaSelectDiv').style.display = 'none';
+                    await loadAdmins(); await loadDashboard();
+                } else { showMessage('Erro', data.error || 'Erro ao criar administrador', 'error'); }
+            } catch (error) { showMessage('Erro', error.message, 'error'); }
+        }
+
+        function openEditAdmin(username) {
+            currentEditUsername = username;
+            document.getElementById('editAdminUsername').textContent = username;
+            document.getElementById('editNewUsername').value = '';
+            document.getElementById('editNewPassword').value = '';
+            new bootstrap.Modal(document.getElementById('editAdminModal')).show();
+        }
+
+        async function editAdminComplete() {
+            const newUsername = document.getElementById('editNewUsername').value.trim();
+            const newPassword = document.getElementById('editNewPassword').value;
+            if (!newUsername && !newPassword) { showMessage('Atenção', 'Preencha pelo menos um campo para salvar', 'warning'); return; }
+            let hasError = false;
+            if (newUsername && newUsername !== currentEditUsername) {
+                try {
+                    const r = await fetch(`${API_URL}/api/super/admins/${encodeURIComponent(currentEditUsername)}/rename`, {
+                        method: 'PUT', headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                        body: JSON.stringify({ new_username: newUsername })
+                    });
+                    const d = await r.json();
+                    if (r.ok && d.success) { showMessage('Sucesso', d.message, 'success'); currentEditUsername = newUsername; }
+                    else { showMessage('Erro', d.error || 'Erro ao renomear', 'error'); hasError = true; }
+                } catch (e) { showMessage('Erro', e.message, 'error'); hasError = true; }
+            }
+            if (newPassword && !hasError) {
+                try {
+                    const r = await fetch(`${API_URL}/api/super/admins/${encodeURIComponent(currentEditUsername)}`, {
+                        method: 'PUT', headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                        body: JSON.stringify({ password: newPassword })
+                    });
+                    const d = await r.json();
+                    if (r.ok && d.success) { showMessage('Sucesso', d.message, 'success'); }
+                    else { showMessage('Erro', d.error || 'Erro ao alterar senha', 'error'); hasError = true; }
+                } catch (e) { showMessage('Erro', e.message, 'error'); hasError = true; }
+            }
+            if (!hasError) { bootstrap.Modal.getInstance(document.getElementById('editAdminModal')).hide(); await loadAdmins(); await loadDashboard(); }
+        }
+
+        async function deleteAdmin(username) {
+            if (!confirm(`Tem certeza que deseja remover o administrador "${username}"?`)) return;
+            try {
+                const r = await fetch(`${API_URL}/api/super/admins/${encodeURIComponent(username)}`, { method: 'DELETE', headers: getAuthHeader() });
+                const d = await r.json();
+                if (r.ok && d.success) { showMessage('Sucesso', d.message, 'success'); await loadAdmins(); await loadDashboard(); }
+                else { showMessage('Erro', d.error || 'Erro ao remover admin', 'error'); }
+            } catch (e) { showMessage('Erro', e.message, 'error'); }
+        }
+
+        async function blockIp() {
+            const ip = document.getElementById('blockIp').value;
+            const reason = document.getElementById('blockReason').value;
+            const duration = document.getElementById('blockDuration').value;
+            if (!ip) { showMessage('Atenção', 'Digite o endereço IP', 'warning'); return; }
+            try {
+                const r = await fetch(`${API_URL}/api/super/blocked-ips`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                    body: JSON.stringify({ ip, reason: reason || 'Bloqueado manualmente', expires_minutes: parseInt(duration) || 60 })
+                });
+                const d = await r.json();
+                if (r.ok && d.success) {
+                    showMessage('Sucesso', d.message, 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('blockIpModal')).hide();
+                    document.getElementById('blockIp').value = '';
+                    document.getElementById('blockReason').value = '';
+                    await loadBlockedIps();
+                } else { showMessage('Erro', d.error || 'Erro ao bloquear IP', 'error'); }
+            } catch (e) { showMessage('Erro', e.message, 'error'); }
+        }
+
+        async function unblockIp(ip) {
+            if (!confirm(`Desbloquear o IP ${ip}?`)) return;
+            try {
+                const r = await fetch(`${API_URL}/api/super/blocked-ips/${encodeURIComponent(ip)}`, { method: 'DELETE', headers: getAuthHeader() });
+                const d = await r.json();
+                if (r.ok && d.success) { showMessage('Sucesso', d.message, 'success'); await loadBlockedIps(); }
+                else { showMessage('Erro', d.error || 'Erro ao desbloquear IP', 'error'); }
+            } catch (e) { showMessage('Erro', e.message, 'error'); }
+        }
+
+        async function exportLogs() {
+            try {
+                const token = sessionStorage.getItem('superAdminToken');
+                if (!token) { showMessage('Erro', 'Sessão não autenticada', 'error'); return; }
+                const r = await fetch(`${API_URL}/api/super/export-logs-excel`, { headers: { 'Authorization': 'Bearer ' + token } });
+                if (!r.ok) throw new Error('Erro ao exportar logs');
+                const blob = await r.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = `logs_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                showMessage('Sucesso', 'Download iniciado!', 'success');
+            } catch (e) { showMessage('Erro', e.message, 'error'); }
+        }
+
+        async function exportBackup() {
+            try {
+                const token = sessionStorage.getItem('superAdminToken');
+                if (!token) { showMessage('Erro', 'Sessão não autenticada', 'error'); return; }
+                const r = await fetch(`${API_URL}/api/super/backup-full`, { headers: { 'Authorization': 'Bearer ' + token } });
+                if (!r.ok) throw new Error('Erro ao exportar backup');
+                const data = await r.json();
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = `backup_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                showMessage('Sucesso', 'Backup exportado com sucesso!', 'success');
+            } catch (e) { showMessage('Erro', e.message, 'error'); }
+        }
+
+        async function restoreBackup() {
+            const fileInput = document.getElementById('restoreBackupFile');
+            if (!fileInput.files.length) { showMessage('Atenção', 'Selecione um arquivo de backup', 'warning'); return; }
+            if (!confirm('⚠️ ATENÇÃO: Isso irá SUBSTITUIR todos os dados atuais! Continuar?')) return;
+            try {
+                const file = fileInput.files[0];
+                const text = await file.text();
+                const backupData = JSON.parse(text);
+                const r = await fetch(`${API_URL}/api/super/backup-restore`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                    body: JSON.stringify(backupData)
+                });
+                const d = await r.json();
+                if (r.ok && d.success) { showMessage('Sucesso', d.message, 'success'); await loadAllData(); await loadDashboard(); }
+                else { showMessage('Erro', d.error || 'Erro ao restaurar backup', 'error'); }
+            } catch (e) { showMessage('Erro', e.message, 'error'); }
+        }
+
+        async function clearAllData() {
+            const confirmation = document.getElementById('clearConfirmInput').value;
+            if (confirmation !== 'CONFIRMAR_LIMPEZA_TOTAL') { showMessage('Erro', 'Confirmação incorreta', 'error'); return; }
+            if (!confirm('⚠️ ATENÇÃO: Esta ação é IRREVERSÍVEL! Todos os dados serão apagados. Continuar?')) return;
+            try {
+                const r = await fetch(`${API_URL}/api/super/clear-all-data`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                    body: JSON.stringify({ confirmation })
+                });
+                const d = await r.json();
+                if (r.ok && d.success) {
+                    showMessage('Concluído', d.message, 'success');
+                    document.getElementById('clearConfirmInput').value = '';
+                    document.getElementById('clearAllDataBtn').disabled = true;
+                    await loadDbStats(); await loadDashboard();
+                } else { showMessage('Erro', d.error || 'Erro ao limpar dados', 'error'); }
+            } catch (e) { showMessage('Erro', e.message, 'error'); }
+        }
+
+        
+
+        // ==================== EVENT LISTENERS ====================
+        function setupEventListeners() {
+            document.querySelectorAll('.sidebar .nav-link[data-tab]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tabId = link.getAttribute('data-tab');
+                    document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('show', 'active'));
+                    document.getElementById(tabId).classList.add('show', 'active');
+                    if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('show');
+                    if (tabId === 'admins') loadAdmins();
+                    if (tabId === 'blocked-ips') loadBlockedIps();
+                    if (tabId === 'logs') loadLogs();
+                    if (tabId === 'database') loadDbStats();
+                    if (tabId === 'site-notice') loadSiteNotice();
+                });
+            });
+
+            document.getElementById('mobileMenuToggle')?.addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('show');
+            });
+
+            document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
+            document.getElementById('refreshDashboard')?.addEventListener('click', () => { loadDashboard(); loadAllData(); });
+            document.getElementById('refreshDbStats')?.addEventListener('click', loadDbStats);
+            document.getElementById('clearHistoryBtn')?.addEventListener('click', clearHistory);
+
+            document.getElementById('saveAdminBtn')?.addEventListener('click', createAdmin);
+            document.getElementById('confirmBlockIpBtn')?.addEventListener('click', blockIp);
+            document.getElementById('exportLogsBtn')?.addEventListener('click', exportLogs);
+            document.getElementById('exportBackupBtn')?.addEventListener('click', exportBackup);
+            document.getElementById('restoreBackupBtn')?.addEventListener('click', restoreBackup);
+            document.getElementById('clearAllDataBtn')?.addEventListener('click', clearAllData);
+            document.getElementById('confirmEditAdminBtn')?.addEventListener('click', editAdminComplete);
+
+            document.getElementById('newAdminType')?.addEventListener('change', (e) => {
+                document.getElementById('turmaSelectDiv').style.display = e.target.value === 'turma' ? 'block' : 'none';
+            });
+
+            document.getElementById('clearConfirmInput')?.addEventListener('input', (e) => {
+                document.getElementById('clearAllDataBtn').disabled = e.target.value !== 'CONFIRMAR_LIMPEZA_TOTAL';
+            });
+
+            
+
+            setupSiteNoticeListeners();
+
+            const toggle = document.getElementById('maintenanceModeToggle');
+            const applyBtn = document.getElementById('applyMaintenanceBtn');
+            const msgDiv = document.getElementById('maintenanceMessageDiv');
+            toggle?.addEventListener('change', (e) => {
+                if (e.target.checked) { msgDiv.style.display = 'block'; applyBtn.style.display = 'inline-flex'; }
+                else { msgDiv.style.display = 'none'; applyBtn.style.display = 'none'; document.getElementById('maintenanceMessage').value = ''; }
+            });
+            applyBtn?.addEventListener('click', async () => {
+                await setMaintenanceMode(toggle.checked, document.getElementById('maintenanceMessage').value);
+            });
+        }
+
+
+        // ==================== AVISO DO SITE ====================
+        async function loadSiteNotice() {
+            try {
+                const res = await fetch(`${API_URL}/api/super/site-notice`, { headers: getAuthHeader() });
+                if (!res.ok) { showMessage('Erro', 'Falha ao carregar aviso do site', 'error'); return; }
+                const data = await res.json();
+                if (!data.success) return;
+                const notice = data.notice;
+
+                document.getElementById('siteNoticeTitle').value = notice.title || '';
+                document.getElementById('siteNoticeBody').value = notice.body || '';
+                document.getElementById('siteNoticeVersionKey').value = notice.version_key || '';
+                document.getElementById('siteNoticeActive').checked = !!notice.active;
+
+                if (notice.start_at) {
+                    document.getElementById('siteNoticeStartAt').value = notice.start_at.slice(0, 16);
+                }
+                if (notice.end_at) {
+                    document.getElementById('siteNoticeEndAt').value = notice.end_at.slice(0, 16);
+                }
+
+                updateSiteNoticePreview();
+                updateSiteNoticeStatus(notice);
+            } catch (e) {
+                showMessage('Erro', e.message, 'error');
+            }
+        }
+
+        function updateSiteNoticePreview() {
+            const title = document.getElementById('siteNoticeTitle').value || 'Título do aviso aparece aqui';
+            const body = document.getElementById('siteNoticeBody').value || '<span style="color:#aaa;font-style:italic;">O conteúdo do aviso aparece aqui...</span>';
+            const versionKey = document.getElementById('siteNoticeVersionKey').value || '—';
+            const active = document.getElementById('siteNoticeActive').checked;
+            const startAt = document.getElementById('siteNoticeStartAt').value;
+            const endAt = document.getElementById('siteNoticeEndAt').value;
+
+            const previewTitle = document.getElementById('previewTitle');
+            const previewBody = document.getElementById('previewBody');
+            const previewStatus = document.getElementById('previewStatus');
+            const previewVersionKey = document.getElementById('previewVersionKey');
+            const previewStartAt = document.getElementById('previewStartAt');
+            const previewEndAt = document.getElementById('previewEndAt');
+
+            if (previewTitle) previewTitle.textContent = title;
+            if (previewBody) previewBody.innerHTML = body;
+            if (previewVersionKey) previewVersionKey.textContent = versionKey;
+            if (previewStatus) {
+                const now = new Date().toISOString().slice(0, 16);
+                let isLive = active;
+                if (isLive && startAt && now < startAt) isLive = false;
+                if (isLive && endAt && now > endAt) isLive = false;
+                previewStatus.innerHTML = isLive
+                    ? '<span class="badge bg-success">✅ Ativo e visível</span>'
+                    : (active
+                        ? '<span class="badge bg-warning text-dark">⏳ Ativo mas fora do período</span>'
+                        : '<span class="badge bg-secondary">❌ Inativo</span>');
+            }
+            if (previewStartAt) previewStartAt.textContent = startAt ? new Date(startAt).toLocaleString('pt-BR') : '—';
+            if (previewEndAt) previewEndAt.textContent = endAt ? new Date(endAt).toLocaleString('pt-BR') : 'Sem prazo';
+        }
+
+        function updateSiteNoticeStatus(notice) {
+            const card = document.getElementById('siteNoticeStatusCard');
+            const dot = document.getElementById('siteNoticeStatusDot');
+            const text = document.getElementById('siteNoticeStatusText');
+            const meta = document.getElementById('siteNoticeStatusMeta');
+            if (!card) return;
+
+            const now = new Date().toISOString();
+            let isLive = notice.active;
+            if (isLive && notice.start_at && now < notice.start_at) isLive = false;
+            if (isLive && notice.end_at && now > notice.end_at) isLive = false;
+
+            card.style.display = 'block';
+            if (isLive) {
+                dot.className = 'status-dot status-online';
+                text.textContent = 'Aviso está sendo exibido no site';
+                text.style.color = 'var(--success)';
+            } else if (notice.active) {
+                dot.className = 'status-dot';
+                dot.style.background = 'var(--warning)';
+                text.textContent = 'Aviso ativo mas fora do período de exibição';
+                text.style.color = 'var(--warning)';
+            } else {
+                dot.className = 'status-dot';
+                dot.style.background = 'var(--text-muted)';
+                text.textContent = 'Aviso inativo — não será exibido';
+                text.style.color = 'var(--text-muted)';
+            }
+            const previewUpdatedAt = document.getElementById('previewUpdatedAt');
+            if (previewUpdatedAt) {
+                previewUpdatedAt.textContent = notice.updated_at
+                    ? new Date(notice.updated_at).toLocaleString('pt-BR') + ' por ' + (notice.updated_by || '—')
+                    : '—';
+            }
+            if (meta) meta.textContent = notice.updated_at ? 'Última edição: ' + new Date(notice.updated_at).toLocaleString('pt-BR') : '';
+        }
+
+        async function saveSiteNotice() {
+            const btn = document.getElementById('saveSiteNoticeBtn');
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<span class="loading-spinner"></span> Salvando...';
+            btn.disabled = true;
+
+            try {
+                const payload = {
+                    title: document.getElementById('siteNoticeTitle').value.trim(),
+                    body: document.getElementById('siteNoticeBody').value.trim(),
+                    version_key: document.getElementById('siteNoticeVersionKey').value.trim(),
+                    active: document.getElementById('siteNoticeActive').checked,
+                    start_at: document.getElementById('siteNoticeStartAt').value || null,
+                    end_at: document.getElementById('siteNoticeEndAt').value || null,
+                };
+
+                const res = await fetch(`${API_URL}/api/super/site-notice`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showMessage('Sucesso', 'Aviso do site salvo com sucesso!', 'success');
+                    updateSiteNoticeStatus(data.notice);
+                    updateSiteNoticePreview();
+                } else {
+                    showMessage('Erro', data.error || 'Erro ao salvar', 'error');
+                }
+            } catch (e) {
+                showMessage('Erro', e.message, 'error');
+            } finally {
+                btn.innerHTML = orig;
+                btn.disabled = false;
+            }
+        }
+
+        function setupSiteNoticeListeners() {
+            document.getElementById('saveSiteNoticeBtn')?.addEventListener('click', saveSiteNotice);
+            document.getElementById('refreshSiteNoticeBtn')?.addEventListener('click', loadSiteNotice);
+
+            document.getElementById('generateVersionKeyBtn')?.addEventListener('click', () => {
+                const now = new Date();
+                const key = 'v_' + now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '_' + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+                document.getElementById('siteNoticeVersionKey').value = key;
+                updateSiteNoticePreview();
+            });
+
+            ['siteNoticeTitle', 'siteNoticeBody', 'siteNoticeVersionKey', 'siteNoticeStartAt', 'siteNoticeEndAt'].forEach(id => {
+                document.getElementById(id)?.addEventListener('input', updateSiteNoticePreview);
+            });
+            document.getElementById('siteNoticeActive')?.addEventListener('change', updateSiteNoticePreview);
+
+            document.querySelectorAll('.quick-duration-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const days = parseInt(btn.dataset.days);
+                    const now = new Date();
+                    const start = now.toISOString().slice(0, 16);
+                    document.getElementById('siteNoticeStartAt').value = start;
+                    if (days === 0) {
+                        document.getElementById('siteNoticeEndAt').value = '';
+                    } else {
+                        const end = new Date(now.getTime() + days * 86400000);
+                        document.getElementById('siteNoticeEndAt').value = end.toISOString().slice(0, 16);
+                    }
+                    document.querySelectorAll('.quick-duration-btn').forEach(b => b.classList.remove('btn-primary'));
+                    btn.classList.add('btn-primary');
+                    btn.classList.remove('btn-outline-secondary');
+                    setTimeout(() => {
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-outline-secondary');
+                    }, 2000);
+                    updateSiteNoticePreview();
+                });
+            });
+        }
+
+        // ==================== CHECK SESSION ====================
+        async function checkSession() {
+            const token = sessionStorage.getItem('superAdminToken');
+            if (!token) return false;
+            try {
+                const r = await fetch(`${API_URL}/api/admin/permissions`, { headers: getAuthHeader() });
+                if (r.status === 401) { sessionStorage.removeItem('superAdminToken'); sessionStorage.removeItem('superAdminName'); return false; }
+                return r.ok;
+            } catch { return false; }
+        }
+
+        // ==================== INIT ====================
+        async function init() {
+            setupEventListeners();
+            const token = sessionStorage.getItem('superAdminToken');
+            if (token && await checkSession()) {
+                document.getElementById('currentUser').textContent = sessionStorage.getItem('superAdminName') || 'Super Admin';
+                await loadDashboard();
+                await loadAllData();
+                await checkMaintenanceStatus();
+                return;
+            }
+
+            const loginHtml = `
+            <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+                    <div class="modal-content" style="border-color:var(--border-accent);">
+                        <div class="modal-header" style="background: linear-gradient(135deg, rgba(0,212,255,.1), rgba(124,58,237,.1)); border-bottom: 1px solid var(--border); padding: 24px 28px; flex-direction: column; align-items: flex-start; gap: 4px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:2px;">
+                                <div style="width:36px; height:36px; background:var(--accent-dim); border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                                    <i class="bi bi-shield-lock-fill" style="color:var(--accent); font-size:1.1rem;"></i>
+                                </div>
+                                <h5 class="modal-title" style="font-size:1.1rem;">Super Admin</h5>
+                            </div>
+                            <p style="color:var(--text-muted); font-size:12.5px; margin:0;">Autenticação de dois fatores (2FA)</p>
+                        </div>
+                        <div class="modal-body" style="padding:28px;">
+                            <div id="loginStep1">
+                                <div class="mb-3">
+                                    <label class="form-label">Usuário</label>
+                                    <input type="text" class="form-control" id="loginUsername" required autocomplete="username" placeholder="seu_usuario">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Senha</label>
+                                    <input type="password" class="form-control" id="loginPassword" required autocomplete="current-password" placeholder="••••••••">
+                                </div>
+                            </div>
+                            <div id="loginStep2" style="display:none;">
+                                <div class="text-center mb-4">
+                                    <div style="width:64px; height:64px; background:var(--accent-dim); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
+                                        <i class="bi bi-envelope-fill" style="font-size:1.6rem; color:var(--accent);"></i>
+                                    </div>
+                                    <div style="font-family:var(--font-head); font-size:1rem; font-weight:700; color:var(--text);">Verifique seu email</div>
+                                    <p style="color:var(--text-muted); font-size:12.5px; margin-top:5px;">Enviamos um código de 6 dígitos para o endereço cadastrado</p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Código de Verificação</label>
+                                    <input type="text" class="form-control text-center" id="verificationCode"
+                                        placeholder="000000" maxlength="6"
+                                        style="font-size:1.6rem; letter-spacing:10px; font-family:var(--font-head); font-weight:700;">
+                                </div>
+                                <div class="text-center" style="font-size:12px; color:var(--text-muted);">
+                                    <i class="bi bi-clock me-1"></i> Expira em: <span id="codeTimer" style="color:var(--accent); font-weight:700;">5:00</span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="resendCodeBtn" style="display:none; font-size:12px;">
+                                        <i class="bi bi-arrow-repeat me-1"></i> Reenviar código
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="padding:16px 28px; border-top:1px solid var(--border);">
+                            <div id="loginStep1Footer" style="width:100%;">
+                                <button type="button" class="btn btn-primary w-100" id="sendCodeBtn">
+                                    <i class="bi bi-envelope-paper me-2"></i> Continuar com 2FA
+                                </button>
+                            </div>
+                            <div id="loginStep2Footer" style="display:none; width:100%;">
+                                <button type="button" class="btn btn-outline-secondary w-100 mb-2" id="backToLoginBtn">
+                                    <i class="bi bi-arrow-left me-2"></i> Voltar
+                                </button>
+                                <button type="button" class="btn btn-primary w-100" id="verifyCodeBtn">
+                                    <i class="bi bi-check-lg me-2"></i> Verificar Código
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+            document.body.insertAdjacentHTML('beforeend', loginHtml);
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'), { backdrop: 'static', keyboard: false });
+            loginModal.show();
+
+            document.getElementById('sendCodeBtn').addEventListener('click', sendVerificationCode);
+            document.getElementById('verifyCodeBtn').addEventListener('click', verifyCode);
+            document.getElementById('backToLoginBtn').addEventListener('click', backToLogin);
+            document.getElementById('resendCodeBtn').addEventListener('click', resendCode);
+            document.getElementById('loginPassword')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendVerificationCode(); });
+            document.getElementById('verificationCode')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') verifyCode(); });
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

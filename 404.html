@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Página não encontrada | Escala de Limpeza </title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ================================================ */
+        /* ROOT — AdminEscala Design System                  */
+        /* ================================================ */
+        :root {
+            --primary:        #ec3333;
+            --primary-dark:   #c82333;
+            --primary-light:  #ff5555;
+            --primary-glow:   rgba(236, 51, 51, 0.22);
+            --bg:             #07080e;
+            --surface-1:      #0d0f18;
+            --surface-2:      #12151f;
+            --surface-3:      #181c28;
+            --border:         rgba(255, 255, 255, 0.07);
+            --border-bright:  rgba(255, 255, 255, 0.13);
+            --text:           #eef0f6;
+            --text-muted:     #7b8199;
+            --text-faint:     #454b62;
+            --radius:         14px;
+            --radius-sm:      8px;
+            --transition:     all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ================================================ */
+        /* RESET                                             */
+        /* ================================================ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ================================================ */
+        /* CANVAS BACKGROUND                                 */
+        /* ================================================ */
+        #bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Noise grain overlay */
+        .grain {
+            position: fixed;
+            inset: -200%;
+            width: 400%;
+            height: 400%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1;
+            animation: grainShift 8s steps(1) infinite;
+        }
+
+        @keyframes grainShift {
+            0%   { transform: translate(0,0); }
+            10%  { transform: translate(-3%,-3%); }
+            20%  { transform: translate(4%,2%); }
+            30%  { transform: translate(-1%,5%); }
+            40%  { transform: translate(3%,-4%); }
+            50%  { transform: translate(-4%,1%); }
+            60%  { transform: translate(2%,4%); }
+            70%  { transform: translate(-3%,-1%); }
+            80%  { transform: translate(4%,3%); }
+            90%  { transform: translate(-2%,-5%); }
+            100% { transform: translate(0,0); }
+        }
+
+        /* Red vignette corners */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 55%, rgba(0,0,0,0.6) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Top accent line */
+        .accent-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, var(--primary) 40%, var(--primary-light) 60%, transparent 100%);
+            z-index: 20;
+            opacity: 0;
+            animation: lineReveal 1s ease 0.2s forwards;
+        }
+
+        @keyframes lineReveal {
+            from { opacity: 0; transform: scaleX(0); }
+            to   { opacity: 1; transform: scaleX(1); }
+        }
+
+        /* ================================================ */
+        /* WRAPPER                                           */
+        /* ================================================ */
+        .wrapper {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            padding: 28px 32px 24px;
+        }
+
+        /* ================================================ */
+        /* HEADER                                            */
+        /* ================================================ */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            opacity: 0;
+            animation: fadeDown 0.6s ease 0.15s forwards;
+        }
+
+        .logo-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            margin-right: auto;
+        }
+
+        .logo-svg {
+            display: block;
+            max-height: 100px;
+            width: auto;
+        }
+
+        .logo-name span {
+            color: var(--primary);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--surface-2);
+            border: 1px solid var(--border-bright);
+            border-radius: 100px;
+            padding: 5px 12px 5px 8px;
+            font-size: 11.5px;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.2px;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 6px var(--primary-glow);
+            animation: pulse 2.2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(236,51,51,0.5); }
+            50%       { opacity: 0.5; box-shadow: 0 0 12px rgba(236,51,51,0.8); }
+        }
+
+        /* ================================================ */
+        /* MAIN CENTER                                       */
+        /* ================================================ */
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 0;
+            padding: 20px 0;
+        }
+
+        /* ================================================ */
+        /* GHOST ILLUSTRATION (SVG inline)                   */
+        /* ================================================ */
+        .illustration-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: floatIn 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.5s forwards;
+        }
+
+        @keyframes floatIn {
+            from { opacity: 0; transform: translateY(28px) scale(0.88); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* The illustration floats continuously */
+        .illustration-inner {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-10px); }
+        }
+
+        /* Glow ring behind illustration - maior */
+        .glow-ring {
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(236,51,51,0.12) 0%, transparent 70%);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50%       { transform: scale(1.15); opacity: 1; }
+        }
+
+        /* Ground ellipse shadow - maior */
+        .ground-shadow {
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 24px;
+            background: radial-gradient(ellipse, rgba(236,51,51,0.15) 0%, transparent 75%);
+            border-radius: 50%;
+            animation: shadowPulse 5s ease-in-out infinite;
+        }
+
+        @keyframes shadowPulse {
+            0%, 100% { transform: translateX(-50%) scaleX(1); opacity: 0.7; }
+            50%       { transform: translateX(-50%) scaleX(0.75); opacity: 0.4; }
+        }
+
+        /* Imagem maior */
+        .bad-img {
+            width: clamp(260px, 45vw, 400px);
+            height: auto;
+            display: block;
+            position: relative;
+            z-index: 2;
+            user-select: none;
+            -webkit-user-drag: none;
+            filter: drop-shadow(0 20px 40px rgba(236,51,51,0.25));
+            cursor: pointer;
+        }
+
+        /* ================================================ */
+        /* TEXT                                              */
+        /* ================================================ */
+        .text-block {
+            opacity: 0;
+            transform: translateY(12px);
+            animation: fadeUp 0.6s ease 0.85s forwards;
+            margin-bottom: 30px;
+        }
+
+        .headline {
+            font-size: clamp(19px, 3.5vw, 26px);
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.6px;
+            margin-bottom: 8px;
+        }
+
+        .subtext {
+            font-size: clamp(12.5px, 2vw, 14px);
+            color: var(--text-muted);
+            font-weight: 400;
+            max-width: 360px;
+            line-height: 1.7;
+            margin: 0 auto;
+        }
+
+        /* ================================================ */
+        /* ACTIONS                                           */
+        /* ================================================ */
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(12px);
+            animation: fadeUp 0.6s ease 1s forwards;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Sora', sans-serif;
+            font-size: 13.5px;
+            font-weight: 600;
+            letter-spacing: 0.1px;
+            padding: 11px 24px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-icon { width: 15px; height: 15px; flex-shrink: 0; }
+
+        /* Primary */
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(236,51,51,0.30);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.16) 0%, transparent 55%);
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(236,51,51,0.45);
+            color: #fff;
+        }
+
+        .btn-primary:hover::before { opacity: 1; }
+        .btn-primary:active { transform: translateY(0); }
+
+        /* Ghost */
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-bright);
+        }
+
+        .btn-ghost:hover {
+            background: var(--surface-2);
+            border-color: rgba(255,255,255,0.2);
+            color: var(--text);
+            transform: translateY(-2px);
+        }
+
+        /* ================================================ */
+        /* BREADCRUMB / PATH DISPLAY                         */
+        /* ================================================ */
+        .path-display {
+            margin-top: 26px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0;
+            animation: fadeUp 0.5s ease 1.15s forwards;
+        }
+
+        .path-display code {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 3px 8px;
+            color: var(--text-faint);
+            letter-spacing: 0.4px;
+        }
+
+        .path-label {
+            font-size: 11px;
+            color: var(--text-faint);
+            letter-spacing: 0.2px;
+        }
+
+        /* ================================================ */
+        /* FOOTER                                            */
+        /* ================================================ */
+        footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            opacity: 0;
+            animation: fadeUp 0.5s ease 1.3s forwards;
+        }
+
+        .footer-link {
+            font-size: 11.5px;
+            color: var(--text-faint);
+            text-decoration: none;
+            letter-spacing: 0.2px;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover { color: var(--text-muted); }
+
+        .footer-divider {
+            width: 1px;
+            height: 12px;
+            background: var(--border);
+        }
+
+        /* ================================================ */
+        /* TOAST NOTIFICATION                                */
+        /* ================================================ */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(70px);
+            background: var(--surface-3);
+            border: 1px solid var(--border-bright);
+            border-radius: var(--radius-sm);
+            padding: 10px 18px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon { font-size: 14px; }
+
+        /* ================================================ */
+        /* KEYFRAMES                                         */
+        /* ================================================ */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes rippleAnim {
+            to { transform: scale(1); opacity: 0; }
+        }
+
+        /* ================================================ */
+        /* RESPONSIVE                                        */
+        /* ================================================ */
+        @media (max-width: 520px) {
+            .wrapper { padding: 20px 20px 18px; }
+            .logo-name { display: none; }
+            .status-badge span { display: none; }
+            .status-badge { padding: 7px; }
+            .btn { padding: 10px 18px; font-size: 13px; }
+            .actions { gap: 8px; }
+            footer { gap: 14px; }
+            .glow-ring { width: 280px; height: 280px; }
+            .ground-shadow { width: 140px; height: 18px; }
+        }
+
+        @media (max-width: 380px) {
+            .btn-ghost { display: none; }
+            .btn-primary { width: 100%; max-width: 260px; justify-content: center; }
+        }
+
+        @media (max-height: 600px) and (orientation: landscape) {
+            body { overflow: auto; }
+            .bad-img { width: 160px; }
+            .glow-ring { display: none; }
+            .wrapper { padding: 60px 32px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+    <div class="accent-line"></div>
+
+    <div class="wrapper">
+
+        <!-- ─── HEADER ─── -->
+        <header>
+            <img src="logu.svg" alt="AdminEscala" class="logo-svg" onerror="this.onerror=null; this.src='/logu.svg';" />
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                <span>Erro 404</span>
+            </div>
+        </header>
+
+        <!-- ─── MAIN ─── -->
+        <main>
+
+            <!-- Illustration - apenas a imagem, sem o texto 404 -->
+            <div class="illustration-wrap">
+                <div class="glow-ring"></div>
+                <div class="illustration-inner">
+                    <img
+                        src="Bad.png"
+                        alt="Página não encontrada"
+                        class="bad-img"
+                        draggable="false"
+                        id="badImg"
+                        onerror="this.replaceWith(document.getElementById('svg-fallback'))"
+                    />
+                    <!-- SVG inline fallback if bad.png is missing -->
+                    <svg id="svg-fallback" style="display:none" width="300" height="300" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Ghost body -->
+                        <path d="M100 30 C65 30 42 55 42 90 L42 155 L55 142 L68 155 L81 142 L94 155 L107 142 L120 155 L133 142 L146 155 L158 90 C158 55 135 30 100 30Z" fill="#1a1e2e" stroke="rgba(236,51,51,0.35)" stroke-width="2"/>
+                        <!-- Eyes -->
+                        <circle cx="80" cy="90" r="10" fill="white" opacity="0.9"/>
+                        <circle cx="120" cy="90" r="10" fill="white" opacity="0.9"/>
+                        <circle cx="83" cy="93" r="5" fill="#ec3333"/>
+                        <circle cx="123" cy="93" r="5" fill="#ec3333"/>
+                        <!-- X marks on eyes -->
+                        <line x1="75" y1="85" x2="85" y2="95" stroke="#ec3333" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="85" y1="85" x2="75" y2="95" stroke="#ec3333" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="115" y1="85" x2="125" y2="95" stroke="#ec3333" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="125" y1="85" x2="115" y2="95" stroke="#ec3333" stroke-width="2" stroke-linecap="round"/>
+                        <!-- Mouth -->
+                        <path d="M85 115 Q100 125 115 115" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round" fill="none"/>
+                    </svg>
+                </div>
+                <div class="ground-shadow"></div>
+            </div>
+
+            <!-- Texto descritivo (sem o 404) -->
+            <div class="text-block">
+                <h1 class="headline">Página não encontrada</h1>
+                <p class="subtext">O endereço que você tentou acessar não existe ou foi movido para outro local.</p>
+            </div>
+
+            <!-- Botões -->
+            <div class="actions">
+                <a href="/" class="btn btn-primary" id="btnHome">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                    </svg>
+                    Voltar ao início
+                </a>
+                <button class="btn btn-ghost" onclick="history.back()">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    Voltar
+                </button>
+            </div>
+
+            <!-- URL path display -->
+            <div class="path-display">
+                <span class="path-label">Você tentou acessar:</span>
+                <code id="pathCode">/página-não-encontrada</code>
+            </div>
+
+        </main>
+
+        <!-- ─── FOOTER ─── -->
+        <footer style="background-color: transparent; padding: 20px; text-align: center;">
+            <span class="footer-link" style="color: #cccccc;">© <span id="currentYear"></span> INRB. Todos os direitos reservados.</span>
+        </footer>
+
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">🔗</span>
+        <span id="toastMsg">Link copiado!</span>
+    </div>
+
+    <script>
+    (function () {
+        'use strict';
+
+        /* ─────────────────────────────────────────────── */
+        /* 1. ANIMATED PARTICLE CANVAS                     */
+        /* ─────────────────────────────────────────────── */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx    = canvas.getContext('2d');
+        let W, H, particles = [];
+        const PARTICLE_COUNT = 55;
+
+        function resize() {
+            W = canvas.width  = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+        }
+
+        function createParticle() {
+            return {
+                x:     Math.random() * W,
+                y:     Math.random() * H,
+                r:     Math.random() * 1.3 + 0.2,
+                vx:    (Math.random() - 0.5) * 0.25,
+                vy:    (Math.random() - 0.5) * 0.25,
+                alpha: Math.random() * 0.45 + 0.05,
+                red:   Math.random() < 0.18,
+            };
+        }
+
+        function initParticles() {
+            particles = Array.from({ length: PARTICLE_COUNT }, createParticle);
+        }
+
+        let mx = W / 2, my = H / 2;
+        document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+
+            const grad = ctx.createRadialGradient(W/2, H/2, H*0.2, W/2, H/2, H*0.9);
+            grad.addColorStop(0, 'rgba(13,15,24,0)');
+            grad.addColorStop(1, 'rgba(4,4,8,0.5)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, W, H);
+
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(236,51,51,${0.04 * (1 - dist/120)})`;
+                        ctx.lineWidth = 0.6;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = p.red
+                    ? `rgba(236,51,51,${p.alpha})`
+                    : `rgba(180,190,215,${p.alpha})`;
+                ctx.fill();
+
+                const fx = (mx / W - 0.5) * 0.3;
+                const fy = (my / H - 0.5) * 0.3;
+                p.x += p.vx + fx * 0.04;
+                p.y += p.vy + fy * 0.04;
+
+                if (p.x < -5)   p.x = W + 5;
+                if (p.x > W + 5) p.x = -5;
+                if (p.y < -5)   p.y = H + 5;
+                if (p.y > H + 5) p.y = -5;
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        resize();
+        initParticles();
+        draw();
+        window.addEventListener('resize', () => { resize(); initParticles(); });
+
+        /* ─────────────────────────────────────────────── */
+        /* 2. SHOW CURRENT PATH IN CODE TAG                */
+        /* ─────────────────────────────────────────────── */
+        const pathCode = document.getElementById('pathCode');
+        if (pathCode) {
+            const p = window.location.pathname || '/404';
+            pathCode.textContent = p.length > 40 ? p.slice(0, 37) + '…' : p;
+        }
+
+        /* ─────────────────────────────────────────────── */
+        /* 3. RIPPLE EFFECT ON PRIMARY BUTTON              */
+        /* ─────────────────────────────────────────────── */
+        const btnHome = document.getElementById('btnHome');
+        if (btnHome) {
+            btnHome.addEventListener('click', function (e) {
+                const r    = btnHome.getBoundingClientRect();
+                const size = Math.max(r.width, r.height) * 2;
+                const ripple = document.createElement('span');
+                Object.assign(ripple.style, {
+                    position:      'absolute',
+                    width:         size + 'px',
+                    height:        size + 'px',
+                    left:          (e.clientX - r.left - size/2) + 'px',
+                    top:           (e.clientY - r.top  - size/2) + 'px',
+                    borderRadius:  '50%',
+                    background:    'rgba(255,255,255,0.22)',
+                    transform:     'scale(0)',
+                    animation:     'rippleAnim 0.55s ease-out forwards',
+                    pointerEvents: 'none',
+                });
+                btnHome.appendChild(ripple);
+                ripple.addEventListener('animationend', () => ripple.remove());
+            });
+        }
+
+        /* ─────────────────────────────────────────────── */
+        /* 4. TOAST HELPER                                  */
+        /* ─────────────────────────────────────────────── */
+        const toast    = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMsg');
+        let toastTimer;
+
+        function showToast(msg) {
+            toastMsg.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+        }
+
+        /* ─────────────────────────────────────────────── */
+        /* 5. EASTER EGG — click image 5× for spin         */
+        /* ─────────────────────────────────────────────── */
+        const badImg = document.getElementById('badImg');
+        let clickCount = 0, clickTimer;
+
+        if (badImg) {
+            badImg.addEventListener('click', () => {
+                clickCount++;
+                clearTimeout(clickTimer);
+
+                if (clickCount >= 5) {
+                    clickCount = 0;
+                    badImg.style.transition = 'transform 0.8s cubic-bezier(0.34,1.56,0.64,1)';
+                    badImg.style.transform  = 'rotate(360deg) scale(1.12)';
+                    showToast('🎉 Easter egg encontrado!');
+                    setTimeout(() => {
+                        badImg.style.transform  = '';
+                        setTimeout(() => { badImg.style.transition = ''; }, 300);
+                    }, 900);
+                } else {
+                    clickTimer = setTimeout(() => { clickCount = 0; }, 900);
+                }
+            });
+        }
+
+        /* ─────────────────────────────────────────────── */
+        /* 6. KEYBOARD — Enter → go home                   */
+        /* ─────────────────────────────────────────────── */
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && document.activeElement.tagName !== 'A' && document.activeElement.tagName !== 'BUTTON') {
+                window.location.href = '/';
+            }
+            if (e.altKey && e.key === 'c') {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    showToast('🔗 URL copiada!');
+                });
+            }
+        });
+
+        /* ─────────────────────────────────────────────── */
+        /* 7. SUBTLE MOUSE GLOW FOLLOW                     */
+        /* ─────────────────────────────────────────────── */
+        document.addEventListener('mousemove', e => {
+            const xp = (e.clientX / window.innerWidth  * 100).toFixed(1);
+            const yp = (e.clientY / window.innerHeight * 100).toFixed(1);
+            document.documentElement.style.setProperty('--mouse-x', xp + '%');
+            document.documentElement.style.setProperty('--mouse-y', yp + '%');
+        });
+
+        /* ─────────────────────────────────────────────── */
+        /* 8. CURRENT YEAR                                 */
+        /* ─────────────────────────────────────────────── */
+        const yearSpan = document.getElementById('currentYear');
+        if (yearSpan) {
+            yearSpan.textContent = new Date().getFullYear();
+        }
+
+    })();
+    </script>
+</body>
+</html>

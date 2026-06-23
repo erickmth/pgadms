@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Detalhes do Aluno - Mentoria</title>
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* ============================================ */
+        /* ROOT VARIABLES                               */
+        /* ============================================ */
+        :root {
+            --primary: #ec3333;
+            --primary-dark: #c82333;
+            --primary-glow: rgba(236, 51, 51, 0.18);
+            --primary-light: rgba(236, 51, 51, 0.08);
+            --sidebar-bg: #181e2a;
+            --sidebar-border: rgba(255, 255, 255, 0.07);
+            --surface: #ffffff;
+            --surface-2: #f4f6fb;
+            --surface-3: #edf0f7;
+            --text: #1a1d2e;
+            --text-muted: #6b7280;
+            --border: #e5e9f2;
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --info: #3b82f6;
+            --info-light: rgba(59, 130, 246, 0.1);
+            --card-shadow: 0 2px 20px rgba(24, 30, 42, 0.07);
+            --card-shadow-hover: 0 8px 40px rgba(24, 30, 42, 0.14);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Sora', system-ui, sans-serif;
+            background: var(--surface-2);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================ */
+        /* LOADING SCREEN                               */
+        /* ============================================ */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.97);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 18px;
+            backdrop-filter: blur(4px);
+        }
+        .loading-screen .spinner-wrap {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            animation: spin 0.75s linear infinite;
+        }
+        .loading-screen p {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /* ============================================ */
+        /* HEADER                                       */
+        /* ============================================ */
+        .page-header {
+            background: linear-gradient(135deg, #181e2a 0%, #0f1520 100%);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+        }
+        .page-header::after {
+            content: '';
+            display: block;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), #ff6b6b, var(--primary));
+            background-size: 200% 100%;
+            animation: shimmer 3s ease infinite;
+        }
+        @keyframes shimmer {
+            0%   { background-position: -200% 0; }
+            100% { background-position:  200% 0; }
+        }
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 18px 32px;
+            flex-wrap: wrap;
+        }
+        .header-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
+        .header-icon {
+            width: 48px; height: 48px;
+            background: rgba(236, 51, 51, 0.15);
+            border: 1px solid rgba(236, 51, 51, 0.3);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: var(--primary);
+            flex-shrink: 0;
+        }
+        .header-logo {
+            width: 42px;
+            height: auto;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .header-subtitle {
+            font-size: 11px;
+            color: rgba(255,255,255,0.45);
+            font-weight: 500;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.14);
+            color: rgba(255,255,255,0.8);
+            padding: 9px 20px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            font-family: 'Sora', sans-serif;
+        }
+        .btn-back:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            transform: translateX(-2px);
+        }
+
+        /* ============================================ */
+        /* PAGE BODY                                    */
+        /* ============================================ */
+        .page-body {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 32px 28px;
+        }
+
+        /* ============================================ */
+        /* CARDS                                        */
+        /* ============================================ */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            animation: fadeUp 0.5s ease both;
+        }
+        .card:hover { box-shadow: var(--card-shadow-hover); }
+
+        .card-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .card-header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .card-header-title i { color: var(--primary); font-size: 16px; }
+        .card-body { padding: 24px; }
+
+        /* ============================================ */
+        /* PERFIL DO ALUNO                              */
+        /* ============================================ */
+        .profile-card .card-body { padding: 0; }
+        .info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 24px;
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+            transition: background 0.2s;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-row:hover { background: var(--surface-2); }
+        .info-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .info-label i { font-size: 14px; color: var(--primary); }
+        .info-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            text-align: right;
+        }
+
+        /* ============================================ */
+        /* MÉDIA GERAL CARD                             */
+        /* ============================================ */
+        .media-hero {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            border-radius: var(--radius);
+            padding: 32px 28px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(236, 51, 51, 0.3);
+            animation: fadeUp 0.5s 0.1s ease both;
+        }
+        .media-hero::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 180px; height: 180px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+        }
+        .media-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -60px; left: -20px;
+            width: 220px; height: 220px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+        }
+        .media-hero-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 8px;
+        }
+        .media-hero-value {
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -3px;
+        }
+        .media-hero-value span {
+            font-size: 24px;
+            font-weight: 500;
+            letter-spacing: 0;
+            opacity: 0.7;
+        }
+        .media-hero-sub {
+            font-size: 12px;
+            opacity: 0.65;
+            margin-top: 12px;
+        }
+        .media-hero-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        .media-hero-bar-fill {
+            height: 100%;
+            background: rgba(255,255,255,0.85);
+            border-radius: 4px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ============================================ */
+        /* BADGES                                       */
+        /* ============================================ */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+        .badge-primary   { background: var(--primary-light); color: var(--primary-dark); }
+        .badge-success   { background: var(--success-light); color: #065f46; }
+        .badge-warning   { background: var(--warning-light); color: #92400e; }
+        .badge-danger    { background: rgba(220,38,38,0.1); color: #991b1b; }
+        .badge-info      { background: var(--info-light); color: #1e40af; }
+        .badge-secondary { background: var(--surface-3); color: var(--text-muted); }
+
+        /* ============================================ */
+        /* CICLO NAVIGATION                             */
+        /* ============================================ */
+        .ciclo-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        .ciclo-btn {
+            background: var(--surface-2);
+            border: 1.5px solid var(--border);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Sora', sans-serif;
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ciclo-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+        .ciclo-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 3px 12px rgba(236, 51, 51, 0.35);
+        }
+        .ciclo-btn small {
+            opacity: 0.7;
+            font-size: 10px;
+        }
+
+        /* ============================================ */
+        /* RESPONSE CARDS                               */
+        /* ============================================ */
+        .response-card {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--primary);
+            transition: var(--transition);
+            animation: fadeUp 0.3s ease both;
+        }
+        .response-card:hover { transform: translateX(3px); box-shadow: var(--card-shadow); }
+        .response-question {
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 10px;
+            color: var(--text);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .response-question i { color: var(--primary); flex-shrink: 0; margin-top: 1px; }
+        .response-answer {
+            background: var(--surface);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid var(--border);
+        }
+        .response-meta {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ============================================ */
+        /* CHART CONTAINERS                             */
+        /* ============================================ */
+        .chart-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            transition: var(--transition);
+        }
+        .chart-wrapper:hover { box-shadow: var(--card-shadow-hover); }
+        .chart-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary-light);
+            line-height: 1.4;
+        }
+        .chart-title i { color: var(--primary); flex-shrink: 0; margin-top: 1px; }
+        .chart-hint {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+        canvas { max-height: 280px; width: 100%; }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+
+        /* ============================================ */
+        /* EMPTY STATE                                  */
+        /* ============================================ */
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--text-muted);
+            animation: fadeIn 0.4s ease;
+        }
+        .empty-state-icon {
+            width: 64px; height: 64px;
+            background: var(--surface-2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--text-muted);
+            margin: 0 auto 16px;
+        }
+        .empty-state p {
+            font-size: 13px;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        /* ============================================ */
+        /* ALERT                                        */
+        /* ============================================ */
+        .alert {
+            border-radius: var(--radius-sm);
+            border: none;
+            font-size: 13px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        .alert-info    { background: var(--info-light);    color: #1d4ed8; border-left: 3px solid var(--info); }
+        .alert-warning { background: var(--warning-light); color: #b45309; border-left: 3px solid var(--warning); }
+        .alert-danger  { background: rgba(236,51,51,0.08); color: var(--primary-dark); border-left: 3px solid var(--primary); }
+
+        /* ============================================ */
+        /* SECTION DIVIDER                              */
+        /* ============================================ */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 32px 0 20px;
+            animation: fadeUp 0.4s ease both;
+        }
+        .section-divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+        .section-divider-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* ============================================ */
+        /* RESPONSIVE                                   */
+        /* ============================================ */
+        @media (max-width: 991px) {
+            .page-body { padding: 20px 16px; }
+            .header-inner { padding: 16px 20px; }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 767px) {
+            .header-title { font-size: 17px; }
+            .media-hero-value { font-size: 48px; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .page-body { padding: 16px 12px; }
+        }
+        @media (max-width: 575px) {
+            .header-inner { padding: 12px 16px; }
+            .card-body { padding: 16px; }
+            .card-header { padding: 14px 16px; }
+        }
+
+        /* Stagger animation for cards */
+        .card:nth-child(1) { animation-delay: 0.05s; }
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.15s; }
+        .card:nth-child(4) { animation-delay: 0.2s; }
+
+        /* Cycle header info bar */
+        .cycle-info-bar {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .cycle-info-bar .badge { font-size: 12px; }
+
+        /* Grid layout for top section */
+        .top-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 900px) {
+            .top-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADING -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="spinner-wrap"></div>
+        <p>Carregando dados do aluno…</p>
+    </div>
+
+    <!-- HEADER -->
+    <header class="page-header">
+        <div class="header-inner">
+            <div class="header-left">
+                <div class="header-icon"><i class="bi bi-person-circle"></i></div>
+                <div>
+                    <div class="header-title" id="alunoNome">Carregando…</div>
+                    <div class="header-subtitle">Desenvolvimento Socioemocional</div>
+                </div>
+            </div>
+            <button class="btn-back" id="btnVoltar">
+                <i class="bi bi-arrow-left"></i> Voltar ao Painel
+            </button>
+        </div>
+    </header>
+
+    <!-- BODY -->
+    <div class="page-body">
+
+        <!-- TOPO: PERFIL + MÉDIA GERAL -->
+        <div class="top-grid">
+            <!-- Perfil -->
+            <div class="card profile-card" style="height:fit-content;">
+                <div class="card-header">
+                    <div class="card-header-title">
+                        <i class="bi bi-person-badge"></i> Perfil do Aluno
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label"><i class="bi bi-person"></i> Nome</span>
+                        <span class="info-value" id="infoNome">–</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="bi bi-building"></i> Turma</span>
+                        <span class="info-value" id="infoTurma">–</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="bi bi-person-badge"></i> Mentor</span>
+                        <span class="info-value" id="infoMentor">–</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="bi bi-calendar-check"></i> Cadastro</span>
+                        <span class="info-value" id="infoDataCadastro">–</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Média Hero -->
+            <div class="media-hero" id="mediaGeralCard">
+                <div class="media-hero-label">Média Geral de Desenvolvimento</div>
+                <div class="media-hero-value" id="mediaGeralValor">--<span>/5</span></div>
+                <div class="media-hero-sub" id="mediaGeralInfo">Aguardando avaliações</div>
+                <div class="media-hero-bar">
+                    <div class="media-hero-bar-fill" id="mediaGeralBarFill" style="width:0%"></div>
+                </div>
+
+                <!-- Mini chart inside hero -->
+                <div style="margin-top: 20px; position: relative; z-index: 1;">
+                    <canvas id="mediaGeralChart" style="max-height: 160px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRÁFICOS INDIVIDUAIS POR COMPETÊNCIA -->
+        <div class="card" style="animation-delay: 0.15s;">
+            <div class="card-header">
+                <div class="card-header-title">
+                    <i class="bi bi-bar-chart-steps"></i> Evolução por Competência Socioemocional
+                </div>
+                <span class="badge badge-info">Acompanhamento individual</span>
+            </div>
+            <div class="card-body">
+                <div id="individualChartsContainer" class="charts-grid">
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="bi bi-hourglass-split"></i></div>
+                        <p>Carregando gráficos…</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTÓRICO POR CICLO -->
+        <div class="card" style="animation-delay: 0.2s;">
+            <div class="card-header">
+                <div class="card-header-title">
+                    <i class="bi bi-calendar-event"></i> Histórico de Respostas por Ciclo
+                </div>
+                <span class="badge badge-secondary" id="totalRespostasBadge">0 ciclos</span>
+            </div>
+            <div class="card-body">
+                <div id="ciclosNav" class="ciclo-nav">
+                    <div class="empty-state" style="padding: 20px; width: 100%;">
+                        <div class="empty-state-icon"><i class="bi bi-hourglass-split"></i></div>
+                        <p>Carregando ciclos…</p>
+                    </div>
+                </div>
+                <div id="respostasContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="bi bi-folder2-open"></i></div>
+                        <p>Selecione um ciclo para ver as respostas detalhadas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /page-body -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        'use strict';
+
+        // ============================================================
+        // CONFIGURAÇÃO
+        // ============================================================
+        const API_URL = 'https://erickmth.pythonanywhere.com';
+        let mediaGeralChart = null;
+        let individualCharts = [];
+        let respostasData = [];
+        let currentAlunoId = null;
+
+        // ============================================================
+        // UTILITÁRIOS
+        // ============================================================
+        function getToken() { return sessionStorage.getItem('adminToken'); }
+
+        function getAuthHeaders() {
+            return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() };
+        }
+
+        function mostrarLoading(show) {
+            const loader = document.getElementById('loadingScreen');
+            if (loader) loader.style.display = show ? 'flex' : 'none';
+        }
+
+        function fmtData(str) {
+            if (!str) return '–';
+            try {
+                const d = new Date(str);
+                return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            } catch { return str; }
+        }
+
+        function fmtDataSimples(str) {
+            if (!str) return '–';
+            try { return new Date(str).toLocaleDateString('pt-BR'); } catch { return str; }
+        }
+
+        function redirectToLogin() {
+            alert('Sessão expirada. Faça login novamente.');
+            window.location.href = 'index.html';
+        }
+
+        async function apiFetch(url, options = {}) {
+            const token = getToken();
+            if (!token) { redirectToLogin(); throw new Error('Não autenticado'); }
+
+            const res = await fetch(url, { ...options, headers: getAuthHeaders() });
+
+            if (res.status === 401) {
+                sessionStorage.removeItem('adminToken');
+                redirectToLogin();
+                throw new Error('Token inválido');
+            }
+            if (!res.ok) {
+                let msg = `Erro ${res.status}`;
+                try { const d = await res.json(); msg = d.message || d.error || msg; } catch {}
+                throw new Error(msg);
+            }
+            return res.json();
+        }
+
+        function extrairNota(resposta) {
+            if (!resposta) return null;
+            const match = resposta.match(/^(\d+)\s*[-–]\s*/);
+            if (match) return parseInt(match[1], 10);
+            const apenasNumero = resposta.match(/^(\d+)$/);
+            if (apenasNumero) return parseInt(apenasNumero[1], 10);
+            return null;
+        }
+
+        // ============================================================
+        // CARREGAMENTO
+        // ============================================================
+        async function carregarDadosAluno(alunoId) {
+            mostrarLoading(true);
+            try {
+                const alunosData = await apiFetch(`${API_URL}/api/mentoria/alunos`);
+                const aluno = (alunosData.alunos || []).find(a => a.id == alunoId);
+                if (!aluno) throw new Error('Aluno não encontrado');
+
+                document.getElementById('alunoNome').textContent = aluno.nome;
+                document.title = `${aluno.nome} — Mentoria`;
+
+                const respostasAluno = await apiFetch(`${API_URL}/api/mentoria/respostas/aluno/${alunoId}`);
+                respostasData = (respostasAluno.success && respostasAluno.respostas) ? respostasAluno.respostas : [];
+
+                document.getElementById('infoNome').textContent = aluno.nome;
+                document.getElementById('infoTurma').textContent = aluno.turma_nome || 'Não informada';
+                document.getElementById('infoMentor').innerHTML = aluno.mentor_nome
+                    ? `<span class="badge badge-info">${aluno.mentor_nome}</span>`
+                    : '<span style="color:var(--text-muted); font-size:13px;">Sem mentor</span>';
+                document.getElementById('infoDataCadastro').textContent = fmtDataSimples(aluno.created_at) || '–';
+
+                const totalCiclos = respostasData.length;
+                document.getElementById('totalRespostasBadge').textContent =
+                    `${totalCiclos} ciclo${totalCiclos !== 1 ? 's' : ''} respondido${totalCiclos !== 1 ? 's' : ''}`;
+
+                renderizarNavegacaoCiclos();
+                renderizarGraficosCompletos();
+
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('ciclosNav').innerHTML = `
+                    <div class="empty-state" style="width:100%">
+                        <div class="empty-state-icon"><i class="bi bi-exclamation-triangle" style="color:#ef4444"></i></div>
+                        <p>Erro ao carregar dados: ${error.message}</p>
+                    </div>`;
+            } finally {
+                mostrarLoading(false);
+            }
+        }
+
+        // ============================================================
+        // CICLOS
+        // ============================================================
+        function renderizarNavegacaoCiclos() {
+            const container = document.getElementById('ciclosNav');
+
+            if (!respostasData || respostasData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="width:100%">
+                        <div class="empty-state-icon"><i class="bi bi-inbox"></i></div>
+                        <p>Este aluno ainda não possui respostas registradas.</p>
+                    </div>`;
+                return;
+            }
+
+            const ciclosOrdenados = [...respostasData].sort((a, b) => new Date(a.data_inicio) - new Date(b.data_inicio));
+
+            container.innerHTML = ciclosOrdenados.map((ciclo, idx) => `
+                <button class="ciclo-btn ${idx === 0 ? 'active' : ''}" data-ciclo-idx="${idx}">
+                    <i class="bi bi-calendar3"></i>
+                    ${ciclo.nome}
+                    <small>(${fmtDataSimples(ciclo.data_inicio)})</small>
+                </button>
+            `).join('');
+
+            document.querySelectorAll('.ciclo-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.ciclo-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderizarRespostasCiclo(parseInt(btn.dataset.cicloIdx));
+                });
+            });
+
+            if (respostasData.length > 0) renderizarRespostasCiclo(0);
+        }
+
+        function renderizarRespostasCiclo(cicloIdx) {
+            const container = document.getElementById('respostasContainer');
+            const ciclo = respostasData[cicloIdx];
+
+            if (!ciclo || !ciclo.respostas || ciclo.respostas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="bi bi-file-text"></i></div>
+                        <p>Nenhuma resposta encontrada para este ciclo.</p>
+                    </div>`;
+                return;
+            }
+
+            const respostasHtml = ciclo.respostas.map(resp => `
+                <div class="response-card">
+                    <div class="response-question">
+                        <i class="bi bi-patch-question"></i>
+                        ${resp.pergunta}
+                    </div>
+                    <div class="response-answer">
+                        ${resp.resposta || '<span style="color:var(--text-muted)">Não respondido</span>'}
+                    </div>
+                    <div class="response-meta">
+                        <i class="bi bi-tag"></i>
+                        Tipo: ${resp.tipo === 'multiple' ? 'Múltipla escolha' : 'Texto livre'}
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="cycle-info-bar">
+                    <span class="badge badge-primary">
+                        <i class="bi bi-calendar-check"></i>
+                        ${fmtDataSimples(ciclo.data_inicio)} a ${fmtDataSimples(ciclo.data_fim)}
+                    </span>
+                    <span class="badge badge-info">
+                        <i class="bi bi-clock-history"></i>
+                        Respondido em: ${fmtData(ciclo.data_envio)}
+                    </span>
+                </div>
+                ${ciclo.mentor ? `
+                    <div class="alert alert-info" style="margin-bottom:16px;">
+                        <i class="bi bi-person-badge"></i>
+                        <strong>Mentor:</strong> ${ciclo.mentor.nome} (${ciclo.mentor.edv})
+                    </div>` : ''}
+                ${respostasHtml}
+            `;
+        }
+
+        // ============================================================
+        // HELPERS PARA GRÁFICOS
+        // ============================================================
+        function getPerguntasUnicas() {
+            const map = new Map();
+            for (const ciclo of respostasData) {
+                if (!ciclo.respostas) continue;
+                for (const resp of ciclo.respostas) {
+                    if (!map.has(resp.pergunta)) map.set(resp.pergunta, resp.tipo);
+                }
+            }
+            return map;
+        }
+
+        function getCiclosOrdenados() {
+            return [...respostasData].sort((a, b) => new Date(a.data_inicio) - new Date(b.data_inicio));
+        }
+
+        function getNotasPorPergunta(pergunta, ciclosOrdenados) {
+            return ciclosOrdenados.map(ciclo => {
+                if (!ciclo.respostas) return null;
+                const r = ciclo.respostas.find(r => r.pergunta === pergunta);
+                return (r && r.resposta) ? extrairNota(r.resposta) : null;
+            });
+        }
+
+        function calcularMediaPorCiclo(ciclosOrdenados, perguntasMap) {
+            const perguntas = Array.from(perguntasMap.keys());
+            return ciclosOrdenados.map(ciclo => {
+                if (!ciclo.respostas) return null;
+                let soma = 0, count = 0;
+                for (const p of perguntas) {
+                    const r = ciclo.respostas.find(r => r.pergunta === p);
+                    if (r && r.resposta) {
+                        const nota = extrairNota(r.resposta);
+                        if (nota !== null) { soma += nota; count++; }
+                    }
+                }
+                return count > 0 ? soma / count : null;
+            });
+        }
+
+        function calcularMediaGeralTotal(ciclosOrdenados, perguntasMap) {
+            const perguntas = Array.from(perguntasMap.keys());
+            let somaTotal = 0, countTotal = 0;
+            for (const ciclo of ciclosOrdenados) {
+                if (!ciclo.respostas) continue;
+                for (const p of perguntas) {
+                    const r = ciclo.respostas.find(r => r.pergunta === p);
+                    if (r && r.resposta) {
+                        const nota = extrairNota(r.resposta);
+                        if (nota !== null) { somaTotal += nota; countTotal++; }
+                    }
+                }
+            }
+            return { mediaGeral: countTotal > 0 ? somaTotal / countTotal : null, countTotal };
+        }
+
+        // ============================================================
+        // GRÁFICO PRINCIPAL (dentro do hero)
+        // ============================================================
+        function renderizarMediaGeralChart(ciclosOrdenados, mediasPorCiclo) {
+            const ctx = document.getElementById('mediaGeralChart').getContext('2d');
+            if (mediaGeralChart) mediaGeralChart.destroy();
+
+            const labels = ciclosOrdenados.map(c => c.nome);
+            const dados = mediasPorCiclo.map(m => m !== null ? parseFloat(m.toFixed(1)) : null);
+
+            mediaGeralChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Média Geral',
+                        data: dados,
+                        borderColor: 'rgba(255,255,255,0.9)',
+                        backgroundColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 2.5,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: 'rgba(255,255,255,0.5)',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            min: 0, max: 5,
+                            grid: { color: 'rgba(255,255,255,0.08)' },
+                            ticks: { color: 'rgba(255,255,255,0.55)', font: { size: 10, family: 'Sora' }, stepSize: 1 },
+                            border: { color: 'transparent' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255,255,255,0.55)', font: { size: 10, family: 'Sora' }, maxRotation: 40 },
+                            border: { color: 'transparent' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15,21,32,0.85)',
+                            titleColor: '#fff',
+                            bodyColor: 'rgba(255,255,255,0.7)',
+                            callbacks: {
+                                label: (ctx) => ` Média: ${ctx.raw !== null ? ctx.raw.toFixed(1) : 'N/A'} / 5`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================================
+        // GRÁFICOS INDIVIDUAIS
+        // ============================================================
+        function renderizarGraficosIndividuais(ciclosOrdenados, perguntasMap) {
+            const container = document.getElementById('individualChartsContainer');
+
+            if (perguntasMap.size === 0 || ciclosOrdenados.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="bi bi-bar-chart"></i></div>
+                        <p>Nenhum dado disponível para gráficos.</p>
+                    </div>`;
+                return;
+            }
+
+            if (individualCharts.length) {
+                individualCharts.forEach(c => { if (c) c.destroy(); });
+                individualCharts = [];
+            }
+
+            const perguntasList = Array.from(perguntasMap.keys());
+            const labels = ciclosOrdenados.map(c => c.nome);
+            let html = '';
+
+            for (let i = 0; i < perguntasList.length; i++) {
+                const pergunta = perguntasList[i];
+                const notas = getNotasPorPergunta(pergunta, ciclosOrdenados);
+                const temDados = notas.some(n => n !== null);
+                const tituloTruncado = pergunta.length > 80 ? pergunta.substring(0, 80) + '…' : pergunta;
+
+                html += `
+                    <div class="chart-wrapper">
+                        <div class="chart-title">
+                            <i class="bi bi-graph-up"></i>
+                            ${tituloTruncado}
+                        </div>
+                        <canvas id="individualChart-${i}" style="max-height:220px;"></canvas>
+                        <div class="chart-hint">
+                            ${temDados
+                                ? '0 = Muito Insatisfatório &nbsp;|&nbsp; 5 = Excelente'
+                                : '<span style="color:var(--warning)"><i class="bi bi-clock"></i> Aguardando respostas para esta competência</span>'}
+                        </div>
+                    </div>`;
+            }
+
+            container.innerHTML = html;
+
+            // Cria charts após o DOM estar pronto
+            setTimeout(() => {
+                const colors = [
+                    { line: '#3b82f6', bg: 'rgba(59,130,246,0.07)' },
+                    { line: '#10b981', bg: 'rgba(16,185,129,0.07)' },
+                    { line: '#f59e0b', bg: 'rgba(245,158,11,0.07)' },
+                    { line: '#8b5cf6', bg: 'rgba(139,92,246,0.07)' },
+                    { line: '#ec4899', bg: 'rgba(236,72,153,0.07)' },
+                    { line: '#06b6d4', bg: 'rgba(6,182,212,0.07)'  },
+                ];
+
+                for (let i = 0; i < perguntasList.length; i++) {
+                    const canvas = document.getElementById(`individualChart-${i}`);
+                    if (!canvas) continue;
+
+                    const notas = getNotasPorPergunta(perguntasList[i], ciclosOrdenados);
+                    const cor = colors[i % colors.length];
+
+                    const chart = new Chart(canvas.getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels,
+                            datasets: [{
+                                label: 'Nota',
+                                data: notas,
+                                borderColor: cor.line,
+                                backgroundColor: cor.bg,
+                                borderWidth: 2,
+                                tension: 0.3,
+                                fill: true,
+                                pointBackgroundColor: notas.map(n => n !== null ? cor.line : '#cbd5e1'),
+                                pointBorderColor: '#fff',
+                                pointRadius: 5,
+                                pointHoverRadius: 7,
+                                pointBorderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            scales: {
+                                y: {
+                                    min: 0, max: 5,
+                                    grid: { color: '#f1f5f9' },
+                                    ticks: { stepSize: 1, font: { size: 10, family: 'Sora' }, color: '#94a3b8' },
+                                    border: { color: 'transparent' }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { maxRotation: 40, font: { size: 10, family: 'Sora' }, color: '#94a3b8' },
+                                    border: { color: 'transparent' }
+                                }
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(15,21,32,0.85)',
+                                    titleColor: '#fff',
+                                    bodyColor: 'rgba(255,255,255,0.7)',
+                                    callbacks: {
+                                        label: (ctx) => ctx.raw === null ? ' Sem resposta' : ` Nota: ${ctx.raw} / 5`
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    individualCharts.push(chart);
+                }
+            }, 80);
+        }
+
+        // ============================================================
+        // CARD DA MÉDIA GERAL
+        // ============================================================
+        function renderizarMediaGeralCard(ciclosOrdenados, perguntasMap) {
+            const { mediaGeral, countTotal } = calcularMediaGeralTotal(ciclosOrdenados, perguntasMap);
+            const valorEl  = document.getElementById('mediaGeralValor');
+            const infoEl   = document.getElementById('mediaGeralInfo');
+            const cardEl   = document.getElementById('mediaGeralCard');
+            const barFill  = document.getElementById('mediaGeralBarFill');
+
+            if (mediaGeral !== null && countTotal > 0) {
+                valorEl.innerHTML = `${mediaGeral.toFixed(1)}<span>/5</span>`;
+                infoEl.textContent = `Baseado em ${countTotal} avaliação${countTotal !== 1 ? 'ões' : ''}`;
+
+                // Barra de progresso
+                setTimeout(() => {
+                    barFill.style.width = `${(mediaGeral / 5) * 100}%`;
+                }, 300);
+
+                // Cor baseada na média
+                if      (mediaGeral >= 4) cardEl.style.background = 'linear-gradient(135deg, #059669 0%, #10b981 100%)';
+                else if (mediaGeral >= 3) cardEl.style.background = 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)';
+                else                     cardEl.style.background = 'linear-gradient(135deg, #c82333 0%, #ec3333 100%)';
+            } else {
+                valorEl.innerHTML = '--<span>/5</span>';
+                infoEl.textContent = 'Sem avaliações registradas';
+                cardEl.style.background = 'linear-gradient(135deg, #475569 0%, #64748b 100%)';
+            }
+        }
+
+        // ============================================================
+        // ORQUESTRA TODOS OS GRÁFICOS
+        // ============================================================
+        function renderizarGraficosCompletos() {
+            if (!respostasData || respostasData.length === 0) {
+                document.getElementById('individualChartsContainer').innerHTML =
+                    `<div class="empty-state">
+                        <div class="empty-state-icon"><i class="bi bi-inbox"></i></div>
+                        <p>Sem dados para exibir gráficos.</p>
+                    </div>`;
+                if (mediaGeralChart) mediaGeralChart.destroy();
+                return;
+            }
+
+            const ciclosOrdenados = getCiclosOrdenados();
+            const perguntasMap    = getPerguntasUnicas();
+
+            if (perguntasMap.size === 0) {
+                document.getElementById('individualChartsContainer').innerHTML =
+                    `<div class="empty-state">
+                        <div class="empty-state-icon"><i class="bi bi-bar-chart"></i></div>
+                        <p>Nenhuma pergunta encontrada.</p>
+                    </div>`;
+                return;
+            }
+
+            const mediasPorCiclo = calcularMediaPorCiclo(ciclosOrdenados, perguntasMap);
+            renderizarMediaGeralChart(ciclosOrdenados, mediasPorCiclo);
+            renderizarMediaGeralCard(ciclosOrdenados, perguntasMap);
+            renderizarGraficosIndividuais(ciclosOrdenados, perguntasMap);
+        }
+
+        // ============================================================
+        // VOLTAR
+        // ============================================================
+        function salvarEstadoRetorno() {
+            sessionStorage.setItem('mentoria_restore_state', JSON.stringify({
+                activeTab: 'alunos', scrollY: 0, timestamp: Date.now()
+            }));
+        }
+
+        document.getElementById('btnVoltar').addEventListener('click', () => {
+            salvarEstadoRetorno();
+            window.location.href = 'mentoria.html';
+        });
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+        function init() {
+            const token = getToken();
+            if (!token) {
+                alert('Acesso não autorizado. Faça login no painel admin.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const alunoId = urlParams.get('id');
+
+            if (!alunoId) {
+                alert('ID do aluno não fornecido.');
+                salvarEstadoRetorno();
+                window.location.href = 'mentoria.html';
+                return;
+            }
+
+            currentAlunoId = alunoId;
+
+            const nomeSalvo = sessionStorage.getItem('alunoDetalhes_nome');
+            if (nomeSalvo) {
+                document.getElementById('alunoNome').textContent = nomeSalvo;
+                sessionStorage.removeItem('alunoDetalhes_nome');
+            }
+
+            carregarDadosAluno(alunoId);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mentoria — Formulário de Avaliação</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ec3333;
+            --primary-dark: #c82333;
+            --primary-light: rgba(236, 51, 51, 0.08);
+            --surface: #ffffff;
+            --surface-2: #f8f9fc;
+            --surface-3: #f0f2f8;
+            --text: #1a1d2e;
+            --text-muted: #6b7280;
+            --text-light: #9ca3af;
+            --border: #e5e9f2;
+            --border-focus: rgba(236, 51, 51, 0.35);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --radius: 18px;
+            --radius-sm: 10px;
+            --radius-xs: 6px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.10);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.18);
+            --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: #f0f2f8;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Decorative background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% -10%, rgba(236,51,51,0.13) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 85% 110%, rgba(200,35,51,0.10) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ─── Layout ─── */
+        .mentor-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mentor-card {
+            max-width: 780px;
+            width: 100%;
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            animation: cardIn 0.45s cubic-bezier(0.22,1,0.36,1) both;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(28px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0)    scale(1);    }
+        }
+
+        /* ─── Card Headers ─── */
+        .card-header {
+            padding: 36px 36px 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            right: -40px; bottom: -40px;
+            width: 180px; height: 180px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.07);
+            pointer-events: none;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            right: 40px; bottom: 10px;
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            pointer-events: none;
+        }
+
+        .card-header-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-header-icon {
+            width: 52px; height: 52px;
+            background: rgba(255,255,255,0.18);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(4px);
+        }
+
+        .card-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .card-header p {
+            font-size: 13.5px;
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        .header-login     { background: linear-gradient(135deg, #c82333 0%, #ec3333 100%); }
+        .header-dashboard { background: linear-gradient(135deg, #1a2340 0%, #2a3a6e 100%); }
+        .header-form      { background: linear-gradient(135deg, #0a7c6a 0%, #15b89e 100%); }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 10px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* ─── Content areas ─── */
+        .login-area,
+        .dashboard-area,
+        .formulario-area {
+            padding: 36px;
+        }
+
+        /* ─── Form elements ─── */
+        .field-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .field-label i {
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .form-control {
+            border-radius: var(--radius-sm);
+            padding: 13px 16px;
+            border: 1.5px solid var(--border);
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text);
+            background: var(--surface-2);
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--border-focus);
+            background: var(--surface);
+        }
+
+        .form-control::placeholder { color: var(--text-light); }
+
+        /* ─── Buttons ─── */
+        .btn-primary-full {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 15px;
+            width: 100%;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: 0.2px;
+            box-shadow: 0 4px 14px rgba(236,51,51,0.3);
+        }
+
+        .btn-primary-full:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(236,51,51,0.38);
+        }
+
+        .btn-primary-full:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-primary-full:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
+            padding: 11px 20px;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .btn-outline:hover {
+            background: var(--surface-3);
+            border-color: #d1d5e0;
+            color: var(--text);
+        }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 9px 20px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 13.5px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(236,51,51,0.2);
+        }
+
+        .btn-action:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(236,51,51,0.3);
+        }
+
+        .btn-action:disabled {
+            background: #d1d5db;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ─── Alerts ─── */
+        .alert {
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            animation: alertIn 0.25s ease both;
+        }
+
+        @keyframes alertIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+        .alert-success {
+            background: rgba(16,185,129,0.08);
+            border: 1px solid rgba(16,185,129,0.25);
+            color: #047857;
+        }
+
+        .alert-danger {
+            background: rgba(236,51,51,0.07);
+            border: 1px solid rgba(236,51,51,0.22);
+            color: var(--primary-dark);
+        }
+
+        .alert-info {
+            background: rgba(59,130,246,0.07);
+            border: 1px solid rgba(59,130,246,0.22);
+            color: #1d4ed8;
+        }
+
+        .alert-warning {
+            background: rgba(245,158,11,0.08);
+            border: 1px solid rgba(245,158,11,0.25);
+            color: #92400e;
+        }
+
+        /* ─── Ciclo info ─── */
+        .ciclo-card {
+            background: linear-gradient(135deg, var(--primary-light), rgba(200,35,51,0.04));
+            border: 1px solid rgba(236,51,51,0.18);
+            border-radius: var(--radius-sm);
+            padding: 18px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .ciclo-card-icon {
+            width: 44px; height: 44px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .ciclo-card-text strong {
+            font-size: 14px;
+            color: var(--text);
+            display: block;
+        }
+
+        .ciclo-card-text small {
+            font-size: 12.5px;
+            color: var(--text-muted);
+        }
+
+        /* ─── Aluno cards ─── */
+        .alunos-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-light);
+            margin-bottom: 14px;
+        }
+
+        .aluno-card {
+            background: var(--surface-2);
+            border-radius: var(--radius-sm);
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            border: 1.5px solid var(--border);
+            transition: var(--transition);
+            animation: cardIn 0.3s ease both;
+        }
+
+        .aluno-card:hover {
+            border-color: #d1d5e0;
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            background: var(--surface);
+        }
+
+        .aluno-avatar {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, #ec3333, #c82333);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .aluno-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+
+        .aluno-info small {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ─── Status badges ─── */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 11px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: rgba(16,185,129,0.12); color: #047857; }
+        .badge-warning { background: rgba(245,158,11,0.12); color: #92400e; }
+        .badge-secondary { background: rgba(156,163,175,0.15); color: #6b7280; }
+
+        /* ─── Question items ─── */
+        .question-item {
+            background: var(--surface-2);
+            border-radius: var(--radius-sm);
+            padding: 22px 24px;
+            margin-bottom: 16px;
+            border: 1.5px solid var(--border);
+            transition: border-color var(--transition);
+        }
+
+        .question-item:focus-within {
+            border-color: rgba(236,51,51,0.3);
+        }
+
+        .question-num {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .question-required {
+            display: inline-block;
+            color: var(--primary);
+            font-size: 13px;
+            margin-left: 4px;
+        }
+
+        .form-check {
+            padding: 10px 14px;
+            border-radius: var(--radius-xs);
+            margin-bottom: 6px;
+            transition: background var(--transition);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-check:hover { background: var(--surface-3); }
+
+        .form-check-input {
+            width: 17px; height: 17px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .form-check-label {
+            font-size: 14px;
+            color: var(--text);
+            cursor: pointer;
+            font-weight: 400;
+        }
+
+        /* ─── Section divider ─── */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 28px 0 20px;
+        }
+
+        .section-divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .section-divider-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+
+        /* ─── Footer ─── */
+        .card-footer {
+            border-top: 1px solid var(--border);
+            padding: 14px 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .card-footer i { color: var(--primary); }
+
+        /* ─── Timer ─── */
+        .session-timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(26,29,46,0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            transition: var(--transition);
+        }
+
+        .session-timer .timer-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: timerPulse 2s infinite;
+        }
+
+        .session-timer.warning {
+            background: rgba(245,158,11,0.92);
+            color: #1a1d2e;
+        }
+
+        .session-timer.warning .timer-dot {
+            background: #1a1d2e;
+            animation: timerPulse 0.7s infinite;
+        }
+
+        @keyframes timerPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.5; transform: scale(0.85); }
+        }
+
+        /* ─── Loading spinner ─── */
+        .spinner {
+            display: inline-block;
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.35);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 600px) {
+            .login-area, .dashboard-area, .formulario-area { padding: 24px 20px; }
+            .card-header { padding: 26px 24px 22px; }
+            .card-footer { padding: 14px 24px; }
+            .session-timer { top: 12px; right: 12px; font-size: 12px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Session Timer -->
+    <div class="session-timer" id="timer" style="display:none;">
+        <div class="timer-dot"></div>
+        <span id="timerText">02:00:00</span>
+    </div>
+
+    <div class="mentor-container">
+        <div class="mentor-card" id="app">
+
+            <!-- ══════════════════════════════════
+                 TELA DE LOGIN
+            ══════════════════════════════════ -->
+            <div id="loginScreen">
+                <div class="card-header header-login">
+                    <div class="card-header-inner">
+                        <div class="card-header-icon"><i class="bi bi-chat-dots-fill"></i></div>
+                        <h2>Programa de Mentoria</h2>
+                        <p>Acesse com suas credenciais de mentor para continuar</p>
+                        <div class="header-badge"><i class="bi bi-shield-lock-fill"></i> Ambiente seguro</div>
+                    </div>
+                </div>
+
+                <div class="login-area">
+                    <form id="loginForm" onsubmit="event.preventDefault(); realizarLogin();">
+                        <div class="mb-4">
+                            <label class="field-label"><i class="bi bi-person-badge"></i> EDV</label>
+                            <input type="text" class="form-control" id="edv" placeholder="Digite seu EDV" required autocomplete="username">
+                        </div>
+                        <div class="mb-4">
+                            <label class="field-label"><i class="bi bi-lock"></i> Senha</label>
+                            <input type="password" class="form-control" id="senha" placeholder="Digite sua senha" required autocomplete="current-password">
+                        </div>
+
+                        <div id="loginError" class="alert alert-danger" style="display:none;">
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                            <span id="loginErrorText"></span>
+                        </div>
+
+                        <button type="submit" class="btn-primary-full" id="loginBtn">
+                            <i class="bi bi-box-arrow-in-right"></i> Entrar
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card-footer">
+                    <i class="bi bi-lock-fill"></i> Seus dados estão protegidos
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════
+                 TELA DE DASHBOARD
+            ══════════════════════════════════ -->
+            <div id="dashboardScreen" style="display:none;">
+                <div class="card-header header-dashboard">
+                    <div class="card-header-inner">
+                        <div class="card-header-icon"><i class="bi bi-person-badge"></i></div>
+                        <h2>Bem-vindo, <span id="mentorNome"></span></h2>
+                        <p>Selecione um aluno para preencher o formulário de avaliação</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-area">
+
+                    <!-- Ciclo ativo -->
+                    <div id="cicloInfo" style="display:none;">
+                        <div class="ciclo-card">
+                            <div class="ciclo-card-icon"><i class="bi bi-calendar-event"></i></div>
+                            <div class="ciclo-card-text">
+                                <strong id="cicloNome"></strong>
+                                <small><i class="bi bi-clock"></i> Período: <span id="cicloPeriodo"></span></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="noCicloWarning" class="alert alert-warning" style="display:none;">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <span>Nenhum ciclo de avaliação ativo no momento. Aguarde até que um ciclo seja iniciado.</span>
+                    </div>
+
+                    <div class="alunos-section-title"><i class="bi bi-people"></i> Seus alunos</div>
+                    <div id="alunosList"></div>
+
+                    <div class="section-divider">
+                        <div class="section-divider-line"></div>
+                        <div class="section-divider-label">sessão</div>
+                        <div class="section-divider-line"></div>
+                    </div>
+
+                    <button class="btn-outline" onclick="logout()" style="width:100%; justify-content: center;">
+                        <i class="bi bi-box-arrow-left"></i> Encerrar sessão
+                    </button>
+                </div>
+
+                <div class="card-footer">
+                    <i class="bi bi-clock"></i> Sua sessão expira automaticamente em 2 horas
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════
+                 TELA DE FORMULÁRIO
+            ══════════════════════════════════ -->
+            <div id="formularioScreen" style="display:none;">
+                <div class="card-header header-form">
+                    <div class="card-header-inner">
+                        <div class="card-header-icon"><i class="bi bi-file-earmark-text"></i></div>
+                        <h2>Formulário de Avaliação</h2>
+                        <p>Aluno: <strong id="alunoResponderNome"></strong></p>
+                    </div>
+                </div>
+
+                <div class="formulario-area">
+                    <div id="formularioPerguntas"></div>
+
+                    <div id="formularioError" class="alert alert-danger" style="display:none;">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                        <span id="formularioErrorText"></span>
+                    </div>
+
+                    <button class="btn-primary-full" id="enviarRespostasBtn" onclick="enviarRespostas()" style="margin-top:8px;">
+                        <i class="bi bi-send-fill"></i> Enviar Respostas
+                    </button>
+
+                    <button class="btn-outline" onclick="voltarDashboard()" style="width:100%; justify-content:center; margin-top:12px;">
+                        <i class="bi bi-arrow-left"></i> Voltar ao painel
+                    </button>
+                </div>
+
+                <div class="card-footer">
+                    <i class="bi bi-info-circle"></i> Campos marcados com <span style="color:var(--primary);font-weight:700;">*</span> são obrigatórios
+                </div>
+            </div>
+
+        </div><!-- .mentor-card -->
+    </div><!-- .mentor-container -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ══════════════════════════════════
+        // CONFIGURAÇÃO
+        // ══════════════════════════════════
+        const API_URL = 'https://erickmth.pythonanywhere.com';
+        let authToken = null;
+        let tokenExpiry = null;
+        let currentMentor = null;
+        let currentAlunos = [];
+        let currentAlunoSelecionado = null;
+        let currentFormulario = null;
+        let currentCiclo = null;
+        let timerInterval = null;
+
+        // ══════════════════════════════════
+        // UTILITÁRIOS
+        // ══════════════════════════════════
+        function formatarTempo(segundos) {
+            const h = Math.floor(segundos / 3600);
+            const m = Math.floor((segundos % 3600) / 60);
+            const s = segundos % 60;
+            return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+
+        function iniciarTimer(expiraEm) {
+            if (timerInterval) clearInterval(timerInterval);
+            let segs = expiraEm;
+            const timerEl = document.getElementById('timer');
+            const timerText = document.getElementById('timerText');
+            timerEl.style.display = 'flex';
+
+            timerInterval = setInterval(() => {
+                if (segs <= 0) {
+                    clearInterval(timerInterval);
+                    logout();
+                    mostrarMensagem('Sessão expirada', 'Sua sessão expirou. Faça login novamente.', 'error');
+                } else {
+                    segs--;
+                    timerText.textContent = formatarTempo(segs);
+                    if (segs < 300) timerEl.classList.add('warning');
+                    else timerEl.classList.remove('warning');
+                }
+            }, 1000);
+        }
+
+        function pararTimer() {
+            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+            document.getElementById('timer').style.display = 'none';
+        }
+
+        function mostrarMensagem(titulo, texto, tipo = 'success') {
+            const bg = tipo === 'success' ? 'bg-success' : tipo === 'error' ? 'bg-danger' : 'bg-warning';
+            const el = document.createElement('div');
+            el.className = 'modal fade';
+            el.innerHTML = `
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
+                        <div class="modal-header ${bg} text-white border-0 py-3">
+                            <h5 class="modal-title fw-bold">${titulo}</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body py-4 px-4">
+                            <p class="mb-0" style="font-size:15px;">${texto}</p>
+                        </div>
+                        <div class="modal-footer border-0 pb-3 pe-3">
+                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.appendChild(el);
+            const modal = new bootstrap.Modal(el);
+            modal.show();
+            el.addEventListener('hidden.bs.modal', () => el.remove());
+        }
+
+        function setLoading(btn, loading, textoOriginal) {
+            if (loading) {
+                btn.disabled = true;
+                btn.setAttribute('data-orig', btn.innerHTML);
+                btn.innerHTML = `<span class="spinner"></span> Carregando...`;
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = btn.getAttribute('data-orig') || textoOriginal;
+            }
+        }
+
+        async function apiFetch(url, options = {}) {
+            const headers = { 'Content-Type': 'application/json' };
+            if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+            const resp = await fetch(url, { ...options, headers });
+            if (resp.status === 401) { logout(); throw new Error('Sessão expirada. Faça login novamente.'); }
+            return resp.json();
+        }
+
+        function getInitials(nome) {
+            return nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
+        }
+
+        // ══════════════════════════════════
+        // LOGIN
+        // ══════════════════════════════════
+        async function realizarLogin() {
+            const edv    = document.getElementById('edv').value.trim();
+            const senha  = document.getElementById('senha').value;
+            const btn    = document.getElementById('loginBtn');
+            const errDiv = document.getElementById('loginError');
+            const errTxt = document.getElementById('loginErrorText');
+
+            if (!edv || !senha) {
+                errDiv.style.display = 'flex';
+                errTxt.textContent = 'Preencha o EDV e a senha para continuar.';
+                return;
+            }
+
+            errDiv.style.display = 'none';
+            setLoading(btn, true);
+
+            try {
+                const resp = await fetch(`${API_URL}/api/mentoria/mentor/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ edv, senha })
+                });
+                const data = await resp.json();
+
+                if (data.success) {
+                    authToken  = data.token;
+                    currentMentor = data.mentor;
+                    tokenExpiry   = Date.now() + (2 * 60 * 60 * 1000);
+                    salvarSessao(authToken, tokenExpiry);
+                    iniciarTimer(2 * 60 * 60);
+                    await carregarDashboard();
+                } else {
+                    errDiv.style.display = 'flex';
+                    errTxt.textContent = data.message || 'Credenciais inválidas. Tente novamente.';
+                }
+            } catch {
+                errDiv.style.display = 'flex';
+                errTxt.textContent = 'Erro ao conectar com o servidor. Verifique sua conexão.';
+            } finally {
+                setLoading(btn, false);
+            }
+        }
+
+        // ══════════════════════════════════
+        // DASHBOARD
+        // ══════════════════════════════════
+        async function carregarDashboard() {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/mentor/me`);
+
+                if (!data.success) {
+                    mostrarMensagem('Erro', data.message || 'Erro ao carregar dados.', 'error');
+                    return;
+                }
+
+                currentAlunos = data.alunos;
+                document.getElementById('mentorNome').textContent = data.mentor.nome;
+
+                const cicloInfoEl    = document.getElementById('cicloInfo');
+                const noCicloEl      = document.getElementById('noCicloWarning');
+                const alunosListEl   = document.getElementById('alunosList');
+
+                if (data.ciclo_ativo) {
+                    currentCiclo = data.ciclo_ativo;
+                    cicloInfoEl.style.display = 'block';
+                    noCicloEl.style.display   = 'none';
+                    document.getElementById('cicloNome').textContent = data.ciclo_ativo.nome;
+                    const ini = new Date(data.ciclo_ativo.data_inicio).toLocaleDateString('pt-BR');
+                    const fim = new Date(data.ciclo_ativo.data_fim).toLocaleDateString('pt-BR');
+                    document.getElementById('cicloPeriodo').textContent = `${ini} a ${fim}`;
+                } else {
+                    currentCiclo = null;
+                    cicloInfoEl.style.display = 'none';
+                    noCicloEl.style.display   = 'flex';
+                }
+
+                if (!currentAlunos.length) {
+                    alunosListEl.innerHTML = `
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle-fill"></i>
+                            <span>Você não possui alunos vinculados.</span>
+                        </div>`;
+                } else {
+                    alunosListEl.innerHTML = '';
+                    currentAlunos.forEach(aluno => {
+                        const jaRespondeu   = aluno.ja_respondeu;
+                        const podeResponder = aluno.pode_responder && currentCiclo !== null;
+
+                        let badgeHtml = '';
+                        let btnHtml   = '';
+
+                        if (jaRespondeu) {
+                            badgeHtml = `<span class="status-badge badge-success"><i class="bi bi-check-circle-fill"></i> Respondido</span>`;
+                            btnHtml   = `<button class="btn-action" disabled><i class="bi bi-check-lg"></i> Concluído</button>`;
+                        } else if (podeResponder) {
+                            badgeHtml = `<span class="status-badge badge-warning"><i class="bi bi-clock-fill"></i> Pendente</span>`;
+                            btnHtml   = `<button class="btn-action" onclick="iniciarFormulario(${aluno.id}, '${aluno.nome.replace(/'/g,"\\'")}')"><i class="bi bi-pencil-square"></i> Responder</button>`;
+                        } else {
+                            badgeHtml = `<span class="status-badge badge-secondary"><i class="bi bi-dash-circle"></i> Indisponível</span>`;
+                        }
+
+                        alunosListEl.innerHTML += `
+                            <div class="aluno-card">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="aluno-avatar">${getInitials(aluno.nome)}</div>
+                                    <div class="aluno-info flex-grow-1">
+                                        <h4>${aluno.nome}</h4>
+                                        <small><i class="bi bi-mortarboard"></i> ${aluno.turma_nome}</small>
+                                    </div>
+                                    <div class="d-flex flex-column align-items-end gap-2">
+                                        ${badgeHtml}
+                                        ${btnHtml}
+                                    </div>
+                                </div>
+                            </div>`;
+                    });
+                }
+
+                mostrarTela('dashboard');
+            } catch (err) {
+                mostrarMensagem('Erro', err.message, 'error');
+            }
+        }
+
+        // ══════════════════════════════════
+        // FORMULÁRIO
+        // ══════════════════════════════════
+        async function iniciarFormulario(alunoId, alunoNome) {
+            currentAlunoSelecionado = { id: alunoId, nome: alunoNome };
+
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/mentor/formulario?aluno_id=${alunoId}`);
+
+                if (!data.success) {
+                    mostrarMensagem('Erro', data.message || 'Erro ao carregar formulário.', 'error');
+                    return;
+                }
+
+                currentFormulario = data.formulario;
+                currentCiclo      = data.ciclo;
+
+                document.getElementById('alunoResponderNome').textContent = alunoNome;
+
+                const cont = document.getElementById('formularioPerguntas');
+                cont.innerHTML = '';
+
+                if (data.formulario.perguntas && data.formulario.perguntas.length > 0) {
+                    data.formulario.perguntas.forEach((p, idx) => {
+                        const req = p.obrigatoria ? '<span class="question-required">*</span>' : '';
+                        let inputHtml = '';
+
+                        if (p.tipo === 'multiple') {
+                            inputHtml = (p.opcoes || []).map((op, oi) => `
+                                <label class="form-check" for="opt_${p.id}_${oi}">
+                                    <input class="form-check-input" type="radio" name="pergunta_${p.id}"
+                                        id="opt_${p.id}_${oi}" value="${op}">
+                                    <span class="form-check-label">${op}</span>
+                                </label>`).join('');
+                        } else {
+                            inputHtml = `<textarea class="form-control" rows="3"
+                                placeholder="Digite sua resposta aqui..."
+                                id="text_${p.id}"></textarea>`;
+                        }
+
+                        cont.innerHTML += `
+                            <div class="question-item" data-pergunta-id="${p.id}" data-obrigatoria="${p.obrigatoria}">
+                                <div class="question-num">Pergunta ${idx + 1}</div>
+                                <div class="question-text">${p.pergunta}${req}</div>
+                                ${inputHtml}
+                            </div>`;
+                    });
+                } else {
+                    cont.innerHTML = `<div class="alert alert-info">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span>Nenhuma pergunta cadastrada neste formulário.</span>
+                    </div>`;
+                }
+
+                mostrarTela('formulario');
+            } catch (err) {
+                mostrarMensagem('Erro', err.message, 'error');
+            }
+        }
+
+        async function enviarRespostas() {
+            if (!currentAlunoSelecionado || !currentFormulario) return;
+
+            const respostas = {};
+            let valido = true;
+            const errDiv = document.getElementById('formularioError');
+            const errTxt = document.getElementById('formularioErrorText');
+            errDiv.style.display = 'none';
+
+            document.querySelectorAll('.question-item').forEach(item => {
+                const pid        = item.dataset.perguntaId;
+                const obrig      = item.dataset.obrigatoria === 'true';
+                let resposta     = null;
+
+                const radio = item.querySelector('input[type="radio"]:checked');
+                if (radio) resposta = radio.value;
+
+                const ta = item.querySelector('textarea');
+                if (ta && ta.value.trim()) resposta = ta.value.trim();
+
+                if (obrig && !resposta) {
+                    valido = false;
+                    item.style.borderColor = 'rgba(236,51,51,0.5)';
+                    item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    item.style.borderColor = '';
+                }
+
+                if (resposta) respostas[pid] = resposta;
+            });
+
+            if (!valido) {
+                errDiv.style.display = 'flex';
+                errTxt.textContent = 'Responda todas as perguntas obrigatórias antes de enviar.';
+                return;
+            }
+
+            const btn = document.getElementById('enviarRespostasBtn');
+            setLoading(btn, true);
+
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/mentor/responder`, {
+                    method: 'POST',
+                    body: JSON.stringify({ aluno_id: currentAlunoSelecionado.id, respostas })
+                });
+
+                if (data.success) {
+                    mostrarMensagem('Enviado com sucesso!', data.message, 'success');
+                    voltarDashboard();
+                } else {
+                    mostrarMensagem('Erro', data.message, 'error');
+                }
+            } catch (err) {
+                mostrarMensagem('Erro', err.message, 'error');
+            } finally {
+                setLoading(btn, false);
+            }
+        }
+
+        // ══════════════════════════════════
+        // NAVEGAÇÃO
+        // ══════════════════════════════════
+        function mostrarTela(tela) {
+            document.getElementById('loginScreen').style.display     = tela === 'login'      ? 'block' : 'none';
+            document.getElementById('dashboardScreen').style.display = tela === 'dashboard'  ? 'block' : 'none';
+            document.getElementById('formularioScreen').style.display= tela === 'formulario' ? 'block' : 'none';
+        }
+
+        function voltarDashboard() {
+            document.getElementById('formularioPerguntas').innerHTML = '';
+            currentAlunoSelecionado = null;
+            currentFormulario = null;
+            mostrarTela('dashboard');
+            carregarDashboard();
+        }
+
+        function logout() {
+            pararTimer();
+            authToken = tokenExpiry = currentMentor = currentCiclo = null;
+            currentAlunos = []; currentAlunoSelecionado = null; currentFormulario = null;
+            sessionStorage.removeItem('mentorToken');
+            sessionStorage.removeItem('mentorExpiry');
+            document.getElementById('edv').value = '';
+            document.getElementById('senha').value = '';
+            document.getElementById('loginError').style.display = 'none';
+            mostrarTela('login');
+        }
+
+        // ══════════════════════════════════
+        // SESSÃO PERSISTENTE
+        // ══════════════════════════════════
+        function salvarSessao(token, expiry) {
+            sessionStorage.setItem('mentorToken', token);
+            sessionStorage.setItem('mentorExpiry', expiry);
+        }
+
+        function verificarSessao() {
+            if (authToken && tokenExpiry && Date.now() > tokenExpiry) {
+                logout();
+                mostrarMensagem('Sessão expirada', 'Sua sessão expirou. Faça login novamente.', 'warning');
+            }
+        }
+
+        setInterval(verificarSessao, 60000);
+
+        // ══════════════════════════════════
+        // INIT
+        // ══════════════════════════════════
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedToken  = sessionStorage.getItem('mentorToken');
+            const savedExpiry = parseInt(sessionStorage.getItem('mentorExpiry'));
+
+            if (savedToken && savedExpiry && Date.now() < savedExpiry) {
+                authToken   = savedToken;
+                tokenExpiry = savedExpiry;
+                const segsRestantes = Math.floor((tokenExpiry - Date.now()) / 1000);
+                iniciarTimer(segsRestantes);
+                carregarDashboard();
+            } else {
+                sessionStorage.removeItem('mentorToken');
+                sessionStorage.removeItem('mentorExpiry');
+            }
+        });
+    </script>
+</body>
+</html>

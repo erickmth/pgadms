@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentoria - Admin Global</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ec3333;
+            --primary-dark: #c82333;
+            --sidebar-bg: #181e2a;
+            --surface: #fff;
+            --surface-2: #f4f6fb;
+            --text: #1a1d2e;
+            --text-muted: #6b7280;
+            --border: #e5e9f2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--surface-2);
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            color: white;
+            z-index: 1000;
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .sidebar-header img {
+            width: 70px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-header small {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .sidebar-nav {
+            padding: 16px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            margin-bottom: 2px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 10px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: 0.2s;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: rgba(236, 51, 51, 0.2);
+            color: var(--primary);
+        }
+
+        .nav-link i {
+            width: 20px;
+            font-size: 16px;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .btn-logout {
+            width: 100%;
+            background: rgba(236, 51, 51, 0.15);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(236, 51, 51, 0.3);
+        }
+
+        /* MAIN */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: var(--surface);
+            padding: 20px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .page-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .page-header .subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .page-body {
+            padding: 24px;
+        }
+
+        /* STAT CARDS */
+        .stat-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card.blue {
+            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+            color: white;
+        }
+
+        .stat-card.green {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #d97706, #f59e0b);
+            color: white;
+        }
+
+        .stat-card.purple {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+        }
+
+        .stat-card-value {
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .stat-card-label {
+            font-size: 11px;
+            opacity: 0.85;
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: var(--surface);
+            font-size: 14px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+            font-size: 13px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 12px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background: var(--surface-2);
+        }
+
+        /* FORMS */
+        .form-control,
+        .form-select {
+            width: 100%;
+            padding: 9px 13px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: block;
+            color: var(--text-muted);
+        }
+
+        /* TABLE */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 11px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .table th {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: var(--surface-2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tr:hover td {
+            background: #fafbfc;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        /* BADGES */
+        .badge {
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* ACTION BUTTONS */
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* LOADING */
+        .loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* TABS */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.25s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* MOBILE */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 1100;
+            background: var(--sidebar-bg);
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .page-header {
+                padding-left: 66px;
+            }
+        }
+
+        /* MODAL */
+        .modal-header {
+            background: var(--sidebar-bg);
+            color: white;
+            border: none;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .modal-content {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* FORMULÁRIO BUILDER */
+        .pergunta-item {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .opcoes-container {
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .opcao-item {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 6px;
+            align-items: center;
+        }
+
+        /* FORMULÁRIO CARDS */
+        .formulario-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            background: white;
+            transition: 0.2s;
+            height: 100%;
+        }
+
+        .formulario-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .formulario-card h6 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .formulario-card p {
+            font-size: 12px;
+        }
+
+        /* CHART */
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 18px;
+            border: 1px solid var(--border);
+        }
+
+        /* STATUS */
+        .connection-status {
+            position: fixed;
+            bottom: 18px;
+            right: 18px;
+            background: #10b981;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            z-index: 1000;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 40px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .empty-state p {
+            font-size: 13px;
+        }
+
+        /* ALERT */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="mobile-toggle" id="mobileToggle"><i class="bi bi-list"></i></button>
+    <div class="overlay" id="overlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="logu-black.svg" alt="Logo" onerror="this.src='logu.svg'">
+            <div><strong>Mentoria</strong></div>
+            <small>Admin Global</small>
+        </div>
+        <div class="sidebar-nav">
+            <div class="nav-item"><a class="nav-link active" data-tab="dashboard"><i class="bi bi-speedometer2"></i>
+                    Dashboard</a></div>
+            <div class="nav-item"><a class="nav-link" data-tab="ciclos"><i class="bi bi-calendar-event"></i> Ciclos</a>
+            </div>
+            <div class="nav-item"><a class="nav-link" data-tab="formularios"><i class="bi bi-file-text"></i>
+                    Formulários</a></div>
+            <div class="nav-item"><a class="nav-link" data-tab="alunos"><i class="bi bi-people"></i> Alunos</a></div>
+            <div class="nav-item"><a class="nav-link" data-tab="mentores"><i class="bi bi-person-badge"></i>
+                    Mentores</a></div>
+            <div class="nav-item"><a class="nav-link" data-tab="relacoes"><i class="bi bi-link"></i> Relacionamentos</a>
+            </div>
+            <div class="nav-item"><a class="nav-link" data-tab="turmas"><i class="bi bi-building"></i> Turmas</a></div>
+            <div class="nav-item"><a class="nav-link" data-tab="importacao"><i class="bi bi-cloud-upload"></i>
+                    Importação</a></div>
+        </div>
+        <div class="sidebar-footer">
+            <button class="btn-logout" id="btnVoltar"><i class="bi bi-arrow-left"></i> Voltar ao Painel</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+
+        <!-- DASHBOARD -->
+        <div id="tab-dashboard" class="tab-content active">
+            <div class="page-header">
+                <div>
+                    <h1>Dashboard de Mentoria</h1>
+                    <div class="subtitle">Visão geral do programa</div>
+                </div>
+                <button class="btn btn-outline" id="refreshDashboard"><i class="bi bi-arrow-repeat"></i>
+                    Atualizar</button>
+            </div>
+            <div class="page-body">
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card blue">
+                            <div class="stat-card-value" id="totalAlunos">–</div>
+                            <div class="stat-card-label">Total Alunos</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card green">
+                            <div class="stat-card-value" id="alunosComMentor">–</div>
+                            <div class="stat-card-label">Com Mentor</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card orange">
+                            <div class="stat-card-value" id="alunosSemMentor">–</div>
+                            <div class="stat-card-label">Sem Mentor</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card purple">
+                            <div class="stat-card-value" id="totalMentores">–</div>
+                            <div class="stat-card-label">Mentores</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-header">Progresso de Submissões</div>
+                            <div class="card-body text-center">
+                                <canvas id="chartProgresso" style="max-height:220px;"></canvas>
+                                <div class="mt-3">
+                                    <span class="badge badge-info" id="activeCycleName">Nenhum ciclo ativo</span>
+                                    <span class="badge badge-secondary" id="submissionPercent">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card">
+                            <div class="card-header">Ciclos Recentes</div>
+                            <div class="card-body p-0">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Período</th>
+                                            <th>Status</th>
+                                            <th>Respostas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ciclosRecentes">
+                                        <tr>
+                                            <td colspan="4" class="empty-state"><i
+                                                    class="bi bi-hourglass"></i>Carregando...</td>
+                                        </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CICLOS -->
+        <div id="tab-ciclos" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1>Gerenciar Ciclos</h1>
+                    <div class="subtitle">Criação e gerenciamento de ciclos</div>
+                </div>
+                <button class="btn btn-primary" id="btnNovoCiclo"><i class="bi bi-plus"></i> Novo Ciclo</button>
+            </div>
+            <div class="page-body">
+                <div class="card">
+                    <div class="card-header">Todos os Ciclos</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Período</th>
+                                        <th>Formulário</th>
+                                        <th>Status</th>
+                                        <th>Respostas</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaCiclos"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORMULÁRIOS -->
+        <div id="tab-formularios" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1>Gerenciar Formulários</h1>
+                    <div class="subtitle">Criação de formulários personalizados</div>
+                </div>
+                <button class="btn btn-primary" id="btnNovoFormulario"><i class="bi bi-plus"></i> Novo
+                    Formulário</button>
+            </div>
+            <div class="page-body">
+                <div id="listaFormularios" class="row g-3">
+                    <div class="col-12">
+                        <div class="empty-state"><i class="bi bi-hourglass"></i>
+                            <p>Carregando formulários...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALUNOS -->
+        <div id="tab-alunos" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1>Gerenciar Alunos</h1>
+                    <div class="subtitle">Cadastro e acompanhamento</div>
+                </div>
+                <button class="btn btn-success" id="btnNovoAluno"><i class="bi bi-plus"></i> Novo Aluno</button>
+            </div>
+            <div class="page-body">
+                <div class="card">
+                    <div class="card-header">
+                        <span>Lista de Alunos</span>
+                        <input type="text" class="form-control" id="buscarAluno" placeholder="Buscar aluno..."
+                            style="width:200px">
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Aluno</th>
+                                        <th>Turma</th>
+                                        <th>Mentor</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaAlunos"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MENTORES -->
+        <div id="tab-mentores" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1>Gerenciar Mentores</h1>
+                    <div class="subtitle">Cadastro e gestão de mentores</div>
+                </div>
+                <button class="btn btn-success" id="btnNovoMentor"><i class="bi bi-plus"></i> Novo Mentor</button>
+            </div>
+            <div class="page-body">
+                <div class="card">
+                    <div class="card-header">
+                        <span>Lista de Mentores</span>
+                        <input type="text" class="form-control" id="buscarMentor" placeholder="Buscar mentor..."
+                            style="width:200px">
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>EDV</th>
+                                        <th>Alunos</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaMentores"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RELACIONAMENTOS -->
+        <div id="tab-relacoes" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1>Relacionamentos</h1>
+                    <div class="subtitle">Vínculos entre alunos e mentores</div>
+                </div>
+                <button class="btn btn-primary" id="btnNovaRelacao"><i class="bi bi-plus"></i> Vincular</button>
+            </div>
+            <div class="page-body">
+                <div class="card">
+                    <div class="card-header">Lista de Vínculos</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Aluno</th>
+                                        <th>Turma</th>
+                                        <th>Mentor</th>
+                                        <th>Data</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaRelacoes"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TURMAS -->
+        <div id="tab-turmas" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1>Gerenciar Turmas</h1>
+                    <div class="subtitle">Cadastro de turmas do programa</div>
+                </div>
+                <button class="btn btn-primary" id="btnNovaTurma"><i class="bi bi-plus"></i> Nova Turma</button>
+            </div>
+            <div class="page-body">
+                <div class="card">
+                    <div class="card-header">Lista de Turmas</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Data Criação</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaTurmas"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IMPORTAÇÃO -->
+        <div id="tab-importacao" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1>Importação em Lote</h1>
+                    <div class="subtitle">Importe alunos, mentores e vínculos via Excel</div>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="card">
+                    <div class="card-header">Importar Dados</div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Formato Excel:</strong> Colunas obrigatórias: <code>turma_nome</code>,
+                            <code>aluno_nome</code>, <code>mentor_nome</code>, <code>mentor_edv</code>,
+                            <code>mentor_senha</code>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Arquivo Excel (.xlsx ou .xls)</label>
+                            <input type="file" class="form-control" id="arquivoImportar" accept=".xlsx,.xls">
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" id="btnImportar"><i class="bi bi-upload"></i>
+                                Importar</button>
+                            <button class="btn btn-outline" id="btnTemplate"><i class="bi bi-download"></i> Baixar
+                                Template</button>
+                        </div>
+                        <div id="resultadoImportacao" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /main-content -->
+
+    <div class="connection-status" id="statusConexao"><i class="bi bi-wifi"></i> Online</div>
+
+    <!-- ============================================================ -->
+    <!-- MODAIS -->
+    <!-- ============================================================ -->
+
+    <!-- MODAL CICLO -->
+    <div class="modal fade" id="modalCiclo" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCicloTitulo">Novo Ciclo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="cicloId">
+                    <div class="mb-3"><label class="form-label">Nome do Ciclo</label><input type="text"
+                            class="form-control" id="cicloNome" placeholder="Ex: Ciclo 1 - 2026"></div>
+                    <div class="mb-3"><label class="form-label">Formulário</label><select class="form-select"
+                            id="cicloFormId">
+                            <option value="">Selecione um formulário...</option>
+                        </select></div>
+                    <div class="mb-3"><label class="form-label">Data e Hora de Início</label><input
+                            type="datetime-local" class="form-control" id="cicloInicio"></div>
+                    <div class="mb-3"><label class="form-label">Data e Hora de Fim</label><input type="datetime-local"
+                            class="form-control" id="cicloFim"></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" id="cicloAtivo"><label
+                            class="form-check-label">Ativar este ciclo imediatamente</label></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" id="salvarCicloBtn">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FORMULÁRIO -->
+    <div class="modal fade" id="modalFormulario" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalFormularioTitulo">Novo Formulário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="formularioId">
+                    <div class="mb-3"><label class="form-label">Título</label><input type="text" class="form-control"
+                            id="formTitulo" placeholder="Título do formulário"></div>
+                    <div class="mb-3"><label class="form-label">Descrição</label><textarea class="form-control"
+                            id="formDescricao" rows="2" placeholder="Descrição opcional..."></textarea></div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <strong>Perguntas</strong>
+                        <button class="btn btn-sm btn-primary" id="addPerguntaBtn"><i class="bi bi-plus"></i> Adicionar
+                            Pergunta</button>
+                    </div>
+                    <div id="perguntasContainer"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" id="salvarFormularioBtn">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ALUNO -->
+    <div class="modal fade" id="modalAluno" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAlunoTitulo">Novo Aluno</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="alunoId">
+                    <div class="mb-3"><label class="form-label">Nome do Aluno</label><input type="text"
+                            class="form-control" id="alunoNome" placeholder="Nome completo"></div>
+                    <div class="mb-3"><label class="form-label">Turma</label><select class="form-select"
+                            id="alunoTurma">
+                            <option value="">Selecione a turma...</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" id="salvarAlunoBtn">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MENTOR -->
+    <div class="modal fade" id="modalMentor" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalMentorTitulo">Novo Mentor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="mentorId">
+                    <div class="mb-3"><label class="form-label">Nome do Mentor</label><input type="text"
+                            class="form-control" id="mentorNome" placeholder="Nome completo"></div>
+                    <div class="mb-3"><label class="form-label">EDV</label><input type="text" class="form-control"
+                            id="mentorEdv" placeholder="Número de matrícula"></div>
+                    <div class="mb-3"><label class="form-label">Senha <small class="text-muted">(deixe em branco para
+                                manter atual ao editar)</small></label>
+                        <input type="text" class="form-control" id="mentorSenha" placeholder="123456">
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="mentorAtivo" checked>
+                        <label class="form-check-label">Mentor ativo</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" id="salvarMentorBtn">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RELAÇÃO -->
+    <div class="modal fade" id="modalRelacao" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Vincular Aluno a Mentor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="form-label">Aluno</label><select class="form-select"
+                            id="relacaoAluno">
+                            <option value="">Selecione o aluno...</option>
+                        </select></div>
+                    <div class="mb-3"><label class="form-label">Mentor</label><select class="form-select"
+                            id="relacaoMentor">
+                            <option value="">Selecione o mentor...</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" id="salvarRelacaoBtn">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TURMA -->
+    <div class="modal fade" id="modalTurma" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nova Turma</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="turmaId">
+                    <div class="mb-3"><label class="form-label">Nome da Turma</label><input type="text"
+                            class="form-control" id="turmaNome" placeholder="Ex: Turma A - 2026"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" id="salvarTurmaBtn">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MENSAGEM -->
+    <div class="modal fade" id="modalMensagem" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalMensagemTitulo">Aviso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="mensagemBody"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        'use strict';
+
+        // ============================================================
+        // CONFIG
+        // ============================================================
+        const API_URL = 'https://erickmth.pythonanywhere.com';
+
+        let chartProgresso = null;
+        let currentPerguntas = [];
+
+        // Restore state management para transição entre páginas
+        const RESTORE_KEY = 'mentoria_restore_state';
+
+        function salvarEstadoEstado() {
+            const activeTab = document.querySelector('.tab-content.active')?.id.replace('tab-', '') || 'dashboard';
+            const scrollY = window.scrollY;
+            const state = { activeTab, scrollY, timestamp: Date.now() };
+            sessionStorage.setItem(RESTORE_KEY, JSON.stringify(state));
+        }
+
+        function restaurarEstado() {
+            try {
+                const saved = sessionStorage.getItem(RESTORE_KEY);
+                if (saved) {
+                    const state = JSON.parse(saved);
+                    if (state.activeTab) {
+                        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                        const targetTab = document.getElementById(`tab-${state.activeTab}`);
+                        if (targetTab) targetTab.classList.add('active');
+                        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                        const targetNav = document.querySelector(`.nav-link[data-tab="${state.activeTab}"]`);
+                        if (targetNav) targetNav.classList.add('active');
+                        setTimeout(() => { window.scrollTo(0, state.scrollY || 0); }, 100);
+                    }
+                    sessionStorage.removeItem(RESTORE_KEY);
+                }
+            } catch (e) { console.warn('Restore state error:', e); }
+        }
+
+        // ============================================================
+        // AUTH
+        // ============================================================
+        function getToken() { return sessionStorage.getItem('adminToken'); }
+
+        function getAuthHeaders() {
+            return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() };
+        }
+
+        async function apiFetch(url, options = {}) {
+            const token = getToken();
+            if (!token) { redirectToLogin(); throw new Error('Não autenticado'); }
+
+            const res = await fetch(url, { ...options, headers: getAuthHeaders() });
+
+            if (res.status === 401) { sessionStorage.removeItem('adminToken'); redirectToLogin(); throw new Error('Token inválido'); }
+            if (!res.ok) {
+                let msg = `Erro ${res.status}`;
+                try { const d = await res.json(); msg = d.message || d.error || msg; } catch { }
+                throw new Error(msg);
+            }
+            return res.json();
+        }
+
+        function redirectToLogin() {
+            mostrarMensagem('Sessão expirada', 'Faça login novamente.');
+            setTimeout(() => window.location.href = 'index.html', 1800);
+        }
+
+        // ============================================================
+        // UI HELPERS
+        // ============================================================
+        function mostrarMensagem(titulo, texto) {
+            document.getElementById('mensagemBody').innerHTML = texto;
+            document.getElementById('modalMensagemTitulo').textContent = titulo;
+            new bootstrap.Modal(document.getElementById('modalMensagem')).show();
+        }
+
+        function setLoading(btn, loading) {
+            if (loading) {
+                btn.disabled = true;
+                btn._originalHTML = btn.innerHTML;
+                btn.innerHTML = '<span class="loading"></span> Aguarde...';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = btn._originalHTML || 'Salvar';
+            }
+        }
+
+        function fmtData(str) {
+            if (!str) return '–';
+            try { return new Date(str).toLocaleDateString('pt-BR'); } catch { return str; }
+        }
+
+        function fmtDataHora(str) {
+            if (!str) return '–';
+            try { return new Date(str).toLocaleString('pt-BR'); } catch { return str; }
+        }
+
+        // ============================================================
+        // TABS
+        // ============================================================
+        function configurarTabs() {
+            document.querySelectorAll('.nav-link[data-tab]').forEach(link => {
+                link.addEventListener('click', e => {
+                    e.preventDefault();
+                    const tabId = link.dataset.tab;
+                    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                    document.getElementById(`tab-${tabId}`).classList.add('active');
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    if (window.innerWidth <= 768) toggleSidebar();
+                    carregarTab(tabId);
+                    salvarEstadoEstado();
+                });
+            });
+        }
+
+        function carregarTab(tabId) {
+            const map = {
+                dashboard: () => carregarDashboard(),
+                ciclos: () => carregarCiclos(),
+                formularios: () => carregarFormularios(),
+                alunos: () => carregarAlunos(),
+                mentores: () => carregarMentores(),
+                relacoes: () => carregarRelacoes(),
+                turmas: () => carregarTurmas()
+            };
+            if (map[tabId]) map[tabId]();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+            document.getElementById('overlay').classList.toggle('show');
+        }
+
+        // NOVO: Navegação para página de detalhes do aluno
+        function navegarParaAluno(alunoId, alunoNome) {
+            salvarEstadoEstado();
+            sessionStorage.setItem('alunoDetalhes_nome', alunoNome);
+            window.location.href = `aluno_mentoria.html?id=${alunoId}`;
+        }
+
+        // ============================================================
+        // DASHBOARD
+        // ============================================================
+        async function carregarDashboard() {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/status`);
+                if (data.success) {
+                    document.getElementById('totalAlunos').textContent = data.resumo.total_alunos ?? 0;
+                    document.getElementById('alunosComMentor').textContent = data.resumo.alunos_com_mentor ?? 0;
+                    document.getElementById('alunosSemMentor').textContent = data.resumo.alunos_sem_mentor ?? 0;
+                    document.getElementById('totalMentores').textContent = data.resumo.total_mentores ?? 0;
+
+                    if (data.ciclo_ativo) {
+                        document.getElementById('activeCycleName').textContent = data.ciclo_ativo.nome;
+                        document.getElementById('submissionPercent').textContent = (data.ciclo_ativo.percentual_submissoes || 0) + '%';
+                        renderChartProgresso(data.ciclo_ativo.total_submissoes || 0, data.resumo.total_alunos || 0);
+                    } else {
+                        document.getElementById('activeCycleName').textContent = 'Nenhum ciclo ativo';
+                        document.getElementById('submissionPercent').textContent = '0%';
+                    }
+                }
+                await carregarCiclosRecentes();
+            } catch (e) { console.error('Dashboard:', e); }
+        }
+
+        function renderChartProgresso(enviaram, total) {
+            if (chartProgresso) chartProgresso.destroy();
+            const nao = Math.max(0, total - enviaram);
+            const ctx = document.getElementById('chartProgresso').getContext('2d');
+            chartProgresso = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: ['Enviaram', 'Pendentes'], datasets: [{ data: [enviaram, nao], backgroundColor: ['#10b981', '#ef4444'], borderWidth: 2 }] },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 12 } } } } }
+            });
+        }
+
+        async function carregarCiclosRecentes() {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/ciclos`);
+                const tbody = document.getElementById('ciclosRecentes');
+                if (data.success && data.ciclos?.length) {
+                    tbody.innerHTML = data.ciclos.slice(0, 6).map(c => `
+                <tr>
+                    <td><strong>${c.nome}</strong></td>
+                    <td><small>${fmtData(c.data_inicio)} – ${fmtData(c.data_fim)}</small></td>
+                    <td>${c.ativo ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-secondary">Inativo</span>'}</td>
+                    <td>${c.total_respostas || 0}</td>
+                </tr>`).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state"><i class="bi bi-inbox"></i> Nenhum ciclo cadastrado</td></tr>';
+                }
+            } catch (e) { console.error('Ciclos recentes:', e); }
+        }
+
+        // ============================================================
+        // CICLOS
+        // ============================================================
+        async function carregarCiclos() {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/ciclos`);
+                const tbody = document.getElementById('listaCiclos');
+                if (data.success && data.ciclos?.length) {
+                    tbody.innerHTML = data.ciclos.map(c => `
+                <tr>
+                    <td><strong>${c.nome}</strong></td>
+                    <td><small>${fmtData(c.data_inicio)} – ${fmtData(c.data_fim)}</small></td>
+                    <td>${c.formulario_titulo || '<span class="text-muted">–</span>'}</td>
+                    <td>${c.ativo ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-secondary">Inativo</span>'}</td>
+                    <td>${c.total_respostas || 0}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-primary btn-editar-ciclo" data-id="${c.id}"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger btn-excluir-ciclo" data-id="${c.id}"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>`).join('');
+                    tbody.querySelectorAll('.btn-editar-ciclo').forEach(b => b.onclick = () => editarCiclo(b.dataset.id));
+                    tbody.querySelectorAll('.btn-excluir-ciclo').forEach(b => b.onclick = () => excluirCiclo(b.dataset.id));
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="bi bi-inbox"></i> Nenhum ciclo cadastrado</td></tr>';
+                }
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        async function carregarSelectFormularios() {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/formularios`);
+                const select = document.getElementById('cicloFormId');
+                select.innerHTML = '<option value="">Selecione um formulário...</option>';
+                (data.formularios || []).forEach(f => {
+                    select.innerHTML += `<option value="${f.id}">${f.titulo}</option>`;
+                });
+            } catch (e) { console.error('Select formulários:', e); }
+        }
+
+        async function editarCiclo(id) {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/ciclos`);
+                const ciclo = (data.ciclos || []).find(c => c.id == id);
+                if (!ciclo) { mostrarMensagem('Erro', 'Ciclo não encontrado'); return; }
+
+                document.getElementById('cicloId').value = ciclo.id;
+                document.getElementById('cicloNome').value = ciclo.nome;
+                document.getElementById('cicloInicio').value = ciclo.data_inicio ? ciclo.data_inicio.replace(' ', 'T').slice(0, 16) : '';
+                document.getElementById('cicloFim').value = ciclo.data_fim ? ciclo.data_fim.replace(' ', 'T').slice(0, 16) : '';
+                document.getElementById('cicloAtivo').checked = !!ciclo.ativo;
+                document.getElementById('modalCicloTitulo').textContent = 'Editar Ciclo';
+
+                await carregarSelectFormularios();
+                document.getElementById('cicloFormId').value = ciclo.form_id || '';
+
+                new bootstrap.Modal(document.getElementById('modalCiclo')).show();
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        async function salvarCiclo() {
+            const id = document.getElementById('cicloId').value;
+            const nome = document.getElementById('cicloNome').value.trim();
+            const form_id = document.getElementById('cicloFormId').value;
+            const data_inicio = document.getElementById('cicloInicio').value;
+            const data_fim = document.getElementById('cicloFim').value;
+            const ativo = document.getElementById('cicloAtivo').checked;
+
+            if (!nome || !form_id || !data_inicio || !data_fim) { mostrarMensagem('Atenção', 'Preencha todos os campos obrigatórios.'); return; }
+
+            const btn = document.getElementById('salvarCicloBtn');
+            setLoading(btn, true);
+            try {
+                const url = id ? `${API_URL}/api/mentoria/ciclos/${id}` : `${API_URL}/api/mentoria/ciclos`;
+                const method = id ? 'PUT' : 'POST';
+                const data = await apiFetch(url, { method, body: JSON.stringify({ nome, form_id: parseInt(form_id), data_inicio, data_fim, ativo }) });
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalCiclo')).hide();
+                    mostrarMensagem('Sucesso', id ? 'Ciclo atualizado!' : 'Ciclo criado!');
+                    carregarCiclos();
+                    carregarDashboard();
+                } else { mostrarMensagem('Erro', data.message || 'Erro ao salvar'); }
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+            finally { setLoading(btn, false); }
+        }
+
+        async function excluirCiclo(id) {
+            if (!confirm('Excluir este ciclo? Esta ação não pode ser desfeita.')) return;
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/ciclos/${id}`, { method: 'DELETE' });
+                if (data.success) { mostrarMensagem('Sucesso', 'Ciclo excluído!'); carregarCiclos(); carregarDashboard(); }
+                else mostrarMensagem('Erro', data.message);
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        // ============================================================
+        // FORMULÁRIOS
+        // ============================================================
+        async function carregarFormularios() {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/formularios`);
+                const container = document.getElementById('listaFormularios');
+                if (data.success && data.formularios?.length) {
+                    container.innerHTML = data.formularios.map(f => `
+                <div class="col-md-4">
+                    <div class="formulario-card">
+                        <h6><i class="bi bi-file-earmark-text text-primary"></i> ${f.titulo}</h6>
+                        <p class="text-muted">${f.descricao || 'Sem descrição'}</p>
+                        <p class="mt-2"><span class="badge badge-info">${f.total_perguntas || 0} perguntas</span></p>
+                        <div class="d-flex gap-2 mt-3">
+                            <button class="btn btn-sm btn-outline btn-editar-form" data-id="${f.id}"><i class="bi bi-pencil"></i> Editar</button>
+                            <button class="btn btn-sm btn-danger btn-excluir-form" data-id="${f.id}"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </div>
+                </div>`).join('');
+                    container.querySelectorAll('.btn-editar-form').forEach(b => b.onclick = () => editarFormulario(b.dataset.id));
+                    container.querySelectorAll('.btn-excluir-form').forEach(b => b.onclick = () => excluirFormulario(b.dataset.id));
+                } else {
+                    container.innerHTML = '<div class="col-12"><div class="empty-state"><i class="bi bi-file-earmark-x"></i><p>Nenhum formulário cadastrado</p></div></div>';
+                }
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        function renderizarPerguntas() {
+            const container = document.getElementById('perguntasContainer');
+            if (!container) return;
+            if (currentPerguntas.length === 0) {
+                container.innerHTML = '<div class="empty-state" style="padding:20px"><i class="bi bi-question-circle"></i><p>Clique em "Adicionar Pergunta" para começar</p></div>';
+                return;
+            }
+            container.innerHTML = currentPerguntas.map((q, idx) => `
+        <div class="pergunta-item">
+            <div class="d-flex gap-2 mb-2">
+                <input type="text" class="form-control pergunta-text" data-idx="${idx}" value="${(q.pergunta || '').replace(/"/g, '&quot;')}" placeholder="Texto da pergunta">
+                <button class="btn btn-sm btn-danger remover-pergunta" data-idx="${idx}"><i class="bi bi-trash"></i></button>
+            </div>
+            <div class="row g-2 mb-2">
+                <div class="col-6">
+                    <select class="form-select form-select-sm pergunta-tipo" data-idx="${idx}">
+                        <option value="text" ${q.tipo === 'text' ? 'selected' : ''}>Texto livre</option>
+                        <option value="multiple" ${q.tipo === 'multiple' ? 'selected' : ''}>Múltipla escolha</option>
+                    </select>
+                </div>
+                <div class="col-6 d-flex align-items-center">
+                    <div class="form-check mb-0">
+                        <input class="form-check-input pergunta-obrig" type="checkbox" data-idx="${idx}" ${q.obrigatoria ? 'checked' : ''}>
+                        <label class="form-check-label" style="font-size:13px">Obrigatória</label>
+                    </div>
+                </div>
+            </div>
+            ${q.tipo === 'multiple' ? `
+            <div class="opcoes-container">
+                <label class="form-label">Opções:</label>
+                ${(q.opcoes || []).map((opt, oidx) => `
+                    <div class="opcao-item">
+                        <input type="text" class="form-control form-control-sm opcao-valor" data-pidx="${idx}" data-oidx="${oidx}" value="${opt.replace(/"/g, '&quot;')}">
+                        <button class="btn btn-sm btn-outline remover-opcao" data-pidx="${idx}" data-oidx="${oidx}" style="padding:3px 8px;color:#dc2626;border-color:#dc2626"><i class="bi bi-x"></i></button>
+                    </div>`).join('')}
+                <button class="btn btn-sm btn-outline adicionar-opcao mt-1" data-idx="${idx}" style="font-size:12px">+ Opção</button>
+            </div>` : ''}
+        </div>`).join('');
+
+            container.querySelectorAll('.pergunta-text').forEach(inp => inp.oninput = e => { currentPerguntas[+inp.dataset.idx].pergunta = e.target.value; });
+            container.querySelectorAll('.pergunta-tipo').forEach(sel => sel.onchange = e => {
+                const i = +sel.dataset.idx;
+                currentPerguntas[i].tipo = e.target.value;
+                if (!currentPerguntas[i].opcoes) currentPerguntas[i].opcoes = [];
+                renderizarPerguntas();
+            });
+            container.querySelectorAll('.pergunta-obrig').forEach(chk => chk.onchange = e => { currentPerguntas[+chk.dataset.idx].obrigatoria = e.target.checked; });
+            container.querySelectorAll('.remover-pergunta').forEach(btn => btn.onclick = () => { currentPerguntas.splice(+btn.dataset.idx, 1); renderizarPerguntas(); });
+            container.querySelectorAll('.remover-opcao').forEach(btn => btn.onclick = () => { currentPerguntas[+btn.dataset.pidx].opcoes.splice(+btn.dataset.oidx, 1); renderizarPerguntas(); });
+            container.querySelectorAll('.adicionar-opcao').forEach(btn => btn.onclick = () => { if (!currentPerguntas[+btn.dataset.idx].opcoes) currentPerguntas[+btn.dataset.idx].opcoes = []; currentPerguntas[+btn.dataset.idx].opcoes.push(''); renderizarPerguntas(); });
+            container.querySelectorAll('.opcao-valor').forEach(inp => inp.oninput = e => { currentPerguntas[+inp.dataset.pidx].opcoes[+inp.dataset.oidx] = e.target.value; });
+        }
+
+        async function editarFormulario(id) {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/formularios/${id}`);
+                if (!data.success || !data.formulario) { mostrarMensagem('Erro', 'Formulário não encontrado'); return; }
+                const f = data.formulario;
+                document.getElementById('formularioId').value = f.id;
+                document.getElementById('formTitulo').value = f.titulo;
+                document.getElementById('formDescricao').value = f.descricao || '';
+                document.getElementById('modalFormularioTitulo').textContent = 'Editar Formulário';
+                currentPerguntas = (f.perguntas || []).map(p => ({
+                    pergunta: p.pergunta, tipo: p.tipo, obrigatoria: !!p.obrigatoria, opcoes: p.opcoes || []
+                }));
+                renderizarPerguntas();
+                new bootstrap.Modal(document.getElementById('modalFormulario')).show();
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        async function salvarFormulario() {
+            const id = document.getElementById('formularioId').value;
+            const titulo = document.getElementById('formTitulo').value.trim();
+            const descricao = document.getElementById('formDescricao').value.trim();
+            if (!titulo) { mostrarMensagem('Atenção', 'O título é obrigatório.'); return; }
+            if (currentPerguntas.length === 0) { mostrarMensagem('Atenção', 'Adicione ao menos uma pergunta.'); return; }
+
+            const btn = document.getElementById('salvarFormularioBtn');
+            setLoading(btn, true);
+            try {
+                const perguntas = currentPerguntas.map(q => ({
+                    pergunta: q.pergunta || '', tipo: q.tipo || 'text',
+                    obrigatoria: !!q.obrigatoria, opcoes: q.opcoes || []
+                }));
+                const url = id ? `${API_URL}/api/mentoria/formularios/${id}` : `${API_URL}/api/mentoria/formularios`;
+                const data = await apiFetch(url, { method: id ? 'PUT' : 'POST', body: JSON.stringify({ titulo, descricao, perguntas }) });
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalFormulario')).hide();
+                    mostrarMensagem('Sucesso', id ? 'Formulário atualizado!' : 'Formulário criado!');
+                    carregarFormularios();
+                } else { mostrarMensagem('Erro', data.message); }
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+            finally { setLoading(btn, false); }
+        }
+
+        async function excluirFormulario(id) {
+            if (!confirm('Excluir formulário? Ciclos que o utilizam serão afetados.')) return;
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/formularios/${id}`, { method: 'DELETE' });
+                if (data.success) { mostrarMensagem('Sucesso', 'Formulário excluído!'); carregarFormularios(); }
+                else mostrarMensagem('Erro', data.message);
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        // ============================================================
+        // ALUNOS (com navegação para página de detalhes)
+        // ============================================================
+        async function carregarAlunos() {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/alunos`);
+                const tbody = document.getElementById('listaAlunos');
+                if (data.success && data.alunos?.length) {
+                    tbody.innerHTML = data.alunos.map(a => `
+                <tr>
+                    <td><strong>${a.nome}</strong></td>
+                    <td>${a.turma_nome || '–'}</td>
+                    <td>${a.mentor_nome ? `<span class="badge badge-info">${a.mentor_nome}</span>` : '<span class="text-muted">Sem mentor</span>'}</td>
+                    <td>${a.respondeu ? '<span class="badge badge-success">Respondido</span>' : '<span class="badge badge-warning">Pendente</span>'}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-info ver-respostas" data-id="${a.id}" data-nome="${a.nome.replace(/"/g, '&quot;')}"><i class="bi bi-eye"></i> Ver</button>
+                        <button class="btn btn-sm btn-primary editar-aluno" data-id="${a.id}" data-nome="${a.nome.replace(/"/g, '&quot;')}" data-turma="${a.turma_id}"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger excluir-aluno" data-id="${a.id}"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>`).join('');
+                    tbody.querySelectorAll('.ver-respostas').forEach(b => b.onclick = () => navegarParaAluno(b.dataset.id, b.dataset.nome));
+                    tbody.querySelectorAll('.editar-aluno').forEach(b => b.onclick = () => abrirEditarAluno(b.dataset.id, b.dataset.nome, b.dataset.turma));
+                    tbody.querySelectorAll('.excluir-aluno').forEach(b => b.onclick = () => excluirAluno(b.dataset.id));
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="bi bi-people"></i> Nenhum aluno cadastrado</td></tr>';
+                }
+                document.getElementById('buscarAluno').oninput = e => {
+                    const t = e.target.value.toLowerCase();
+                    tbody.querySelectorAll('tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(t) ? '' : 'none');
+                };
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        async function carregarTurmasSelect(selectId) {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/turmas`);
+                const sel = document.getElementById(selectId);
+                sel.innerHTML = '<option value="">Selecione a turma...</option>';
+                (data.turmas || []).forEach(t => sel.innerHTML += `<option value="${t.id}">${t.nome}</option>`);
+            } catch (e) { console.error('Select turmas:', e); }
+        }
+
+        function abrirEditarAluno(id, nome, turmaId) {
+            document.getElementById('alunoId').value = id;
+            document.getElementById('alunoNome').value = nome;
+            document.getElementById('modalAlunoTitulo').textContent = 'Editar Aluno';
+            carregarTurmasSelect('alunoTurma').then(() => {
+                document.getElementById('alunoTurma').value = turmaId || '';
+                new bootstrap.Modal(document.getElementById('modalAluno')).show();
+            });
+        }
+
+        async function salvarAluno() {
+            const id = document.getElementById('alunoId').value;
+            const nome = document.getElementById('alunoNome').value.trim();
+            const turma_id = document.getElementById('alunoTurma').value;
+            if (!nome || !turma_id) { mostrarMensagem('Atenção', 'Preencha nome e turma.'); return; }
+
+            const btn = document.getElementById('salvarAlunoBtn');
+            setLoading(btn, true);
+            try {
+                const url = id ? `${API_URL}/api/mentoria/alunos/${id}` : `${API_URL}/api/mentoria/alunos`;
+                const data = await apiFetch(url, { method: id ? 'PUT' : 'POST', body: JSON.stringify({ nome, turma_id: parseInt(turma_id) }) });
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalAluno')).hide();
+                    mostrarMensagem('Sucesso', id ? 'Aluno atualizado!' : 'Aluno criado!');
+                    carregarAlunos(); carregarDashboard();
+                } else { mostrarMensagem('Erro', data.message); }
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+            finally { setLoading(btn, false); }
+        }
+
+        async function excluirAluno(id) {
+            if (!confirm('Excluir este aluno? Todas as respostas e vínculos serão removidos.')) return;
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/alunos/${id}`, { method: 'DELETE' });
+                if (data.success) { mostrarMensagem('Sucesso', 'Aluno excluído!'); carregarAlunos(); carregarDashboard(); }
+                else mostrarMensagem('Erro', data.message);
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        // ============================================================
+        // MENTORES
+        // ============================================================
+        async function carregarMentores() {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/mentores`);
+                const tbody = document.getElementById('listaMentores');
+                if (data.success && data.mentores?.length) {
+                    tbody.innerHTML = data.mentores.map(m => `
+                <tr>
+                    <td><strong>${m.nome}</strong></td>
+                    <td><code>${m.edv}</code></td>
+                    <td><span class="badge badge-secondary">${m.total_alunos || 0} alunos</span></td>
+                    <td>${m.ativo ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>'}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-primary editar-mentor" data-id="${m.id}"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger excluir-mentor" data-id="${m.id}"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>`).join('');
+                    tbody.querySelectorAll('.editar-mentor').forEach(b => b.onclick = () => editarMentor(b.dataset.id));
+                    tbody.querySelectorAll('.excluir-mentor').forEach(b => b.onclick = () => excluirMentor(b.dataset.id));
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="bi bi-person-badge"></i> Nenhum mentor cadastrado</td></tr>';
+                }
+                document.getElementById('buscarMentor').oninput = e => {
+                    const t = e.target.value.toLowerCase();
+                    tbody.querySelectorAll('tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(t) ? '' : 'none');
+                };
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        async function editarMentor(id) {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/mentores`);
+                const m = (data.mentores || []).find(x => x.id == id);
+                if (!m) { mostrarMensagem('Erro', 'Mentor não encontrado'); return; }
+                document.getElementById('mentorId').value = m.id;
+                document.getElementById('mentorNome').value = m.nome;
+                document.getElementById('mentorEdv').value = m.edv;
+                document.getElementById('mentorEdv').disabled = true;
+                document.getElementById('mentorSenha').value = '';
+                document.getElementById('mentorSenha').placeholder = 'Deixe em branco para manter';
+                document.getElementById('mentorAtivo').checked = !!m.ativo;
+                document.getElementById('modalMentorTitulo').textContent = 'Editar Mentor';
+                new bootstrap.Modal(document.getElementById('modalMentor')).show();
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        async function salvarMentor() {
+            const id = document.getElementById('mentorId').value;
+            const nome = document.getElementById('mentorNome').value.trim();
+            const edv = document.getElementById('mentorEdv').value.trim();
+            const senha = document.getElementById('mentorSenha').value.trim();
+            const ativo = document.getElementById('mentorAtivo').checked;
+
+            if (!nome || (!id && !edv)) { mostrarMensagem('Atenção', 'Preencha nome e EDV.'); return; }
+
+            const btn = document.getElementById('salvarMentorBtn');
+            setLoading(btn, true);
+            try {
+                let body, url, method;
+                if (id) {
+                    url = `${API_URL}/api/mentoria/mentores/${id}`;
+                    method = 'PUT';
+                    body = { nome, ativo };
+                    if (senha) body.senha = senha;
+                } else {
+                    url = `${API_URL}/api/mentoria/mentores`;
+                    method = 'POST';
+                    body = { nome, edv, senha: senha || '123456', ativo };
+                }
+                const data = await apiFetch(url, { method, body: JSON.stringify(body) });
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalMentor')).hide();
+                    mostrarMensagem('Sucesso', id ? 'Mentor atualizado!' : 'Mentor criado!');
+                    carregarMentores(); carregarDashboard();
+                } else { mostrarMensagem('Erro', data.message); }
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+            finally { setLoading(btn, false); }
+        }
+
+        async function excluirMentor(id) {
+            if (!confirm('Excluir este mentor? Os vínculos com alunos serão removidos.')) return;
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/mentores/${id}`, { method: 'DELETE' });
+                if (data.success) { mostrarMensagem('Sucesso', 'Mentor excluído!'); carregarMentores(); carregarDashboard(); }
+                else mostrarMensagem('Erro', data.message);
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        // ============================================================
+        // RELACIONAMENTOS
+        // ============================================================
+        async function carregarRelacoes() {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/relacoes`);
+                const tbody = document.getElementById('listaRelacoes');
+                if (data.success && data.relacoes?.length) {
+                    tbody.innerHTML = data.relacoes.map(r => `
+                <tr>
+                    <td>${r.aluno_nome}</td>
+                    <td>${r.turma_nome}</td>
+                    <td>${r.mentor_nome} <small class="text-muted">(${r.mentor_edv})</small></td>
+                    <td><small>${fmtData(r.created_at)}</small></td>
+                    <td><button class="btn btn-sm btn-danger remover-relacao" data-id="${r.id}"><i class="bi bi-trash"></i></button></td>
+                </tr>`).join('');
+                    tbody.querySelectorAll('.remover-relacao').forEach(b => b.onclick = () => removerRelacao(b.dataset.id));
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="bi bi-link-45deg"></i> Nenhum vínculo cadastrado</td></tr>';
+                }
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        async function abrirModalRelacao() {
+            try {
+                const [alunosData, mentoresData] = await Promise.all([
+                    apiFetch(`${API_URL}/api/mentoria/alunos`),
+                    apiFetch(`${API_URL}/api/mentoria/mentores`)
+                ]);
+                const selAluno = document.getElementById('relacaoAluno');
+                selAluno.innerHTML = '<option value="">Selecione o aluno...</option>';
+                (alunosData.alunos || []).forEach(a => selAluno.innerHTML += `<option value="${a.id}">${a.nome} (${a.turma_nome})</option>`);
+
+                const selMentor = document.getElementById('relacaoMentor');
+                selMentor.innerHTML = '<option value="">Selecione o mentor...</option>';
+                (mentoresData.mentores || []).filter(m => m.ativo).forEach(m => selMentor.innerHTML += `<option value="${m.id}">${m.nome} (${m.edv})</option>`);
+
+                new bootstrap.Modal(document.getElementById('modalRelacao')).show();
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        async function salvarRelacao() {
+            const aluno_id = document.getElementById('relacaoAluno').value;
+            const mentor_id = document.getElementById('relacaoMentor').value;
+            if (!aluno_id || !mentor_id) { mostrarMensagem('Atenção', 'Selecione aluno e mentor.'); return; }
+
+            const btn = document.getElementById('salvarRelacaoBtn');
+            setLoading(btn, true);
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/relacoes`, { method: 'POST', body: JSON.stringify({ aluno_id: parseInt(aluno_id), mentor_id: parseInt(mentor_id) }) });
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalRelacao')).hide();
+                    mostrarMensagem('Sucesso', data.message);
+                    carregarRelacoes(); carregarAlunos();
+                } else { mostrarMensagem('Erro', data.message); }
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+            finally { setLoading(btn, false); }
+        }
+
+        async function removerRelacao(id) {
+            if (!confirm('Remover este vínculo?')) return;
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/relacoes/${id}`, { method: 'DELETE' });
+                if (data.success) { mostrarMensagem('Sucesso', 'Vínculo removido!'); carregarRelacoes(); carregarAlunos(); }
+                else mostrarMensagem('Erro', data.message);
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        // ============================================================
+        // TURMAS
+        // ============================================================
+        async function carregarTurmas() {
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/turmas`);
+                const tbody = document.getElementById('listaTurmas');
+                if (data.success && data.turmas?.length) {
+                    tbody.innerHTML = data.turmas.map(t => `
+                <tr>
+                    <td><strong>${t.nome}</strong></td>
+                    <td><small>${fmtData(t.created_at)}</small></td>
+                    <td><button class="btn btn-sm btn-danger excluir-turma" data-id="${t.id}"><i class="bi bi-trash"></i></button></td>
+                </tr>`).join('');
+                    tbody.querySelectorAll('.excluir-turma').forEach(b => b.onclick = () => excluirTurma(b.dataset.id));
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="3" class="empty-state"><i class="bi bi-building"></i> Nenhuma turma cadastrada</td></tr>';
+                }
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        async function salvarTurma() {
+            const nome = document.getElementById('turmaNome').value.trim();
+            if (!nome) { mostrarMensagem('Atenção', 'Informe o nome da turma.'); return; }
+
+            const btn = document.getElementById('salvarTurmaBtn');
+            setLoading(btn, true);
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/turmas`, { method: 'POST', body: JSON.stringify({ nome }) });
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalTurma')).hide();
+                    mostrarMensagem('Sucesso', 'Turma criada!');
+                    carregarTurmas();
+                } else { mostrarMensagem('Erro', data.message || data.error); }
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+            finally { setLoading(btn, false); }
+        }
+
+        async function excluirTurma(id) {
+            if (!confirm('Excluir esta turma? Todos os alunos e vínculos serão removidos.')) return;
+            try {
+                const data = await apiFetch(`${API_URL}/api/mentoria/turmas/${id}`, { method: 'DELETE' });
+                if (data.success) { mostrarMensagem('Sucesso', 'Turma excluída!'); carregarTurmas(); carregarAlunos(); }
+                else mostrarMensagem('Erro', data.message || data.error);
+            } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        // ============================================================
+        // IMPORTAÇÃO EXCEL
+        // ============================================================
+        function paraString(v) {
+            if (v === null || v === undefined) return '';
+            return String(v).trim();
+        }
+
+        async function importarExcel() {
+            const file = document.getElementById('arquivoImportar').files[0];
+            if (!file) { mostrarMensagem('Atenção', 'Selecione um arquivo Excel.'); return; }
+
+            const resultDiv = document.getElementById('resultadoImportacao');
+            resultDiv.innerHTML = '<div class="alert alert-info"><i class="bi bi-hourglass-split"></i> Processando arquivo...</div>';
+
+            const reader = new FileReader();
+            reader.onload = async e => {
+                try {
+                    const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+
+                    const campos = ['turma_nome', 'aluno_nome', 'mentor_nome', 'mentor_edv', 'mentor_senha'];
+                    const dados = rows.map(row => {
+                        const get = keys => {
+                            for (const k of keys) {
+                                if (row[k] !== undefined) return paraString(row[k]);
+                                if (row[k.toLowerCase()] !== undefined) return paraString(row[k.toLowerCase()]);
+                                if (row[k.toUpperCase()] !== undefined) return paraString(row[k.toUpperCase()]);
+                            }
+                            return '';
+                        };
+                        return {
+                            turma_nome: get(['turma_nome', 'Turma', 'TURMA']),
+                            aluno_nome: get(['aluno_nome', 'Aluno', 'ALUNO']),
+                            mentor_nome: get(['mentor_nome', 'Mentor', 'MENTOR']),
+                            mentor_edv: get(['mentor_edv', 'EDV', 'Edv']),
+                            mentor_senha: get(['mentor_senha', 'Senha', 'SENHA']) || '123456'
+                        };
+                    }).filter(d => d.aluno_nome && d.mentor_edv);
+
+                    if (!dados.length) {
+                        resultDiv.innerHTML = '<div class="alert alert-warning">Nenhum dado válido encontrado. Verifique as colunas do arquivo.</div>';
+                        return;
+                    }
+
+                    const res = await fetch(`${API_URL}/api/mentoria/importar`, {
+                        method: 'POST',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify(dados)
+                    });
+                    const result = await res.json();
+
+                    if (result.success) {
+                        resultDiv.innerHTML = `<div class="alert alert-success">
+                    ✅ <strong>Importação concluída!</strong><br>
+                    Importados: <strong>${result.importados}</strong> | Atualizados: <strong>${result.atualizados}</strong>
+                    ${result.erros?.length ? `<br>⚠️ Erros: ${result.erros.slice(0, 5).join(', ')}` : ''}
+                </div>`;
+                        carregarDashboard(); carregarAlunos(); carregarMentores(); carregarRelacoes();
+                        document.getElementById('arquivoImportar').value = '';
+                    } else {
+                        resultDiv.innerHTML = `<div class="alert alert-danger">❌ Erro: ${result.error || result.message}</div>`;
+                    }
+                } catch (err) {
+                    resultDiv.innerHTML = `<div class="alert alert-danger">Erro ao processar: ${err.message}</div>`;
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function baixarTemplate() {
+            const ws = XLSX.utils.json_to_sheet([{
+                turma_nome: 'Mentoria 2026', aluno_nome: 'João Silva',
+                mentor_nome: 'Maria Oliveira', mentor_edv: '12345', mentor_senha: '123456'
+            }]);
+            ws['!cols'] = [{ wch: 20 }, { wch: 25 }, { wch: 25 }, { wch: 15 }, { wch: 15 }];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Template');
+            XLSX.writeFile(wb, 'template_mentoria.xlsx');
+        }
+
+        // ============================================================
+        // EVENTOS
+        // ============================================================
+        function configurarEventos() {
+            document.getElementById('refreshDashboard').onclick = () => { carregarDashboard(); };
+
+            document.getElementById('btnNovoCiclo').onclick = () => {
+                document.getElementById('cicloId').value = '';
+                document.getElementById('cicloNome').value = '';
+                document.getElementById('cicloInicio').value = '';
+                document.getElementById('cicloFim').value = '';
+                document.getElementById('cicloAtivo').checked = false;
+                document.getElementById('modalCicloTitulo').textContent = 'Novo Ciclo';
+                carregarSelectFormularios().then(() => new bootstrap.Modal(document.getElementById('modalCiclo')).show());
+            };
+            document.getElementById('salvarCicloBtn').onclick = salvarCiclo;
+
+            document.getElementById('btnNovoFormulario').onclick = () => {
+                document.getElementById('formularioId').value = '';
+                document.getElementById('formTitulo').value = '';
+                document.getElementById('formDescricao').value = '';
+                document.getElementById('modalFormularioTitulo').textContent = 'Novo Formulário';
+                currentPerguntas = [];
+                renderizarPerguntas();
+                new bootstrap.Modal(document.getElementById('modalFormulario')).show();
+            };
+            document.getElementById('addPerguntaBtn').onclick = () => {
+                currentPerguntas.push({ pergunta: '', tipo: 'text', obrigatoria: true, opcoes: [] });
+                renderizarPerguntas();
+            };
+            document.getElementById('salvarFormularioBtn').onclick = salvarFormulario;
+
+            document.getElementById('btnNovoAluno').onclick = () => {
+                document.getElementById('alunoId').value = '';
+                document.getElementById('alunoNome').value = '';
+                document.getElementById('modalAlunoTitulo').textContent = 'Novo Aluno';
+                carregarTurmasSelect('alunoTurma').then(() => new bootstrap.Modal(document.getElementById('modalAluno')).show());
+            };
+            document.getElementById('salvarAlunoBtn').onclick = salvarAluno;
+
+            document.getElementById('btnNovoMentor').onclick = () => {
+                document.getElementById('mentorId').value = '';
+                document.getElementById('mentorNome').value = '';
+                document.getElementById('mentorEdv').value = '';
+                document.getElementById('mentorEdv').disabled = false;
+                document.getElementById('mentorSenha').value = '';
+                document.getElementById('mentorSenha').placeholder = '123456';
+                document.getElementById('mentorAtivo').checked = true;
+                document.getElementById('modalMentorTitulo').textContent = 'Novo Mentor';
+                new bootstrap.Modal(document.getElementById('modalMentor')).show();
+            };
+            document.getElementById('salvarMentorBtn').onclick = salvarMentor;
+
+            document.getElementById('btnNovaRelacao').onclick = abrirModalRelacao;
+            document.getElementById('salvarRelacaoBtn').onclick = salvarRelacao;
+
+            document.getElementById('btnNovaTurma').onclick = () => {
+                document.getElementById('turmaId').value = '';
+                document.getElementById('turmaNome').value = '';
+                new bootstrap.Modal(document.getElementById('modalTurma')).show();
+            };
+            document.getElementById('salvarTurmaBtn').onclick = salvarTurma;
+
+            document.getElementById('btnImportar').onclick = importarExcel;
+            document.getElementById('btnTemplate').onclick = baixarTemplate;
+
+            document.getElementById('btnVoltar').onclick = () => window.location.href = 'index.html';
+
+            document.getElementById('mobileToggle').onclick = toggleSidebar;
+            document.getElementById('overlay').onclick = toggleSidebar;
+
+            document.getElementById('modalMentor').addEventListener('hidden.bs.modal', () => {
+                document.getElementById('mentorEdv').disabled = false;
+            });
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        async function init() {
+            const token = getToken();
+            if (!token) {
+                mostrarMensagem('Acesso Negado', 'Faça login no painel admin primeiro.');
+                setTimeout(() => window.location.href = 'index.html', 1800);
+                return;
+            }
+
+            configurarTabs();
+            configurarEventos();
+
+            try {
+                await carregarDashboard();
+                await carregarCiclos();
+                await carregarFormularios();
+                await carregarAlunos();
+                await carregarMentores();
+                await carregarRelacoes();
+                await carregarTurmas();
+            } catch (e) {
+                console.error('Init error:', e);
+            }
+
+            restaurarEstado();
+
+            setInterval(carregarDashboard, 60000);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>
