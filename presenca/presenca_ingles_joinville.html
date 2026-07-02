@@ -417,14 +417,23 @@
         .btn-report:hover:not(:disabled) { background: #2563eb; }
         .btn.loading { opacity: 0.7; cursor: not-allowed; }
         /* ===== NOTIFICATIONS ===== */
-        .notification {
+        .notification-container {
             position: fixed; bottom: 24px; right: 24px;
+            display: flex; flex-direction: column; gap: 12px;
+            z-index: 9999; max-width: 380px;
+        }
+        .notification {
             background: white; border-radius: var(--radius-md);
             padding: 14px 20px; display: flex; align-items: center; gap: 12px;
             box-shadow: var(--shadow-lg); border-left: 4px solid var(--success);
-            z-index: 9999; font-size: 0.875rem; font-weight: 500; max-width: 380px;
+            font-size: 0.875rem; font-weight: 500; max-width: 100%;
             animation: slideIn 0.3s ease;
+            color: var(--gray-800);
         }
+        .notification span { color: var(--gray-800); }
+        .notification.success i { color: var(--success); }
+        .notification.error i { color: var(--danger); }
+        .notification.warning i { color: var(--warning); }
         .notification.error { border-color: var(--danger); }
         .notification.warning { border-color: var(--warning); }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -619,6 +628,11 @@
                 <span>Atualizado por:</span>
                 <span class="meta-value" id="updatedBy">-</span>
             </div>
+            <div class="meta-item" id="locationContainer" style="display: none;">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Localização:</span>
+                <span class="meta-value" id="locationLink"></span>
+            </div>
             <div class="meta-item">
                 <i class="fas fa-clock"></i>
                 <span>Última atualização:</span>
@@ -716,6 +730,8 @@
         const attendanceMeta = document.getElementById('attendanceMeta');
         const createdBySpan = document.getElementById('createdBy');
         const updatedBySpan = document.getElementById('updatedBy');
+        const locationContainer = document.getElementById('locationContainer');
+        const locationLink = document.getElementById('locationLink');
         const updatedByContainer = document.getElementById('updatedByContainer');
         const lastUpdatedSpan = document.getElementById('lastUpdated');
         const weekendWarning = document.getElementById('weekendWarning');
@@ -1036,7 +1052,13 @@
             const notif = document.createElement('div');
             notif.className = `notification ${type}`;
             notif.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i><span>${message}</span>`;
-            document.body.appendChild(notif);
+            let container = document.querySelector('.notification-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'notification-container';
+                document.body.appendChild(container);
+            }
+            container.appendChild(notif);
             setTimeout(() => notif.remove(), 4000);
         }
 
@@ -1051,6 +1073,32 @@
             btn.disabled = false;
             btn.classList.remove('loading');
             if (originalText) btn.innerHTML = originalText;
+        }
+
+        function getCurrentLocation() {
+            return new Promise(resolve => {
+                if (!navigator.geolocation) {
+                    return resolve({ error: 'unsupported' });
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        resolve({
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        });
+                    },
+                    error => {
+                        if (error.code === error.PERMISSION_DENIED) {
+                            resolve({ error: 'denied' });
+                        } else {
+                            resolve({ error: 'unavailable' });
+                        }
+                    },
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+                );
+            });
         }
 
         function formatDateTime(dateStr) {
@@ -1133,6 +1181,17 @@
                     updatedByContainer.style.display = 'flex';
                 } else {
                     updatedByContainer.style.display = 'none';
+                }
+                const locationLat = attendanceMetadata.updatedLat != null ? attendanceMetadata.updatedLat : attendanceMetadata.createdLat;
+                const locationLng = attendanceMetadata.updatedLng != null ? attendanceMetadata.updatedLng : attendanceMetadata.createdLng;
+                if (locationLat != null && locationLng != null) {
+                    locationContainer.style.display = 'flex';
+                    const displayLat = Number(locationLat).toFixed(5);
+                    const displayLng = Number(locationLng).toFixed(5);
+                    locationLink.innerHTML = `<a href="https://www.google.com/maps?q=${locationLat},${locationLng}" target="_blank" rel="noopener noreferrer">${displayLat}, ${displayLng}</a>`;
+                } else {
+                    locationContainer.style.display = 'none';
+                    locationLink.textContent = '';
                 }
                 lastUpdatedSpan.textContent = attendanceMetadata.updatedAt 
                     ? formatDateTime(attendanceMetadata.updatedAt) 
@@ -1267,7 +1326,13 @@
                     createdBy: data.created_by || null,
                     updatedBy: data.updated_by || null,
                     createdAt: data.created_at,
-                    updatedAt: data.updated_at
+                    updatedAt: data.updated_at,
+                    createdLat: data.created_lat ?? null,
+                    createdLng: data.created_lng ?? null,
+                    createdLocAccuracy: data.created_loc_accuracy ?? null,
+                    updatedLat: data.updated_lat ?? null,
+                    updatedLng: data.updated_lng ?? null,
+                    updatedLocAccuracy: data.updated_loc_accuracy ?? null
                 };
                 updateMetadataDisplay();
                 if (data.registros && Array.isArray(data.registros)) {
@@ -1313,6 +1378,23 @@
             const btn = isUpdate ? saveChangesBtn : submitBtn;
             const originalText = btn.innerHTML;
             showLoading(btn);
+            const locationResult = await getCurrentLocation();
+            if (!locationResult || locationResult.error || typeof locationResult.lat !== 'number' || typeof locationResult.lng !== 'number') {
+                hideLoading(btn, originalText);
+                if (locationResult?.error === 'denied') {
+                    showNotification('Permita acesso à localização para enviar a chamada.', 'error');
+                } else if (locationResult?.error === 'unsupported') {
+                    showNotification('Geolocalização não é suportada neste navegador. Localização é obrigatória.', 'error');
+                } else {
+                    showNotification('Não foi possível obter a localização. Localização é obrigatória.', 'error');
+                }
+                return;
+            }
+            payload.localizacao = {
+                lat: locationResult.lat,
+                lng: locationResult.lng,
+                accuracy: locationResult.accuracy
+            };
             try {
                 const response = await fetch(`${API_BASE}/presenca/salvar`, {
                     method: 'POST',
@@ -1333,11 +1415,23 @@
                     }
                     attendanceMetadata.updatedBy = currentUser;
                     attendanceMetadata.updatedAt = now;
+                    attendanceMetadata.updatedLat = result.updated_lat ?? null;
+                    attendanceMetadata.updatedLng = result.updated_lng ?? null;
+                    attendanceMetadata.updatedLocAccuracy = result.updated_loc_accuracy ?? null;
+                    attendanceMetadata.createdLat = result.created_lat ?? attendanceMetadata.createdLat;
+                    attendanceMetadata.createdLng = result.created_lng ?? attendanceMetadata.createdLng;
+                    attendanceMetadata.createdLocAccuracy = result.created_loc_accuracy ?? attendanceMetadata.createdLocAccuracy;
                 } else {
                     attendanceMetadata.createdBy = result.created_by || currentUser;
                     attendanceMetadata.createdAt = now;
+                    attendanceMetadata.createdLat = result.created_lat ?? locationResult.lat;
+                    attendanceMetadata.createdLng = result.created_lng ?? locationResult.lng;
+                    attendanceMetadata.createdLocAccuracy = result.created_loc_accuracy ?? locationResult.accuracy;
                     attendanceMetadata.updatedBy = null;
                     attendanceMetadata.updatedAt = null;
+                    attendanceMetadata.updatedLat = null;
+                    attendanceMetadata.updatedLng = null;
+                    attendanceMetadata.updatedLocAccuracy = null;
                 }
                 updateMetadataDisplay();
                 showNotification(`Chamada ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`);
