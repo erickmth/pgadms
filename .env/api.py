@@ -127,7 +127,8 @@ def add_security_headers(response):
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:;"
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
-    response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+    # Permite geolocalização no próprio domínio (necessário para as páginas de presença)
+    response.headers['Permissions-Policy'] = "geolocation=(self), microphone=(), camera=()"
     return response
 
 # ============================================
@@ -643,7 +644,7 @@ def get_db():
     return conn
 
 def migrate_presenca_table():
-    """Adiciona colunas created_by e updated_by na tabela presenca se não existirem"""
+    """Adiciona colunas de auditoria e localização na tabela presenca se não existirem"""
     conn = get_db()
     cursor = conn.cursor()
 
@@ -658,6 +659,30 @@ def migrate_presenca_table():
         if 'updated_by' not in columns:
             cursor.execute("ALTER TABLE presenca ADD COLUMN updated_by TEXT")
             print("✅ Coluna updated_by adicionada")
+
+        if 'created_lat' not in columns:
+            cursor.execute("ALTER TABLE presenca ADD COLUMN created_lat REAL")
+            print("✅ Coluna created_lat adicionada")
+
+        if 'created_lng' not in columns:
+            cursor.execute("ALTER TABLE presenca ADD COLUMN created_lng REAL")
+            print("✅ Coluna created_lng adicionada")
+
+        if 'created_loc_accuracy' not in columns:
+            cursor.execute("ALTER TABLE presenca ADD COLUMN created_loc_accuracy REAL")
+            print("✅ Coluna created_loc_accuracy adicionada")
+
+        if 'updated_lat' not in columns:
+            cursor.execute("ALTER TABLE presenca ADD COLUMN updated_lat REAL")
+            print("✅ Coluna updated_lat adicionada")
+
+        if 'updated_lng' not in columns:
+            cursor.execute("ALTER TABLE presenca ADD COLUMN updated_lng REAL")
+            print("✅ Coluna updated_lng adicionada")
+
+        if 'updated_loc_accuracy' not in columns:
+            cursor.execute("ALTER TABLE presenca ADD COLUMN updated_loc_accuracy REAL")
+            print("✅ Coluna updated_loc_accuracy adicionada")
 
         cursor.execute("UPDATE presenca SET created_by = responsavel WHERE created_by IS NULL AND responsavel IS NOT NULL")
         cursor.execute("UPDATE presenca SET updated_by = NULL")
@@ -756,6 +781,12 @@ def init_db():
             responsavel TEXT,
             created_by TEXT,
             updated_by TEXT,
+            created_lat REAL,
+            created_lng REAL,
+            created_loc_accuracy REAL,
+            updated_lat REAL,
+            updated_lng REAL,
+            updated_loc_accuracy REAL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             UNIQUE(data, turma_id),
@@ -2138,6 +2169,25 @@ def save_attendance():
         turma_nome = data.get('turma', TURMAS['formare'])
 
         responsavel = request.user if hasattr(request, 'user') else 'Sistema'
+        localizacao = data.get('localizacao')
+        created_lat = created_lng = created_loc_accuracy = None
+        updated_lat = updated_lng = updated_loc_accuracy = None
+
+        if isinstance(localizacao, dict):
+            try:
+                lat = float(localizacao.get('lat'))
+                lng = float(localizacao.get('lng'))
+                accuracy = localizacao.get('accuracy')
+                if -90 <= lat <= 90 and -180 <= lng <= 180:
+                    created_lat = updated_lat = lat
+                    created_lng = updated_lng = lng
+                    created_loc_accuracy = updated_loc_accuracy = float(accuracy) if accuracy is not None else None
+                else:
+                    created_lat = created_lng = created_loc_accuracy = None
+                    updated_lat = updated_lng = updated_loc_accuracy = None
+            except (TypeError, ValueError):
+                created_lat = created_lng = created_loc_accuracy = None
+                updated_lat = updated_lng = updated_loc_accuracy = None
 
         if not data_str or not registros:
             return jsonify({'error': 'Data e registros são obrigatórios'}), 400
@@ -2165,16 +2215,32 @@ def save_attendance():
         cursor.execute('SELECT id, created_by, updated_by FROM presenca WHERE data = ? AND turma_id = ?', (data_str, turma['id']))
         existing = cursor.fetchone()
 
+        # Exigir coordenadas: se for atualização, updated_lat/updated_lng obrigatórios;
+        # se for criação, created_lat/created_lng obrigatórios.
+        if existing:
+            if updated_lat is None or updated_lng is None:
+                conn.close()
+                return jsonify({'error': 'Localização (latitude/longitude) é obrigatória para atualizar a chamada.'}), 400
+        else:
+            if created_lat is None or created_lng is None:
+                conn.close()
+                return jsonify({'error': 'Localização (latitude/longitude) é obrigatória para salvar a chamada.'}), 400
+
         if existing:
             cursor.execute('''
                 UPDATE presenca
-                SET registros = ?, updated_at = CURRENT_TIMESTAMP, updated_by = ?
+                SET registros = ?, updated_at = CURRENT_TIMESTAMP, updated_by = ?,
+                    updated_lat = ?, updated_lng = ?, updated_loc_accuracy = ?
                 WHERE id = ?
-            ''', (json.dumps(registros), responsavel, existing['id']))
+            ''', (
+                json.dumps(registros), responsavel,
+                updated_lat, updated_lng, updated_loc_accuracy,
+                existing['id']
+            ))
 
             conn.commit()
 
-            cursor.execute('SELECT created_by, updated_by FROM presenca WHERE id = ?', (existing['id'],))
+            cursor.execute('SELECT created_by, updated_by, created_lat, created_lng, created_loc_accuracy, updated_lat, updated_lng, updated_loc_accuracy FROM presenca WHERE id = ?', (existing['id'],))
             result = cursor.fetchone()
             conn.close()
 
@@ -2183,16 +2249,26 @@ def save_attendance():
                 'message': 'Chamada atualizada com sucesso',
                 'created_by': result['created_by'],
                 'updated_by': result['updated_by'],
+                'created_lat': result['created_lat'],
+                'created_lng': result['created_lng'],
+                'created_loc_accuracy': result['created_loc_accuracy'],
+                'updated_lat': result['updated_lat'],
+                'updated_lng': result['updated_lng'],
+                'updated_loc_accuracy': result['updated_loc_accuracy'],
                 'is_update': True
             })
         else:
             cursor.execute('''
-                INSERT INTO presenca (data, turma_id, registros, responsavel, created_by, updated_by)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (data_str, turma['id'], json.dumps(registros), responsavel, responsavel, None))
+                INSERT INTO presenca (data, turma_id, registros, responsavel, created_by, updated_by, created_lat, created_lng, created_loc_accuracy)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                data_str, turma['id'], json.dumps(registros), responsavel,
+                responsavel, None,
+                created_lat, created_lng, created_loc_accuracy
+            ))
 
             conn.commit()
-            cursor.execute('SELECT created_by, updated_by FROM presenca WHERE id = ?', (cursor.lastrowid,))
+            cursor.execute('SELECT created_by, updated_by, created_lat, created_lng, created_loc_accuracy, updated_lat, updated_lng, updated_loc_accuracy FROM presenca WHERE id = ?', (cursor.lastrowid,))
             result = cursor.fetchone()
             conn.close()
 
@@ -2201,6 +2277,12 @@ def save_attendance():
                 'message': 'Chamada salva com sucesso',
                 'created_by': result['created_by'],
                 'updated_by': result['updated_by'],
+                'created_lat': result['created_lat'],
+                'created_lng': result['created_lng'],
+                'created_loc_accuracy': result['created_loc_accuracy'],
+                'updated_lat': result['updated_lat'],
+                'updated_lng': result['updated_lng'],
+                'updated_loc_accuracy': result['updated_loc_accuracy'],
                 'is_update': False
             })
 
@@ -2229,7 +2311,9 @@ def get_attendance(data_str):
             return jsonify({'error': 'Turma não encontrada'}), 404
 
         cursor.execute('''
-            SELECT registros, responsavel, created_at, updated_at, created_by, updated_by
+            SELECT registros, responsavel, created_at, updated_at, created_by, updated_by,
+                   created_lat, created_lng, created_loc_accuracy,
+                   updated_lat, updated_lng, updated_loc_accuracy
             FROM presenca
             WHERE data = ? AND turma_id = ?
         ''', (data_str, turma['id']))
@@ -2244,7 +2328,13 @@ def get_attendance(data_str):
                 'created_by': result['created_by'],
                 'updated_by': result['updated_by'],
                 'created_at': result['created_at'],
-                'updated_at': result['updated_at']
+                'updated_at': result['updated_at'],
+                'created_lat': result['created_lat'],
+                'created_lng': result['created_lng'],
+                'created_loc_accuracy': result['created_loc_accuracy'],
+                'updated_lat': result['updated_lat'],
+                'updated_lng': result['updated_lng'],
+                'updated_loc_accuracy': result['updated_loc_accuracy']
             })
         else:
             return jsonify({'registros': []}), 404
