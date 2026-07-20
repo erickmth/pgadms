@@ -1984,22 +1984,24 @@
             const originalText = btn.innerHTML;
             showLoading(btn);
             const locationResult = await getCurrentLocation();
-            if (!locationResult || locationResult.error || typeof locationResult.lat !== 'number' || typeof locationResult.lng !== 'number') {
-                hideLoading(btn, originalText);
+            const hasLocation = locationResult && typeof locationResult.lat === 'number' && typeof locationResult.lng === 'number';
+            if (!hasLocation) {
                 if (locationResult?.error === 'denied') {
-                    showNotification('Permita acesso à localização para enviar a chamada.', 'error');
+                    showNotification('Localização negada. O registro será enviado sem ela.', 'warning');
                 } else if (locationResult?.error === 'unsupported') {
-                    showNotification('Geolocalização não é suportada neste navegador. Localização é obrigatória.', 'error');
+                    showNotification('Geolocalização não é suportada neste navegador. O registro será enviado sem ela.', 'warning');
+                } else if (locationResult?.error === 'unavailable') {
+                    showNotification('Não foi possível obter a localização. O registro será enviado sem ela.', 'warning');
                 } else {
-                    showNotification('Não foi possível obter a localização. Localização é obrigatória.', 'error');
+                    showNotification('A localização é opcional. O registro será enviado sem ela.', 'warning');
                 }
-                return;
+            } else {
+                payload.localizacao = {
+                    lat: locationResult.lat,
+                    lng: locationResult.lng,
+                    accuracy: locationResult.accuracy
+                };
             }
-            payload.localizacao = {
-                lat: locationResult.lat,
-                lng: locationResult.lng,
-                accuracy: locationResult.accuracy
-            };
             try {
                 const response = await fetch(`${API_BASE}/presenca/salvar`, {
                     method: 'POST',
@@ -2029,9 +2031,10 @@
                 } else {
                     attendanceMetadata.createdBy = result.created_by || currentUser;
                     attendanceMetadata.createdAt = now;
-                    attendanceMetadata.createdLat = result.created_lat ?? locationResult.lat;
-                    attendanceMetadata.createdLng = result.created_lng ?? locationResult.lng;
-                    attendanceMetadata.createdLocAccuracy = result.created_loc_accuracy ?? locationResult.accuracy;
+                    const hasLocation = locationResult && typeof locationResult.lat === 'number' && typeof locationResult.lng === 'number';
+                    attendanceMetadata.createdLat = result.created_lat ?? (hasLocation ? locationResult.lat : null);
+                    attendanceMetadata.createdLng = result.created_lng ?? (hasLocation ? locationResult.lng : null);
+                    attendanceMetadata.createdLocAccuracy = result.created_loc_accuracy ?? (hasLocation ? locationResult.accuracy : null);
                     attendanceMetadata.updatedBy = null;
                     attendanceMetadata.updatedAt = null;
                     attendanceMetadata.updatedLat = null;
