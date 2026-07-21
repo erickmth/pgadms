@@ -941,26 +941,25 @@
                 </div>
             </div>
 
-            <!-- MODAL DE NOVIDADE - Exibido apenas uma vez após login -->
-            <div class="modal fade" id="novidadeModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title">Novidade — Atualização 20/07/2026 (v12.0.9)</h5>
-                        </div>
-                        <div class="modal-body">
-                          <p>
- <strong>Nova atualização!</strong> O sistema recebeu melhorias no <strong>controle de requisições</strong>, aumentando os <strong>limites de uso da API</strong> para proporcionar mais estabilidade e desempenho, mesmo com vários usuários realizando envios simultâneos.
-
-Além disso, a <strong>permissão de localização</strong> durante o envio da <strong>lista de presença</strong> agora é <strong>opcional</strong>. O sistema continuará solicitando a localização para garantir <strong>mais segurança e confiabilidade</strong> nos registros, porém a chamada poderá ser enviada mesmo sem a autorização da localização.
-</p>
-</div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" id="fecharNovidadeBtn">OK</button>
-                        </div>
-                    </div>
+<!-- MODAL DE NOVIDADE - DINÂMICO VIA API -->
+<div class="modal fade" id="novidadeModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="novidadeModalTitle">Novidade</h5>
+            </div>
+            <div class="modal-body" id="novidadeModalBody">
+                <div class="text-center">
+                    <div class="loading"></div>
+                    <p>Carregando...</p>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="fecharNovidadeBtn">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
 
             <div class="modal fade class-selector-modal" id="classSelectorModal" tabindex="-1" data-bs-backdrop="static"
                 data-bs-keyboard="false">
@@ -1646,19 +1645,63 @@ Além disso, a <strong>permissão de localização</strong> durante o envio da <
                 // ==================== POPUP DE NOVIDADE (UMA VEZ POR VERSÃO) ====================
                 const NOVIDADE_VERSION_KEY = 'novidade_vista_v20260601';
 
-                function showNovidadeSeNecessario() {
-                    if (localStorage.getItem(NOVIDADE_VERSION_KEY)) return;
-                    setTimeout(() => {
-                        elements.novidadeModal.show();
-                        const btn = document.getElementById('fecharNovidadeBtn');
-                        if (btn) {
-                            btn.onclick = () => {
-                                localStorage.setItem(NOVIDADE_VERSION_KEY, '1');
-                                elements.novidadeModal.hide();
-                            };
-                        }
-                    }, 600);
-                }
+// ==================== POPUP DE NOVIDADE (VIA API) ====================
+const NOVIDADE_STORAGE_KEY = 'novidade_vista_';
+
+async function showNovidadeSeNecessario() {
+    try {
+        const response = await fetch(`${API_URL}/api/public/site-notice`);
+        if (!response.ok) {
+            console.warn('Erro ao carregar aviso do site');
+            return;
+        }
+        const data = await response.json();
+        
+        if (!data.active) {
+            console.log('📢 Nenhum aviso ativo no momento');
+            return;
+        }
+
+        // Verifica se o usuário já viu esta versão
+        const storageKey = NOVIDADE_STORAGE_KEY + data.version_key;
+        if (localStorage.getItem(storageKey)) {
+            console.log('📢 Usuário já viu esta versão:', data.version_key);
+            return;
+        }
+
+        // Exibe o modal
+        const modalTitle = document.getElementById('novidadeModalTitle');
+        const modalBody = document.getElementById('novidadeModalBody');
+        
+        if (modalTitle) modalTitle.textContent = data.title || 'Novidade';
+        if (modalBody) modalBody.innerHTML = data.body || '<p>Sem conteúdo.</p>';
+
+        // Marca como vista
+        const fecharBtn = document.getElementById('fecharNovidadeBtn');
+        if (fecharBtn) {
+            fecharBtn.onclick = () => {
+                localStorage.setItem(storageKey, '1');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('novidadeModal'));
+                if (modal) modal.hide();
+            };
+        }
+
+        // Mostra o modal após um pequeno delay
+        setTimeout(() => {
+            const modalElement = document.getElementById('novidadeModal');
+            if (modalElement) {
+                const modal = new bootstrap.Modal(modalElement, {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                modal.show();
+            }
+        }, 600);
+
+    } catch (error) {
+        console.error('Erro ao carregar aviso do site:', error);
+    }
+}
 
                 async function handleLogin() {
                     const username = document.getElementById('username').value;
