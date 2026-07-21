@@ -22,14 +22,14 @@
         }
 
         :root {
-            --accent: #ef4444;
+            --accent: #00d4ff;
             --accent-dim: rgba(0, 212, 255, 0.12);
             --accent-glow: rgba(0, 212, 255, 0.35);
             --accent-2: #7c3aed;
             --success: #10d67a;
             --danger: #ff4757;
             --warning: #ffc947;
-            --info: #ef4444;
+            --info: #00b4d8;
             --bg: #060a12;
             --bg-2: #0b1120;
             --surface: #0f1929;
@@ -73,16 +73,13 @@
         ::-webkit-scrollbar {
             width: 5px;
         }
-
         ::-webkit-scrollbar-track {
             background: var(--bg-2);
         }
-
         ::-webkit-scrollbar-thumb {
             background: var(--surface-3);
             border-radius: 99px;
         }
-
         ::-webkit-scrollbar-thumb:hover {
             background: var(--accent);
         }
@@ -127,7 +124,6 @@
             height: 44px;
             transition: transform .3s;
         }
-
         .sidebar-logo-area .logo:hover {
             transform: scale(1.06);
         }
@@ -172,6 +168,8 @@
             border-left: 2px solid transparent;
             position: relative;
             margin: 1px 0;
+            text-decoration: none;
+            cursor: pointer;
         }
 
         .sidebar-nav .nav-link:hover {
@@ -235,7 +233,6 @@
                 opacity: 0;
                 transform: translateY(18px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -338,17 +335,14 @@
             background: rgba(0, 212, 255, .12);
             color: var(--accent);
         }
-
         .icon-success {
             background: rgba(16, 214, 122, .12);
             color: var(--success);
         }
-
         .icon-warning {
             background: rgba(255, 201, 71, .12);
             color: var(--warning);
         }
-
         .icon-info {
             background: rgba(0, 180, 216, .12);
             color: var(--info);
@@ -454,19 +448,16 @@
             color: #a78bfa;
             border: 1px solid rgba(124, 58, 237, .3);
         }
-
         .badge-formare {
             background: rgba(255, 201, 71, .15);
             color: var(--warning);
             border: 1px solid rgba(255, 201, 71, .3);
         }
-
         .badge-turma {
             background: rgba(16, 214, 122, .15);
             color: var(--success);
             border: 1px solid rgba(16, 214, 122, .3);
         }
-
         .badge-maintenance {
             background: rgba(255, 71, 87, .2);
             color: var(--danger);
@@ -479,12 +470,10 @@
             color: var(--success) !important;
             border: 1px solid rgba(16, 214, 122, .3);
         }
-
         .bg-secondary {
             background: var(--surface-3) !important;
             color: var(--text-sub) !important;
         }
-
         .bg-primary {
             background: var(--accent-dim) !important;
             color: var(--accent) !important;
@@ -616,12 +605,10 @@
         }
 
         @keyframes pulse-green {
-
             0%,
             100% {
                 box-shadow: 0 0 4px var(--success);
             }
-
             50% {
                 box-shadow: 0 0 10px var(--success);
             }
@@ -835,12 +822,10 @@
         }
 
         @keyframes pulse {
-
             0%,
             100% {
                 opacity: 1;
             }
-
             50% {
                 opacity: .55;
             }
@@ -888,18 +873,15 @@
             .sidebar {
                 transform: translateX(-100%);
             }
-
             .sidebar.show {
                 transform: translateX(0);
                 box-shadow: 0 0 60px rgba(0, 0, 0, .6);
             }
-
             .main-content {
                 margin-left: 0;
                 padding: 20px 16px;
                 padding-top: 64px;
             }
-
             .mobile-menu-toggle {
                 display: flex;
                 align-items: center;
@@ -924,15 +906,66 @@
         .text-muted {
             color: var(--text-muted) !important;
         }
-
         .text-white {
             color: var(--text) !important;
         }
-
         p,
         span,
         div {
             color: inherit;
+        }
+
+        /* Preview do aviso do site */
+        .notice-preview {
+            background: var(--surface-2);
+            border: 1px solid var(--border-accent);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .notice-preview-header {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .notice-preview-header h5 {
+            margin: 0;
+            font-family: var(--font-head);
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .notice-preview-body {
+            padding: 20px;
+            background: #fff;
+            min-height: 80px;
+            color: #212529;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .notice-preview-footer {
+            padding: 12px 20px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .notice-preview-footer button {
+            background: #0d6efd;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: default;
         }
     </style>
 </head>
@@ -999,13 +1032,11 @@
                         <i class="bi bi-tools"></i> Ferramentas
                     </a>
                 </li>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-tab="site-notice">
                         <i class="bi bi-megaphone-fill"></i> Aviso do Site
                     </a>
                 </li>
-                <!-- Apagar Chamada removed -->
             </ul>
         </nav>
 
@@ -1492,56 +1523,15 @@
                                 <h5><i class="bi bi-eye"></i> Preview — Como aparece no site</h5>
                             </div>
                             <div class="card-body p-4">
-                                <!-- Simula o modal do index.html com as mesmas cores/estilos -->
-                                <div style="
-                                    background: var(--surface-2);
-                                    border: 1px solid var(--border-accent);
-                                    border-radius: 16px;
-                                    overflow: hidden;
-                                    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-                                ">
-                                    <div style="
-                                        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
-                                        padding: 16px 20px;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: space-between;
-                                    ">
-                                        <h5 style="
-                                            margin: 0;
-                                            font-family: var(--font-head);
-                                            font-size: 14px;
-                                            font-weight: 700;
-                                            color: #fff;
-                                        " id="previewTitle">Título do aviso aparece aqui</h5>
+                                <div class="notice-preview">
+                                    <div class="notice-preview-header">
+                                        <h5 id="previewTitle">Título do aviso aparece aqui</h5>
                                     </div>
-                                    <div style="
-                                        padding: 20px;
-                                        background: #fff;
-                                        min-height: 80px;
-                                        color: #212529;
-                                        font-size: 14px;
-                                        line-height: 1.6;
-                                    " id="previewBody">
+                                    <div class="notice-preview-body" id="previewBody">
                                         <span style="color:#aaa; font-style:italic;">O conteúdo do aviso aparece aqui...</span>
                                     </div>
-                                    <div style="
-                                        padding: 12px 20px;
-                                        background: #f8f9fa;
-                                        display: flex;
-                                        justify-content: flex-end;
-                                        border-top: 1px solid #dee2e6;
-                                    ">
-                                        <button style="
-                                            background: #0d6efd;
-                                            color: #fff;
-                                            border: none;
-                                            border-radius: 6px;
-                                            padding: 6px 18px;
-                                            font-size: 14px;
-                                            font-weight: 600;
-                                            cursor: default;
-                                        ">OK</button>
+                                    <div class="notice-preview-footer">
+                                        <button>OK</button>
                                     </div>
                                 </div>
 
@@ -1828,18 +1818,27 @@
         let loginPassword = null;
         let timerInterval = null;
 
-        function getAuthHeader() { const token = sessionStorage.getItem('superAdminToken'); return token ? { 'Authorization': 'Bearer ' + token } : {}; }
-        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
+        function getAuthHeader() {
+            const token = sessionStorage.getItem('superAdminToken');
+            return token ? { 'Authorization': 'Bearer ' + token } : {};
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+        }
 
         function showMessage(title, msg, type) {
             const colors = { success: '#10d67a', error: '#ff4757', info: '#00d4ff', warning: '#ffc947' };
-            const icons = { success: 'bi-check-circle-fill', error: 'bi-x-circle-fill', info: 'bi-info-circle-fill', warning: 'bi-exclamation-triangle-fill' };
+            const icons = { success: 'bi-check-circle-fill', error: 'bi-x-circle-fill', info: 'bi-info-circle-fill',
+                warning: 'bi-exclamation-triangle-fill' };
             const col = colors[type] || colors.info;
             const icon = icons[type] || icons.info;
             const el = document.createElement('div');
             el.className = 'toast-custom toast align-items-center show';
             el.style.cssText = `border-left: 3px solid ${col};`;
-            el.innerHTML = `<div class="d-flex align-items-center gap-3 p-3">
+            el.innerHTML =
+                `<div class="d-flex align-items-center gap-3 p-3">
                 <i class="bi ${icon}" style="color:${col}; font-size:1.1rem; flex-shrink:0;"></i>
                 <div style="flex:1;">
                     <div style="font-weight:600; font-size:13px; color:var(--text);">${escapeHtml(title)}</div>
@@ -1857,11 +1856,13 @@
             el.style.cssText = 'border-left: 3px solid #ff4757; max-width: 400px;';
             let errorList = '';
             if (Array.isArray(errors)) {
-                errorList = '<ul style="margin:0; padding-left:20px;">' + errors.map(e => `<li>${escapeHtml(e)}</li>`).join('') + '</ul>';
+                errorList = '<ul style="margin:0; padding-left:20px;">' + errors.map(e => `<li>${escapeHtml(e)}</li>`)
+                    .join('') + '</ul>';
             } else {
                 errorList = `<div>${escapeHtml(errors)}</div>`;
             }
-            el.innerHTML = `<div class="d-flex align-items-start gap-3 p-3">
+            el.innerHTML =
+                `<div class="d-flex align-items-start gap-3 p-3">
                 <i class="bi bi-x-circle-fill" style="color:#ff4757; font-size:1.1rem; flex-shrink:0;"></i>
                 <div style="flex:1;">
                     <div style="font-weight:600; font-size:13px; color:var(--text);">${escapeHtml(title)}</div>
@@ -1894,30 +1895,36 @@
 
                     const label = document.getElementById('maintenanceToggleLabel');
                     if (label) {
-                        label.innerHTML = isMaintenance
-                            ? 'Modo Manutenção: <span class="badge badge-maintenance">ATIVADO</span>'
-                            : 'Modo Manutenção: <span class="badge bg-secondary">Desativado</span>';
+                        label.innerHTML = isMaintenance ?
+                            'Modo Manutenção: <span class="badge badge-maintenance">ATIVADO</span>' :
+                            'Modo Manutenção: <span class="badge bg-secondary">Desativado</span>';
                     }
 
                     const statusBadge = document.getElementById('maintenanceStatusBadge');
                     if (statusBadge) {
-                        statusBadge.innerHTML = isMaintenance
-                            ? '<span class="badge badge-maintenance">🔧 Em Manutenção</span>'
-                            : '<span class="badge bg-success">✅ Normal</span>';
+                        statusBadge.innerHTML = isMaintenance ?
+                            '<span class="badge badge-maintenance">🔧 Em Manutenção</span>' :
+                            '<span class="badge bg-success">✅ Normal</span>';
                     }
 
                     const apiStatusDot = document.getElementById('apiStatusDot');
                     const apiStatusText = document.getElementById('apiStatusText');
                     if (apiStatusDot && apiStatusText) {
-                        if (isMaintenance) { apiStatusDot.className = 'status-dot status-maintenance'; apiStatusText.textContent = 'Manutenção'; }
-                        else { apiStatusDot.className = 'status-dot status-online'; apiStatusText.textContent = 'Online'; }
+                        if (isMaintenance) {
+                            apiStatusDot.className = 'status-dot status-maintenance';
+                            apiStatusText.textContent = 'Manutenção';
+                        } else {
+                            apiStatusDot.className = 'status-dot status-online';
+                            apiStatusText.textContent = 'Online';
+                        }
                     }
 
                     const alertDiv = document.getElementById('maintenanceAlert');
                     if (alertDiv) {
                         if (isMaintenance) {
                             alertDiv.style.display = 'block';
-                            alertDiv.innerHTML = `<div class="maintenance-banner">
+                            alertDiv.innerHTML =
+                                `<div class="maintenance-banner">
                                 <div class="d-flex align-items-center gap-3">
                                     <i class="bi bi-tools maintenance-banner-icon"></i>
                                     <div>
@@ -1927,7 +1934,10 @@
                                 </div>
                                 <div style="font-size:12px; color:var(--text-sub);">${escapeHtml(maintenanceMessage) || 'Manutenção programada em andamento'}</div>
                             </div>`;
-                        } else { alertDiv.style.display = 'none'; alertDiv.innerHTML = ''; }
+                        } else {
+                            alertDiv.style.display = 'none';
+                            alertDiv.innerHTML = '';
+                        }
                     }
                     return isMaintenance;
                 }
@@ -1943,16 +1953,28 @@
                     body: JSON.stringify({ maintenance_mode: enable, message })
                 });
                 const data = await response.json();
-                if (response.ok && data.success) { showMessage('Sucesso', data.message, 'success'); await checkMaintenanceStatus(); return true; }
-                else { showMessage('Erro', data.error || 'Erro ao alterar', 'error'); return false; }
-            } catch (error) { showMessage('Erro', error.message, 'error'); return false; }
+                if (response.ok && data.success) {
+                    showMessage('Sucesso', data.message, 'success');
+                    await checkMaintenanceStatus();
+                    return true;
+                } else {
+                    showMessage('Erro', data.error || 'Erro ao alterar', 'error');
+                    return false;
+                }
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+                return false;
+            }
         }
 
         // ==================== AUTENTICAÇÃO 2FA ====================
         async function sendVerificationCode() {
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
-            if (!username || !password) { showMessage('Atenção', 'Digite usuário e senha', 'warning'); return; }
+            if (!username || !password) {
+                showMessage('Atenção', 'Digite usuário e senha', 'warning');
+                return;
+            }
 
             const btn = document.getElementById('sendCodeBtn');
             const orig = btn.innerHTML;
@@ -1961,7 +1983,8 @@
 
             try {
                 const response = await fetch(`${API_URL}/api/super/send-code`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
                 const data = await response.json();
@@ -1976,10 +1999,18 @@
                     document.getElementById('verificationCode').focus();
                     showMessage('Código enviado', 'Verifique seu email', 'success');
                     startCodeTimer();
-                    setTimeout(() => { document.getElementById('resendCodeBtn').style.display = 'inline-flex'; }, 30000);
-                } else { showMessage('Erro', data.error || 'Erro ao enviar código', 'error'); }
-            } catch { showMessage('Erro', 'Não foi possível conectar ao servidor', 'error'); }
-            finally { btn.innerHTML = orig; btn.disabled = false; }
+                    setTimeout(() => {
+                        document.getElementById('resendCodeBtn').style.display = 'inline-flex';
+                    }, 30000);
+                } else {
+                    showMessage('Erro', data.error || 'Erro ao enviar código', 'error');
+                }
+            } catch {
+                showMessage('Erro', 'Não foi possível conectar ao servidor', 'error');
+            } finally {
+                btn.innerHTML = orig;
+                btn.disabled = false;
+            }
         }
 
         function startCodeTimer() {
@@ -1987,9 +2018,12 @@
             const timerEl = document.getElementById('codeTimer');
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                if (timeLeft <= 0) { clearInterval(timerInterval); timerEl.textContent = '0:00'; }
-                else {
-                    const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerEl.textContent = '0:00';
+                } else {
+                    const m = Math.floor(timeLeft / 60),
+                        s = timeLeft % 60;
                     timerEl.textContent = `${m}:${s.toString().padStart(2, '0')}`;
                     timeLeft--;
                 }
@@ -1998,7 +2032,10 @@
 
         async function verifyCode() {
             const code = document.getElementById('verificationCode').value;
-            if (!code) { showMessage('Atenção', 'Digite o código de verificação', 'warning'); return; }
+            if (!code) {
+                showMessage('Atenção', 'Digite o código de verificação', 'warning');
+                return;
+            }
 
             const btn = document.getElementById('verifyCodeBtn');
             btn.innerHTML = '<span class="loading-spinner"></span> Verificando...';
@@ -2006,7 +2043,8 @@
 
             try {
                 const response = await fetch(`${API_URL}/api/super/verify-code`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username: loginUsername, code })
                 });
                 const data = await response.json();
@@ -2020,9 +2058,15 @@
                     await loadAllData();
                     await checkMaintenanceStatus();
                     showMessage('Bem-vindo!', `Sessão iniciada como ${data.admin}`, 'success');
-                } else { showMessage('Erro', data.error || 'Código inválido ou expirado', 'error'); }
-            } catch { showMessage('Erro', 'Não foi possível verificar o código', 'error'); }
-            finally { btn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Verificar Código'; btn.disabled = false; }
+                } else {
+                    showMessage('Erro', data.error || 'Código inválido ou expirado', 'error');
+                }
+            } catch {
+                showMessage('Erro', 'Não foi possível verificar o código', 'error');
+            } finally {
+                btn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Verificar Código';
+                btn.disabled = false;
+            }
         }
 
         function backToLogin() {
@@ -2035,12 +2079,22 @@
             document.getElementById('codeTimer').textContent = '5:00';
         }
 
-        function resendCode() { document.getElementById('resendCodeBtn').style.display = 'none'; sendVerificationCode(); }
-        function handleLogout() { sessionStorage.removeItem('superAdminToken'); sessionStorage.removeItem('superAdminName'); location.reload(); }
+        function resendCode() {
+            document.getElementById('resendCodeBtn').style.display = 'none';
+            sendVerificationCode();
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('superAdminToken');
+            sessionStorage.removeItem('superAdminName');
+            location.reload();
+        }
 
         // ==================== LIMPAR HISTÓRICO ====================
         async function clearHistory() {
-            if (!confirm('⚠️ ATENÇÃO: Isso irá remover TODOS os registros de ações/logs permanentemente.\n\nEsta ação não pode ser desfeita. Deseja continuar?')) {
+            if (!confirm(
+                    '⚠️ ATENÇÃO: Isso irá remover TODOS os registros de ações/logs permanentemente.\n\nEsta ação não pode ser desfeita. Deseja continuar?'
+                    )) {
                 return;
             }
 
@@ -2054,18 +2108,16 @@
                     method: 'DELETE',
                     headers: getAuthHeader()
                 });
-                
+
                 if (!response.ok) {
                     const error = await response.json();
                     throw new Error(error.error || 'Erro ao limpar histórico');
                 }
-                
+
                 const result = await response.json();
                 showMessage('Sucesso', result.message || `${result.removidos} registros removidos`, 'success');
-                
-                // Recarregar a lista de ações
                 await loadDashboard();
-                
+
             } catch (error) {
                 showMessage('Erro', error.message, 'error');
             } finally {
@@ -2103,7 +2155,8 @@
                             <td><code>${escapeHtml(log.ip || '—')}</code></td>
                            `).join('');
                     } else {
-                        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4" style="color:var(--text-muted);">Nenhum log encontrado</td></tr>';
+                        tbody.innerHTML =
+                            '<tr><td colspan="5" class="text-center py-4" style="color:var(--text-muted);">Nenhum log encontrado</td></tr>';
                     }
                 }
 
@@ -2126,15 +2179,28 @@
                                     datasets: [{
                                         data: [globals, formares, turmas],
                                         backgroundColor: ['#00d4ff', '#ffc947', '#10d67a'],
-                                        borderColor: ['rgba(0,212,255,.3)', 'rgba(255,201,71,.3)', 'rgba(16,214,122,.3)'],
-                                        borderWidth: 2, hoverOffset: 6
+                                        borderColor: ['rgba(0,212,255,.3)', 'rgba(255,201,71,.3)',
+                                            'rgba(16,214,122,.3)'
+                                        ],
+                                        borderWidth: 2,
+                                        hoverOffset: 6
                                     }]
                                 },
                                 options: {
-                                    responsive: true, maintainAspectRatio: true,
+                                    responsive: true,
+                                    maintainAspectRatio: true,
                                     cutout: '68%',
                                     plugins: {
-                                        legend: { position: 'bottom', labels: { color: '#a8bcd4', font: { family: 'DM Sans', size: 13 }, padding: 20, boxWidth: 12, boxHeight: 12 } }
+                                        legend: {
+                                            position: 'bottom',
+                                            labels: {
+                                                color: '#a8bcd4',
+                                                font: { family: 'DM Sans', size: 13 },
+                                                padding: 20,
+                                                boxWidth: 12,
+                                                boxHeight: 12
+                                            }
+                                        }
                                     }
                                 }
                             });
@@ -2164,7 +2230,8 @@
                             </td>
                            `).join('');
                     } else {
-                        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4" style="color:var(--text-muted);">Nenhum administrador cadastrado</td></tr>';
+                        tbody.innerHTML =
+                            '<tr><td colspan="7" class="text-center py-4" style="color:var(--text-muted);">Nenhum administrador cadastrado</td></tr>';
                     }
                 }
             } catch (error) { console.error('Erro ao carregar admins:', error); }
@@ -2186,7 +2253,8 @@
                             <td><button class="btn btn-sm btn-success" onclick="unblockIp('${escapeHtml(ip.ip)}')"><i class="bi bi-unlock me-1"></i>Desbloquear</button></td>
                            `).join('');
                     } else {
-                        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">Nenhum IP bloqueado</td></tr>';
+                        tbody.innerHTML =
+                            '<tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">Nenhum IP bloqueado</td></tr>';
                     }
                 }
             } catch (error) { console.error('Erro ao carregar IPs:', error); }
@@ -2208,7 +2276,8 @@
                             <td><code>${escapeHtml(log.ip || '—')}</code></td>
                            `).join('');
                     } else {
-                        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">Nenhum log encontrado</td></tr>';
+                        tbody.innerHTML =
+                            '<tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">Nenhum log encontrado</td></tr>';
                     }
                 }
             } catch (error) { console.error('Erro ao carregar logs:', error); }
@@ -2251,7 +2320,10 @@
             const password = document.getElementById('newAdminPassword').value;
             const adminType = document.getElementById('newAdminType').value;
             const turma = document.getElementById('newAdminTurma').value;
-            if (!username || !password) { showMessage('Atenção', 'Preencha usuário e senha', 'warning'); return; }
+            if (!username || !password) {
+                showMessage('Atenção', 'Preencha usuário e senha', 'warning');
+                return;
+            }
             try {
                 const response = await fetch(`${API_URL}/api/super/admins`, {
                     method: 'POST',
@@ -2264,9 +2336,14 @@
                     bootstrap.Modal.getInstance(document.getElementById('addAdminModal')).hide();
                     document.getElementById('addAdminForm').reset();
                     document.getElementById('turmaSelectDiv').style.display = 'none';
-                    await loadAdmins(); await loadDashboard();
-                } else { showMessage('Erro', data.error || 'Erro ao criar administrador', 'error'); }
-            } catch (error) { showMessage('Erro', error.message, 'error'); }
+                    await loadAdmins();
+                    await loadDashboard();
+                } else {
+                    showMessage('Erro', data.error || 'Erro ao criar administrador', 'error');
+                }
+            } catch (error) {
+                showMessage('Erro', error.message, 'error');
+            }
         }
 
         function openEditAdmin(username) {
@@ -2280,52 +2357,92 @@
         async function editAdminComplete() {
             const newUsername = document.getElementById('editNewUsername').value.trim();
             const newPassword = document.getElementById('editNewPassword').value;
-            if (!newUsername && !newPassword) { showMessage('Atenção', 'Preencha pelo menos um campo para salvar', 'warning'); return; }
+            if (!newUsername && !newPassword) {
+                showMessage('Atenção', 'Preencha pelo menos um campo para salvar', 'warning');
+                return;
+            }
             let hasError = false;
             if (newUsername && newUsername !== currentEditUsername) {
                 try {
-                    const r = await fetch(`${API_URL}/api/super/admins/${encodeURIComponent(currentEditUsername)}/rename`, {
-                        method: 'PUT', headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
-                        body: JSON.stringify({ new_username: newUsername })
-                    });
+                    const r = await fetch(
+                        `${API_URL}/api/super/admins/${encodeURIComponent(currentEditUsername)}/rename`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                            body: JSON.stringify({ new_username: newUsername })
+                        });
                     const d = await r.json();
-                    if (r.ok && d.success) { showMessage('Sucesso', d.message, 'success'); currentEditUsername = newUsername; }
-                    else { showMessage('Erro', d.error || 'Erro ao renomear', 'error'); hasError = true; }
-                } catch (e) { showMessage('Erro', e.message, 'error'); hasError = true; }
+                    if (r.ok && d.success) {
+                        showMessage('Sucesso', d.message, 'success');
+                        currentEditUsername = newUsername;
+                    } else {
+                        showMessage('Erro', d.error || 'Erro ao renomear', 'error');
+                        hasError = true;
+                    }
+                } catch (e) {
+                    showMessage('Erro', e.message, 'error');
+                    hasError = true;
+                }
             }
             if (newPassword && !hasError) {
                 try {
                     const r = await fetch(`${API_URL}/api/super/admins/${encodeURIComponent(currentEditUsername)}`, {
-                        method: 'PUT', headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
                         body: JSON.stringify({ password: newPassword })
                     });
                     const d = await r.json();
-                    if (r.ok && d.success) { showMessage('Sucesso', d.message, 'success'); }
-                    else { showMessage('Erro', d.error || 'Erro ao alterar senha', 'error'); hasError = true; }
-                } catch (e) { showMessage('Erro', e.message, 'error'); hasError = true; }
+                    if (r.ok && d.success) {
+                        showMessage('Sucesso', d.message, 'success');
+                    } else {
+                        showMessage('Erro', d.error || 'Erro ao alterar senha', 'error');
+                        hasError = true;
+                    }
+                } catch (e) {
+                    showMessage('Erro', e.message, 'error');
+                    hasError = true;
+                }
             }
-            if (!hasError) { bootstrap.Modal.getInstance(document.getElementById('editAdminModal')).hide(); await loadAdmins(); await loadDashboard(); }
+            if (!hasError) {
+                bootstrap.Modal.getInstance(document.getElementById('editAdminModal')).hide();
+                await loadAdmins();
+                await loadDashboard();
+            }
         }
 
         async function deleteAdmin(username) {
             if (!confirm(`Tem certeza que deseja remover o administrador "${username}"?`)) return;
             try {
-                const r = await fetch(`${API_URL}/api/super/admins/${encodeURIComponent(username)}`, { method: 'DELETE', headers: getAuthHeader() });
+                const r = await fetch(`${API_URL}/api/super/admins/${encodeURIComponent(username)}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeader()
+                });
                 const d = await r.json();
-                if (r.ok && d.success) { showMessage('Sucesso', d.message, 'success'); await loadAdmins(); await loadDashboard(); }
-                else { showMessage('Erro', d.error || 'Erro ao remover admin', 'error'); }
-            } catch (e) { showMessage('Erro', e.message, 'error'); }
+                if (r.ok && d.success) {
+                    showMessage('Sucesso', d.message, 'success');
+                    await loadAdmins();
+                    await loadDashboard();
+                } else {
+                    showMessage('Erro', d.error || 'Erro ao remover admin', 'error');
+                }
+            } catch (e) {
+                showMessage('Erro', e.message, 'error');
+            }
         }
 
         async function blockIp() {
             const ip = document.getElementById('blockIp').value;
             const reason = document.getElementById('blockReason').value;
             const duration = document.getElementById('blockDuration').value;
-            if (!ip) { showMessage('Atenção', 'Digite o endereço IP', 'warning'); return; }
+            if (!ip) {
+                showMessage('Atenção', 'Digite o endereço IP', 'warning');
+                return;
+            }
             try {
                 const r = await fetch(`${API_URL}/api/super/blocked-ips`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
-                    body: JSON.stringify({ ip, reason: reason || 'Bloqueado manualmente', expires_minutes: parseInt(duration) || 60 })
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                    body: JSON.stringify({ ip, reason: reason || 'Bloqueado manualmente', expires_minutes: parseInt(
+                            duration) || 60 })
                 });
                 const d = await r.json();
                 if (r.ok && d.success) {
@@ -2334,78 +2451,126 @@
                     document.getElementById('blockIp').value = '';
                     document.getElementById('blockReason').value = '';
                     await loadBlockedIps();
-                } else { showMessage('Erro', d.error || 'Erro ao bloquear IP', 'error'); }
-            } catch (e) { showMessage('Erro', e.message, 'error'); }
+                } else {
+                    showMessage('Erro', d.error || 'Erro ao bloquear IP', 'error');
+                }
+            } catch (e) {
+                showMessage('Erro', e.message, 'error');
+            }
         }
 
         async function unblockIp(ip) {
             if (!confirm(`Desbloquear o IP ${ip}?`)) return;
             try {
-                const r = await fetch(`${API_URL}/api/super/blocked-ips/${encodeURIComponent(ip)}`, { method: 'DELETE', headers: getAuthHeader() });
+                const r = await fetch(`${API_URL}/api/super/blocked-ips/${encodeURIComponent(ip)}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeader()
+                });
                 const d = await r.json();
-                if (r.ok && d.success) { showMessage('Sucesso', d.message, 'success'); await loadBlockedIps(); }
-                else { showMessage('Erro', d.error || 'Erro ao desbloquear IP', 'error'); }
-            } catch (e) { showMessage('Erro', e.message, 'error'); }
+                if (r.ok && d.success) {
+                    showMessage('Sucesso', d.message, 'success');
+                    await loadBlockedIps();
+                } else {
+                    showMessage('Erro', d.error || 'Erro ao desbloquear IP', 'error');
+                }
+            } catch (e) {
+                showMessage('Erro', e.message, 'error');
+            }
         }
 
         async function exportLogs() {
             try {
                 const token = sessionStorage.getItem('superAdminToken');
-                if (!token) { showMessage('Erro', 'Sessão não autenticada', 'error'); return; }
-                const r = await fetch(`${API_URL}/api/super/export-logs-excel`, { headers: { 'Authorization': 'Bearer ' + token } });
+                if (!token) {
+                    showMessage('Erro', 'Sessão não autenticada', 'error');
+                    return;
+                }
+                const r = await fetch(`${API_URL}/api/super/export-logs-excel`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
                 if (!r.ok) throw new Error('Erro ao exportar logs');
                 const blob = await r.blob();
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                a.href = url; a.download = `logs_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`;
-                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                a.href = url;
+                a.download = `logs_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
                 showMessage('Sucesso', 'Download iniciado!', 'success');
-            } catch (e) { showMessage('Erro', e.message, 'error'); }
+            } catch (e) {
+                showMessage('Erro', e.message, 'error');
+            }
         }
 
         async function exportBackup() {
             try {
                 const token = sessionStorage.getItem('superAdminToken');
-                if (!token) { showMessage('Erro', 'Sessão não autenticada', 'error'); return; }
-                const r = await fetch(`${API_URL}/api/super/backup-full`, { headers: { 'Authorization': 'Bearer ' + token } });
+                if (!token) {
+                    showMessage('Erro', 'Sessão não autenticada', 'error');
+                    return;
+                }
+                const r = await fetch(`${API_URL}/api/super/backup-full`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
                 if (!r.ok) throw new Error('Erro ao exportar backup');
                 const data = await r.json();
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                a.href = url; a.download = `backup_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
-                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                a.href = url;
+                a.download = `backup_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
                 showMessage('Sucesso', 'Backup exportado com sucesso!', 'success');
-            } catch (e) { showMessage('Erro', e.message, 'error'); }
+            } catch (e) {
+                showMessage('Erro', e.message, 'error');
+            }
         }
 
         async function restoreBackup() {
             const fileInput = document.getElementById('restoreBackupFile');
-            if (!fileInput.files.length) { showMessage('Atenção', 'Selecione um arquivo de backup', 'warning'); return; }
+            if (!fileInput.files.length) {
+                showMessage('Atenção', 'Selecione um arquivo de backup', 'warning');
+                return;
+            }
             if (!confirm('⚠️ ATENÇÃO: Isso irá SUBSTITUIR todos os dados atuais! Continuar?')) return;
             try {
                 const file = fileInput.files[0];
                 const text = await file.text();
                 const backupData = JSON.parse(text);
                 const r = await fetch(`${API_URL}/api/super/backup-restore`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
                     body: JSON.stringify(backupData)
                 });
                 const d = await r.json();
-                if (r.ok && d.success) { showMessage('Sucesso', d.message, 'success'); await loadAllData(); await loadDashboard(); }
-                else { showMessage('Erro', d.error || 'Erro ao restaurar backup', 'error'); }
-            } catch (e) { showMessage('Erro', e.message, 'error'); }
+                if (r.ok && d.success) {
+                    showMessage('Sucesso', d.message, 'success');
+                    await loadAllData();
+                    await loadDashboard();
+                } else {
+                    showMessage('Erro', d.error || 'Erro ao restaurar backup', 'error');
+                }
+            } catch (e) {
+                showMessage('Erro', e.message, 'error');
+            }
         }
 
         async function clearAllData() {
             const confirmation = document.getElementById('clearConfirmInput').value;
-            if (confirmation !== 'CONFIRMAR_LIMPEZA_TOTAL') { showMessage('Erro', 'Confirmação incorreta', 'error'); return; }
+            if (confirmation !== 'CONFIRMAR_LIMPEZA_TOTAL') {
+                showMessage('Erro', 'Confirmação incorreta', 'error');
+                return;
+            }
             if (!confirm('⚠️ ATENÇÃO: Esta ação é IRREVERSÍVEL! Todos os dados serão apagados. Continuar?')) return;
             try {
                 const r = await fetch(`${API_URL}/api/super/clear-all-data`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
                     body: JSON.stringify({ confirmation })
                 });
                 const d = await r.json();
@@ -2413,79 +2578,24 @@
                     showMessage('Concluído', d.message, 'success');
                     document.getElementById('clearConfirmInput').value = '';
                     document.getElementById('clearAllDataBtn').disabled = true;
-                    await loadDbStats(); await loadDashboard();
-                } else { showMessage('Erro', d.error || 'Erro ao limpar dados', 'error'); }
-            } catch (e) { showMessage('Erro', e.message, 'error'); }
+                    await loadDbStats();
+                    await loadDashboard();
+                } else {
+                    showMessage('Erro', d.error || 'Erro ao limpar dados', 'error');
+                }
+            } catch (e) {
+                showMessage('Erro', e.message, 'error');
+            }
         }
-
-        
-
-        // ==================== EVENT LISTENERS ====================
-        function setupEventListeners() {
-            document.querySelectorAll('.sidebar .nav-link[data-tab]').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const tabId = link.getAttribute('data-tab');
-                    document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
-                    link.classList.add('active');
-                    document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('show', 'active'));
-                    document.getElementById(tabId).classList.add('show', 'active');
-                    if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('show');
-                    if (tabId === 'admins') loadAdmins();
-                    if (tabId === 'blocked-ips') loadBlockedIps();
-                    if (tabId === 'logs') loadLogs();
-                    if (tabId === 'database') loadDbStats();
-                    if (tabId === 'site-notice') loadSiteNotice();
-                });
-            });
-
-            document.getElementById('mobileMenuToggle')?.addEventListener('click', () => {
-                document.getElementById('sidebar').classList.toggle('show');
-            });
-
-            document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
-            document.getElementById('refreshDashboard')?.addEventListener('click', () => { loadDashboard(); loadAllData(); });
-            document.getElementById('refreshDbStats')?.addEventListener('click', loadDbStats);
-            document.getElementById('clearHistoryBtn')?.addEventListener('click', clearHistory);
-
-            document.getElementById('saveAdminBtn')?.addEventListener('click', createAdmin);
-            document.getElementById('confirmBlockIpBtn')?.addEventListener('click', blockIp);
-            document.getElementById('exportLogsBtn')?.addEventListener('click', exportLogs);
-            document.getElementById('exportBackupBtn')?.addEventListener('click', exportBackup);
-            document.getElementById('restoreBackupBtn')?.addEventListener('click', restoreBackup);
-            document.getElementById('clearAllDataBtn')?.addEventListener('click', clearAllData);
-            document.getElementById('confirmEditAdminBtn')?.addEventListener('click', editAdminComplete);
-
-            document.getElementById('newAdminType')?.addEventListener('change', (e) => {
-                document.getElementById('turmaSelectDiv').style.display = e.target.value === 'turma' ? 'block' : 'none';
-            });
-
-            document.getElementById('clearConfirmInput')?.addEventListener('input', (e) => {
-                document.getElementById('clearAllDataBtn').disabled = e.target.value !== 'CONFIRMAR_LIMPEZA_TOTAL';
-            });
-
-            
-
-            setupSiteNoticeListeners();
-
-            const toggle = document.getElementById('maintenanceModeToggle');
-            const applyBtn = document.getElementById('applyMaintenanceBtn');
-            const msgDiv = document.getElementById('maintenanceMessageDiv');
-            toggle?.addEventListener('change', (e) => {
-                if (e.target.checked) { msgDiv.style.display = 'block'; applyBtn.style.display = 'inline-flex'; }
-                else { msgDiv.style.display = 'none'; applyBtn.style.display = 'none'; document.getElementById('maintenanceMessage').value = ''; }
-            });
-            applyBtn?.addEventListener('click', async () => {
-                await setMaintenanceMode(toggle.checked, document.getElementById('maintenanceMessage').value);
-            });
-        }
-
 
         // ==================== AVISO DO SITE ====================
         async function loadSiteNotice() {
             try {
                 const res = await fetch(`${API_URL}/api/super/site-notice`, { headers: getAuthHeader() });
-                if (!res.ok) { showMessage('Erro', 'Falha ao carregar aviso do site', 'error'); return; }
+                if (!res.ok) {
+                    showMessage('Erro', 'Falha ao carregar aviso do site', 'error');
+                    return;
+                }
                 const data = await res.json();
                 if (!data.success) return;
                 const notice = data.notice;
@@ -2511,35 +2621,32 @@
 
         function updateSiteNoticePreview() {
             const title = document.getElementById('siteNoticeTitle').value || 'Título do aviso aparece aqui';
-            const body = document.getElementById('siteNoticeBody').value || '<span style="color:#aaa;font-style:italic;">O conteúdo do aviso aparece aqui...</span>';
+            const body = document.getElementById('siteNoticeBody').value ||
+                '<span style="color:#aaa;font-style:italic;">O conteúdo do aviso aparece aqui...</span>';
             const versionKey = document.getElementById('siteNoticeVersionKey').value || '—';
             const active = document.getElementById('siteNoticeActive').checked;
             const startAt = document.getElementById('siteNoticeStartAt').value;
             const endAt = document.getElementById('siteNoticeEndAt').value;
 
-            const previewTitle = document.getElementById('previewTitle');
-            const previewBody = document.getElementById('previewBody');
-            const previewStatus = document.getElementById('previewStatus');
-            const previewVersionKey = document.getElementById('previewVersionKey');
-            const previewStartAt = document.getElementById('previewStartAt');
-            const previewEndAt = document.getElementById('previewEndAt');
+            document.getElementById('previewTitle').textContent = title;
+            document.getElementById('previewBody').innerHTML = body;
+            document.getElementById('previewVersionKey').textContent = versionKey;
 
-            if (previewTitle) previewTitle.textContent = title;
-            if (previewBody) previewBody.innerHTML = body;
-            if (previewVersionKey) previewVersionKey.textContent = versionKey;
-            if (previewStatus) {
-                const now = new Date().toISOString().slice(0, 16);
-                let isLive = active;
-                if (isLive && startAt && now < startAt) isLive = false;
-                if (isLive && endAt && now > endAt) isLive = false;
-                previewStatus.innerHTML = isLive
-                    ? '<span class="badge bg-success">✅ Ativo e visível</span>'
-                    : (active
-                        ? '<span class="badge bg-warning text-dark">⏳ Ativo mas fora do período</span>'
-                        : '<span class="badge bg-secondary">❌ Inativo</span>');
-            }
-            if (previewStartAt) previewStartAt.textContent = startAt ? new Date(startAt).toLocaleString('pt-BR') : '—';
-            if (previewEndAt) previewEndAt.textContent = endAt ? new Date(endAt).toLocaleString('pt-BR') : 'Sem prazo';
+            const now = new Date().toISOString().slice(0, 16);
+            let isLive = active;
+            if (isLive && startAt && now < startAt) isLive = false;
+            if (isLive && endAt && now > endAt) isLive = false;
+
+            document.getElementById('previewStatus').innerHTML = isLive ?
+                '<span class="badge bg-success">✅ Ativo e visível</span>' :
+                (active ?
+                    '<span class="badge bg-warning text-dark">⏳ Ativo mas fora do período</span>' :
+                    '<span class="badge bg-secondary">❌ Inativo</span>');
+
+            document.getElementById('previewStartAt').textContent = startAt ? new Date(startAt).toLocaleString('pt-BR') :
+            '—';
+            document.getElementById('previewEndAt').textContent = endAt ? new Date(endAt).toLocaleString('pt-BR') :
+                'Sem prazo';
         }
 
         function updateSiteNoticeStatus(notice) {
@@ -2570,13 +2677,13 @@
                 text.textContent = 'Aviso inativo — não será exibido';
                 text.style.color = 'var(--text-muted)';
             }
-            const previewUpdatedAt = document.getElementById('previewUpdatedAt');
-            if (previewUpdatedAt) {
-                previewUpdatedAt.textContent = notice.updated_at
-                    ? new Date(notice.updated_at).toLocaleString('pt-BR') + ' por ' + (notice.updated_by || '—')
-                    : '—';
-            }
-            if (meta) meta.textContent = notice.updated_at ? 'Última edição: ' + new Date(notice.updated_at).toLocaleString('pt-BR') : '';
+
+            document.getElementById('previewUpdatedAt').textContent = notice.updated_at ?
+                new Date(notice.updated_at).toLocaleString('pt-BR') + ' por ' + (notice.updated_by || '—') :
+                '—';
+
+            if (meta) meta.textContent = notice.updated_at ? 'Última edição: ' + new Date(notice.updated_at)
+                .toLocaleString('pt-BR') : '';
         }
 
         async function saveSiteNotice() {
@@ -2617,20 +2724,23 @@
         }
 
         function setupSiteNoticeListeners() {
-            document.getElementById('saveSiteNoticeBtn')?.addEventListener('click', saveSiteNotice);
-            document.getElementById('refreshSiteNoticeBtn')?.addEventListener('click', loadSiteNotice);
+            document.getElementById('saveSiteNoticeBtn').addEventListener('click', saveSiteNotice);
+            document.getElementById('refreshSiteNoticeBtn').addEventListener('click', loadSiteNotice);
 
-            document.getElementById('generateVersionKeyBtn')?.addEventListener('click', () => {
+            document.getElementById('generateVersionKeyBtn').addEventListener('click', () => {
                 const now = new Date();
-                const key = 'v_' + now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '_' + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+                const key = 'v_' + now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now
+                    .getDate()).padStart(2, '0') + '_' + String(now.getHours()).padStart(2, '0') + String(now
+                    .getMinutes()).padStart(2, '0');
                 document.getElementById('siteNoticeVersionKey').value = key;
                 updateSiteNoticePreview();
             });
 
-            ['siteNoticeTitle', 'siteNoticeBody', 'siteNoticeVersionKey', 'siteNoticeStartAt', 'siteNoticeEndAt'].forEach(id => {
-                document.getElementById(id)?.addEventListener('input', updateSiteNoticePreview);
+            ['siteNoticeTitle', 'siteNoticeBody', 'siteNoticeVersionKey', 'siteNoticeStartAt', 'siteNoticeEndAt']
+            .forEach(id => {
+                document.getElementById(id).addEventListener('input', updateSiteNoticePreview);
             });
-            document.getElementById('siteNoticeActive')?.addEventListener('change', updateSiteNoticePreview);
+            document.getElementById('siteNoticeActive').addEventListener('change', updateSiteNoticePreview);
 
             document.querySelectorAll('.quick-duration-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -2644,15 +2754,81 @@
                         const end = new Date(now.getTime() + days * 86400000);
                         document.getElementById('siteNoticeEndAt').value = end.toISOString().slice(0, 16);
                     }
-                    document.querySelectorAll('.quick-duration-btn').forEach(b => b.classList.remove('btn-primary'));
+                    document.querySelectorAll('.quick-duration-btn').forEach(b => {
+                        b.classList.remove('btn-primary');
+                        b.classList.add('btn-outline-secondary');
+                    });
                     btn.classList.add('btn-primary');
                     btn.classList.remove('btn-outline-secondary');
-                    setTimeout(() => {
-                        btn.classList.remove('btn-primary');
-                        btn.classList.add('btn-outline-secondary');
-                    }, 2000);
                     updateSiteNoticePreview();
                 });
+            });
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        function setupEventListeners() {
+            document.querySelectorAll('.sidebar .nav-link[data-tab]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tabId = link.getAttribute('data-tab');
+                    document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('show', 'active'));
+                    document.getElementById(tabId).classList.add('show', 'active');
+                    if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('show');
+                    if (tabId === 'admins') loadAdmins();
+                    if (tabId === 'blocked-ips') loadBlockedIps();
+                    if (tabId === 'logs') loadLogs();
+                    if (tabId === 'database') loadDbStats();
+                    if (tabId === 'site-notice') loadSiteNotice();
+                });
+            });
+
+            document.getElementById('mobileMenuToggle').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('show');
+            });
+
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            document.getElementById('refreshDashboard').addEventListener('click', () => {
+                loadDashboard();
+                loadAllData();
+            });
+            document.getElementById('refreshDbStats').addEventListener('click', loadDbStats);
+            document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+            document.getElementById('saveAdminBtn').addEventListener('click', createAdmin);
+            document.getElementById('confirmBlockIpBtn').addEventListener('click', blockIp);
+            document.getElementById('exportLogsBtn').addEventListener('click', exportLogs);
+            document.getElementById('exportBackupBtn').addEventListener('click', exportBackup);
+            document.getElementById('restoreBackupBtn').addEventListener('click', restoreBackup);
+            document.getElementById('clearAllDataBtn').addEventListener('click', clearAllData);
+            document.getElementById('confirmEditAdminBtn').addEventListener('click', editAdminComplete);
+
+            document.getElementById('newAdminType').addEventListener('change', (e) => {
+                document.getElementById('turmaSelectDiv').style.display = e.target.value === 'turma' ? 'block' :
+                    'none';
+            });
+
+            document.getElementById('clearConfirmInput').addEventListener('input', (e) => {
+                document.getElementById('clearAllDataBtn').disabled = e.target.value !== 'CONFIRMAR_LIMPEZA_TOTAL';
+            });
+
+            setupSiteNoticeListeners();
+
+            const toggle = document.getElementById('maintenanceModeToggle');
+            const applyBtn = document.getElementById('applyMaintenanceBtn');
+            const msgDiv = document.getElementById('maintenanceMessageDiv');
+            toggle.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    msgDiv.style.display = 'block';
+                    applyBtn.style.display = 'inline-flex';
+                } else {
+                    msgDiv.style.display = 'none';
+                    applyBtn.style.display = 'none';
+                    document.getElementById('maintenanceMessage').value = '';
+                }
+            });
+            applyBtn.addEventListener('click', async () => {
+                await setMaintenanceMode(toggle.checked, document.getElementById('maintenanceMessage').value);
             });
         }
 
@@ -2662,9 +2838,15 @@
             if (!token) return false;
             try {
                 const r = await fetch(`${API_URL}/api/admin/permissions`, { headers: getAuthHeader() });
-                if (r.status === 401) { sessionStorage.removeItem('superAdminToken'); sessionStorage.removeItem('superAdminName'); return false; }
+                if (r.status === 401) {
+                    sessionStorage.removeItem('superAdminToken');
+                    sessionStorage.removeItem('superAdminName');
+                    return false;
+                }
                 return r.ok;
-            } catch { return false; }
+            } catch {
+                return false;
+            }
         }
 
         // ==================== INIT ====================
@@ -2672,7 +2854,8 @@
             setupEventListeners();
             const token = sessionStorage.getItem('superAdminToken');
             if (token && await checkSession()) {
-                document.getElementById('currentUser').textContent = sessionStorage.getItem('superAdminName') || 'Super Admin';
+                document.getElementById('currentUser').textContent = sessionStorage.getItem('superAdminName') ||
+                    'Super Admin';
                 await loadDashboard();
                 await loadAllData();
                 await checkMaintenanceStatus();
@@ -2747,15 +2930,20 @@
             </div>`;
 
             document.body.insertAdjacentHTML('beforeend', loginHtml);
-            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'), { backdrop: 'static', keyboard: false });
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'), { backdrop: 'static',
+                keyboard: false });
             loginModal.show();
 
             document.getElementById('sendCodeBtn').addEventListener('click', sendVerificationCode);
             document.getElementById('verifyCodeBtn').addEventListener('click', verifyCode);
             document.getElementById('backToLoginBtn').addEventListener('click', backToLogin);
             document.getElementById('resendCodeBtn').addEventListener('click', resendCode);
-            document.getElementById('loginPassword')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendVerificationCode(); });
-            document.getElementById('verificationCode')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') verifyCode(); });
+            document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendVerificationCode();
+            });
+            document.getElementById('verificationCode').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') verifyCode();
+            });
         }
 
         init();
