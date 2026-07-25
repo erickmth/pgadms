@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="../favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../styles/presenca-styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         /* ===== TOPBAR FIXA ===== */
@@ -60,7 +59,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 clamp(10px, 4vw, 24px);
             gap: 16px;
             z-index: 1000;
         }
@@ -71,7 +70,7 @@
             min-width: 0;
         }
         .topbar-logo {
-            height: 38px;
+            height: clamp(30px, 5vw, 38px);
             width: auto;
             flex-shrink: 0;
         }
@@ -81,7 +80,7 @@
             min-width: 0;
         }
         .topbar-title {
-            font-size: 1.05rem;
+            font-size: clamp(0.9rem, 4vw, 1.05rem);
             font-weight: 700;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             background-clip: text;
@@ -170,9 +169,9 @@
         .logout-link:hover { color: var(--primary); background: var(--primary-light); }
         /* ===== MAIN ===== */
         .main-container {
+            width: 95%;
             max-width: 820px;
             margin: 0 auto;
-            padding: 0 16px;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -239,12 +238,15 @@
         .bar-stat-color.present { background: var(--success); }
         .bar-stat-color.not-present { background: var(--danger); }
         .dashboard-stats {
-            display: flex; justify-content: center;
-            gap: 24px; margin-top: 18px; flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 18px;
         }
         .dashboard-stat-card {
-            text-align: center; padding: 8px 18px;
+            text-align: center; padding: 12px;
             background: var(--gray-50); border-radius: var(--radius-md);
+            border: 1px solid var(--gray-200);
         }
         .dashboard-stat-value { font-size: 1.4rem; font-weight: 700; color: var(--gray-800); }
         .dashboard-stat-label { font-size: 0.68rem; color: var(--gray-500); text-transform: uppercase; }
@@ -259,6 +261,8 @@
             font-size: 0.875rem;
             font-family: 'Inter', sans-serif;
             background: white; cursor: pointer; transition: all 0.2s;
+            width: 100%;
+            max-width: 300px;
         }
         .month-selector select:focus { outline: none; border-color: var(--primary); }
         /* ===== LEGEND ===== */
@@ -278,26 +282,35 @@
         .date-section {
             background: white; border-radius: var(--radius-lg);
             padding: 18px 24px;
-            display: flex; align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap; gap: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
             box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
         }
         .date-control {
-            display: flex; align-items: center; gap: 14px;
-            flex-wrap: wrap; flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        @media (min-width: 640px) {
+            .date-control {
+                flex-direction: row;
+                align-items: center;
+                flex-wrap: wrap;
+            }
         }
         .date-label {
             display: flex; align-items: center; gap: 8px;
             font-weight: 500; color: var(--gray-700);
         }
-        .date-picker-wrapper { position: relative; }
+        .date-picker-wrapper { position: relative; flex: 1; min-width: 200px; }
         .date-picker-input {
             padding: 11px 18px;
             border: 2px solid var(--gray-200); border-radius: var(--radius-md);
             font-size: 0.95rem; font-family: 'Inter', monospace;
             background: white; cursor: pointer; transition: all 0.2s;
-            min-width: 200px; font-weight: 500; color: var(--gray-700);
+            width: 100%;
+            font-weight: 500; color: var(--gray-700);
         }
         .date-picker-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(236,51,51,0.1); }
         .date-picker-input.weekend { border-color: var(--danger); background-color: var(--danger-light); color: var(--danger); }
@@ -310,6 +323,7 @@
             font-size: 0.875rem; color: var(--gray-500); background: var(--gray-100);
             padding: 8px 14px; border-radius: var(--radius-md);
             display: inline-flex; align-items: center; gap: 8px;
+            white-space: nowrap;
         }
         .day-info.weekend-day { background: var(--danger-light); color: var(--danger); }
         .day-info.weekday { background: var(--success-light); color: var(--success); }
@@ -318,6 +332,7 @@
             border: none; border-radius: var(--radius-md);
             font-size: 0.875rem; font-weight: 600; cursor: pointer;
             transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+            white-space: nowrap;
         }
         .quick-btn:hover:not(:disabled) { background: #0e9f6e; transform: translateY(-1px); box-shadow: var(--shadow-md); }
         .quick-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -377,34 +392,44 @@
         .status-btn:disabled { opacity: 0.3; cursor: not-allowed; }
         /* ===== STATS INFO ===== */
         .stats-info {
-            background: white; border-radius: var(--radius-lg);
-            padding: 16px 24px;
-            display: flex; justify-content: space-between;
-            flex-wrap: wrap; gap: 12px;
-            box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
         }
         .stat-card {
             display: flex; align-items: center; gap: 10px;
-            padding: 8px 14px; background: var(--gray-50); border-radius: var(--radius-md);
+            padding: 12px 14px; background: white;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-200);
         }
         .stat-icon {
             width: 34px; height: 34px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
+            flex-shrink: 0;
         }
         .stat-icon.total { background: var(--gray-200); color: var(--gray-600); }
         .stat-icon.present { background: var(--success-light); color: var(--success); }
         .stat-icon.absent { background: var(--danger-light); color: var(--danger); }
         .stat-icon.certificate { background: var(--info-light); color: var(--info); }
         .stat-icon.pending { background: #fef3c7; color: var(--warning); }
-        .stat-info { display: flex; flex-direction: column; }
+        .stat-info { display: flex; flex-direction: column; min-width: 0; }
         .stat-value { font-size: 1.4rem; font-weight: 700; color: var(--gray-800); line-height: 1.2; }
         .stat-label { font-size: 0.68rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; }
         /* ===== ACTIONS ===== */
-        .actions { display: flex; gap: 14px; flex-wrap: wrap; }
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        @media (min-width: 640px) {
+            .actions {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
         .btn {
-            padding: 12px 22px; border: none; border-radius: var(--radius-md);
+            padding: 14px 22px; border: none; border-radius: var(--radius-md);
             font-size: 0.875rem; font-weight: 600; cursor: pointer;
-            transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+            transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
             text-decoration: none;
         }
         .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow-md); }
@@ -418,9 +443,9 @@
         .btn.loading { opacity: 0.7; cursor: not-allowed; }
         /* ===== NOTIFICATIONS ===== */
         .notification-container {
-            position: fixed; bottom: 24px; right: 24px;
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
             display: flex; flex-direction: column; gap: 12px;
-            z-index: 9999; max-width: 380px;
+            z-index: 9999; width: 90%; max-width: 380px;
         }
         .notification {
             background: white; border-radius: var(--radius-md);
@@ -490,40 +515,89 @@
             height: 8px; background: linear-gradient(to bottom, transparent, var(--gray-100));
             pointer-events: none;
         }
-        /* ===== RESPONSIVE MOBILE ===== */
+        /* ===== RESPONSIVE MOBILE OPTIMIZED ===== */
         @media (max-width: 640px) {
             body { padding-top: calc(var(--topbar-h) + 16px); padding-bottom: 24px; }
-            .topbar { padding: 0 16px; }
+            .topbar { padding: 0 12px; }
             .topbar-sub { display: none; }
             .user-name-pill { display: none; }
             .back-btn span { display: none; }
             .back-btn { padding: 8px 10px; }
+            
+            .list-header { display: none; }
+            .person-card {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                padding: 16px;
+                position: relative;
+                border-bottom: 1px solid var(--gray-100);
+            }
+            .student-num {
+                position: absolute;
+                top: 12px; right: 12px;
+                background: var(--gray-100);
+                padding: 2px 10px;
+                border-radius: 12px;
+                font-size: 0.7rem;
+                font-weight: 600;
+            }
+            .person-name {
+                font-weight: 600;
+                font-size: 1rem;
+                padding-right: 40px;
+            }
+            .status-group {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                width: 100%;
+            }
+            .status-btn {
+                width: 100% !important;
+                height: 48px !important;
+                font-size: 1.1rem;
+                border-radius: var(--radius-sm);
+            }
+            
             .pie-chart-container { display: none !important; }
             .horizontal-bar-container { display: block !important; }
-            .list-header { grid-template-columns: 36px 1fr 120px; padding: 12px 16px; }
-            .person-card { grid-template-columns: 36px 1fr 120px; padding: 12px 16px; gap: 8px; }
-            .student-num { font-size: 0.72rem; }
-            .person-name { font-size: 0.88rem; }
-            .status-btn { width: 34px; height: 34px; font-size: 0.85rem; }
-            .stats-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-            .stat-card { padding: 8px 10px; }
-            .actions { flex-direction: column; }
-            .actions .btn { width: 100%; justify-content: center; }
-            .date-section { flex-direction: column; align-items: flex-start; }
-            .date-control { flex-direction: column; align-items: flex-start; width: 100%; }
-            .date-picker-input { min-width: 100%; width: 100%; }
+            .dashboard-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .dashboard-stat-card { padding: 8px; }
+            .dashboard-stat-value { font-size: 1.1rem; }
+            
+            .stats-info { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .stat-card { padding: 10px 12px; }
+            .stat-value { font-size: 1.1rem; }
+            
+            .date-section { padding: 16px; }
+            .date-control { flex-direction: column; align-items: stretch; }
+            .date-picker-wrapper { min-width: unset; }
+            .date-picker-input { width: 100%; min-width: unset; }
             .quick-btn { width: 100%; justify-content: center; }
-            .main-container { gap: 14px; }
+            .day-info { justify-content: center; }
+            .weekend-warning { justify-content: center; text-align: center; }
+            
+            .actions { grid-template-columns: 1fr; }
+            .actions .btn { width: 100%; justify-content: center; padding: 14px; }
+            
+            .legend { padding: 12px 16px; gap: 16px; }
+            .legend-item { font-size: 0.8rem; }
+            .legend-dot { width: 20px; height: 20px; }
+            
+            .modal-container { margin: 16px; max-width: 100%; }
+            .modal-footer { flex-direction: column; }
+            .modal-footer .btn { width: 100%; justify-content: center; }
+            
+            .main-container { gap: 14px; width: 98%; padding: 0 4px; }
         }
         @media (min-width: 641px) {
             .pie-chart-container { display: flex !important; }
             .horizontal-bar-container { display: none !important; }
         }
-
     </style>
 </head>
 <body>
-        <div class="topbar" id="topbar">
+    <div class="topbar" id="topbar">
         <div class="topbar-left">
             <img src="logu-black.svg" alt="Logo" class="topbar-logo" onerror="this.src='logu.svg'">
             <div class="topbar-titles">
@@ -703,14 +777,15 @@
         // ==================== CONFIGURAÇÕES ====================
         const API_BASE = 'https://erickmth.pythonanywhere.com/api';
         const TURMA_NOME = 'Inglês Básico (Joinville)';
+        const ALLOWED_DAY_NAME = 'Sábado';
+        const ALLOWED_WEEKDAY_INDEX = 6;
         
         let students = [];
         let currentAttendance = {};
         let selectedDate = '';
         let pendingDateChange = null;
         let attendanceChart = null;
-        let attendanceMetadata = { createdBy: null, updatedBy: null, createdAt: null, updatedAt: null };
-        let adminNames = [];
+        let attendanceMetadata = { createdBy: null, updatedBy: null, createdAt: null, updatedAt: null, createdLat: null, createdLng: null, updatedLat: null, updatedLng: null };
 
         // ==================== DOM ELEMENTS ====================
         const datePicker = document.getElementById('datePicker');
@@ -781,7 +856,7 @@
             const date = parseDateToBrasilia(dateStr);
             if (!date) return false;
             const dayOfWeek = date.getUTCDay();
-            return dayOfWeek !== 6;
+            return dayOfWeek !== ALLOWED_WEEKDAY_INDEX;
         }
         
         function getDayName(dateStr) {
@@ -795,7 +870,7 @@
         function getNextWeekday(dateStr) {
             const [year, month, day] = dateStr.split('-').map(Number);
             let date = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
-            while (date.getUTCDay() !== 6) {
+            while (date.getUTCDay() !== ALLOWED_WEEKDAY_INDEX) {
                 date.setUTCDate(date.getUTCDate() + 1);
             }
             return formatDateUTC(date);
@@ -808,7 +883,7 @@
             dayNameText.textContent = dayName;
             if (isWeekendDay) {
                 dayInfo.className = 'day-info weekend-day';
-                dayInfo.innerHTML = `<i class="fas fa-ban"></i><span>${dayName} - BLOQUEADO! Apenas sábados são permitidos.</span>`;
+                dayInfo.innerHTML = `<i class="fas fa-ban"></i><span>${dayName} - BLOQUEADO! Apenas ${ALLOWED_DAY_NAME} é permitido.</span>`;
             } else {
                 dayInfo.className = 'day-info weekday';
                 dayInfo.innerHTML = `<i class="fas fa-calendar-check"></i><span>${dayName} - Liberado</span>`;
@@ -831,7 +906,7 @@
                     <i class="fas fa-calendar-times" style="font-size: 48px; color: var(--warning); margin-bottom: 16px; display: block;"></i>
                     <strong style="font-size: 1.1rem;">${originalDayName.toUpperCase()} não é permitido!</strong><br><br>
                     <span style="color: var(--danger);">📅 Data selecionada: ${originalDateFormatted} (${originalDayName})</span><br><br>
-                    ⚠️ Apenas sábados são permitidos para registro de chamada.<br><br>
+                    ⚠️ Apenas ${ALLOWED_DAY_NAME} é permitido para registro de chamada.<br><br>
                     <span style="color: var(--success);">✅ A data será alterada para: <strong>${newDateFormatted} (${newDayName})</strong></span>
                 </div>
             `;
@@ -908,7 +983,7 @@
             }
             if (isWeekend(selectedDate)) {
                 const dayName = getDayName(selectedDate);
-                showNotification(`❌ ${dayName.toUpperCase()} NÃO É PERMITIDO! Apenas sábados são permitidos.`, 'error');
+                showNotification(`❌ ${dayName.toUpperCase()} NÃO É PERMITIDO! Apenas ${ALLOWED_DAY_NAME} é permitido.`, 'error');
                 validateDateWithModal();
                 return false;
             }
@@ -1080,7 +1155,6 @@
                 if (!navigator.geolocation) {
                     return resolve({ error: 'unsupported' });
                 }
-
                 navigator.geolocation.getCurrentPosition(
                     position => {
                         resolve({
@@ -1144,7 +1218,7 @@
             }
             if (isWeekend(currentDate)) {
                 const dayName = getDayName(currentDate);
-                showNotification(`❌ ${actionName ? actionName + ': ' : ''}${dayName.toUpperCase()} NÃO É PERMITIDO! Apenas sábados são permitidos.`, 'error');
+                showNotification(`❌ ${actionName ? actionName + ': ' : ''}${dayName.toUpperCase()} NÃO É PERMITIDO! Apenas ${ALLOWED_DAY_NAME} é permitido.`, 'error');
                 validateDateWithModal();
                 return null;
             }
@@ -1242,7 +1316,6 @@
                         nomeOriginal: nome
                     }))
                     .filter(student => !isAdminByName(student.nome));
-                // ===== ORDENAR ALFABETICAMENTE =====
                 students.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', {sensitivity: 'base'}));
                 renderStudentList();
                 updateStats();
@@ -1317,7 +1390,7 @@
                     headers: getAuthHeader()
                 });
                 if (response.status === 404) {
-                    attendanceMetadata = { createdBy: null, updatedBy: null, createdAt: null, updatedAt: null };
+                    attendanceMetadata = { createdBy: null, updatedBy: null, createdAt: null, updatedAt: null, createdLat: null, createdLng: null, updatedLat: null, updatedLng: null };
                     return null;
                 }
                 if (!response.ok) throw new Error('Erro ao carregar chamada');
@@ -1329,10 +1402,8 @@
                     updatedAt: data.updated_at,
                     createdLat: data.created_lat ?? null,
                     createdLng: data.created_lng ?? null,
-                    createdLocAccuracy: data.created_loc_accuracy ?? null,
                     updatedLat: data.updated_lat ?? null,
-                    updatedLng: data.updated_lng ?? null,
-                    updatedLocAccuracy: data.updated_loc_accuracy ?? null
+                    updatedLng: data.updated_lng ?? null
                 };
                 updateMetadataDisplay();
                 if (data.registros && Array.isArray(data.registros)) {
@@ -1419,22 +1490,18 @@
                     attendanceMetadata.updatedAt = now;
                     attendanceMetadata.updatedLat = result.updated_lat ?? null;
                     attendanceMetadata.updatedLng = result.updated_lng ?? null;
-                    attendanceMetadata.updatedLocAccuracy = result.updated_loc_accuracy ?? null;
                     attendanceMetadata.createdLat = result.created_lat ?? attendanceMetadata.createdLat;
                     attendanceMetadata.createdLng = result.created_lng ?? attendanceMetadata.createdLng;
-                    attendanceMetadata.createdLocAccuracy = result.created_loc_accuracy ?? attendanceMetadata.createdLocAccuracy;
                 } else {
                     attendanceMetadata.createdBy = result.created_by || currentUser;
                     attendanceMetadata.createdAt = now;
                     const hasLocation = locationResult && typeof locationResult.lat === 'number' && typeof locationResult.lng === 'number';
                     attendanceMetadata.createdLat = result.created_lat ?? (hasLocation ? locationResult.lat : null);
                     attendanceMetadata.createdLng = result.created_lng ?? (hasLocation ? locationResult.lng : null);
-                    attendanceMetadata.createdLocAccuracy = result.created_loc_accuracy ?? (hasLocation ? locationResult.accuracy : null);
                     attendanceMetadata.updatedBy = null;
                     attendanceMetadata.updatedAt = null;
                     attendanceMetadata.updatedLat = null;
                     attendanceMetadata.updatedLng = null;
-                    attendanceMetadata.updatedLocAccuracy = null;
                 }
                 updateMetadataDisplay();
                 showNotification(`Chamada ${isUpdate ? 'atualizada' : 'salva'} com sucesso!`);
@@ -1475,7 +1542,7 @@
                 submitBtn.disabled = true;
                 saveChangesBtn.disabled = true;
                 markAllPresentBtn.disabled = true;
-                attendanceMetadata = { createdBy: null, updatedBy: null, createdAt: null, updatedAt: null };
+                attendanceMetadata = { createdBy: null, updatedBy: null, createdAt: null, updatedAt: null, createdLat: null, createdLng: null, updatedLat: null, updatedLng: null };
                 updateMetadataDisplay();
                 return;
             }
@@ -1490,7 +1557,7 @@
                 currentAttendance[date] = {};
                 submitBtn.style.display = 'block';
                 saveChangesBtn.style.display = 'none';
-                attendanceMetadata = { createdBy: null, updatedBy: null, createdAt: null, updatedAt: null };
+                attendanceMetadata = { createdBy: null, updatedBy: null, createdAt: null, updatedAt: null, createdLat: null, createdLng: null, updatedLat: null, updatedLng: null };
                 updateMetadataDisplay();
             }
             renderStudentList();
@@ -1527,7 +1594,6 @@
             }
         }
 
-        // ==================== FUNÇÃO DE DOWNLOAD CORRIGIDA ====================
         async function downloadReport() {
             const mes = monthSelect.value;
             if (!mes) {
@@ -1614,53 +1680,42 @@
             return true;
         }
 
-        // ==================== VERIFICAÇÃO DE PERMISSÃO DE ACESSO ====================
+        // ==================== VERIFICAÇÃO DE PERMISSÃO ====================
         async function verificarPermissaoAcesso() {
             try {
                 const response = await fetch(`${API_BASE}/admin/permissions`, {
                     headers: getAuthHeader()
                 });
-                
                 if (!response.ok) {
                     console.error('Erro ao carregar permissões');
                     return false;
                 }
-                
                 const data = await response.json();
                 const tipoAdmin = data.tipo_admin;
                 const turmasPermitidas = data.turmas_permitidas || [];
-                
                 if (tipoAdmin === 'global') {
                     console.log('✅ Admin global - acesso liberado');
                     return true;
                 }
-                
                 if (tipoAdmin === 'formare') {
                     if (TURMA_NOME !== 'Formare 2026') {
                         showNotification('❌ Acesso negado! Administradores Formare só podem acessar a turma Formare.', 'error');
-                        setTimeout(() => {
-                            window.location.href = '/index.html';
-                        }, 2000);
+                        setTimeout(() => { window.location.href = '/index.html'; }, 2000);
                         return false;
                     }
                     console.log('✅ Admin Formare - acesso liberado para Formare');
                     return true;
                 }
-                
                 if (tipoAdmin === 'turma') {
                     if (!turmasPermitidas.includes(TURMA_NOME)) {
                         showNotification(`❌ Acesso negado! Você só tem permissão para acessar sua própria turma.`, 'error');
-                        setTimeout(() => {
-                            window.location.href = '/index.html';
-                        }, 2000);
+                        setTimeout(() => { window.location.href = '/index.html'; }, 2000);
                         return false;
                     }
                     console.log('✅ Admin de turma - acesso liberado para sua turma');
                     return true;
                 }
-                
                 return true;
-                
             } catch (error) {
                 console.error('Erro ao verificar permissão:', error);
                 return false;
@@ -1693,10 +1748,8 @@
         // ==================== INITIALIZATION ====================
         async function init() {
             if (!checkAuth()) return;
-            
             const temPermissao = await verificarPermissaoAcesso();
             if (!temPermissao) return;
-            
             const adminName = sessionStorage.getItem('adminName') || 'Administrador';
             userNameSpan.textContent = adminName;
             userAvatar.textContent = adminName.charAt(0).toUpperCase();
