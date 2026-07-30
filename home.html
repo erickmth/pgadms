@@ -2031,7 +2031,11 @@ async function showNovidadeSeNecessario() {
                                 files.forEach(f => {
                                     const card = document.createElement('div');
                                     card.className = 'upload-card';
-                                    const thumbnailHtml = f.thumbnail_url ? `<img src="${API_URL}${f.thumbnail_url}" alt="thumbnail">` : `<i class="bi ${f.icon || 'bi-file-earmark'} upload-icon"></i>`;
+                                    const isImage = (f.type || '').startsWith('image/');
+                                    const thumbSrc = f.thumbnail_url ? `${API_URL}${f.thumbnail_url}` : (isImage ? `${API_URL}${f.url}` : null);
+                                    const thumbnailHtml = thumbSrc
+                                        ? `<img src="${thumbSrc}" alt="${f.name}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('i'), {className:'bi ${f.icon || 'bi-file-earmark'} upload-icon'}))">`
+                                        : `<i class="bi ${f.icon || 'bi-file-earmark'} upload-icon"></i>`;
                                     card.innerHTML = `<div class="upload-thumbnail">${thumbnailHtml}<span class="upload-type-badge">${f.type?.split('/')[1]?.toUpperCase() || 'FILE'}</span></div><div class="upload-info"><div class="upload-name">${f.name}</div><div class="upload-meta"><span>${f.size_formatted}</span></div></div>`;
                                     card.onclick = () => {
                                         if (document.getElementById('fileDownloadLink')) document.getElementById('fileDownloadLink').href = `${API_URL}${f.url}`;
