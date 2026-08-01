@@ -37,15 +37,14 @@
   }
 
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-  html{height:100%;}
+  html, body{height:100%;}
   body{
-    min-height:100%;
     background:var(--bg);
     color:var(--text);
     font-family:var(--font-body);
     -webkit-font-smoothing:antialiased;
     text-rendering:optimizeLegibility;
-    overflow-x:hidden;
+    overflow:hidden;
   }
 
   a{color:inherit;}
@@ -94,10 +93,11 @@
   ============================================================ */
   .wrapper{
     position:relative; z-index:2;
-    min-height:100vh;
+    height:100vh;
     display:grid;
     grid-template-rows:auto 1fr auto;
-    padding:26px 32px 22px;
+    padding:22px 32px 18px;
+    overflow:hidden;
   }
 
   header{
@@ -105,22 +105,15 @@
     opacity:0; animation:fadeDown .6s var(--ease) .1s forwards;
   }
   .brand{
-    display:flex; align-items:center; gap:10px;
+    display:flex; align-items:center;
     text-decoration:none;
+    margin-right:auto;
   }
-  .brand-mark{
-    width:30px; height:30px; border-radius:8px;
-    background:linear-gradient(155deg, var(--primary), var(--primary-dark));
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 4px 14px var(--primary-glow);
-    flex-shrink:0;
+  .logo-svg{
+    display:block;
+    max-height:56px;
+    width:auto;
   }
-  .brand-mark svg{width:16px; height:16px;}
-  .brand-name{
-    font-family:var(--font-display); font-weight:700; font-size:15px;
-    letter-spacing:-.2px; color:var(--text);
-  }
-  .brand-name span{color:var(--primary-light);}
 
   .status-chip{
     display:flex; align-items:center; gap:8px;
@@ -139,50 +132,51 @@
   main{
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center;
-    padding:32px 0;
+    min-height:0;
+    overflow:hidden;
   }
 
   /* ============================================================
-     SIGNATURE ILLUSTRATION — quadro de escala com um turno ausente
+     SIGNATURE ILLUSTRATION — mascote triste
   ============================================================ */
   .illustration{
     position:relative;
-    width:min(420px, 78vw);
-    margin-bottom:36px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:18px;
     opacity:0;
     animation:riseIn .8s var(--ease) .3s forwards;
   }
-  @keyframes riseIn{ from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes riseIn{ from{opacity:0; transform:translateY(20px) scale(.92);} to{opacity:1; transform:translateY(0) scale(1);} }
 
-  .illustration svg{ width:100%; height:auto; display:block; overflow:visible; }
+  .illustration-inner{ animation:float 5s ease-in-out infinite; }
+  @keyframes float{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-9px);} }
 
-  .cell-fill{ fill:var(--surface-2); stroke:var(--border-strong); stroke-width:1.2; }
-  .cell-bar{ fill:var(--text-faint); opacity:.55; }
-  .cell-line{ stroke:var(--text-faint); stroke-width:3; stroke-linecap:round; opacity:.4; }
-  .cell-dot{ fill:var(--text-faint); opacity:.6; }
-
-  .cell-empty{
-    fill:transparent;
-    stroke:var(--primary);
-    stroke-width:1.6;
-    stroke-dasharray:6 6;
-    animation:dashFlow 22s linear infinite;
+  .glow-ring{
+    position:absolute;
+    width:min(300px, 55vw); height:min(300px, 55vw);
+    border-radius:50%;
+    background:radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+    animation:glowPulse 3s ease-in-out infinite;
   }
-  @keyframes dashFlow{ to{ stroke-dashoffset:-240; } }
+  @keyframes glowPulse{ 0%,100%{transform:scale(1); opacity:.7;} 50%{transform:scale(1.14); opacity:1;} }
 
-  .empty-glow{ animation:glowPulse 3.2s ease-in-out infinite; }
-  @keyframes glowPulse{ 0%,100%{opacity:.55;} 50%{opacity:1;} }
-
-  .empty-icon{ stroke:var(--primary-light); }
-  .empty-code{
-    font-family:var(--font-mono); font-size:11px; font-weight:500;
-    fill:var(--primary-light); letter-spacing:1px;
+  .ground-shadow{
+    position:absolute;
+    bottom:-10px; left:50%; transform:translateX(-50%);
+    width:min(170px, 30vw); height:20px;
+    background:radial-gradient(ellipse, var(--primary-glow) 0%, transparent 75%);
+    border-radius:50%;
+    animation:shadowPulse 5s ease-in-out infinite;
   }
+  @keyframes shadowPulse{ 0%,100%{transform:translateX(-50%) scaleX(1); opacity:.7;} 50%{transform:translateX(-50%) scaleX(.72); opacity:.4;} }
 
-  .ghost-404{
-    font-family:var(--font-display); font-weight:800;
-    fill:var(--surface-2);
-    opacity:.5;
+  .bad-img{
+    width:min(220px, 34vh, 42vw);
+    height:auto;
+    display:block;
+    position:relative; z-index:2;
+    user-select:none; -webkit-user-drag:none;
+    filter:drop-shadow(0 16px 32px var(--primary-glow));
   }
 
   /* ============================================================
@@ -217,51 +211,10 @@
   }
 
   /* ============================================================
-     SEARCH
-  ============================================================ */
-  .search-form{
-    margin-top:28px;
-    display:flex; align-items:center; gap:0;
-    width:100%; max-width:400px;
-    background:var(--surface-2);
-    border:1px solid var(--border-strong);
-    border-radius:var(--radius-md);
-    padding:4px;
-    transition:border-color .2s var(--ease), box-shadow .2s var(--ease);
-    opacity:0; animation:fadeUp .6s var(--ease) .86s forwards;
-  }
-  .search-form:focus-within{
-    border-color:rgba(230,57,63,.5);
-    box-shadow:0 0 0 4px var(--primary-glow);
-  }
-  .search-icon{
-    width:17px; height:17px; flex-shrink:0; margin:0 10px 0 12px;
-    color:var(--text-faint);
-  }
-  .search-form:focus-within .search-icon{ color:var(--primary-light); }
-  .search-input{
-    flex:1; min-width:0;
-    background:transparent; border:none; outline:none;
-    color:var(--text); font-family:var(--font-body); font-size:13.5px;
-    padding:10px 4px;
-  }
-  .search-input::placeholder{ color:var(--text-faint); }
-  .search-submit{
-    display:flex; align-items:center; justify-content:center;
-    background:var(--surface-3); border:1px solid var(--border);
-    color:var(--text-muted);
-    width:34px; height:34px; border-radius:var(--radius-sm);
-    cursor:pointer; transition:var(--ease) .2s;
-    flex-shrink:0;
-  }
-  .search-submit:hover{ background:var(--primary); border-color:var(--primary); color:#fff; }
-  .search-submit svg{ width:15px; height:15px; }
-
-  /* ============================================================
      ACTIONS
   ============================================================ */
   .actions{
-    margin-top:22px;
+    margin-top:24px;
     display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:center;
     opacity:0; animation:fadeUp .6s var(--ease) .98s forwards;
   }
@@ -308,14 +261,11 @@
      FOOTER
   ============================================================ */
   footer{
-    display:flex; align-items:center; justify-content:center; gap:18px;
-    padding-top:20px;
-    opacity:0; animation:fadeUp .5s var(--ease) 1.22s forwards;
+    display:flex; align-items:center; justify-content:center;
+    padding-top:14px;
+    opacity:0; animation:fadeUp .5s var(--ease) 1.05s forwards;
   }
   .footer-text{ font-size:11.5px; color:var(--text-faint); letter-spacing:.2px; }
-  .footer-link{ font-size:11.5px; color:var(--text-faint); text-decoration:none; transition:color .2s; }
-  .footer-link:hover{ color:var(--text-muted); }
-  .footer-divider{ width:1px; height:12px; background:var(--border); }
 
   @keyframes fadeUp{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
   @keyframes fadeDown{ from{opacity:0; transform:translateY(-8px);} to{opacity:1; transform:translateY(0);} }
@@ -324,8 +274,8 @@
      RESPONSIVE
   ============================================================ */
   @media (max-width:560px){
-    .wrapper{ padding:20px 18px 18px; }
-    .brand-name{ font-size:14px; }
+    .wrapper{ padding:16px 18px 14px; }
+    .logo-svg{ max-height:40px; }
     .status-chip span:not(.status-dot){ display:none; }
     .status-chip{ padding:7px; }
     footer{ flex-wrap:wrap; gap:10px; }
@@ -363,12 +313,7 @@
 
   <header>
     <a href="/" class="brand" aria-label="AdminEscala — página inicial">
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M4 6h12M4 10h12M4 14h7" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </span>
-      <span class="brand-name">Admin<span>Escala</span></span>
+      <img src="logu.svg" alt="AdminEscala" class="logo-svg" onerror="this.onerror=null; this.src='/logu.svg';">
     </a>
     <div class="status-chip">
       <span class="status-dot" aria-hidden="true"></span>
@@ -379,91 +324,37 @@
   <main id="main">
 
     <div class="illustration" aria-hidden="true">
-      <svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg">
-        <text class="ghost-404" x="230" y="205" font-size="220" text-anchor="middle">404</text>
-
-        <!-- linha 1 -->
-        <g>
-          <rect class="cell-fill" x="20" y="40" width="120" height="96" rx="12"/>
-          <circle class="cell-dot" cx="46" cy="66" r="9"/>
-          <rect class="cell-line" x="64" y="61" width="52" height="4" rx="2"/>
-          <rect class="cell-line" x="64" y="72" width="34" height="4" rx="2" opacity=".28"/>
-          <rect class="cell-bar" x="38" y="98" width="86" height="6" rx="3"/>
-          <rect class="cell-bar" x="38" y="112" width="60" height="6" rx="3" opacity=".6"/>
-        </g>
-
-        <g>
-          <rect class="cell-fill" x="170" y="40" width="120" height="96" rx="12"/>
-          <circle class="cell-dot" cx="196" cy="66" r="9"/>
-          <rect class="cell-line" x="214" y="61" width="52" height="4" rx="2"/>
-          <rect class="cell-line" x="214" y="72" width="30" height="4" rx="2" opacity=".28"/>
-          <rect class="cell-bar" x="188" y="98" width="86" height="6" rx="3"/>
-          <rect class="cell-bar" x="188" y="112" width="50" height="6" rx="3" opacity=".6"/>
-        </g>
-
-        <g>
-          <rect class="cell-fill" x="320" y="40" width="120" height="96" rx="12"/>
-          <circle class="cell-dot" cx="346" cy="66" r="9"/>
-          <rect class="cell-line" x="364" y="61" width="52" height="4" rx="2"/>
-          <rect class="cell-line" x="364" y="72" width="38" height="4" rx="2" opacity=".28"/>
-          <rect class="cell-bar" x="338" y="98" width="86" height="6" rx="3"/>
-          <rect class="cell-bar" x="338" y="112" width="66" height="6" rx="3" opacity=".6"/>
-        </g>
-
-        <!-- linha 2 -->
-        <g>
-          <rect class="cell-fill" x="20" y="164" width="120" height="96" rx="12"/>
-          <circle class="cell-dot" cx="46" cy="190" r="9"/>
-          <rect class="cell-line" x="64" y="185" width="52" height="4" rx="2"/>
-          <rect class="cell-line" x="64" y="196" width="40" height="4" rx="2" opacity=".28"/>
-          <rect class="cell-bar" x="38" y="222" width="86" height="6" rx="3"/>
-          <rect class="cell-bar" x="38" y="236" width="56" height="6" rx="3" opacity=".6"/>
-        </g>
-
-        <g>
-          <rect class="cell-fill" x="170" y="164" width="120" height="96" rx="12"/>
-          <circle class="cell-dot" cx="196" cy="190" r="9"/>
-          <rect class="cell-line" x="214" y="185" width="52" height="4" rx="2"/>
-          <rect class="cell-line" x="214" y="196" width="26" height="4" rx="2" opacity=".28"/>
-          <rect class="cell-bar" x="188" y="222" width="86" height="6" rx="3"/>
-          <rect class="cell-bar" x="188" y="236" width="44" height="6" rx="3" opacity=".6"/>
-        </g>
-
-        <!-- slot ausente -->
-        <g class="empty-glow">
-          <rect class="cell-empty" x="320" y="164" width="120" height="96" rx="12"/>
-          <g class="empty-icon" transform="translate(346,190)">
-            <rect x="0" y="0" width="24" height="24" rx="4" fill="none" stroke-width="1.6"/>
-            <line x1="0" y1="8" x2="24" y2="8" stroke-width="1.6"/>
-            <line x1="6" y1="-4" x2="6" y2="2" stroke-width="1.6" stroke-linecap="round"/>
-            <line x1="18" y1="-4" x2="18" y2="2" stroke-width="1.6" stroke-linecap="round"/>
-            <line x1="6" y1="13" x2="18" y2="19" stroke-width="1.6" stroke-linecap="round"/>
-            <line x1="18" y1="13" x2="6" y2="19" stroke-width="1.6" stroke-linecap="round"/>
-          </g>
-          <text class="empty-code" x="380" y="248" text-anchor="middle">SEM REGISTRO</text>
-        </g>
-      </svg>
+      <div class="glow-ring"></div>
+      <div class="illustration-inner">
+        <img
+          src="bad.png"
+          alt=""
+          class="bad-img"
+          draggable="false"
+          id="badImg"
+          onerror="this.replaceWith(document.getElementById('svg-fallback'))"
+        />
+        <svg id="svg-fallback" style="display:none" width="220" height="220" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="bad-img">
+          <path d="M100 30 C65 30 42 55 42 90 L42 155 L55 142 L68 155 L81 142 L94 155 L107 142 L120 155 L133 142 L146 155 L158 90 C158 55 135 30 100 30Z" fill="#151822" stroke="rgba(230,57,63,.4)" stroke-width="2"/>
+          <circle cx="80" cy="90" r="10" fill="white" opacity="0.9"/>
+          <circle cx="120" cy="90" r="10" fill="white" opacity="0.9"/>
+          <circle cx="83" cy="93" r="5" fill="#e6393f"/>
+          <circle cx="123" cy="93" r="5" fill="#e6393f"/>
+          <line x1="75" y1="85" x2="85" y2="95" stroke="#e6393f" stroke-width="2" stroke-linecap="round"/>
+          <line x1="85" y1="85" x2="75" y2="95" stroke="#e6393f" stroke-width="2" stroke-linecap="round"/>
+          <line x1="115" y1="85" x2="125" y2="95" stroke="#e6393f" stroke-width="2" stroke-linecap="round"/>
+          <line x1="125" y1="85" x2="115" y2="95" stroke="#e6393f" stroke-width="2" stroke-linecap="round"/>
+          <path d="M85 115 Q100 125 115 115" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="ground-shadow"></div>
     </div>
 
     <h1 class="error-code">Erro <em>404</em></h1>
     <p class="headline">Este registro não existe na escala</p>
     <p class="subtext">
-      O link pode ter expirado, o turno pode ter sido removido, ou o endereço foi digitado incorretamente. Verifique a URL ou utilize a busca abaixo.
+      O link pode ter expirado, o turno pode ter sido removido, ou o endereço foi digitado incorretamente. Verifique a URL e tente novamente.
     </p>
-
-    <form class="search-form" role="search" action="/buscar" method="get" id="searchForm">
-      <svg class="search-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="9" cy="9" r="6.2" stroke="currentColor" stroke-width="1.6"/>
-        <line x1="13.6" y1="13.6" x2="18" y2="18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>
-      <label for="searchInput" class="sr-only" style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);">Pesquisar por funcionário, unidade ou data</label>
-      <input type="search" id="searchInput" name="q" class="search-input" placeholder="Buscar por funcionário, unidade ou data" autocomplete="off">
-      <button type="submit" class="search-submit" aria-label="Pesquisar">
-        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M5 10h10M10 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-    </form>
 
     <div class="actions">
       <a href="/" class="btn btn-primary">
@@ -489,8 +380,6 @@
 
   <footer>
     <span class="footer-text">© <span id="year"></span> AdminEscala. Todos os direitos reservados.</span>
-    <span class="footer-divider" aria-hidden="true"></span>
-    <a href="/suporte" class="footer-link">Suporte</a>
   </footer>
 
 </div>
@@ -516,15 +405,6 @@
     backBtn.addEventListener('click', function(){
       if (history.length > 1) history.back();
       else window.location.href = '/';
-    });
-  }
-
-  // Busca — ajuste o endpoint conforme a rota real do sistema
-  var form = document.getElementById('searchForm');
-  if (form) {
-    form.addEventListener('submit', function(e){
-      var q = document.getElementById('searchInput').value.trim();
-      if (!q) e.preventDefault();
     });
   }
 })();
