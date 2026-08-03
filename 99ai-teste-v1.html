@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>INRB.ia - Chat</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+
+<body class="landing-page">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">INRB.ia</h4>
+                        <p class="mb-0 small">Chat de prova de conceito integrado à API do sistema.</p>
+                    </div>
+                    <div class="card-body">
+                        <div id="chatArea" class="border rounded p-3 mb-3" style="min-height: 350px; max-height: 520px; overflow-y: auto; background: #f8f9fa;"></div>
+
+                        <div id="chatAlert" class="alert alert-danger d-none" role="alert"></div>
+
+                        <div class="input-group">
+                            <input type="text" id="chatInput" class="form-control" placeholder="Escreva sua mensagem" maxlength="2000" autocomplete="off">
+                            <button id="sendButton" class="btn btn-primary" type="button">Enviar</button>
+                        </div>
+                        <div class="form-text text-muted mt-2">Aguarde a resposta antes de enviar outra mensagem.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://erickmth.pythonanywhere.com';
+        const token = sessionStorage.getItem('adminToken');
+        const chatArea = document.getElementById('chatArea');
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendButton');
+        const chatAlert = document.getElementById('chatAlert');
+        const CHAT_HISTORY_KEY = 'aiChatHistory';
+        const MAX_CHAT_TURNS = 10;
+        let isSending = false;
+
+        function redirectToLogin() {
+            clearChatHistory();
+            window.location.replace('index.html');
+        }
+
+        function loadChatHistory() {
+            try {
+                const raw = sessionStorage.getItem(CHAT_HISTORY_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function saveChatHistory(history) {
+            sessionStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+        }
+
+        function clearChatHistory() {
+            sessionStorage.removeItem(CHAT_HISTORY_KEY);
+        }
+
+        function trimChatHistory(history) {
+            if (history.length <= MAX_CHAT_TURNS * 2) {
+                return history;
+            }
+            return history.slice(-MAX_CHAT_TURNS * 2);
+        }
+
+        function appendMessage(role, text) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'mb-3';
+
+            const badge = document.createElement('span');
+            badge.className = 'badge rounded-pill mb-2 ' + (role === 'user' ? 'bg-primary' : 'bg-secondary');
+            badge.textContent = role === 'user' ? 'Você' : 'INRB.ia';
+
+            const message = document.createElement('div');
+            message.className = 'p-3 rounded';
+            message.style.background = role === 'user' ? '#d0e7ff' : '#e9ecef';
+            message.style.whiteSpace = 'pre-wrap';
+            message.textContent = text;
+
+            wrapper.appendChild(badge);
+            wrapper.appendChild(message);
+            chatArea.appendChild(wrapper);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function showAlert(message) {
+            chatAlert.textContent = message;
+            chatAlert.classList.remove('d-none');
+        }
+
+        function hideAlert() {
+            chatAlert.classList.add('d-none');
+            chatAlert.textContent = '';
+        }
+
+        function setSending(value) {
+            isSending = value;
+            chatInput.disabled = value;
+            sendButton.disabled = value;
+            sendButton.innerHTML = value ? '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando...' : 'Enviar';
+        }
+
+        async function fetchChat(message, history) {
+            const response = await fetch(`${API_URL}/api/ai/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ message, history })
+            });
+
+            if (response.status === 401) {
+                redirectToLogin();
+                return null;
+            }
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Erro na requisição de chat.');
+            }
+
+            return data.response;
+        }
+
+        function renderChatHistory() {
+            const history = loadChatHistory();
+            history.forEach(msg => appendMessage(msg.role, msg.content));
+        }
+
+        async function handleSend() {
+            if (isSending) {
+                return;
+            }
+
+            hideAlert();
+            const message = chatInput.value.trim();
+            if (!message) {
+                showAlert('Digite uma mensagem antes de enviar.');
+                return;
+            }
+
+            const history = trimChatHistory(loadChatHistory());
+            appendMessage('user', message);
+            history.push({ role: 'user', content: message });
+            saveChatHistory(trimChatHistory(history));
+            chatInput.value = '';
+            setSending(true);
+
+            try {
+                const answer = await fetchChat(message, history);
+                if (answer === null) {
+                    return;
+                }
+
+                appendMessage('assistant', answer);
+                history.push({ role: 'assistant', content: answer });
+                saveChatHistory(trimChatHistory(history));
+            } catch (error) {
+                showAlert(error.message);
+            } finally {
+                setSending(false);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!token) {
+                redirectToLogin();
+                return;
+            }
+
+            renderChatHistory();
+            sendButton.addEventListener('click', handleSend);
+            chatInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    handleSend();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

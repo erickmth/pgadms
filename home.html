@@ -78,6 +78,9 @@
         }
 
         .connection-status {
+            /* Oculto: ficava atrás do botão flutuante da INRB.ia. A lógica que
+               atualiza este elemento continua ativa, apenas a exibição foi removida. */
+            display: none !important;
             position: fixed;
             bottom: 20px;
             right: 20px;
@@ -942,6 +945,87 @@
                 </div>
             </div>
 
+            <!-- ==================== INRB.ia - Assistente Virtual (Popup) ==================== -->
+
+            <!-- Aviso de cookies: modal centralizado com explicação detalhada -->
+<div class="inrbia-cookie-overlay d-none" id="inrbiaCookieOverlay" role="dialog" aria-modal="true" aria-label="Preferências de cookies">
+    <div class="inrbia-cookie-modal">
+        <div class="inrbia-cookie-icon">
+            <i class="bi bi-shield-lock"></i>
+        </div>
+
+        <h5 class="inrbia-cookie-title">Sua privacidade é importante</h5>
+
+        <div class="inrbia-cookie-text">
+            <p>
+                Utilizamos cookies e tecnologias semelhantes para oferecer uma melhor experiência durante a utilização da plataforma.
+            </p>
+
+            <p>
+                Ao selecionar <strong>"Concordar"</strong>, você autoriza o uso dessas tecnologias conforme nossa Política de Privacidade. Você também pode optar por <strong>"Recusar"</strong>, ciente de que algumas funcionalidades ou preferências poderão não ser mantidas entre as visitas.
+            </p>
+        </div>
+
+        <div class="inrbia-cookie-actions">
+            <button type="button" class="btn btn-outline-secondary" id="inrbiaCookieDecline">Recusar</button>
+            <button type="button" class="btn btn-primary" id="inrbiaCookieAccept">Concordar</button>
+        </div>
+    </div>
+</div>
+
+            <!-- Apresentação da IA: overlay em spotlight destacando o botão flutuante -->
+            <div class="inrbia-spotlight-catcher d-none" id="inrbiaSpotlightCatcher"></div>
+            <div class="inrbia-onboarding d-none" id="inrbiaOnboarding" role="dialog" aria-label="Apresentação da INRB.ia">
+                <div class="inrbia-onboarding-card">
+                    <button type="button" class="inrbia-onboarding-close" id="inrbiaOnboardingClose" aria-label="Fechar apresentação">&times;</button>
+                    <div class="inrbia-onboarding-icon"><img src="img/Bia.gif" alt="INRB.ia" data-inrbia-gif="1"></div>
+                    <h6 class="inrbia-onboarding-title">Nova funcionalidade disponível</h6>
+                    <p class="inrbia-onboarding-text">Agora você pode conversar com a <strong>INRB.ia</strong> para consultar informações do sistema. Toque no botão em destaque sempre que precisar tirar dúvidas — ela respeita as suas permissões de acesso.</p>
+                    <button type="button" class="btn btn-primary btn-sm w-100" id="inrbiaOnboardingOk">Entendi</button>
+                </div>
+                <div class="inrbia-onboarding-arrow"></div>
+            </div>
+
+            <button type="button" class="inrbia-fab" id="inrbiaFab" aria-label="Abrir assistente INRB.ia" aria-expanded="false">
+                <span class="inrbia-fab-pulse"></span>
+                <img src="img/Bia.gif" alt="INRB.ia" class="inrbia-fab-img" data-inrbia-gif="1">
+                <span class="inrbia-fab-close-icon"><i class="bi bi-x-lg"></i></span>
+            </button>
+
+            <div class="inrbia-chat-window" id="inrbiaChatWindow" role="dialog" aria-modal="false" aria-label="Chat INRB.ia" aria-hidden="true">
+                <div class="inrbia-chat-header">
+                    <div class="inrbia-chat-header-info">
+                        <div class="inrbia-chat-avatar"><img src="img/Bia.gif" alt="INRB.ia" data-inrbia-gif="1"></div>
+                        <div class="inrbia-chat-header-text">
+                            <div class="inrbia-chat-title">INRB.ia</div>
+                            <div class="inrbia-chat-status"><span class="inrbia-status-dot"></span> Online</div>
+                        </div>
+                    </div>
+                    <button type="button" class="inrbia-chat-close" id="inrbiaChatClose" aria-label="Fechar chat"><i class="bi bi-x-lg"></i></button>
+                </div>
+
+                <div class="inrbia-chat-body" id="inrbiaChatBody"></div>
+
+                <div class="inrbia-chat-typing d-none" id="inrbiaTyping">
+                    <div class="inrbia-msg-avatar"><img src="img/Bia.gif" alt="INRB.ia" data-inrbia-gif="1"></div>
+                    <div class="inrbia-typing-bubble">
+                        <span class="inrbia-typing-dots"><span></span><span></span><span></span></span>
+                        <span class="inrbia-typing-timer" id="inrbiaTypingTimer">Pensando... 1s</span>
+                    </div>
+                </div>
+
+                <div class="inrbia-chat-alert d-none" id="inrbiaChatAlert" role="alert"></div>
+
+                <div class="inrbia-chat-footer">
+                    <div class="inrbia-chat-input-group">
+                        <input type="text" id="inrbiaChatInput" class="inrbia-chat-input" placeholder="Escreva sua mensagem..." maxlength="2000" autocomplete="off">
+                        <button type="button" class="inrbia-chat-send" id="inrbiaChatSend" aria-label="Enviar mensagem"><i class="bi bi-send-fill"></i></button>
+                    </div>
+                    <div class="inrbia-chat-hint">Aguarde a resposta antes de enviar outra mensagem.</div>
+                </div>
+            </div>
+            <!-- ==================== FIM INRB.ia ==================== -->
+
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
             <script>
                 // Desabilita logs em produção
@@ -1665,8 +1749,17 @@ async function showNovidadeSeNecessario() {
                 // O login acontece exclusivamente em index.html.
                 // Aqui, qualquer sessão ausente/inválida/expirada apenas limpa o storage e redireciona.
                 function handleLogout() {
+                    // Remove sessão e limpa histórico do chat para iniciar sem memória
                     sessionStorage.removeItem('adminToken');
                     sessionStorage.removeItem('adminName');
+                    try {
+                        sessionStorage.removeItem('inrbiaChatHistory');
+                        sessionStorage.removeItem('inrbia_tutorial_seen_session');
+                        // também limpar possíveis chaves antigas
+                        sessionStorage.removeItem('INRBIA_CHAT_HISTORY');
+                    } catch (e) {
+                        console.warn('Erro ao limpar chat history:', e);
+                    }
                     window.location.replace('index.html');
                 }
 
@@ -2031,11 +2124,18 @@ async function showNovidadeSeNecessario() {
                                 files.forEach(f => {
                                     const card = document.createElement('div');
                                     card.className = 'upload-card';
-                                    const isImage = (f.type || '').startsWith('image/');
-                                    const thumbSrc = f.thumbnail_url ? `${API_URL}${f.thumbnail_url}` : (isImage ? `${API_URL}${f.url}` : null);
-                                    const thumbnailHtml = thumbSrc
-                                        ? `<img src="${thumbSrc}" alt="${f.name}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('i'), {className:'bi ${f.icon || 'bi-file-earmark'} upload-icon'}))">`
-                                        : `<i class="bi ${f.icon || 'bi-file-earmark'} upload-icon"></i>`;
+                                    // Miniatura: prioriza thumbnail_url vindo da API; se o arquivo for
+                                    // uma imagem e não houver thumbnail, usa a própria imagem (f.url)
+                                    // como miniatura em vez de cair no ícone genérico. Assim a galeria
+                                    // já mostra a prévia da imagem sem precisar clicar.
+                                    let thumbnailHtml;
+                                    if (f.thumbnail_url) {
+                                        thumbnailHtml = `<img src="${API_URL}${f.thumbnail_url}" alt="thumbnail" loading="lazy">`;
+                                    } else if (f.type && f.type.startsWith('image/')) {
+                                        thumbnailHtml = `<img src="${API_URL}${f.url}" alt="${f.name}" loading="lazy">`;
+                                    } else {
+                                        thumbnailHtml = `<i class="bi ${f.icon || 'bi-file-earmark'} upload-icon"></i>`;
+                                    }
                                     card.innerHTML = `<div class="upload-thumbnail">${thumbnailHtml}<span class="upload-type-badge">${f.type?.split('/')[1]?.toUpperCase() || 'FILE'}</span></div><div class="upload-info"><div class="upload-name">${f.name}</div><div class="upload-meta"><span>${f.size_formatted}</span></div></div>`;
                                     card.onclick = () => {
                                         if (document.getElementById('fileDownloadLink')) document.getElementById('fileDownloadLink').href = `${API_URL}${f.url}`;
@@ -2413,6 +2513,413 @@ async function showNovidadeSeNecessario() {
 
                 document.querySelectorAll('.sidebar .nav-link[data-bs-target="#sobre"]').forEach(link => { link.addEventListener('click', () => { setTimeout(() => { if (document.getElementById('typingName') && document.getElementById('typingName').innerHTML === '') initAboutPage(); else loadAboutStats(); }, 100); }); });
                 if (document.querySelector('#sobre.tab-pane.active')) setTimeout(initAboutPage, 200);
+            </script>
+
+            <script>
+                // ==================== INRB.ia - CHAT POPUP ====================
+                // Reutiliza API_URL, getAuthHeader() e a mesma lógica de autenticação/comunicação
+                // já definidas no script principal desta página. Nenhum endpoint, token ou
+                // regra de permissão é criado ou alterado aqui.
+                (function () {
+                    const inrbiaFab = document.getElementById('inrbiaFab');
+                    const chatWindow = document.getElementById('inrbiaChatWindow');
+                    const chatBody = document.getElementById('inrbiaChatBody');
+                    const chatInput = document.getElementById('inrbiaChatInput');
+                    const chatSend = document.getElementById('inrbiaChatSend');
+                    const chatClose = document.getElementById('inrbiaChatClose');
+                    const chatAlert = document.getElementById('inrbiaChatAlert');
+                    const typingEl = document.getElementById('inrbiaTyping');
+                    const typingTimerEl = document.getElementById('inrbiaTypingTimer');
+                    const onboarding = document.getElementById('inrbiaOnboarding');
+                    const onboardingClose = document.getElementById('inrbiaOnboardingClose');
+                    const onboardingOk = document.getElementById('inrbiaOnboardingOk');
+                    const spotlightCatcher = document.getElementById('inrbiaSpotlightCatcher');
+                    const cookieOverlay = document.getElementById('inrbiaCookieOverlay');
+                    const cookieAccept = document.getElementById('inrbiaCookieAccept');
+                    const cookieDecline = document.getElementById('inrbiaCookieDecline');
+
+                    if (!inrbiaFab || !chatWindow) return;
+
+                    const HISTORY_KEY = 'inrbiaChatHistory';
+                    const MAX_TURNS = 10;
+                    const TUTORIAL_KEY = 'inrbia_tutorial_seen';
+                    const TUTORIAL_KEY_SESSION = 'inrbia_tutorial_seen_session';
+                    const COOKIE_KEY = 'inrbia_cookie_choice';
+                    const FALLBACK_MESSAGE = 'Desculpe, não consigo responder agora. Tente novamente em alguns instantes.';
+
+                    // ---------- Bia.gif: reproduz a animação a cada 5 segundos ----------
+                    // Reatribui o src com um parâmetro anti-cache para reiniciar o GIF em todos
+                    // os avatares atualmente na tela (botão, cabeçalho do chat e mensagens).
+                    function replayBiaGif() {
+                        document.querySelectorAll('img[data-inrbia-gif]').forEach(function (img) {
+                            img.src = 'img/Bia.gif?r=' + Date.now();
+                        });
+                    }
+                    setInterval(replayBiaGif, 5000);
+
+                    let isSending = false;
+                    let typingInterval = null;
+                    let typingStart = null;
+
+                    // ---------- Sessão / autenticação (mesma regra do sistema) ----------
+                    function hasSession() {
+                        return !!sessionStorage.getItem('adminToken');
+                    }
+
+                    function redirectToLogin() {
+                        sessionStorage.removeItem(HISTORY_KEY);
+                        window.location.replace('index.html');
+                    }
+
+                    // ---------- Histórico (vinculado à sessão autenticada, sem dados sensíveis) ----------
+                    function loadHistory() {
+                        try {
+                            const raw = sessionStorage.getItem(HISTORY_KEY);
+                            return raw ? JSON.parse(raw) : [];
+                        } catch (e) {
+                            return [];
+                        }
+                    }
+
+                    function saveHistory(history) {
+                        try { sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch (e) { }
+                    }
+
+                    function trimHistory(history) {
+                        if (history.length <= MAX_TURNS * 2) return history;
+                        return history.slice(-MAX_TURNS * 2);
+                    }
+
+                    // ---------- Markdown seguro (sem execução de HTML vindo da IA) ----------
+                    function escapeHtml(str) {
+                        return str
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;')
+                            .replace(/'/g, '&#39;');
+                    }
+
+                    function renderMarkdown(raw) {
+                        let text = escapeHtml(raw || '');
+
+                        // links [texto](url) - somente http(s) e mailto
+                        text = text.replace(/\[([^\[\]]+)\]\((https?:\/\/[^\s)]+|mailto:[^\s)]+)\)/g, function (m, label, url) {
+                            return '<a href="' + url + '" target="_blank" rel="noopener noreferrer nofollow">' + label + '</a>';
+                        });
+
+                        // urls soltas
+                        text = text.replace(/(^|[\s])((https?:\/\/)[^\s<]+)/g, function (m, pre, url) {
+                            return pre + '<a href="' + url + '" target="_blank" rel="noopener noreferrer nofollow">' + url + '</a>';
+                        });
+
+                        // negrito / itálico / código
+                        text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                        text = text.replace(/(?:^|[^*])\*([^*\n]+)\*(?!\*)/g, function (m, p1, offset, str) {
+                            const prefixChar = m.charAt(0) === '*' ? '' : m.charAt(0);
+                            return prefixChar + '<em>' + p1 + '</em>';
+                        });
+                        text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+                        // listas
+                        const lines = text.split('\n');
+                        let html = '';
+                        let listType = null;
+                        lines.forEach(function (line) {
+                            const bullet = /^\s*[-*]\s+(.*)$/.exec(line);
+                            const numbered = /^\s*\d+[.)]\s+(.*)$/.exec(line);
+                            if (bullet) {
+                                if (listType !== 'ul') { if (listType) html += '</' + listType + '>'; html += '<ul>'; listType = 'ul'; }
+                                html += '<li>' + bullet[1] + '</li>';
+                            } else if (numbered) {
+                                if (listType !== 'ol') { if (listType) html += '</' + listType + '>'; html += '<ol>'; listType = 'ol'; }
+                                html += '<li>' + numbered[1] + '</li>';
+                            } else {
+                                if (listType) { html += '</' + listType + '>'; listType = null; }
+                                html += (line.length ? line : '') + '<br>';
+                            }
+                        });
+                        if (listType) html += '</' + listType + '>';
+                        return html;
+                    }
+
+                    // ---------- Renderização de mensagens ----------
+                    function appendMessage(role, text) {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'inrbia-msg ' + (role === 'user' ? 'inrbia-msg-user' : 'inrbia-msg-bot');
+
+                        if (role !== 'user') {
+                            const avatar = document.createElement('div');
+                            avatar.className = 'inrbia-msg-avatar';
+                            avatar.innerHTML = '<img src="img/Bia.gif" alt="INRB.ia" data-inrbia-gif="1">';
+                            wrapper.appendChild(avatar);
+                        }
+
+                        const col = document.createElement('div');
+                        col.className = 'inrbia-msg-col';
+
+                        if (role === 'user') {
+                            const userName = sessionStorage.getItem('adminName');
+                            if (userName) {
+                                const nameEl = document.createElement('div');
+                                nameEl.className = 'inrbia-msg-name';
+                                nameEl.textContent = userName;
+                                col.appendChild(nameEl);
+                            }
+                        }
+
+                        const bubble = document.createElement('div');
+                        bubble.className = 'inrbia-msg-bubble';
+                        if (role === 'user') {
+                            bubble.textContent = text;
+                        } else {
+                            bubble.innerHTML = renderMarkdown(text);
+                        }
+                        col.appendChild(bubble);
+                        wrapper.appendChild(col);
+
+                        chatBody.appendChild(wrapper);
+                        chatBody.scrollTop = chatBody.scrollHeight;
+                    }
+
+                    function renderHistory() {
+                        chatBody.innerHTML = '';
+                        const history = loadHistory();
+                        if (!history.length) {
+                            appendMessage('assistant', 'Olá! Eu sou a INRB.ia. Como posso te ajudar hoje?');
+                            return;
+                        }
+                        history.forEach(function (msg) { appendMessage(msg.role, msg.content); });
+                    }
+
+                    function showChatAlert(message) {
+                        chatAlert.textContent = message;
+                        chatAlert.classList.remove('d-none');
+                    }
+
+                    function hideChatAlert() {
+                        chatAlert.classList.add('d-none');
+                        chatAlert.textContent = '';
+                    }
+
+                    // ---------- Estado "digitando..." com contador ----------
+                    function startTyping() {
+                        typingStart = Date.now();
+                        typingEl.classList.remove('d-none');
+                        updateTypingTimer();
+                        typingInterval = setInterval(updateTypingTimer, 1000);
+                        chatBody.scrollTop = chatBody.scrollHeight;
+                    }
+
+                    function updateTypingTimer() {
+                        const seconds = Math.max(1, Math.round((Date.now() - typingStart) / 1000));
+                        typingTimerEl.textContent = 'Pensando... ' + seconds + 's';
+                    }
+
+                    function stopTyping() {
+                        if (typingInterval) { clearInterval(typingInterval); typingInterval = null; }
+                        typingEl.classList.add('d-none');
+                    }
+
+                    function setSending(value) {
+                        isSending = value;
+                        chatInput.disabled = value;
+                        chatSend.disabled = value;
+                    }
+
+                    // ---------- Comunicação com a IA (mesma estrutura/endpoint atual) ----------
+                    async function fetchChat(message, history) {
+                        const token = sessionStorage.getItem('adminToken');
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(function () { controller.abort(); }, 30000);
+
+                        try {
+                            const response = await fetch(`${API_URL}/api/ai/chat`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ message, history }),
+                                signal: controller.signal
+                            });
+
+                            let data = null;
+                            try { data = await response.json(); } catch (e) { data = null; }
+
+                            if (response.status === 401) {
+                                return { unauthorized: true };
+                            }
+
+                            if (!response.ok) {
+                                const backendError = (data && (data.error || data.debug)) ? (data.error || data.debug) : null;
+                                return { error: true, backendError };
+                            }
+
+                            if (!data || typeof data.response !== 'string' || !data.response.trim()) {
+                                const backendError = (data && (data.error || data.debug)) ? (data.error || data.debug) : null;
+                                return { error: true, backendError };
+                            }
+
+                            return { text: data.response };
+                        } catch (error) {
+                            return { error: true };
+                        } finally {
+                            clearTimeout(timeoutId);
+                        }
+                    }
+
+                    async function handleSend() {
+                        if (isSending) return;
+
+                        hideChatAlert();
+                        const message = chatInput.value.trim();
+                        if (!message) return;
+
+                        if (!hasSession()) { redirectToLogin(); return; }
+
+                        let history = trimHistory(loadHistory());
+                        appendMessage('user', message);
+                        history.push({ role: 'user', content: message });
+                        history = trimHistory(history);
+                        saveHistory(history);
+                        chatInput.value = '';
+
+                        setSending(true);
+                        startTyping();
+
+                        const result = await fetchChat(message, history);
+
+                        stopTyping();
+
+                        if (result.unauthorized) {
+                            redirectToLogin();
+                            return;
+                        }
+
+                        if (result.error) {
+                            const errMsg = result.backendError ? ("Erro do servidor: " + result.backendError) : FALLBACK_MESSAGE;
+                            appendMessage('assistant', errMsg);
+                            history.push({ role: 'assistant', content: errMsg });
+                            saveHistory(trimHistory(history));
+                        } else {
+                            appendMessage('assistant', result.text);
+                            history.push({ role: 'assistant', content: result.text });
+                            saveHistory(trimHistory(history));
+                        }
+
+                        setSending(false);
+                        chatInput.focus();
+                    }
+
+                    // ---------- Abrir / fechar popup ----------
+                    function openChat() {
+                        chatWindow.classList.add('is-open');
+                        chatWindow.setAttribute('aria-hidden', 'false');
+                        inrbiaFab.classList.add('is-open');
+                        inrbiaFab.setAttribute('aria-expanded', 'true');
+                        hideOnboarding();
+                        setTimeout(function () { chatInput.focus(); }, 200);
+                    }
+
+                    function closeChat() {
+                        chatWindow.classList.remove('is-open');
+                        chatWindow.setAttribute('aria-hidden', 'true');
+                        inrbiaFab.classList.remove('is-open');
+                        inrbiaFab.setAttribute('aria-expanded', 'false');
+                    }
+
+                    function toggleChat() {
+                        if (chatWindow.classList.contains('is-open')) closeChat();
+                        else openChat();
+                    }
+
+                    // ---------- Apresentação da IA: spotlight destacando o botão flutuante ----------
+                    // Escurece parcialmente a tela e realça o botão da INRB.ia (aparece uma única vez).
+                    function tutorialAlreadySeen() {
+                        return !!(localStorage.getItem(TUTORIAL_KEY) || sessionStorage.getItem(TUTORIAL_KEY_SESSION));
+                    }
+
+                    function showOnboarding() {
+                        if (!onboarding) return;
+                        if (tutorialAlreadySeen()) return;
+                        document.body.classList.add('inrbia-spotlight-on');
+                        if (spotlightCatcher) spotlightCatcher.classList.remove('d-none');
+                        inrbiaFab.classList.add('inrbia-spotlight-target');
+                        onboarding.classList.remove('d-none');
+                    }
+
+                    function hideOnboarding() {
+                        if (!onboarding) return;
+                        onboarding.classList.add('d-none');
+                        document.body.classList.remove('inrbia-spotlight-on');
+                        if (spotlightCatcher) spotlightCatcher.classList.add('d-none');
+                        inrbiaFab.classList.remove('inrbia-spotlight-target');
+                        // Se o usuário recusou os cookies, guardamos "visto" apenas na sessão atual;
+                        // caso contrário, guardamos de forma permanente para não repetir a apresentação.
+                        try {
+                            if (localStorage.getItem(COOKIE_KEY) === 'declined') {
+                                sessionStorage.setItem(TUTORIAL_KEY_SESSION, '1');
+                            } else {
+                                localStorage.setItem(TUTORIAL_KEY, '1');
+                            }
+                        } catch (e) { }
+                    }
+
+                    // ---------- Aviso de cookies: modal centralizado (concordar / recusar) ----------
+                    function showCookieModal() {
+                        if (!cookieOverlay) return;
+                        if (localStorage.getItem(COOKIE_KEY)) return;
+                        cookieOverlay.classList.remove('d-none');
+                        document.body.classList.add('inrbia-modal-open');
+                    }
+
+                    function resolveCookieModal(choice) {
+                        if (!cookieOverlay) return;
+                        cookieOverlay.classList.add('d-none');
+                        document.body.classList.remove('inrbia-modal-open');
+                        try { localStorage.setItem(COOKIE_KEY, choice); } catch (e) { }
+                        // Depois da decisão sobre cookies, mostra a apresentação da IA (se ainda não vista).
+                        setTimeout(showOnboarding, 350);
+                    }
+
+                    // ---------- Listeners ----------
+                    inrbiaFab.addEventListener('click', toggleChat);
+                    chatClose.addEventListener('click', closeChat);
+                    chatSend.addEventListener('click', handleSend);
+                    chatInput.addEventListener('keydown', function (event) {
+                        if (event.key === 'Enter' && !event.shiftKey) {
+                            event.preventDefault();
+                            handleSend();
+                        }
+                    });
+
+                    if (onboardingClose) onboardingClose.addEventListener('click', hideOnboarding);
+                    if (onboardingOk) onboardingOk.addEventListener('click', hideOnboarding);
+                    if (spotlightCatcher) spotlightCatcher.addEventListener('click', hideOnboarding);
+                    if (cookieAccept) cookieAccept.addEventListener('click', function () { resolveCookieModal('accepted'); });
+                    if (cookieDecline) cookieDecline.addEventListener('click', function () { resolveCookieModal('declined'); });
+
+                    // ---------- Inicialização ----------
+                    function initInrbia() {
+                        if (!hasSession()) return; // não carrega o chat nem inicia chamadas sem autenticação
+                        renderHistory();
+
+                        // Ordem: primeiro o aviso de cookies (se ainda não respondido);
+                        // depois de resolvido, a apresentação em spotlight da IA.
+                        if (!localStorage.getItem(COOKIE_KEY)) {
+                            setTimeout(showCookieModal, 500);
+                        } else {
+                            setTimeout(showOnboarding, 900);
+                        }
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initInrbia);
+                    } else {
+                        initInrbia();
+                    }
+                })();
             </script>
 </body>
 
