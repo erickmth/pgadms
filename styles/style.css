@@ -3722,11 +3722,14 @@ img {
 }
 
 .inrbia-chat-title {
-    font-weight: 600;
+    font-weight: 400;
     font-size: 15px;
     line-height: 1.2;
 }
 
+.inrbia-chat-title .bia-bold {
+    font-weight: 700;
+}
 .inrbia-chat-status {
     font-size: 12px;
     opacity: 0.9;

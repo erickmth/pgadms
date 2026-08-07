@@ -997,7 +997,7 @@
                     <div class="inrbia-chat-header-info">
                         <div class="inrbia-chat-avatar"><img src="img/Bia.gif" alt="INRB.ia" data-inrbia-gif="1"></div>
                         <div class="inrbia-chat-header-text">
-                            <div class="inrbia-chat-title">INRB.ia (Bia) - Versão Teste</div>
+                           <div class="inrbia-chat-title">INR<strong>B.ia</strong> - V2</div>
                             <div class="inrbia-chat-status"><span class="inrbia-status-dot"></span> Online</div>
                         </div>
                     </div>
@@ -2541,6 +2541,7 @@ async function showNovidadeSeNecessario() {
                     if (!inrbiaFab || !chatWindow) return;
 
                     const HISTORY_KEY = 'inrbiaChatHistory';
+                    const CONVERSATION_ID_KEY = 'inrbiaChatConversationId';
                     const MAX_TURNS = 10;
                     const TUTORIAL_KEY = 'inrbia_tutorial_seen';
                     const TUTORIAL_KEY_SESSION = 'inrbia_tutorial_seen_session';
@@ -2568,6 +2569,7 @@ async function showNovidadeSeNecessario() {
 
                     function redirectToLogin() {
                         sessionStorage.removeItem(HISTORY_KEY);
+                        clearConversationId();
                         window.location.replace('index.html');
                     }
 
@@ -2583,6 +2585,18 @@ async function showNovidadeSeNecessario() {
 
                     function saveHistory(history) {
                         try { sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch (e) { }
+                    }
+
+                    function loadConversationId() {
+                        return sessionStorage.getItem(CONVERSATION_ID_KEY) || '';
+                    }
+
+                    function saveConversationId(id) {
+                        try { sessionStorage.setItem(CONVERSATION_ID_KEY, id); } catch (e) { }
+                    }
+
+                    function clearConversationId() {
+                        sessionStorage.removeItem(CONVERSATION_ID_KEY);
                     }
 
                     function trimHistory(history) {
@@ -2740,7 +2754,14 @@ async function showNovidadeSeNecessario() {
                                     'Content-Type': 'application/json',
                                     'Authorization': `Bearer ${token}`
                                 },
-                                body: JSON.stringify({ message, history }),
+                                body: JSON.stringify({
+                                message,
+                                history,
+                                conversation_id: loadConversationId(),
+                                user_name: sessionStorage.getItem('adminName') || 'Admin',
+                                platform: 'Painel Admin',
+                                model: 'INRB.ia'
+                            }),
                                 signal: controller.signal
                             });
 
@@ -2761,6 +2782,9 @@ async function showNovidadeSeNecessario() {
                                 return { error: true, backendError };
                             }
 
+                            if (data && data.conversation_id) {
+                                saveConversationId(data.conversation_id);
+                            }
                             return { text: data.response };
                         } catch (error) {
                             return { error: true };
