@@ -1,0 +1,3849 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel — Formulários de ONGs</title>
+
+<style>
+  :root{
+    --primary:#2f5d50;
+    --primary-dark:#234840;
+    --bg:#f2f1ec;
+    --card:#ffffff;
+    --border:#e2e0da;
+    --text:#26261f;
+    --muted:#6f6d66;
+    --danger:#c0392b;
+    --danger-bg:#fdecea;
+    --success:#1f7a4d;
+    --success-bg:#e8f6ee;
+    --radius:12px;
+    --sidebar-w:220px;
+  }
+
+  *{
+    box-sizing:border-box;
+  }
+
+  html,
+  body{
+    margin:0;
+    width:100%;
+    min-height:100%;
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Helvetica,
+      Arial,
+      sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+
+  body{
+    min-height:100vh;
+  }
+
+  button,
+  input,
+  textarea,
+  select{
+    font:inherit;
+  }
+
+  button{
+    cursor:pointer;
+  }
+
+  .hidden{
+    display:none !important;
+  }
+
+  /* =========================================================
+     LOGIN
+     ========================================================= */
+
+  #login-screen{
+    min-height:100vh;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+
+  .login-box{
+    background:var(--card);
+    padding:36px;
+    border-radius:var(--radius);
+    border:1px solid var(--border);
+    width:min(380px,100%);
+    box-shadow:0 12px 40px rgba(0,0,0,.08);
+  }
+
+  .login-box h2{
+    margin:0 0 8px;
+    color:var(--primary-dark);
+  }
+
+  .login-box p{
+    margin:0 0 24px;
+    color:var(--muted);
+  }
+
+  .login-box input{
+    width:100%;
+    padding:12px 13px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    margin-bottom:12px;
+    font-size:1rem;
+    outline:none;
+  }
+
+  .login-box input:focus{
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(47,93,80,.10);
+  }
+
+  .login-box button{
+    width:100%;
+    padding:12px;
+    background:var(--primary);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-weight:600;
+  }
+
+  .login-box button:hover{
+    background:var(--primary-dark);
+  }
+
+  .login-error{
+    display:none;
+    background:var(--danger-bg);
+    color:var(--danger);
+    border-radius:8px;
+    padding:10px 12px;
+    margin-top:12px;
+    font-size:.9rem;
+  }
+
+  /* =========================================================
+     APP
+     ========================================================= */
+
+  #app-screen{
+    display:none;
+    min-height:100vh;
+  }
+
+  .layout{
+    display:flex;
+    min-height:100vh;
+    width:100%;
+  }
+
+  .sidebar{
+    width:var(--sidebar-w);
+    min-height:100vh;
+    background:var(--primary-dark);
+    color:#fff;
+    flex-shrink:0;
+    padding:22px 0;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .sidebar h1{
+    font-size:1.05rem;
+    padding:0 20px 18px;
+    margin:0;
+    border-bottom:1px solid rgba(255,255,255,.15);
+  }
+
+  .nav{
+    margin-top:12px;
+  }
+
+  .nav-item{
+    display:block;
+    width:100%;
+    padding:12px 20px;
+    cursor:pointer;
+    opacity:.8;
+    font-size:.95rem;
+    color:#fff;
+    background:none;
+    border:0;
+    text-align:left;
+  }
+
+  .nav-item:hover{
+    opacity:1;
+    background:rgba(255,255,255,.06);
+  }
+
+  .nav-item.active{
+    opacity:1;
+    background:rgba(255,255,255,.12);
+    border-left:3px solid #fff;
+  }
+
+  .logout{
+    margin-top:auto;
+    padding:16px;
+  }
+
+  .logout button{
+    width:100%;
+    padding:10px;
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:8px;
+  }
+
+  .logout button:hover{
+    background:rgba(255,255,255,.15);
+  }
+
+  .main{
+    flex:1;
+    min-width:0;
+    padding:28px 32px;
+    overflow-x:auto;
+  }
+
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+
+  .topbar h2{
+    margin:0;
+    color:var(--primary-dark);
+  }
+
+  /* =========================================================
+     BUTTONS
+     ========================================================= */
+
+  .btn{
+    padding:9px 16px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    background:#fff;
+    color:var(--text);
+    cursor:pointer;
+    font-size:.9rem;
+    font-weight:500;
+  }
+
+  .btn:hover{
+    background:#f7f7f4;
+  }
+
+  .btn-primary{
+    background:var(--primary);
+    color:#fff;
+    border-color:var(--primary);
+  }
+
+  .btn-primary:hover{
+    background:var(--primary-dark);
+  }
+
+  .btn-danger{
+    color:var(--danger);
+    border-color:#eccfcb;
+  }
+
+  .btn-danger:hover{
+    background:var(--danger-bg);
+  }
+
+  .btn-sm{
+    padding:6px 10px;
+    font-size:.82rem;
+  }
+
+  /* =========================================================
+     DASHBOARD
+     ========================================================= */
+
+  .cards-row{
+    display:flex;
+    gap:16px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+
+  .stat-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px 22px;
+    min-width:190px;
+    flex:1;
+    box-shadow:0 2px 8px rgba(0,0,0,.03);
+  }
+
+  .stat-card .num{
+    font-size:1.8rem;
+    font-weight:700;
+    color:var(--primary-dark);
+  }
+
+  .stat-card .label{
+    color:var(--muted);
+    font-size:.85rem;
+    margin-top:4px;
+  }
+
+  /* =========================================================
+     TABLE
+     ========================================================= */
+
+  .table-wrap{
+    width:100%;
+    overflow-x:auto;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--card);
+    border-radius:var(--radius);
+    overflow:hidden;
+    border:1px solid var(--border);
+  }
+
+  th,
+  td{
+    text-align:left;
+    padding:12px 14px;
+    border-bottom:1px solid var(--border);
+    font-size:.92rem;
+    vertical-align:middle;
+  }
+
+  th{
+    background:#f7f6f2;
+    color:var(--muted);
+    font-weight:600;
+    font-size:.8rem;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+  }
+
+  tr:last-child td{
+    border-bottom:none;
+  }
+
+  .badge{
+    display:inline-block;
+    padding:3px 10px;
+    border-radius:20px;
+    font-size:.78rem;
+    font-weight:600;
+  }
+
+  .badge-active{
+    background:var(--success-bg);
+    color:var(--success);
+  }
+
+  .badge-inactive{
+    background:#eee;
+    color:var(--muted);
+  }
+
+  .actions-cell{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+
+  .empty{
+    text-align:center;
+    padding:35px;
+    color:var(--muted);
+  }
+
+  /* =========================================================
+     FIELDS
+     ========================================================= */
+
+  .field{
+    margin-bottom:16px;
+  }
+
+  .field label{
+    display:block;
+    font-weight:600;
+    margin-bottom:6px;
+    font-size:.9rem;
+  }
+
+  .field input[type="text"],
+  .field textarea,
+  .field select{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-family:inherit;
+    font-size:.95rem;
+    outline:none;
+    background:#fff;
+  }
+
+  .field input[type="text"]:focus,
+  .field textarea:focus,
+  .field select:focus{
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(47,93,80,.08);
+  }
+
+  .field textarea{
+    min-height:90px;
+    resize:vertical;
+  }
+
+  /* =========================================================
+     MODAIS
+     
+     IMPORTANTE:
+     O modal agora é controlado por viewport.
+     Não usa align-items:flex-start.
+     ========================================================= */
+
+  .modal-bg{
+    position:fixed !important;
+    inset:0 !important;
+
+    width:100vw !important;
+    height:100vh !important;
+
+    display:none;
+
+    align-items:center !important;
+    justify-content:center !important;
+
+    padding:24px !important;
+
+    background:rgba(20,30,24,.62);
+
+    backdrop-filter:blur(5px);
+
+    overflow:hidden !important;
+
+    z-index:9999 !important;
+  }
+
+  .modal-bg.show{
+    display:flex !important;
+  }
+
+  .modal{
+    position:relative !important;
+
+    width:min(1400px, calc(100vw - 48px)) !important;
+    max-width:1400px !important;
+
+    height:min(900px, calc(100vh - 48px)) !important;
+    max-height:calc(100vh - 48px) !important;
+
+    margin:0 !important;
+
+    padding:28px !important;
+
+    background:var(--card);
+
+    border-radius:16px;
+
+    box-shadow:
+      0 30px 80px rgba(0,0,0,.25),
+      0 10px 30px rgba(0,0,0,.12);
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    animation:modalIn .18s ease-out;
+  }
+
+  @keyframes modalIn{
+    from{
+      opacity:0;
+      transform:translateY(8px) scale(.985);
+    }
+
+    to{
+      opacity:1;
+      transform:translateY(0) scale(1);
+    }
+  }
+
+  .modal h3{
+    margin:0;
+    color:var(--primary-dark);
+  }
+
+  /* =========================================================
+     EDITOR
+     ========================================================= */
+
+  #editorModal .modal{
+    display:flex;
+    flex-direction:column;
+  }
+
+  #editorModal .editor-header{
+    flex-shrink:0;
+  }
+
+  .editor-grid{
+    display:grid;
+
+    grid-template-columns:
+      minmax(0, 1.15fr)
+      minmax(380px, .85fr);
+
+    gap:28px;
+
+    width:100%;
+    min-height:0;
+
+    flex:1;
+
+    margin-top:6px;
+  }
+
+  .editor-left{
+    min-width:0;
+    overflow-y:auto;
+    padding-right:4px;
+  }
+
+  .editor-right{
+    min-width:0;
+    min-height:0;
+  }
+
+  .add-q-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:10px 0 18px;
+  }
+
+  .add-q-row .btn{
+    background:#f7f8f6;
+  }
+
+  .add-q-row .btn:hover{
+    background:#eef2ee;
+  }
+
+  .qcard{
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:12px;
+    background:#fbfaf7;
+  }
+
+  .qcard-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+  }
+
+  .qtype-tag{
+    font-size:.75rem;
+    background:#e6e3da;
+    color:var(--primary-dark);
+    padding:3px 9px;
+    border-radius:10px;
+    font-weight:600;
+  }
+
+  .qopts{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:10px;
+    font-size:.85rem;
+  }
+
+  .qopts label{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-weight:400;
+  }
+
+  .choice-row{
+    display:flex;
+    gap:6px;
+    margin-bottom:7px;
+  }
+
+  .choice-row input{
+    flex:1;
+    min-width:0;
+    padding:9px 10px;
+    border:1px solid var(--border);
+    border-radius:8px;
+  }
+
+  .preview-pane{
+    background:#fdfdfb;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:22px;
+
+    width:100%;
+    height:100%;
+
+    min-height:400px;
+    max-height:none;
+
+    overflow-y:auto;
+
+    position:sticky;
+    top:0;
+  }
+
+  .preview-pane h4{
+    margin:0 0 16px;
+    color:var(--primary-dark);
+  }
+
+  .preview-q{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:15px;
+    margin:14px 0;
+  }
+
+  .preview-q label{
+    display:block;
+    font-weight:600;
+    margin-bottom:8px;
+  }
+
+  .preview-q .d{
+    color:var(--muted);
+    margin-bottom:8px;
+    white-space:pre-wrap;
+  }
+
+  .preview-q input,
+  .preview-q textarea{
+    width:100%;
+    padding:9px 10px;
+    border:1px solid var(--border);
+    border-radius:8px;
+  }
+
+  .preview-q textarea{
+    min-height:80px;
+  }
+
+  .editor-footer{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px solid var(--border);
+    flex-shrink:0;
+  }
+
+  /* =========================================================
+     RESPONSE MODAL
+     ========================================================= */
+
+  #responseModal .modal{
+    width:min(900px, calc(100vw - 48px)) !important;
+    max-width:900px !important;
+    height:auto !important;
+    max-height:calc(100vh - 48px) !important;
+  }
+
+  .response-detail-q{
+    padding:14px 0;
+    border-bottom:1px solid var(--border);
+  }
+
+  .response-detail-q:last-child{
+    border-bottom:none;
+  }
+
+  .file-download{
+    display:inline-block;
+    margin-top:6px;
+    color:var(--primary);
+    text-decoration:none;
+    font-weight:600;
+  }
+
+  .file-download:hover{
+    text-decoration:underline;
+  }
+
+  /* =========================================================
+     TOAST
+     ========================================================= */
+
+  .toast{
+    position:fixed;
+    right:24px;
+    bottom:24px;
+
+    background:#1f2a24;
+    color:#fff;
+
+    padding:14px 20px;
+
+    border-radius:10px;
+
+    display:none;
+
+    z-index:20000;
+
+    max-width:420px;
+
+    font-weight:500;
+
+    box-shadow:0 8px 24px rgba(0,0,0,.15);
+  }
+
+  .toast.show{
+    display:block;
+    animation:toastIn .2s ease-out;
+  }
+
+  .toast.error{
+    background:var(--danger);
+  }
+
+  @keyframes toastIn{
+    from{
+      opacity:0;
+      transform:translateY(8px);
+    }
+
+    to{
+      opacity:1;
+      transform:translateY(0);
+    }
+  }
+
+  /* =========================================================
+     RESPONSIVIDADE
+     ========================================================= */
+
+  @media(max-width:1100px){
+
+    .editor-grid{
+      grid-template-columns:1fr;
+    }
+
+    .preview-pane{
+      position:static;
+      height:450px;
+      min-height:450px;
+    }
+
+    #editorModal .modal{
+      height:calc(100vh - 32px) !important;
+      max-height:calc(100vh - 32px) !important;
+      width:calc(100vw - 32px) !important;
+    }
+  }
+
+  @media(max-width:850px){
+
+    .layout{
+      flex-direction:column;
+    }
+
+    .sidebar{
+      width:100%;
+      min-height:auto;
+      padding:12px 0;
+    }
+
+    .sidebar h1{
+      padding:0 16px 12px;
+    }
+
+    .nav{
+      display:flex;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    .nav-item{
+      width:auto;
+      padding:9px 14px;
+    }
+
+    .logout{
+      padding:8px 14px;
+    }
+
+    .main{
+      padding:20px;
+    }
+  }
+
+  @media(max-width:600px){
+
+    #login-screen{
+      padding:16px;
+    }
+
+    .login-box{
+      padding:26px 20px;
+    }
+
+    .main{
+      padding:16px;
+    }
+
+    .modal-bg{
+      padding:10px !important;
+    }
+
+    .modal{
+      width:calc(100vw - 20px) !important;
+      height:calc(100vh - 20px) !important;
+      max-height:calc(100vh - 20px) !important;
+      padding:18px !important;
+      border-radius:12px;
+    }
+
+    #responseModal .modal{
+      width:calc(100vw - 20px) !important;
+      max-width:none !important;
+    }
+
+    .editor-grid{
+      grid-template-columns:1fr;
+    }
+
+    .preview-pane{
+      height:350px;
+      min-height:350px;
+    }
+
+    .editor-footer{
+      flex-direction:column;
+    }
+
+    .editor-footer .btn{
+      width:100%;
+    }
+
+    .actions-cell{
+      flex-direction:column;
+      align-items:stretch;
+    }
+
+    .actions-cell .btn{
+      width:100%;
+    }
+
+    .toast{
+      left:12px;
+      right:12px;
+      bottom:12px;
+      max-width:none;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     LOGIN
+     ========================================================= -->
+
+<div id="login-screen">
+
+  <div class="login-box">
+
+    <h2>Painel administrativo</h2>
+
+    <p>
+      Sistema de formulários de ONGs
+    </p>
+
+    <input
+      type="password"
+      id="loginPassword"
+      placeholder="Senha administrativa"
+      autocomplete="current-password"
+    >
+
+    <button onclick="doLogin()">
+      Entrar
+    </button>
+
+    <div
+      class="login-error"
+      id="loginError"
+    >
+      Senha incorreta.
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     APPLICATION
+     ========================================================= -->
+
+<div id="app-screen">
+
+  <div class="layout">
+
+    <aside class="sidebar">
+
+      <h1>
+        Formulários de ONGs
+      </h1>
+
+      <div class="nav">
+
+        <button
+          class="nav-item active"
+          data-view="dashboard"
+        >
+          Dashboard
+        </button>
+
+        <button
+          class="nav-item"
+          data-view="forms"
+        >
+          Formulários
+        </button>
+
+        <button
+          class="nav-item"
+          data-view="responses"
+        >
+          Respostas
+        </button>
+
+      </div>
+
+      <div class="logout">
+
+        <button onclick="logout()">
+          Sair
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <main
+      class="main"
+      id="mainContent"
+    >
+    </main>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     EDITOR MODAL
+     ========================================================= -->
+
+<div
+  class="modal-bg"
+  id="editorModal"
+>
+
+  <div class="modal">
+
+    <div class="topbar editor-header">
+
+      <h2 id="editorTitle">
+        Novo formulário
+      </h2>
+
+      <button
+        class="btn"
+        onclick="closeEditor()"
+      >
+        Fechar
+      </button>
+
+    </div>
+
+
+    <div class="editor-grid">
+
+      <!-- ===================================================
+           EDITOR
+           =================================================== -->
+
+      <div class="editor-left">
+
+        <div class="field">
+
+          <label for="fTitle">
+            Título
+          </label>
+
+          <input
+            type="text"
+            id="fTitle"
+            placeholder="Ex.: Inscrição de organizações"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="fDescription">
+            Descrição
+          </label>
+
+          <textarea
+            id="fDescription"
+            placeholder="Descrição do formulário"
+          ></textarea>
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="fImage">
+            Imagem do cabeçalho
+          </label>
+
+          <input
+            id="fImage"
+            type="file"
+            accept="image/*"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Perguntas
+          </label>
+
+        </div>
+
+
+        <div class="add-q-row">
+
+          <button
+            class="btn btn-sm"
+            onclick="addQuestion('short_text')"
+          >
+            + Texto curto
+          </button>
+
+          <button
+            class="btn btn-sm"
+            onclick="addQuestion('long_text')"
+          >
+            + Texto longo
+          </button>
+
+          <button
+            class="btn btn-sm"
+            onclick="addQuestion('multiple_choice')"
+          >
+            + Múltipla escolha
+          </button>
+
+          <button
+            class="btn btn-sm"
+            onclick="addQuestion('pdf_file')"
+          >
+            + Arquivo PDF
+          </button>
+
+          <button
+            class="btn btn-sm"
+            onclick="addQuestion('text_block')"
+          >
+            + Bloco de texto
+          </button>
+
+        </div>
+
+
+        <div id="questionsList"></div>
+
+      </div>
+
+
+      <!-- ===================================================
+           PREVIEW
+           =================================================== -->
+
+      <div class="editor-right">
+
+        <div
+          class="preview-pane"
+          id="previewPane"
+        >
+          <h4>Preview</h4>
+
+          <p style="color:var(--muted);">
+            A pré-visualização aparecerá aqui.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="editor-footer">
+
+      <button
+        class="btn"
+        onclick="closeEditor()"
+      >
+        Cancelar
+      </button>
+
+      <button
+        class="btn btn-primary"
+        onclick="saveForm()"
+      >
+        Salvar formulário
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     RESPONSE MODAL
+     ========================================================= -->
+
+<div
+  class="modal-bg"
+  id="responseModal"
+>
+
+  <div class="modal">
+
+    <div class="topbar">
+
+      <h3 id="responseTitle">
+        Resposta
+      </h3>
+
+      <button
+        class="btn"
+        onclick="closeResponseModal()"
+      >
+        Fechar
+      </button>
+
+    </div>
+
+    <div id="responseBody"></div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     TOAST
+     ========================================================= -->
+
+<div
+  class="toast"
+  id="toast"
+></div>
+
+
+<script>
+
+/* ============================================================
+   CONFIGURAÇÃO
+   ============================================================ */
+
+const API_BASE =
+  "https://banco.pythonanywhere.com";
+
+const FORM_FRONTEND_URL =
+  "https://adminescala.vercel.app/forms-osc/forms.html";
+
+
+let ADMIN_PASSWORD = "";
+
+let currentView =
+  "dashboard";
+
+let editingFormId =
+  null;
+
+let editorQuestions =
+  [];
+
+let editorImageData =
+  null;
+
+
+/* ============================================================
+   API
+   ============================================================ */
+
+function api(path, opts){
+
+  opts =
+    opts || {};
+
+  opts.headers =
+    Object.assign(
+      {},
+      opts.headers,
+      {
+        "X-Admin-Password":
+          ADMIN_PASSWORD
+      }
+    );
+
+  return fetch(
+    `${API_BASE}${path}`,
+    opts
+  );
+}
+
+
+/* ============================================================
+   UTILITÁRIOS
+   ============================================================ */
+
+function showToast(
+  msg,
+  isError
+){
+
+  const toast =
+    document.getElementById("toast");
+
+  toast.textContent =
+    msg;
+
+  toast.className =
+    "toast show" +
+    (
+      isError
+        ? " error"
+        : ""
+    );
+
+  clearTimeout(
+    window.__toastTimer
+  );
+
+  window.__toastTimer =
+    setTimeout(
+      () => {
+        toast.classList.remove(
+          "show"
+        );
+      },
+      3500
+    );
+}
+
+
+function escapeHtml(s){
+
+  return String(
+    s ?? ""
+  ).replace(
+    /[&<>"']/g,
+    c =>
+      ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+      }[c])
+  );
+}
+
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+
+async function doLogin(){
+
+  const password =
+    document
+      .getElementById(
+        "loginPassword"
+      )
+      .value;
+
+  if (!password){
+
+    document
+      .getElementById(
+        "loginError"
+      )
+      .textContent =
+        "Informe a senha.";
+
+    document
+      .getElementById(
+        "loginError"
+      )
+      .style.display =
+        "block";
+
+    return;
+  }
+
+  try{
+
+    const response =
+      await fetch(
+        `${API_BASE}/api/auth/login`,
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:JSON.stringify({
+            password
+          })
+        }
+      );
+
+    if(response.ok){
+
+      ADMIN_PASSWORD =
+        password;
+
+      sessionStorage.setItem(
+        "forms_admin_password",
+        password
+      );
+
+      document
+        .getElementById(
+          "login-screen"
+        )
+        .style.display =
+        "none";
+
+      document
+        .getElementById(
+          "app-screen"
+        )
+        .style.display =
+        "block";
+
+      document
+        .getElementById(
+          "loginError"
+        )
+        .style.display =
+        "none";
+
+      setupNav();
+
+      navigate(
+        "dashboard"
+      );
+
+    }else{
+
+      document
+        .getElementById(
+          "loginError"
+        )
+        .textContent =
+        "Senha incorreta.";
+
+      document
+        .getElementById(
+          "loginError"
+        )
+        .style.display =
+        "block";
+    }
+
+  }catch(error){
+
+    document
+      .getElementById(
+        "loginError"
+      )
+      .textContent =
+      "Não foi possível conectar à API.";
+
+    document
+      .getElementById(
+        "loginError"
+      )
+      .style.display =
+      "block";
+  }
+}
+
+
+function logout(){
+
+  ADMIN_PASSWORD =
+    "";
+
+  sessionStorage.removeItem(
+    "forms_admin_password"
+  );
+
+  document
+    .getElementById(
+      "app-screen"
+    )
+    .style.display =
+    "none";
+
+  document
+    .getElementById(
+      "login-screen"
+    )
+    .style.display =
+    "flex";
+
+  document
+    .getElementById(
+      "loginPassword"
+    )
+    .value =
+    "";
+}
+
+
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
+
+function setupNav(){
+
+  document
+    .querySelectorAll(
+      ".nav-item"
+    )
+    .forEach(
+      item => {
+
+        item.addEventListener(
+          "click",
+          () => {
+
+            navigate(
+              item.dataset.view
+            );
+
+          }
+        );
+
+      }
+    );
+}
+
+
+function navigate(view){
+
+  currentView =
+    view;
+
+  document
+    .querySelectorAll(
+      ".nav-item"
+    )
+    .forEach(
+      item => {
+
+        item.classList.toggle(
+          "active",
+          item.dataset.view ===
+            view
+        );
+
+      }
+    );
+
+
+  if(
+    view ===
+    "dashboard"
+  ){
+
+    renderDashboard();
+
+  }
+
+  if(
+    view ===
+    "forms"
+  ){
+
+    renderFormsList();
+
+  }
+
+  if(
+    view ===
+    "responses"
+  ){
+
+    renderResponsesList();
+
+  }
+
+}
+
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+
+async function renderDashboard(){
+
+  const main =
+    document.getElementById(
+      "mainContent"
+    );
+
+  main.innerHTML = `
+    <div class="topbar">
+      <h2>Dashboard</h2>
+    </div>
+
+    <div
+      class="cards-row"
+      id="statCards"
+    ></div>
+  `;
+
+
+  try{
+
+    const response =
+      await api(
+        "/api/dashboard"
+      );
+
+    if(!response.ok){
+
+      throw new Error(
+        "Erro ao carregar dashboard"
+      );
+
+    }
+
+    const data =
+      await response.json();
+
+
+    document.getElementById(
+      "statCards"
+    ).innerHTML = `
+
+      <div class="stat-card">
+
+        <div class="num">
+          ${data.total_forms ?? 0}
+        </div>
+
+        <div class="label">
+          Formulários cadastrados
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="num">
+          ${
+            data.active_form
+              ? "1"
+              : "0"
+          }
+        </div>
+
+        <div class="label">
+
+          Formulário ativo
+
+          ${
+            data.active_form
+              ? ": " +
+                escapeHtml(
+                  data.active_form.title
+                )
+              : ""
+          }
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="num">
+          ${data.total_responses ?? 0}
+        </div>
+
+        <div class="label">
+          Respostas recebidas
+        </div>
+
+      </div>
+
+    `;
+
+  }catch(error){
+
+    showToast(
+      "Erro ao carregar dashboard.",
+      true
+    );
+
+  }
+}
+
+
+/* ============================================================
+   FORMULÁRIOS
+   ============================================================ */
+
+async function renderFormsList(){
+
+  const main =
+    document.getElementById(
+      "mainContent"
+    );
+
+
+  main.innerHTML = `
+
+    <div class="topbar">
+
+      <h2>
+        Formulários
+      </h2>
+
+      <button
+        class="btn btn-primary"
+        onclick="openEditor()"
+      >
+        + Novo formulário
+      </button>
+
+    </div>
+
+
+    <div class="table-wrap">
+
+      <table id="formsTable">
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Nome
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Criado em
+            </th>
+
+            <th>
+              Ações
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <tr>
+
+            <td
+              colspan="4"
+              class="empty"
+            >
+              Carregando…
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+
+  try{
+
+    const response =
+      await api(
+        "/api/forms"
+      );
+
+    if(!response.ok){
+
+      throw new Error(
+        "Erro"
+      );
+
+    }
+
+    const forms =
+      await response.json();
+
+    const tbody =
+      main.querySelector(
+        "tbody"
+      );
+
+
+    if(
+      !forms.length
+    ){
+
+      tbody.innerHTML = `
+
+        <tr>
+
+          <td
+            colspan="4"
+            class="empty"
+          >
+            Nenhum formulário
+            cadastrado ainda.
+          </td>
+
+        </tr>
+
+      `;
+
+      return;
+    }
+
+
+    tbody.innerHTML =
+      forms.map(
+        form => `
+
+          <tr>
+
+            <td>
+              ${escapeHtml(
+                form.title
+              )}
+            </td>
+
+
+            <td>
+
+              ${
+                form.status ===
+                "active"
+
+                  ? `
+                    <span
+                      class="badge badge-active"
+                    >
+                      Ativo
+                    </span>
+                  `
+
+                  : `
+                    <span
+                      class="badge badge-inactive"
+                    >
+                      Inativo
+                    </span>
+                  `
+              }
+
+            </td>
+
+
+            <td>
+              ${
+                (
+                  form.created_at ||
+                  ""
+                ).slice(0,10)
+              }
+            </td>
+
+
+            <td>
+
+              <div
+                class="actions-cell"
+              >
+
+                <button
+                  class="btn btn-sm"
+                  onclick="openEditor('${form.id}')"
+                >
+                  Editar
+                </button>
+
+
+                <button
+                  class="btn btn-sm"
+                  onclick="viewFormLink('${form.public_token}')"
+                >
+                  Copiar link
+                </button>
+
+
+                <button
+                  class="btn btn-sm"
+                  onclick="duplicateForm('${form.id}')"
+                >
+                  Duplicar
+                </button>
+
+
+                ${
+                  form.status ===
+                  "active"
+
+                    ? `
+                      <button
+                        class="btn btn-sm"
+                        onclick="deactivateForm('${form.id}')"
+                      >
+                        Desativar
+                      </button>
+                    `
+
+                    : `
+                      <button
+                        class="btn btn-sm btn-primary"
+                        onclick="activateForm('${form.id}')"
+                      >
+                        Ativar
+                      </button>
+                    `
+                }
+
+
+                <button
+                  class="btn btn-sm btn-danger"
+                  onclick="deleteForm('${form.id}', '${escapeHtml(form.title).replace(/'/g,"\\'")}')"
+                >
+                  Excluir
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        `
+      ).join("");
+
+
+  }catch(error){
+
+    showToast(
+      "Erro ao carregar formulários.",
+      true
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   LINK
+   ============================================================ */
+
+function viewFormLink(token){
+
+  const url =
+    `${FORM_FRONTEND_URL}?token=${token}`;
+
+
+  if(
+    navigator.clipboard &&
+    navigator.clipboard.writeText
+  ){
+
+    navigator.clipboard
+      .writeText(url)
+      .then(
+        () => {
+
+          showToast(
+            "Link copiado!"
+          );
+
+        }
+      )
+      .catch(
+        () => {
+
+          prompt(
+            "Copie o link:",
+            url
+          );
+
+        }
+      );
+
+  }else{
+
+    prompt(
+      "Copie o link:",
+      url
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   ATIVAR / DESATIVAR
+   ============================================================ */
+
+async function activateForm(id){
+
+  try{
+
+    const response =
+      await api(
+        `/api/forms/${id}/activate`,
+        {
+          method:"POST"
+        }
+      );
+
+
+    if(response.ok){
+
+      showToast(
+        "Formulário ativado. Os demais foram desativados automaticamente."
+      );
+
+      renderFormsList();
+
+    }else{
+
+      const data =
+        await response.json()
+          .catch(
+            () => ({})
+          );
+
+      showToast(
+        data.error ||
+        "Erro ao ativar formulário.",
+        true
+      );
+
+    }
+
+  }catch(error){
+
+    showToast(
+      "Erro de conexão.",
+      true
+    );
+
+  }
+
+}
+
+
+async function deactivateForm(id){
+
+  try{
+
+    const response =
+      await api(
+        `/api/forms/${id}/deactivate`,
+        {
+          method:"POST"
+        }
+      );
+
+
+    if(response.ok){
+
+      showToast(
+        "Formulário desativado."
+      );
+
+      renderFormsList();
+
+    }else{
+
+      showToast(
+        "Erro ao desativar formulário.",
+        true
+      );
+
+    }
+
+  }catch(error){
+
+    showToast(
+      "Erro de conexão.",
+      true
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   DUPLICAR
+   ============================================================ */
+
+async function duplicateForm(id){
+
+  try{
+
+    const response =
+      await api(
+        `/api/forms/${id}/duplicate`,
+        {
+          method:"POST"
+        }
+      );
+
+
+    if(response.ok){
+
+      showToast(
+        "Formulário duplicado."
+      );
+
+      renderFormsList();
+
+    }else{
+
+      showToast(
+        "Erro ao duplicar formulário.",
+        true
+      );
+
+    }
+
+  }catch(error){
+
+    showToast(
+      "Erro de conexão.",
+      true
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   EXCLUIR
+   ============================================================ */
+
+async function deleteForm(
+  id,
+  title
+){
+
+  if(
+    !confirm(
+      `Excluir o formulário "${title}"? As respostas já recebidas serão preservadas.`
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    const response =
+      await api(
+        `/api/forms/${id}`,
+        {
+          method:"DELETE"
+        }
+      );
+
+
+    if(response.ok){
+
+      showToast(
+        "Formulário excluído."
+      );
+
+      renderFormsList();
+
+    }else{
+
+      const data =
+        await response.json()
+          .catch(
+            () => ({})
+          );
+
+      showToast(
+        data.error ||
+        "Erro ao excluir formulário.",
+        true
+      );
+
+    }
+
+  }catch(error){
+
+    showToast(
+      "Erro de conexão.",
+      true
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   EDITOR
+   ============================================================ */
+
+async function openEditor(id){
+
+  editingFormId =
+    id || null;
+
+  editorQuestions =
+    [];
+
+  editorImageData =
+    null;
+
+
+  document.getElementById(
+    "fTitle"
+  ).value =
+    "";
+
+  document.getElementById(
+    "fDescription"
+  ).value =
+    "";
+
+  document.getElementById(
+    "fImage"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "editorTitle"
+  ).textContent =
+    id
+      ? "Editar formulário"
+      : "Novo formulário";
+
+
+  if(id){
+
+    try{
+
+      const response =
+        await api(
+          `/api/forms/${id}`
+        );
+
+      if(!response.ok){
+
+        throw new Error(
+          "Erro ao carregar formulário"
+        );
+
+      }
+
+      const form =
+        await response.json();
+
+
+      document.getElementById(
+        "fTitle"
+      ).value =
+        form.title || "";
+
+
+      document.getElementById(
+        "fDescription"
+      ).value =
+        form.description || "";
+
+
+      editorImageData =
+        form.image_data ||
+        null;
+
+
+      editorQuestions =
+        (
+          form.questions ||
+          []
+        ).map(
+          question =>
+            Object.assign(
+              {},
+              question
+            )
+        );
+
+    }catch(error){
+
+      showToast(
+        "Erro ao carregar formulário.",
+        true
+      );
+
+      return;
+
+    }
+
+  }
+
+
+  renderQuestionsEditor();
+
+  renderPreview();
+
+
+  /*
+   * Abre somente depois que todo o conteúdo
+   * já foi preparado.
+   */
+  document
+    .getElementById(
+      "editorModal"
+    )
+    .classList.add(
+      "show"
+    );
+
+
+  document.body.style.overflow =
+    "hidden";
+
+}
+
+
+function closeEditor(){
+
+  document
+    .getElementById(
+      "editorModal"
+    )
+    .classList.remove(
+      "show"
+    );
+
+  document.body.style.overflow =
+    "";
+
+}
+
+
+/* ============================================================
+   PERGUNTAS
+   ============================================================ */
+
+function addQuestion(type){
+
+  editorQuestions.push({
+
+    id:
+      "q_" +
+      Math.random()
+        .toString(36)
+        .slice(2,10),
+
+    type,
+
+    title:
+      "",
+
+    description:
+      "",
+
+    required:
+      false,
+
+    options:
+      type ===
+      "multiple_choice"
+        ? ["Opção 1"]
+        : [],
+
+    allow_multiple_files:
+      false,
+
+    use_as_folder_name:
+      false
+
+  });
+
+
+  renderQuestionsEditor();
+
+  renderPreview();
+
+}
+
+
+function removeQuestion(qid){
+
+  editorQuestions =
+    editorQuestions.filter(
+      question =>
+        question.id !==
+        qid
+    );
+
+  renderQuestionsEditor();
+
+  renderPreview();
+
+}
+
+
+const TYPE_LABELS = {
+
+  short_text:
+    "Texto curto",
+
+  long_text:
+    "Texto longo",
+
+  multiple_choice:
+    "Múltipla escolha",
+
+  pdf_file:
+    "Arquivo PDF",
+
+  text_block:
+    "Bloco de texto"
+
+};
+
+
+/* ============================================================
+   EDITOR DE PERGUNTAS
+   ============================================================ */
+
+function renderQuestionsEditor(){
+
+  const element =
+    document.getElementById(
+      "questionsList"
+    );
+
+
+  if(
+    !editorQuestions.length
+  ){
+
+    element.innerHTML = `
+
+      <p
+        style="color:var(--muted);"
+      >
+        Nenhuma pergunta ainda.
+        Use os botões acima
+        para adicionar.
+      </p>
+
+    `;
+
+    return;
+
+  }
+
+
+  element.innerHTML =
+    editorQuestions
+      .map(
+        (q,index) => `
+
+          <div class="qcard">
+
+            <div
+              class="qcard-head"
+            >
+
+              <span
+                class="qtype-tag"
+              >
+                ${
+                  TYPE_LABELS[
+                    q.type
+                  ] ||
+                  q.type
+                }
+              </span>
+
+
+              <button
+                class="btn btn-sm btn-danger"
+                onclick="removeQuestion('${q.id}')"
+              >
+                Remover
+              </button>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+
+                ${
+                  q.type ===
+                  "text_block"
+
+                    ? "Texto"
+
+                    : "Título da pergunta"
+
+                }
+
+              </label>
+
+
+              <input
+                type="text"
+                value="${escapeHtml(q.title)}"
+                oninput="updateQ('${q.id}','title',this.value)"
+              >
+
+            </div>
+
+
+            ${
+              q.type !==
+              "text_block"
+
+                ? `
+
+                  <div class="field">
+
+                    <label>
+                      Descrição
+                      (opcional)
+                    </label>
+
+                    <input
+                      type="text"
+                      value="${escapeHtml(q.description)}"
+                      oninput="updateQ('${q.id}','description',this.value)"
+                    >
+
+                  </div>
+
+                `
+
+                : ""
+            }
+
+
+            ${
+              q.type ===
+              "multiple_choice"
+
+                ? `
+
+                  <div>
+
+                    ${
+                      (
+                        q.options ||
+                        []
+                      )
+                        .map(
+                          (option,i) => `
+
+                            <div
+                              class="choice-row"
+                            >
+
+                              <input
+                                type="text"
+                                value="${escapeHtml(option)}"
+                                oninput="updateOption('${q.id}',${i},this.value)"
+                              >
+
+                              <button
+                                class="btn btn-sm btn-danger"
+                                onclick="removeOption('${q.id}',${i})"
+                              >
+                                ✕
+                              </button>
+
+                            </div>
+
+                          `
+                        )
+                        .join("")
+                    }
+
+                  </div>
+
+
+                  <button
+                    class="btn btn-sm"
+                    onclick="addOption('${q.id}')"
+                  >
+                    + Opção
+                  </button>
+
+                `
+
+                : ""
+            }
+
+
+            <div class="qopts">
+
+              ${
+                q.type !==
+                "text_block"
+
+                  ? `
+
+                    <label>
+
+                      <input
+                        type="checkbox"
+                        ${
+                          q.required
+                            ? "checked"
+                            : ""
+                        }
+                        onchange="updateQ('${q.id}','required',this.checked)"
+                      >
+
+                      Obrigatória
+
+                    </label>
+
+                  `
+
+                  : ""
+              }
+
+
+              ${
+                q.type ===
+                "pdf_file"
+
+                  ? `
+
+                    <label>
+
+                      <input
+                        type="checkbox"
+                        ${
+                          q.allow_multiple_files
+                            ? "checked"
+                            : ""
+                        }
+                        onchange="updateQ('${q.id}','allow_multiple_files',this.checked)"
+                      >
+
+                      Aceitar vários arquivos
+
+                    </label>
+
+                  `
+
+                  : ""
+              }
+
+
+              ${
+                (
+                  q.type ===
+                  "short_text" ||
+                  q.type ===
+                  "long_text"
+                )
+
+                  ? `
+
+                    <label>
+
+                      <input
+                        type="checkbox"
+                        ${
+                          q.use_as_folder_name
+                            ? "checked"
+                            : ""
+                        }
+                        onchange="updateQ('${q.id}','use_as_folder_name',this.checked)"
+                      >
+
+                      Usar resposta
+                      como nome da pasta
+
+                    </label>
+
+                  `
+
+                  : ""
+              }
+
+            </div>
+
+          </div>
+
+        `
+      )
+      .join("");
+
+}
+
+
+/* ============================================================
+   ATUALIZAÇÃO DE PERGUNTA
+   ============================================================ */
+
+function updateQ(
+  qid,
+  field,
+  value
+){
+
+  const question =
+    editorQuestions.find(
+      q =>
+        q.id ===
+        qid
+    );
+
+  if(!question){
+    return;
+  }
+
+  question[field] =
+    value;
+
+  renderPreview();
+
+}
+
+
+function addOption(qid){
+
+  const question =
+    editorQuestions.find(
+      q =>
+        q.id ===
+        qid
+    );
+
+  if(!question){
+    return;
+  }
+
+  if(!question.options){
+    question.options =
+      [];
+  }
+
+  question.options.push(
+    "Nova opção"
+  );
+
+  renderQuestionsEditor();
+
+  renderPreview();
+
+}
+
+
+function removeOption(
+  qid,
+  index
+){
+
+  const question =
+    editorQuestions.find(
+      q =>
+        q.id ===
+        qid
+    );
+
+  if(!question){
+    return;
+  }
+
+  question.options.splice(
+    index,
+    1
+  );
+
+  renderQuestionsEditor();
+
+  renderPreview();
+
+}
+
+
+function updateOption(
+  qid,
+  index,
+  value
+){
+
+  const question =
+    editorQuestions.find(
+      q =>
+        q.id ===
+        qid
+    );
+
+  if(!question){
+    return;
+  }
+
+  question.options[index] =
+    value;
+
+  renderPreview();
+
+}
+
+
+/* ============================================================
+   IMAGEM
+   ============================================================ */
+
+document
+  .getElementById(
+    "fImage"
+  )
+  .addEventListener(
+    "change",
+    function(){
+
+      const file =
+        this.files[0];
+
+      if(!file){
+        return;
+      }
+
+      const reader =
+        new FileReader();
+
+      reader.onload =
+        () => {
+
+          editorImageData =
+            reader.result;
+
+          renderPreview();
+
+        };
+
+      reader.readAsDataURL(
+        file
+      );
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "fTitle"
+  )
+  .addEventListener(
+    "input",
+    renderPreview
+  );
+
+
+document
+  .getElementById(
+    "fDescription"
+  )
+  .addEventListener(
+    "input",
+    renderPreview
+  );
+
+
+/* ============================================================
+   PREVIEW
+   ============================================================ */
+
+function renderPreview(){
+
+  const title =
+    document.getElementById(
+      "fTitle"
+    ).value ||
+    "(sem título)";
+
+
+  const description =
+    document.getElementById(
+      "fDescription"
+    ).value ||
+    "";
+
+
+  let html = `
+    <h4>
+      Pré-visualização
+    </h4>
+  `;
+
+
+  if(
+    editorImageData
+  ){
+
+    html += `
+
+      <img
+        src="${editorImageData}"
+        alt=""
+        style="
+          width:100%;
+          border-radius:10px;
+          margin-bottom:14px;
+          max-height:220px;
+          object-fit:cover;
+          display:block;
+        "
+      >
+
+    `;
+
+  }
+
+
+  html += `
+
+    <div
+      style="
+        font-size:1.3rem;
+        font-weight:700;
+        color:var(--primary-dark);
+        margin-bottom:6px;
+      "
+    >
+      ${escapeHtml(title)}
+    </div>
+
+  `;
+
+
+  if(description){
+
+    html += `
+
+      <div
+        style="
+          color:var(--muted);
+          margin-bottom:18px;
+          white-space:pre-wrap;
+        "
+      >
+        ${escapeHtml(description)}
+      </div>
+
+    `;
+
+  }
+
+
+  editorQuestions
+    .forEach(
+      question => {
+
+        if(
+          question.type ===
+          "text_block"
+        ){
+
+          html += `
+
+            <div
+              class="preview-q"
+            >
+
+              <div class="d">
+
+                ${escapeHtml(
+                  question.title
+                )}
+
+              </div>
+
+            </div>
+
+          `;
+
+          return;
+        }
+
+
+        html += `
+
+          <div
+            class="preview-q"
+          >
+
+            <label>
+
+              ${escapeHtml(
+                question.title ||
+                "(sem título)"
+              )}
+
+              ${
+                question.required
+                  ? " *"
+                  : ""
+              }
+
+            </label>
+
+        `;
+
+
+        if(
+          question.description
+        ){
+
+          html += `
+
+            <div class="d">
+
+              ${escapeHtml(
+                question.description
+              )}
+
+            </div>
+
+          `;
+
+        }
+
+
+        if(
+          question.type ===
+          "short_text"
+        ){
+
+          html += `
+
+            <input
+              type="text"
+              disabled
+              placeholder="Resposta curta"
+            >
+
+          `;
+
+        }
+
+
+        if(
+          question.type ===
+          "long_text"
+        ){
+
+          html += `
+
+            <textarea
+              disabled
+              placeholder="Resposta longa"
+            ></textarea>
+
+          `;
+
+        }
+
+
+        if(
+          question.type ===
+          "multiple_choice"
+        ){
+
+          html += (
+
+            question.options ||
+            []
+
+          )
+            .map(
+              option => `
+
+                <div
+                  style="
+                    padding:5px 0;
+                  "
+                >
+                  ○
+                  ${escapeHtml(
+                    option
+                  )}
+                </div>
+
+              `
+            )
+            .join("");
+
+        }
+
+
+        if(
+          question.type ===
+          "pdf_file"
+        ){
+
+          html += `
+
+            <div
+              style="
+                border:1px dashed var(--border);
+                padding:12px;
+                border-radius:8px;
+                color:var(--muted);
+                background:#fafaf8;
+              "
+            >
+
+              Selecionar PDF
+
+              ${
+                question.allow_multiple_files
+                  ? "(s)"
+                  : ""
+              }
+
+            </div>
+
+          `;
+
+        }
+
+
+        html += `
+          </div>
+        `;
+
+      }
+    );
+
+
+  document.getElementById(
+    "previewPane"
+  ).innerHTML =
+    html;
+
+}
+
+
+/* ============================================================
+   SALVAR FORMULÁRIO
+   ============================================================ */
+
+async function saveForm(){
+
+  const title =
+    document.getElementById(
+      "fTitle"
+    ).value.trim();
+
+
+  if(!title){
+
+    showToast(
+      "Informe um título para o formulário.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  const payload = {
+
+    title,
+
+    description:
+      document.getElementById(
+        "fDescription"
+      ).value,
+
+    image_data:
+      editorImageData,
+
+    questions:
+      editorQuestions
+
+  };
+
+
+  const url =
+    editingFormId
+      ? `/api/forms/${editingFormId}`
+      : "/api/forms";
+
+
+  const method =
+    editingFormId
+      ? "PUT"
+      : "POST";
+
+
+  try{
+
+    const response =
+      await api(
+        url,
+        {
+          method,
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            )
+        }
+      );
+
+
+    if(response.ok){
+
+      showToast(
+        "Formulário salvo."
+      );
+
+      closeEditor();
+
+      renderFormsList();
+
+    }else{
+
+      const data =
+        await response.json()
+          .catch(
+            () => ({})
+          );
+
+      showToast(
+        data.error ||
+        "Erro ao salvar formulário.",
+        true
+      );
+
+    }
+
+  }catch(error){
+
+    showToast(
+      "Erro de conexão com a API.",
+      true
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   RESPOSTAS
+   ============================================================ */
+
+async function renderResponsesList(){
+
+  const main =
+    document.getElementById(
+      "mainContent"
+    );
+
+
+  main.innerHTML = `
+
+    <div class="topbar">
+
+      <h2>
+        Respostas
+      </h2>
+
+    </div>
+
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Formulário
+            </th>
+
+            <th>
+              Pasta / Organização
+            </th>
+
+            <th>
+              Data
+            </th>
+
+            <th>
+              Ação
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr>
+
+            <td
+              colspan="4"
+              class="empty"
+            >
+              Carregando…
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+
+  try{
+
+    const response =
+      await api(
+        "/api/responses"
+      );
+
+    if(!response.ok){
+
+      throw new Error(
+        "Erro"
+      );
+
+    }
+
+    const responses =
+      await response.json();
+
+
+    const tbody =
+      main.querySelector(
+        "tbody"
+      );
+
+
+    if(
+      !responses.length
+    ){
+
+      tbody.innerHTML = `
+
+        <tr>
+
+          <td
+            colspan="4"
+            class="empty"
+          >
+            Nenhuma resposta
+            recebida ainda.
+          </td>
+
+        </tr>
+
+      `;
+
+      return;
+
+    }
+
+
+    tbody.innerHTML =
+      responses
+        .map(
+          response => `
+
+            <tr>
+
+              <td>
+                ${escapeHtml(
+                  response.form_title
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  response.folder_name ||
+                  "—"
+                )}
+              </td>
+
+              <td>
+                ${
+                  (
+                    response.created_at ||
+                    ""
+                  )
+                    .slice(0,16)
+                    .replace(
+                      "T",
+                      " "
+                    )
+                }
+              </td>
+
+              <td>
+
+                <button
+                  class="btn btn-sm"
+                  onclick="openResponse('${response.id}')"
+                >
+                  Ver resposta
+                </button>
+
+              </td>
+
+            </tr>
+
+          `
+        )
+        .join("");
+
+
+  }catch(error){
+
+    showToast(
+      "Erro ao carregar respostas.",
+      true
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   ABRIR RESPOSTA
+   ============================================================ */
+
+async function openResponse(id){
+
+  try{
+
+    const response =
+      await api(
+        `/api/responses/${id}`
+      );
+
+
+    if(!response.ok){
+
+      showToast(
+        "Erro ao carregar resposta.",
+        true
+      );
+
+      return;
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    document.getElementById(
+      "responseTitle"
+    ).textContent =
+      (
+        data.form_title ||
+        "Resposta"
+      ) +
+      " — " +
+      (
+        data.response?.folder_name ||
+        ""
+      );
+
+
+    const body =
+      document.getElementById(
+        "responseBody"
+      );
+
+
+    body.innerHTML =
+      (
+        data.questions ||
+        []
+      )
+        .map(
+          question => {
+
+            if(
+              question.type ===
+              "text_block"
+            ){
+
+              return "";
+
+            }
+
+
+            let answerHtml =
+              "";
+
+
+            if(
+              question.type ===
+              "pdf_file"
+            ){
+
+              if(
+                !question.files ||
+                !question.files.length
+              ){
+
+                answerHtml = `
+
+                  <span
+                    style="
+                      color:var(--muted);
+                    "
+                  >
+                    Nenhum arquivo enviado
+                  </span>
+
+                `;
+
+              }else{
+
+                answerHtml =
+                  question.files
+                    .map(
+                      file => `
+
+                        <div
+                          style="
+                            margin-bottom:8px;
+                          "
+                        >
+
+                          ${escapeHtml(
+                            file.stored_name
+                          )}
+
+                          <br>
+
+                          <a
+                            class="file-download"
+                            href="${API_BASE}/api/files/${file.id}/download?password=${encodeURIComponent(ADMIN_PASSWORD)}"
+                            target="_blank"
+                          >
+                            Baixar PDF
+                          </a>
+
+                        </div>
+
+                      `
+                    )
+                    .join("");
+
+              }
+
+            }else{
+
+              answerHtml =
+                escapeHtml(
+                  question.answer ??
+                  "—"
+                );
+
+            }
+
+
+            return `
+
+              <div
+                class="response-detail-q"
+              >
+
+                <div
+                  style="
+                    font-weight:600;
+                    margin-bottom:5px;
+                  "
+                >
+                  ${escapeHtml(
+                    question.title ||
+                    ""
+                  )}
+                </div>
+
+                <div>
+                  ${answerHtml}
+                </div>
+
+              </div>
+
+            `;
+
+          }
+        )
+        .join("");
+
+
+    document
+      .getElementById(
+        "responseModal"
+      )
+      .classList.add(
+        "show"
+      );
+
+
+    document.body.style.overflow =
+      "hidden";
+
+
+  }catch(error){
+
+    showToast(
+      "Erro ao carregar resposta.",
+      true
+    );
+
+  }
+
+}
+
+
+function closeResponseModal(){
+
+  document
+    .getElementById(
+      "responseModal"
+    )
+    .classList.remove(
+      "show"
+    );
+
+  document.body.style.overflow =
+    "";
+
+}
+
+
+/* ============================================================
+   FECHAR MODAIS CLICANDO NO FUNDO
+   ============================================================ */
+
+document
+  .getElementById(
+    "editorModal"
+  )
+  .addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target ===
+        event.currentTarget
+      ){
+
+        closeEditor();
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "responseModal"
+  )
+  .addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target ===
+        event.currentTarget
+      ){
+
+        closeResponseModal();
+
+      }
+
+    }
+  );
+
+
+/* ============================================================
+   ESC FECHA MODAL
+   ============================================================ */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key ===
+      "Escape"
+    ){
+
+      const editor =
+        document.getElementById(
+          "editorModal"
+        );
+
+      const response =
+        document.getElementById(
+          "responseModal"
+        );
+
+
+      if(
+        editor.classList.contains(
+          "show"
+        )
+      ){
+
+        closeEditor();
+
+      }
+
+
+      if(
+        response.classList.contains(
+          "show"
+        )
+      ){
+
+        closeResponseModal();
+
+      }
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   ENTER NO LOGIN
+   ============================================================ */
+
+document
+  .getElementById(
+    "loginPassword"
+  )
+  .addEventListener(
+    "keydown",
+    event => {
+
+      if(
+        event.key ===
+        "Enter"
+      ){
+
+        doLogin();
+
+      }
+
+    }
+  );
+
+
+/* ============================================================
+   RESTAURAR SESSÃO DE TESTE
+   ============================================================ */
+
+(async function restoreSession(){
+
+  const saved =
+    sessionStorage.getItem(
+      "forms_admin_password"
+    );
+
+  if(!saved){
+    return;
+  }
+
+
+  try{
+
+    const response =
+      await fetch(
+        `${API_BASE}/api/auth/login`,
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              password:saved
+            })
+        }
+      );
+
+
+    if(response.ok){
+
+      ADMIN_PASSWORD =
+        saved;
+
+      document
+        .getElementById(
+          "login-screen"
+        )
+        .style.display =
+        "none";
+
+      document
+        .getElementById(
+          "app-screen"
+        )
+        .style.display =
+        "block";
+
+      setupNav();
+
+      navigate(
+        "dashboard"
+      );
+
+    }else{
+
+      sessionStorage.removeItem(
+        "forms_admin_password"
+      );
+
+    }
+
+  }catch(error){
+
+    /*
+     * Se a API estiver indisponível,
+     * mantém a tela de login.
+     */
+
+  }
+
+})();
+
+</script>
+
+</body>
+</html>
