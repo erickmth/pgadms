@@ -107,7 +107,7 @@ vertical-align:-3px;margin-right:8px}
       return;
     }
     try{
-      const r=await fetch(`${API_BASE}/api/public/forms/${encodeURIComponent(TOKEN)}`);
+      const r=await fetch(`${API_BASE}/api/public/forms/${encodeURIComponent(TOKEN)}`,{cache:"no-store"});
       if(r.status===404){banner("Formulário não encontrado","Verifique o link.");return}
       if(r.status===410){banner("Formulário desativado","Este formulário não está mais disponível.");return}
       if(!r.ok){banner("Erro ao carregar","Tente novamente em instantes.");return}
@@ -271,7 +271,7 @@ vertical-align:-3px;margin-right:8px}
 
     try{
       const r=await fetch(`${API_BASE}/api/public/forms/${encodeURIComponent(TOKEN)}/submit`,{
-        method:"POST",body:fd
+        method:"POST",body:fd,cache:"no-store"
       });
       const data=await r.json().catch(()=>({}));
 
