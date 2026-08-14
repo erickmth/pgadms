@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulário de Inscrição</title>
+<style>
+:root{
+  --primary:#2f5d50;--primary-dark:#234840;--bg:#f5f4f0;
+  --card:#fff;--border:#e2e0da;--text:#292926;--muted:#6f6d66;
+  --danger:#c0392b;--danger-bg:#fdecea;--success:#1f7a4d;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:820px;margin:0 auto;padding:34px 22px 80px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+padding:28px;margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.035)}
+.header-image{width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin-bottom:18px}
+h1{margin:0 0 8px;font-size:30px;color:var(--primary-dark)}
+h2{color:var(--primary-dark)}
+.desc,.qdesc{white-space:pre-wrap;line-height:1.55;color:var(--muted)}
+.qtitle{display:block;font-weight:700;margin-bottom:7px}
+.req{color:var(--danger);margin-left:3px}
+input[type=text],textarea{width:100%;border:1px solid var(--border);border-radius:9px;
+padding:12px;font:inherit;background:#fff}
+textarea{min-height:120px;resize:vertical}
+.choice{display:flex;align-items:center;gap:9px;padding:8px 0}
+.filebox{border:2px dashed var(--border);border-radius:11px;padding:22px;
+text-align:center;cursor:pointer;color:var(--muted)}
+.filebox:hover{border-color:var(--primary);color:var(--primary)}
+.filelist{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.fileitem{display:flex;align-items:center;justify-content:space-between;gap:12px;
+background:#f3f6f4;border:1px solid var(--border);padding:10px 12px;border-radius:9px}
+.rm{cursor:pointer;color:var(--danger);font-weight:800}
+.err,.global-error{display:none;background:var(--danger-bg);color:var(--danger);
+padding:12px;border-radius:9px;margin-top:10px}
+.err.show,.global-error.show{display:block}
+.submit{width:100%;border:0;border-radius:9px;background:var(--primary);color:#fff;
+padding:15px;font-size:17px;font-weight:700;cursor:pointer}
+.submit:hover{background:var(--primary-dark)}
+.submit:disabled{opacity:.6;cursor:not-allowed}
+.banner{text-align:center;padding:70px 25px}
+.draft{background:#fff8e6;border:1px solid #ecd79d;border-radius:10px;padding:14px;margin-bottom:18px}
+.draft-actions{display:flex;gap:10px;margin-top:12px}
+.small-btn{border:1px solid var(--border);background:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}
+.success{text-align:center;padding:70px 25px}
+.success-icon{font-size:50px}
+.spinner{display:inline-block;width:17px;height:17px;border:2px solid #fff;
+border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;
+vertical-align:-3px;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="card banner"><h2>Carregando formulário…</h2></div>
+</div>
+
+<script>
+(() => {
+  const API_BASE = "https://banco.pythonanywhere.com";
+
+  function getToken(){
+    const match = location.pathname.match(/\/form\/([^/?#]+)/);
+    if(match) return decodeURIComponent(match[1]);
+    return new URLSearchParams(location.search).get("token") || "";
+  }
+
+  const TOKEN = getToken();
+  const APP = document.getElementById("app");
+  const DRAFT_KEY = "form_draft_" + TOKEN;
+
+  let formData = null;
+  let answers = {};
+  let selectedFiles = {};
+
+  const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+
+  function saveDraft(){
+    const files = {};
+    Object.keys(selectedFiles).forEach(id => {
+      files[id] = selectedFiles[id].map(f => ({
+        name:f.name,size:f.size
+      }));
+    });
+    localStorage.setItem(DRAFT_KEY,JSON.stringify({answers,files}));
+  }
+
+  function loadDraft(){
+    try{return JSON.parse(localStorage.getItem(DRAFT_KEY)||"null")}
+    catch{return null}
+  }
+
+  function clearDraft(){localStorage.removeItem(DRAFT_KEY)}
+
+  function banner(title,text){
+    APP.innerHTML=`<div class="card banner"><h2>${esc(title)}</h2><p class="desc">${esc(text||"")}</p></div>`;
+  }
+
+  async function init(){
+    if(!TOKEN){
+      banner("Link inválido","O link deste formulário não contém um identificador válido.");
+      return;
+    }
+    try{
+      const r=await fetch(`${API_BASE}/api/public/forms/${encodeURIComponent(TOKEN)}`);
+      if(r.status===404){banner("Formulário não encontrado","Verifique o link.");return}
+      if(r.status===410){banner("Formulário desativado","Este formulário não está mais disponível.");return}
+      if(!r.ok){banner("Erro ao carregar","Tente novamente em instantes.");return}
+      formData=await r.json();
+
+      const draft=loadDraft();
+      if(draft && (Object.keys(draft.answers||{}).length || Object.keys(draft.files||{}).length)){
+        answers=draft.answers||{};
+        renderDraftPrompt(draft);
+      }else renderForm();
+    }catch(e){
+      banner("Erro de conexão","Não foi possível conversar com a API.");
+    }
+  }
+
+  function renderDraftPrompt(draft){
+    APP.innerHTML=`
+      <div class="card">
+        <h2>Encontramos um rascunho</h2>
+        <p class="desc">Você pode continuar de onde parou. PDFs não são armazenados no navegador e precisarão ser selecionados novamente.</p>
+        <div class="draft-actions">
+          <button class="submit" id="continue">Continuar</button>
+          <button class="small-btn" id="clear">Começar novamente</button>
+        </div>
+      </div>`;
+    document.getElementById("continue").onclick=renderForm;
+    document.getElementById("clear").onclick=()=>{
+      clearDraft();answers={};selectedFiles={};renderForm();
+    };
+  }
+
+  function renderForm(){
+    let html=`<div class="card">`;
+    if(formData.image_data) html+=`<img class="header-image" src="${formData.image_data}" alt="">`;
+    html+=`<h1>${esc(formData.title)}</h1>`;
+    if(formData.description) html+=`<p class="desc">${esc(formData.description)}</p>`;
+    html+=`</div>`;
+
+    formData.questions.forEach(q=>{
+      if(q.type==="text_block"){
+        html+=`<div class="card"><div class="desc">${esc(q.title)}</div></div>`;
+        return;
+      }
+
+      html+=`<div class="card" data-q="${q.id}">
+        <label class="qtitle">${esc(q.title)}${q.required?'<span class="req">*</span>':''}</label>
+        ${q.description?`<div class="qdesc">${esc(q.description)}</div>`:""}`;
+
+      if(q.type==="short_text"){
+        html+=`<input type="text" data-answer="${q.id}" value="${esc(answers[q.id]||"")}">`;
+      }else if(q.type==="long_text"){
+        html+=`<textarea data-answer="${q.id}">${esc(answers[q.id]||"")}</textarea>`;
+      }else if(q.type==="multiple_choice"){
+        (q.options||[]).forEach((o,i)=>{
+          html+=`<div class="choice">
+            <input type="radio" id="mc_${q.id}_${i}" name="mc_${q.id}"
+              value="${esc(o)}" ${answers[q.id]===o?"checked":""}
+              data-radio="${q.id}">
+            <label for="mc_${q.id}_${i}">${esc(o)}</label>
+          </div>`;
+        });
+      }else if(q.type==="pdf_file"){
+        html+=`
+          <div class="filebox" data-filebox="${q.id}">
+            <strong>Selecionar PDF${q.allow_multiple_files?"s":""}</strong>
+            <div style="font-size:13px;margin-top:5px">
+              ${q.allow_multiple_files?"Você pode selecionar vários PDFs.":"Selecione um PDF."}
+            </div>
+            <input hidden type="file" accept=".pdf,application/pdf"
+              ${q.allow_multiple_files?"multiple":""} data-file="${q.id}">
+          </div>
+          <div class="filelist" data-list="${q.id}"></div>`;
+      }
+
+      html+=`<div class="err" data-error="${q.id}"></div></div>`;
+    });
+
+    html+=`<div class="global-error" id="globalError"></div>
+           <button class="submit" id="send">Enviar formulário</button>`;
+    APP.innerHTML=html;
+
+    APP.querySelectorAll("[data-answer]").forEach(el=>{
+      el.oninput=()=>{answers[el.dataset.answer]=el.value;saveDraft()};
+    });
+    APP.querySelectorAll("[data-radio]").forEach(el=>{
+      el.onchange=()=>{if(el.checked){answers[el.dataset.radio]=el.value;saveDraft()}};
+    });
+
+    APP.querySelectorAll("[data-filebox]").forEach(box=>{
+      const id=box.dataset.filebox;
+      const input=box.querySelector("[data-file]");
+      box.onclick=e=>{if(e.target.closest(".rm"))return;input.click()};
+      input.onchange=()=>{
+        const q=formData.questions.find(x=>String(x.id)===String(id));
+        let files=Array.from(input.files||[]);
+        if(!q.allow_multiple_files) files=files.slice(0,1);
+        selectedFiles[id]=selectedFiles[id]||[];
+        if(!q.allow_multiple_files) selectedFiles[id]=[];
+
+        for(const file of files){
+          if(!file.name.toLowerCase().endsWith(".pdf")){
+            showError(id,"Apenas PDF é permitido.");continue;
+          }
+          selectedFiles[id].push(file);
+        }
+        input.value="";
+        renderFiles(id);
+        saveDraft();
+      };
+      renderFiles(id);
+    });
+
+    document.getElementById("send").onclick=submit;
+  }
+
+  function renderFiles(id){
+    const list=APP.querySelector(`[data-list="${id}"]`);
+    if(!list)return;
+    list.innerHTML=(selectedFiles[id]||[]).map((f,i)=>`
+      <div class="fileitem">
+        <span>📄 ${esc(f.name)} — ${(f.size/1024/1024).toFixed(2)} MB</span>
+        <span class="rm" data-remove="${id}" data-index="${i}">✕</span>
+      </div>`).join("");
+    list.querySelectorAll("[data-remove]").forEach(el=>{
+      el.onclick=e=>{
+        e.stopPropagation();
+        const id=el.dataset.remove;
+        selectedFiles[id].splice(Number(el.dataset.index),1);
+        renderFiles(id);saveDraft();
+      };
+    });
+  }
+
+  function showError(id,msg){
+    const el=APP.querySelector(`[data-error="${id}"]`);
+    if(el){el.textContent=msg;el.classList.add("show")}
+  }
+
+  function clearErrors(){
+    APP.querySelectorAll(".err").forEach(x=>{x.textContent="";x.classList.remove("show")});
+    const g=document.getElementById("globalError");
+    if(g){g.textContent="";g.classList.remove("show")}
+  }
+
+  async function submit(){
+    clearErrors();
+    const button=document.getElementById("send");
+    button.disabled=true;
+    button.innerHTML='<span class="spinner"></span>Enviando…';
+
+    const fd=new FormData();
+    fd.append("answers",JSON.stringify(answers));
+
+    formData.questions.forEach(q=>{
+      if(q.type==="pdf_file"){
+        (selectedFiles[q.id]||[]).forEach(file=>{
+          fd.append(`file_${q.id}`,file,file.name);
+        });
+      }
+    });
+
+    try{
+      const r=await fetch(`${API_BASE}/api/public/forms/${encodeURIComponent(TOKEN)}/submit`,{
+        method:"POST",body:fd
+      });
+      const data=await r.json().catch(()=>({}));
+
+      if(!r.ok){
+        const g=document.getElementById("globalError");
+        g.innerHTML=esc(data.error||"Não foi possível concluir o envio.")+
+          (data.details?.length?`<ul>${data.details.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:"");
+        g.classList.add("show");
+        button.disabled=false;
+        button.textContent="Enviar formulário";
+        // Keep local draft intentionally.
+        return;
+      }
+
+      clearDraft();
+      APP.innerHTML=`<div class="card success">
+        <div class="success-icon">✅</div>
+        <h2>Formulário enviado com sucesso!</h2>
+        <p class="desc">Sua resposta e seus documentos foram registrados.</p>
+      </div>`;
+    }catch(e){
+      const g=document.getElementById("globalError");
+      g.textContent="Erro de conexão. O rascunho foi preservado. Tente novamente.";
+      g.classList.add("show");
+      button.disabled=false;
+      button.textContent="Enviar formulário";
+    }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
