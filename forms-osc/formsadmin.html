@@ -2,21 +2,36 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel — Formulários de ONGs</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Inscrição OSC — Painel Admin</title>
+<link rel="shortcut icon" type="image/x-icon" href="../favicon.png">
+<script>
+  // Guarda de acesso: bloqueia a renderização da página sem token de sessão.
+  // A validação real do token e da permissão de admin global acontece em
+  // verifyGlobalAdmin() no carregamento (chamada ao backend principal).
+  (function () {
+    var token = sessionStorage.getItem('adminToken');
+    if (!token) {
+      window.location.replace('../index.html');
+    }
+  })();
+</script>
+<link
+  href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+  rel="stylesheet">
 
 <style>
   :root{
-    --primary:#2f5d50;
-    --primary-dark:#234840;
-    --bg:#f2f1ec;
+    --primary:#ff1f3d;
+    --primary-dark:#b8102b;
+    --bg:#f4f6fb;
     --card:#ffffff;
-    --border:#e2e0da;
-    --text:#26261f;
-    --muted:#6f6d66;
+    --border:#e5e9f2;
+    --text:#1a1d2e;
+    --muted:#6b7280;
     --danger:#c0392b;
     --danger-bg:#fdecea;
-    --success:#1f7a4d;
+    --success:#10b981;
     --success-bg:#e8f6ee;
     --radius:12px;
     --sidebar-w:220px;
@@ -32,6 +47,7 @@
     width:100%;
     min-height:100%;
     font-family:
+      'Sora',
       -apple-system,
       BlinkMacSystemFont,
       "Segoe UI",
@@ -157,6 +173,26 @@
     padding:22px 0;
     display:flex;
     flex-direction:column;
+  }
+
+  .sidebar-back-link{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:16px 20px 14px;
+    color:rgba(255,255,255,.75);
+    text-decoration:none;
+    font-size:.82rem;
+    font-weight:500;
+  }
+
+  .sidebar-back-link:hover{
+    color:#fff;
+  }
+
+  .sidebar-back-logo{
+    height:22px;
+    width:auto;
   }
 
   .sidebar h1{
@@ -877,6 +913,7 @@
     }
   }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 
 <body>
@@ -887,31 +924,23 @@
 
 <div id="login-screen">
 
-  <div class="login-box">
+  <div class="login-box" id="gateBox">
 
-    <h2>Painel administrativo</h2>
+    <h2 id="gateTitle">Verificando acesso…</h2>
 
-    <p>
-      Sistema de formulários de ONGs
+    <p id="gateMessage">
+      Confirmando sua sessão e permissão de administrador global.
     </p>
-
-    <input
-      type="password"
-      id="loginPassword"
-      placeholder="Senha administrativa"
-      autocomplete="current-password"
-    >
-
-    <button onclick="doLogin()">
-      Entrar
-    </button>
 
     <div
       class="login-error"
       id="loginError"
     >
-      Senha incorreta.
     </div>
+
+    <a href="../home.html" class="btn btn-primary" id="gateBackBtn" style="display:none;text-decoration:none;text-align:center;">
+      Voltar ao painel
+    </a>
 
   </div>
 
@@ -928,8 +957,13 @@
 
     <aside class="sidebar">
 
+      <a href="../home.html" class="sidebar-back-link" title="Voltar ao painel administrativo">
+        <img src="../logu.svg" alt="Logo" class="sidebar-back-logo" onerror="this.style.display='none'">
+        <span>Painel Admin</span>
+      </a>
+
       <h1>
-        Formulários de ONGs
+        Inscrição OSC
       </h1>
 
       <div class="nav">
@@ -1175,12 +1209,31 @@
         Resposta
       </h3>
 
-      <button
-        class="btn"
-        onclick="closeResponseModal()"
-      >
-        Fechar
-      </button>
+      <div style="display:flex;gap:8px">
+
+        <button
+          class="btn"
+          id="downloadAllBtn"
+          onclick="downloadAllFilesAsZip()"
+        >
+          Baixar tudo (ZIP)
+        </button>
+
+        <button
+          class="btn btn-danger"
+          onclick="deleteResponse()"
+        >
+          Excluir resposta
+        </button>
+
+        <button
+          class="btn"
+          onclick="closeResponseModal()"
+        >
+          Fechar
+        </button>
+
+      </div>
 
     </div>
 
@@ -1213,8 +1266,11 @@ const API_BASE =
 const FORM_FRONTEND_URL =
   "https://adminescala.vercel.app/forms-osc/forms.html";
 
+// Backend principal (mesmo usado pelo home.html) — usado apenas para
+// validar o JWT e a permissão de admin global no carregamento da página.
+const MAIN_SYSTEM_API_URL =
+  "https://erickmth.pythonanywhere.com";
 
-let ADMIN_PASSWORD = "";
 
 let currentView =
   "dashboard";
@@ -1228,6 +1284,15 @@ let editorQuestions =
 let editorImageData =
   null;
 
+let currentResponseFiles =
+  [];
+
+let currentResponseFolderName =
+  "";
+
+let currentResponseId =
+  null;
+
 
 /* ============================================================
    API
@@ -1238,20 +1303,35 @@ function api(path, opts){
   opts =
     opts || {};
 
+  const token =
+    sessionStorage.getItem("adminToken") || "";
+
   opts.headers =
     Object.assign(
       {},
       opts.headers,
       {
-        "X-Admin-Password":
-          ADMIN_PASSWORD
+        "Authorization":
+          "Bearer " + token
       }
     );
+
+  opts.cache =
+    "no-store";
 
   return fetch(
     `${API_BASE}${path}`,
     opts
-  );
+  ).then(response => {
+    if (response.status === 401) {
+      // Sessão expirada ou inválida: volta para o painel principal,
+      // onde o login é feito.
+      sessionStorage.removeItem("adminToken");
+      sessionStorage.removeItem("adminName");
+      window.location.replace("../index.html");
+    }
+    return response;
+  });
 }
 
 
@@ -1313,158 +1393,110 @@ function escapeHtml(s){
 
 
 /* ============================================================
-   LOGIN
+   AUTENTICAÇÃO — JWT DO PAINEL PRINCIPAL
+   Não existe login próprio nesta página. O token já deve estar em
+   sessionStorage.adminToken (colocado lá pelo login em index.html).
+   Aqui só verificamos, junto ao backend principal, se esse token é
+   válido e se pertence a um administrador global. Sem essa
+   confirmação do servidor, o painel não é liberado.
    ============================================================ */
 
-async function doLogin(){
+function showGate(title, message, showBackBtn){
 
-  const password =
-    document
-      .getElementById(
-        "loginPassword"
-      )
-      .value;
+  const gateTitle =
+    document.getElementById("gateTitle");
+  const gateMessage =
+    document.getElementById("gateMessage");
+  const gateBackBtn =
+    document.getElementById("gateBackBtn");
+  const loginError =
+    document.getElementById("loginError");
 
-  if (!password){
+  if (gateTitle) gateTitle.textContent = title;
+  if (gateMessage) gateMessage.textContent = message || "";
+  if (loginError) loginError.style.display = "none";
+  if (gateBackBtn) gateBackBtn.style.display = showBackBtn ? "block" : "none";
+}
 
-    document
-      .getElementById(
-        "loginError"
-      )
-      .textContent =
-        "Informe a senha.";
+async function verifyGlobalAdmin(){
 
-    document
-      .getElementById(
-        "loginError"
-      )
-      .style.display =
-        "block";
+  const token =
+    sessionStorage.getItem("adminToken");
 
+  if (!token) {
+    window.location.replace("../index.html");
     return;
   }
 
-  try{
+  try {
 
     const response =
       await fetch(
-        `${API_BASE}/api/auth/login`,
+        `${MAIN_SYSTEM_API_URL}/api/admin/permissions`,
         {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "application/json"
+          headers: {
+            "Authorization": "Bearer " + token
           },
-
-          body:JSON.stringify({
-            password
-          })
+          cache: "no-store"
         }
       );
 
-    if(response.ok){
-
-      ADMIN_PASSWORD =
-        password;
-
-      sessionStorage.setItem(
-        "forms_admin_password",
-        password
-      );
-
-      document
-        .getElementById(
-          "login-screen"
-        )
-        .style.display =
-        "none";
-
-      document
-        .getElementById(
-          "app-screen"
-        )
-        .style.display =
-        "block";
-
-      document
-        .getElementById(
-          "loginError"
-        )
-        .style.display =
-        "none";
-
-      setupNav();
-
-      navigate(
-        "dashboard"
-      );
-
-    }else{
-
-      document
-        .getElementById(
-          "loginError"
-        )
-        .textContent =
-        "Senha incorreta.";
-
-      document
-        .getElementById(
-          "loginError"
-        )
-        .style.display =
-        "block";
+    if (response.status === 401) {
+      // Token ausente/expirado/inválido: volta para o login do painel principal.
+      sessionStorage.removeItem("adminToken");
+      sessionStorage.removeItem("adminName");
+      window.location.replace("../index.html");
+      return;
     }
 
-  }catch(error){
+    if (!response.ok) {
+      showGate(
+        "Erro ao verificar sessão",
+        "Não foi possível confirmar suas permissões agora. Tente novamente em instantes.",
+        true
+      );
+      return;
+    }
+
+    const data =
+      await response.json();
+
+    if (data.tipo_admin !== "global") {
+      showGate(
+        "Acesso negado",
+        "Esta área é exclusiva para administradores globais.",
+        true
+      );
+      return;
+    }
+
+    // Autorizado: libera o painel.
+    document
+      .getElementById("login-screen")
+      .style.display = "none";
 
     document
-      .getElementById(
-        "loginError"
-      )
-      .textContent =
-      "Não foi possível conectar à API.";
+      .getElementById("app-screen")
+      .style.display = "block";
 
-    document
-      .getElementById(
-        "loginError"
-      )
-      .style.display =
-      "block";
+    setupNav();
+    navigate("dashboard");
+
+  } catch (error) {
+    showGate(
+      "Erro de conexão",
+      "Não foi possível verificar sua sessão. Verifique sua internet e tente novamente.",
+      true
+    );
   }
 }
 
 
 function logout(){
 
-  ADMIN_PASSWORD =
-    "";
-
-  sessionStorage.removeItem(
-    "forms_admin_password"
-  );
-
-  document
-    .getElementById(
-      "app-screen"
-    )
-    .style.display =
-    "none";
-
-  document
-    .getElementById(
-      "login-screen"
-    )
-    .style.display =
-    "flex";
-
-  document
-    .getElementById(
-      "loginPassword"
-    )
-    .value =
-    "";
+  sessionStorage.removeItem("adminToken");
+  sessionStorage.removeItem("adminName");
+  window.location.replace("../index.html");
 }
 
 
@@ -2264,7 +2296,13 @@ async function openEditor(id){
           question =>
             Object.assign(
               {},
-              question
+              question,
+              {
+                title:
+                  question.title ??
+                  question.question ??
+                  ""
+              }
             )
         );
 
@@ -3434,6 +3472,9 @@ async function renderResponsesList(){
 
 async function openResponse(id){
 
+  currentResponseId =
+    id;
+
   try{
 
     const response =
@@ -3478,11 +3519,100 @@ async function openResponse(id){
       );
 
 
+    const answersList =
+      data.answers ||
+      [];
+
+    const filesList =
+      data.files ||
+      [];
+
+    currentResponseFiles =
+      filesList;
+
+    currentResponseFolderName =
+      data.response?.folder_name ||
+      "resposta";
+
+    const downloadAllBtn =
+      document.getElementById(
+        "downloadAllBtn"
+      );
+
+    if(downloadAllBtn){
+
+      downloadAllBtn.style.display =
+        filesList.length
+          ? ""
+          : "none";
+
+    }
+
+    const grouped =
+      {};
+
+    const order =
+      [];
+
+    answersList.forEach(
+      a => {
+
+        const qid =
+          a.question_id;
+
+        if(!grouped[qid]){
+
+          grouped[qid] = {
+            title: a.question,
+            type: a.type,
+            answer: a.answer,
+            files: []
+          };
+
+          order.push(qid);
+
+        }else{
+
+          grouped[qid].answer =
+            a.answer;
+
+        }
+
+      }
+    );
+
+    filesList.forEach(
+      f => {
+
+        const qid =
+          f.question_id;
+
+        if(!grouped[qid]){
+
+          grouped[qid] = {
+            title: f.question,
+            type: "pdf_file",
+            answer: null,
+            files: []
+          };
+
+          order.push(qid);
+
+        }
+
+        grouped[qid].files.push(f);
+
+      }
+    );
+
+    const questionsForDisplay =
+      order.map(
+        qid => grouped[qid]
+      );
+
+
     body.innerHTML =
-      (
-        data.questions ||
-        []
-      )
+      questionsForDisplay
         .map(
           question => {
 
@@ -3543,8 +3673,9 @@ async function openResponse(id){
 
                           <a
                             class="file-download"
-                            href="${API_BASE}/api/files/${file.id}/download?password=${encodeURIComponent(ADMIN_PASSWORD)}"
-                            target="_blank"
+                            href="javascript:void(0)"
+                            data-download-file="${file.id}"
+                            data-download-name="${escapeHtml(file.stored_name)}"
                           >
                             Baixar PDF
                           </a>
@@ -3599,6 +3730,24 @@ async function openResponse(id){
         .join("");
 
 
+    body
+      .querySelectorAll(
+        "[data-download-file]"
+      )
+      .forEach(
+        el => {
+
+          el.onclick =
+            () =>
+              downloadFile(
+                el.dataset.downloadFile,
+                el.dataset.downloadName
+              );
+
+        }
+      );
+
+
     document
       .getElementById(
         "responseModal"
@@ -3624,6 +3773,287 @@ async function openResponse(id){
 }
 
 
+async function downloadFile(fileId, filename){
+
+  try{
+
+    const response =
+      await api(
+        `/api/files/${fileId}/download`
+      );
+
+
+    if(!response.ok){
+
+      showToast(
+        "Erro ao baixar arquivo.",
+        true
+      );
+
+      return;
+
+    }
+
+
+    const blob =
+      await response.blob();
+
+    const objectUrl =
+      URL.createObjectURL(blob);
+
+    const link =
+      document.createElement("a");
+
+    link.href =
+      objectUrl;
+
+    link.download =
+      filename ||
+      "documento.pdf";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(objectUrl);
+
+  }catch(error){
+
+    showToast(
+      "Erro de conexão ao baixar arquivo.",
+      true
+    );
+
+  }
+
+}
+
+
+async function downloadAllFilesAsZip(){
+
+  if(!currentResponseFiles.length){
+
+    showToast(
+      "Nenhum arquivo para baixar nesta resposta.",
+      true
+    );
+
+    return;
+
+  }
+
+  if(typeof JSZip === "undefined"){
+
+    showToast(
+      "Não foi possível carregar o compactador de ZIP. " +
+      "Verifique sua conexão e tente novamente.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  const button =
+    document.getElementById(
+      "downloadAllBtn"
+    );
+
+  const originalLabel =
+    button
+      ? button.textContent
+      : "";
+
+  if(button){
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      "Compactando…";
+
+  }
+
+
+  try{
+
+    const zip =
+      new JSZip();
+
+    const usedNames =
+      {};
+
+    for(const file of currentResponseFiles){
+
+      const response =
+        await api(
+          `/api/files/${file.id}/download`
+        );
+
+      if(!response.ok){
+
+        throw new Error(
+          `Falha ao baixar "${file.stored_name || file.original_name}".`
+        );
+
+      }
+
+      const blob =
+        await response.blob();
+
+      let name =
+        file.stored_name ||
+        file.original_name ||
+        `arquivo-${file.id}.pdf`;
+
+      if(usedNames[name] !== undefined){
+
+        usedNames[name] += 1;
+
+        const stem =
+          name.replace(/\.pdf$/i, "");
+
+        name =
+          `${stem} (${usedNames[name]}).pdf`;
+
+      }else{
+
+        usedNames[name] = 0;
+
+      }
+
+      zip.file(name, blob);
+
+    }
+
+
+    const zipBlob =
+      await zip.generateAsync({
+        type: "blob"
+      });
+
+    const objectUrl =
+      URL.createObjectURL(zipBlob);
+
+    const link =
+      document.createElement("a");
+
+    link.href =
+      objectUrl;
+
+    link.download =
+      sanitizeZipName(
+        currentResponseFolderName
+      ) +
+      ".zip";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(objectUrl);
+
+  }catch(error){
+
+    showToast(
+      "Erro ao gerar o ZIP. Tente novamente.",
+      true
+    );
+
+  }finally{
+
+    if(button){
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        originalLabel ||
+        "Baixar tudo (ZIP)";
+
+    }
+
+  }
+
+}
+
+
+function sanitizeZipName(name){
+
+  return String(name || "resposta")
+    .replace(/[<>:"/\\|?*\x00-\x1f]/g, "_")
+    .trim() || "resposta";
+
+}
+
+
+async function deleteResponse(){
+
+  if(!currentResponseId){
+    return;
+  }
+
+  const confirmed =
+    confirm(
+      "Tem certeza que deseja excluir esta resposta? " +
+      "Isso apaga também os arquivos no SharePoint. " +
+      "Esta ação não pode ser desfeita."
+    );
+
+  if(!confirmed){
+    return;
+  }
+
+  try{
+
+    const response =
+      await api(
+        `/api/responses/${currentResponseId}`,
+        { method: "DELETE" }
+      );
+
+    const data =
+      await response.json().catch(
+        () => ({})
+      );
+
+    if(!response.ok){
+
+      showToast(
+        data.error ||
+        "Erro ao excluir resposta.",
+        true
+      );
+
+      return;
+
+    }
+
+    showToast(
+      "Resposta excluída com sucesso."
+    );
+
+    closeResponseModal();
+
+    renderResponsesList();
+
+  }catch(error){
+
+    showToast(
+      "Erro de conexão ao excluir resposta.",
+      true
+    );
+
+  }
+
+}
+
+
 function closeResponseModal(){
 
   document
@@ -3636,6 +4066,12 @@ function closeResponseModal(){
 
   document.body.style.overflow =
     "";
+
+  currentResponseId =
+    null;
+
+  currentResponseFiles =
+    [];
 
 }
 
@@ -3738,110 +4174,10 @@ document.addEventListener(
 
 
 /* ============================================================
-   ENTER NO LOGIN
+   INICIALIZAÇÃO — verifica JWT + admin global ao carregar a página
    ============================================================ */
 
-document
-  .getElementById(
-    "loginPassword"
-  )
-  .addEventListener(
-    "keydown",
-    event => {
-
-      if(
-        event.key ===
-        "Enter"
-      ){
-
-        doLogin();
-
-      }
-
-    }
-  );
-
-
-/* ============================================================
-   RESTAURAR SESSÃO DE TESTE
-   ============================================================ */
-
-(async function restoreSession(){
-
-  const saved =
-    sessionStorage.getItem(
-      "forms_admin_password"
-    );
-
-  if(!saved){
-    return;
-  }
-
-
-  try{
-
-    const response =
-      await fetch(
-        `${API_BASE}/api/auth/login`,
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-
-          body:
-            JSON.stringify({
-              password:saved
-            })
-        }
-      );
-
-
-    if(response.ok){
-
-      ADMIN_PASSWORD =
-        saved;
-
-      document
-        .getElementById(
-          "login-screen"
-        )
-        .style.display =
-        "none";
-
-      document
-        .getElementById(
-          "app-screen"
-        )
-        .style.display =
-        "block";
-
-      setupNav();
-
-      navigate(
-        "dashboard"
-      );
-
-    }else{
-
-      sessionStorage.removeItem(
-        "forms_admin_password"
-      );
-
-    }
-
-  }catch(error){
-
-    /*
-     * Se a API estiver indisponível,
-     * mantém a tela de login.
-     */
-
-  }
-
-})();
+verifyGlobalAdmin();
 
 </script>
 
