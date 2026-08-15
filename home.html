@@ -142,6 +142,12 @@
                         <i class="bi bi-chat-dots-fill"></i> Mentoria
                     </a>
                 </li>
+                <!-- Aba Inscrição OSC - Mostrar APENAS para admin global. Redireciona para forms-osc/forms-admin.html -->
+                <li class="nav-item" id="navFormsOscContainer" style="display: none;">
+                    <a class="nav-link" href="#" id="navFormsOscLink">
+                        <i class="bi bi-clipboard2-check-fill"></i> Inscrição OSC
+                    </a>
+                </li>
             </ul>
             <div class="nav-section-label">Sistema</div>
             <ul class="nav flex-column mb-3">
@@ -1118,6 +1124,7 @@
                     navAvisosContainer: document.getElementById('navAvisosContainer'),
                     navBackupContainer: document.getElementById('navBackupContainer'),
                     navMentoriaContainer: document.getElementById('navMentoriaContainer'),
+                    navFormsOscContainer: document.getElementById('navFormsOscContainer'),
                     navPresencaContainer: document.getElementById('navPresencaContainer'),
                     turmaEscala: document.getElementById('turmaEscala'),
                     carregarEscalaBtn: document.getElementById('carregarEscalaBtn'),
@@ -1455,6 +1462,25 @@
                             });
                         }
 
+                        // ==================== INSCRIÇÃO OSC - MOSTRAR APENAS PARA ADMIN GLOBAL ====================
+                        const navFormsOscContainer = document.getElementById('navFormsOscContainer');
+                        if (navFormsOscContainer) {
+                            // Apenas admin global pode ver a aba Inscrição OSC
+                            navFormsOscContainer.style.display = (userPermissions.tipo_admin === 'global') ? 'block' : 'none';
+                        }
+
+                        // Configurar redirecionamento da Inscrição OSC para forms-osc/forms-admin.html
+                        const navFormsOscLink = document.getElementById('navFormsOscLink');
+                        if (navFormsOscLink) {
+                            navFormsOscLink.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                // Redirecionar para a página separada de Inscrição OSC.
+                                // A própria forms-admin.html valida o JWT e a permissão de
+                                // admin global no carregamento (ver guarda de acesso no head).
+                                window.location.href = '/forms-osc/formsadmin.html';
+                            });
+                        }
+
                         if (userPermissions.tipo_admin === 'turma' && userPermissions.turmas_permitidas.length === 1) {
                             userPermissions.turma_unica = userPermissions.turmas_permitidas[0];
                         }
@@ -1495,7 +1521,8 @@
                             elements.navEscalasContainer,
                             elements.navAvisosContainer,
                             elements.navBackupContainer,
-                            elements.navMentoriaContainer
+                            elements.navMentoriaContainer,
+                            elements.navFormsOscContainer
                         ];
                         hiddenContainers.forEach(container => {
                             if (container) container.style.display = 'none';
