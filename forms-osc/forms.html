@@ -91,11 +91,19 @@ transition:var(--transition-fast);cursor:pointer}
 .choice input[type=radio]{width:17px;height:17px;accent-color:var(--primary);flex-shrink:0;cursor:pointer}
 .choice label{cursor:pointer;font-size:14.5px}
 
-.filebox{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:26px 20px;
-text-align:center;cursor:pointer;color:var(--muted);transition:var(--transition-fast);background:var(--surface-2)}
+.filebox{position:relative;border:2px dashed var(--border);border-radius:var(--radius-sm);padding:26px 20px;
+text-align:center;cursor:pointer;color:var(--muted);transition:var(--transition-fast);background:var(--surface-2);overflow:hidden}
 .filebox:hover{border-color:var(--primary);color:var(--primary-dark);background:rgba(255,31,61,.04)}
+.filebox.dragover{border-color:var(--primary);background:rgba(255,31,61,.07);border-style:solid}
+.filebox.dragover .filebox-content{opacity:.12}
 .filebox i{font-size:26px;color:var(--primary);display:block;margin-bottom:8px}
-.filebox strong{color:var(--text);font-size:14.5px}
+.filebox strong{color:var(--text);font-size:14.5px;display:block}
+.filebox-or{font-size:12px;color:var(--muted);margin:8px 0;text-transform:uppercase;letter-spacing:.5px}
+.filebox-select{position:relative;z-index:1}
+.filebox-hint{font-size:13px;margin-top:8px}
+.filebox-dragmsg{display:none;position:absolute;inset:0;align-items:center;justify-content:center;gap:8px;
+background:rgba(255,31,61,.95);color:#fff;font-weight:700;font-size:15px;border-radius:inherit}
+.filebox.dragover .filebox-dragmsg{display:flex}
 
 .filelist{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .fileitem{display:flex;align-items:center;justify-content:space-between;gap:12px;
@@ -172,7 +180,7 @@ border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinit
           <strong>Formulário Institucional</strong>
         </div>
       </div>
-      <a href="../home.html" class="btn-voltar" aria-label="Voltar para a página inicial">
+      <a href="../home.html" class="btn-voltar" id="btnVoltar" aria-label="Voltar para a página inicial">
         <i class="bi bi-arrow-left-short"></i> <span>Voltar</span>
       </a>
     </div>
@@ -199,6 +207,10 @@ border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinit
   let formData = null;
   let answers = {};
   let selectedFiles = {};
+
+  // Evita que o navegador abra o arquivo quando ele é solto fora de um campo de upload
+  window.addEventListener("dragover",e=>{if(!e.target.closest("[data-filebox]"))e.preventDefault()});
+  window.addEventListener("drop",e=>{if(!e.target.closest("[data-filebox]"))e.preventDefault()});
 
   const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -301,11 +313,18 @@ border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinit
       }else if(q.type==="pdf_file"){
         html+=`
           <div class="filebox" data-filebox="${q.id}">
-            <i class="bi bi-file-earmark-arrow-up"></i>
-            <strong>Selecionar PDF${q.allow_multiple_files?"s":""}</strong>
-            <div style="font-size:13px;margin-top:5px">
-              ${q.allow_multiple_files?"Você pode selecionar vários PDFs.":"Selecione um PDF."}
+            <div class="filebox-content">
+              <i class="bi bi-cloud-arrow-up"></i>
+              <strong>Arraste o arquivo aqui</strong>
+              <div class="filebox-or">ou</div>
+              <button type="button" class="small-btn filebox-select" data-select="${q.id}">
+                <i class="bi bi-folder2-open"></i> Selecionar arquivo${q.allow_multiple_files?"s":""}
+              </button>
+              <div class="filebox-hint">
+                ${q.allow_multiple_files?"Você pode selecionar vários PDFs.":"Selecione um PDF."}
+              </div>
             </div>
+            <div class="filebox-dragmsg"><i class="bi bi-cloud-arrow-up-fill"></i> Solte o arquivo aqui</div>
             <input hidden type="file" accept=".pdf,application/pdf"
               ${q.allow_multiple_files?"multiple":""} data-file="${q.id}">
           </div>
@@ -329,28 +348,79 @@ border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinit
     APP.querySelectorAll("[data-filebox]").forEach(box=>{
       const id=box.dataset.filebox;
       const input=box.querySelector("[data-file]");
-      box.onclick=e=>{if(e.target.closest(".rm"))return;input.click()};
-      input.onchange=()=>{
-        const q=formData.questions.find(x=>String(x.id)===String(id));
-        let files=Array.from(input.files||[]);
-        if(!q.allow_multiple_files) files=files.slice(0,1);
-        selectedFiles[id]=selectedFiles[id]||[];
-        if(!q.allow_multiple_files) selectedFiles[id]=[];
+      const selectBtn=box.querySelector("[data-select]");
 
-        for(const file of files){
-          if(!file.name.toLowerCase().endsWith(".pdf")){
-            showError(id,"Apenas PDF é permitido.");continue;
-          }
-          selectedFiles[id].push(file);
-        }
-        input.value="";
-        renderFiles(id);
-        saveDraft();
+      // Clique na área (exceto no botão remover / botão selecionar, que têm sua própria ação)
+      box.onclick=e=>{
+        if(e.target.closest(".rm"))return;
+        if(e.target.closest("[data-select]"))return;
+        input.click();
       };
+
+      if(selectBtn){
+        selectBtn.onclick=e=>{
+          e.stopPropagation();
+          input.click();
+        };
+      }
+
+      input.onchange=()=>{
+        const files=Array.from(input.files||[]);
+        input.value="";
+        handleIncomingFiles(id,files);
+      };
+
+      // ---- Drag & Drop ----
+      let dragCounter=0;
+      box.addEventListener("dragover",e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        box.classList.add("dragover");
+      });
+      box.addEventListener("dragenter",e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        dragCounter++;
+        box.classList.add("dragover");
+      });
+      box.addEventListener("dragleave",e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        dragCounter=Math.max(0,dragCounter-1);
+        if(dragCounter===0) box.classList.remove("dragover");
+      });
+      box.addEventListener("drop",e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        dragCounter=0;
+        box.classList.remove("dragover");
+        const dt=e.dataTransfer;
+        if(!dt||!dt.files||!dt.files.length)return;
+        handleIncomingFiles(id,Array.from(dt.files));
+      });
+
       renderFiles(id);
     });
 
     document.getElementById("send").onclick=submit;
+  }
+
+  function handleIncomingFiles(id,files){
+    const q=formData.questions.find(x=>String(x.id)===String(id));
+    if(!q)return;
+    let list=files.slice();
+    if(!q.allow_multiple_files) list=list.slice(0,1);
+    selectedFiles[id]=selectedFiles[id]||[];
+    if(!q.allow_multiple_files) selectedFiles[id]=[];
+
+    for(const file of list){
+      if(!file.name.toLowerCase().endsWith(".pdf")){
+        showError(id,"Apenas PDF é permitido.");continue;
+      }
+      selectedFiles[id].push(file);
+    }
+    renderFiles(id);
+    saveDraft();
   }
 
   function renderFiles(id){
@@ -425,6 +495,8 @@ border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinit
       }
 
       clearDraft();
+      const backBtn=document.getElementById("btnVoltar");
+      if(backBtn) backBtn.style.display="none";
       APP.innerHTML=`<div class="card success">
         <div class="success-icon"><i class="bi bi-check-circle-fill"></i></div>
         <h2>Formulário enviado com sucesso!</h2>

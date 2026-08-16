@@ -792,11 +792,34 @@
     min-height:0;
   }
 
+  .add-q-toolbar{
+    position:sticky;
+    top:0;
+    z-index:15;
+    background:var(--card);
+    padding:10px 0 12px;
+    margin:10px 0 18px;
+    border-bottom:1px solid var(--border);
+  }
+
+  .add-q-toolbar.is-stuck{
+    box-shadow:0 6px 14px -10px rgba(24,30,42,.35);
+  }
+
+  .add-q-label{
+    display:block;
+    font-weight:700;
+    font-size:.72rem;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    margin-bottom:8px;
+  }
+
   .add-q-row{
     display:flex;
     flex-wrap:wrap;
     gap:8px;
-    margin:10px 0 18px;
   }
 
   .add-q-row .btn{
@@ -1384,45 +1407,62 @@
             Perguntas
           </label>
 
+          <p style="margin:0;color:var(--muted);font-size:.82rem;font-weight:400;text-transform:none;letter-spacing:normal;">
+            Clique em um dos tipos abaixo para adicionar uma nova pergunta ao final do formulário.
+            Cada pergunta pode ser editada diretamente no card (título, descrição e opções) e removida
+            pelo botão "Remover".
+          </p>
+
         </div>
 
 
-        <div class="add-q-row">
+        <div class="add-q-toolbar" id="addQToolbar">
 
-          <button
-            class="btn btn-sm"
-            onclick="addQuestion('short_text')"
-          >
-            <i class="bi bi-plus-lg"></i> Texto curto
-          </button>
+          <span class="add-q-label">Adicionar pergunta ao formulário</span>
 
-          <button
-            class="btn btn-sm"
-            onclick="addQuestion('long_text')"
-          >
-            <i class="bi bi-plus-lg"></i> Texto longo
-          </button>
+          <div class="add-q-row">
 
-          <button
-            class="btn btn-sm"
-            onclick="addQuestion('multiple_choice')"
-          >
-            <i class="bi bi-plus-lg"></i> Múltipla escolha
-          </button>
+            <button
+              class="btn btn-sm"
+              onclick="addQuestion('short_text')"
+              title="Adicionar pergunta de texto curto (resposta em uma linha)"
+            >
+              <i class="bi bi-plus-lg"></i> Texto curto
+            </button>
 
-          <button
-            class="btn btn-sm"
-            onclick="addQuestion('pdf_file')"
-          >
-            <i class="bi bi-plus-lg"></i> Arquivo PDF
-          </button>
+            <button
+              class="btn btn-sm"
+              onclick="addQuestion('long_text')"
+              title="Adicionar pergunta de texto longo (resposta em parágrafo)"
+            >
+              <i class="bi bi-plus-lg"></i> Texto longo
+            </button>
 
-          <button
-            class="btn btn-sm"
-            onclick="addQuestion('text_block')"
-          >
-            <i class="bi bi-plus-lg"></i> Bloco de texto
-          </button>
+            <button
+              class="btn btn-sm"
+              onclick="addQuestion('multiple_choice')"
+              title="Adicionar pergunta de múltipla escolha"
+            >
+              <i class="bi bi-plus-lg"></i> Múltipla escolha
+            </button>
+
+            <button
+              class="btn btn-sm"
+              onclick="addQuestion('pdf_file')"
+              title="Adicionar campo para upload de arquivo PDF"
+            >
+              <i class="bi bi-plus-lg"></i> Upload de arquivo
+            </button>
+
+            <button
+              class="btn btn-sm"
+              onclick="addQuestion('text_block')"
+              title="Adicionar bloco de texto informativo (sem resposta)"
+            >
+              <i class="bi bi-plus-lg"></i> Bloco de texto
+            </button>
+
+          </div>
 
         </div>
 
@@ -1864,8 +1904,8 @@ async function renderDashboard(){
   main.innerHTML = `
     <div class="topbar">
       <h2><i class="bi bi-speedometer2" style="color:var(--primary);margin-right:6px"></i>Dashboard</h2>
-      <button class="btn btn-primary" onclick="window.open('https://inrbb.sharepoint.com/:u:/s/ApoioOscs/IQCb5rgkm1C2RbcexEhSKvf_Aaljt7HmW52ACRP4tpotCKc?e=HM7y4i', '_blank')" aria-label="Abrir pasta de documentos das OSCs no SharePoint">
-        <i class="bi bi-folder2-open"></i> Pasta OSC
+      <button class="btn btn-primary" onclick="window.open('https://inrbb.sharepoint.com/:u:/s/ApoioOscs/IQCb5rgkm1C2RbcexEhSKvf_Aaljt7HmW52ACRP4tpotCKc?e=HM7y4i', '_blank')" aria-label="Abrir a pasta das OSCs no SharePoint" title="Abrir a pasta de documentos das OSCs no SharePoint">
+        <i class="bi bi-buildings"></i> OSCs
       </button>
     </div>
 
@@ -2632,6 +2672,42 @@ async function openEditor(id){
   document.body.style.overflow =
     "hidden";
 
+
+  setupStickyToolbar();
+
+}
+
+
+function setupStickyToolbar(){
+
+  const editorLeft =
+    document.querySelector(
+      ".editor-left"
+    );
+
+  const toolbar =
+    document.getElementById(
+      "addQToolbar"
+    );
+
+  if(!editorLeft || !toolbar){
+    return;
+  }
+
+  editorLeft.onscroll =
+    () => {
+
+      toolbar.classList.toggle(
+        "is-stuck",
+        editorLeft.scrollTop > 4
+      );
+
+    };
+
+  toolbar.classList.remove(
+    "is-stuck"
+  );
+
 }
 
 
@@ -2657,13 +2733,16 @@ function closeEditor(){
 
 function addQuestion(type){
 
+  const newId =
+    "q_" +
+    Math.random()
+      .toString(36)
+      .slice(2,10);
+
   editorQuestions.push({
 
     id:
-      "q_" +
-      Math.random()
-        .toString(36)
-        .slice(2,10),
+      newId,
 
     type,
 
@@ -2694,6 +2773,20 @@ function addQuestion(type){
   renderQuestionsEditor();
 
   renderPreview();
+
+  const newCard =
+    document.querySelector(
+      `.qcard[data-qid="${newId}"]`
+    );
+
+  if(newCard){
+
+    newCard.scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
+
+  }
 
 }
 
@@ -2772,7 +2865,7 @@ function renderQuestionsEditor(){
       .map(
         (q,index) => `
 
-          <div class="qcard">
+          <div class="qcard" data-qid="${q.id}">
 
             <div
               class="qcard-head"
@@ -2780,6 +2873,7 @@ function renderQuestionsEditor(){
 
               <span
                 class="qtype-tag"
+                title="Tipo de campo: ${TYPE_LABELS[q.type] || q.type}"
               >
                 ${
                   TYPE_LABELS[
@@ -2793,8 +2887,9 @@ function renderQuestionsEditor(){
               <button
                 class="btn btn-sm btn-danger"
                 onclick="removeQuestion('${q.id}')"
+                title="Remover esta pergunta do formulário"
               >
-                Remover
+                <i class="bi bi-trash3-fill"></i> Remover
               </button>
 
             </div>
@@ -2917,7 +3012,7 @@ function renderQuestionsEditor(){
 
                   ? `
 
-                    <label>
+                    <label title="A OSC precisará preencher este campo para enviar o formulário">
 
                       <input
                         type="checkbox"
@@ -2945,7 +3040,7 @@ function renderQuestionsEditor(){
 
                   ? `
 
-                    <label>
+                    <label title="Permite que a OSC envie mais de um arquivo neste campo">
 
                       <input
                         type="checkbox"
@@ -2977,7 +3072,7 @@ function renderQuestionsEditor(){
 
                   ? `
 
-                    <label>
+                    <label title="A resposta desta pergunta será usada para nomear a pasta da resposta no SharePoint">
 
                       <input
                         type="checkbox"
