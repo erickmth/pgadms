@@ -1,266 +1,726 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Formulário de Inscrição</title>
-<link rel="shortcut icon" type="image/x-icon" href="../favicon.png">
-<link
-  href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
-  rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-<style>
-:root{
-  --primary:#ff1f3d;--primary-dark:#b8102b;--primary-light:#ff5c5c;
-  --primary-glow:rgba(255,31,61,.28);--primary-glow-strong:rgba(255,31,61,.45);
-  --bg:#f4f6fb;--card:#fff;--surface-2:#f4f6fb;--surface-3:#edf0f7;
-  --border:#e5e9f2;--text:#1a1d2e;--muted:#6b7280;
-  --danger:#c0392b;--danger-bg:#fdecea;--success:#10b981;--success-bg:#e8f6ee;
-  --radius:16px;--radius-sm:10px;--radius-lg:20px;
-  --card-shadow:0 1px 2px rgba(24,30,42,.04), 0 4px 24px rgba(24,30,42,.07);
-  --card-shadow-hover:0 4px 8px rgba(24,30,42,.06), 0 12px 44px rgba(24,30,42,.14);
-  --shadow-primary:0 10px 30px rgba(255,31,61,.35);
-  --shadow-primary-hover:0 16px 44px rgba(255,31,61,.48);
-  --focus-ring:0 0 0 3px var(--primary-glow-strong);
-  --transition:all .25s cubic-bezier(.4,0,.2,1);
-  --transition-fast:all .15s cubic-bezier(.4,0,.2,1);
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--text);
-font-family:'Sora',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
--webkit-font-smoothing:antialiased;line-height:1.55}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Inscrição</title>
+  <link rel="shortcut icon" type="image/x-icon" href="../favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary: #ff1f3d;
+      --primary-dark: #b8102b;
+      --primary-light: #ff5c5c;
+      --primary-glow: rgba(255, 31, 61, .28);
+      --primary-glow-strong: rgba(255, 31, 61, .45);
+      --bg: #f4f6fb;
+      --card: #fff;
+      --surface-2: #f4f6fb;
+      --surface-3: #edf0f7;
+      --border: #e5e9f2;
+      --text: #1a1d2e;
+      --muted: #6b7280;
+      --danger: #c0392b;
+      --danger-bg: #fdecea;
+      --success: #10b981;
+      --success-bg: #e8f6ee;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-lg: 20px;
+      --card-shadow: 0 1px 2px rgba(24, 30, 42, .04), 0 4px 24px rgba(24, 30, 42, .07);
+      --card-shadow-hover: 0 4px 8px rgba(24, 30, 42, .06), 0 12px 44px rgba(24, 30, 42, .14);
+      --shadow-primary: 0 10px 30px rgba(255, 31, 61, .35);
+      --shadow-primary-hover: 0 16px 44px rgba(255, 31, 61, .48);
+      --focus-ring: 0 0 0 3px var(--primary-glow-strong);
+      --transition: all .25s cubic-bezier(.4, 0, .2, 1);
+      --transition-fast: all .15s cubic-bezier(.4, 0, .2, 1);
+    }
 
-.page-shell{min-height:100vh;display:flex;flex-direction:column}
+    * {
+      box-sizing: border-box
+    }
 
-.top-strip{height:4px;background:linear-gradient(90deg,var(--primary),var(--primary-light),var(--primary));
-background-size:200% 100%;animation:shimmer 3s ease infinite;flex-shrink:0}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    html {
+      scroll-behavior: smooth
+    }
 
-.header-shell{background:rgba(255,255,255,.9);border-bottom:1px solid var(--border);
-position:sticky;top:0;z-index:100;backdrop-filter:saturate(180%) blur(12px);
--webkit-backdrop-filter:saturate(180%) blur(12px);box-shadow:0 1px 0 rgba(24,30,42,.02), 0 8px 24px -12px rgba(24,30,42,.1)}
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Sora', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.55
+    }
 
-.brand-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;
-padding:16px 22px;max-width:820px;margin:0 auto;width:100%}
-.brand-bar .brand-left{display:flex;align-items:center;gap:12px;min-width:0}
-.brand-bar img{height:38px;width:auto;flex-shrink:0}
-.brand-bar .brand-title{display:flex;flex-direction:column;min-width:0}
-.brand-bar .brand-title span{font-size:11px;font-weight:700;letter-spacing:1.6px;color:var(--muted);
-text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.brand-bar .brand-title strong{font-size:14px;color:var(--text);font-weight:700}
+    .page-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column
+    }
 
-.btn-voltar{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;
-padding:9px 15px 9px 11px;border-radius:var(--radius-sm);border:1.5px solid var(--border);
-background:#fff;color:var(--text);text-decoration:none;font-weight:600;font-size:13.5px;
-transition:var(--transition-fast)}
-.btn-voltar:hover{background:var(--surface-3);border-color:#c8cdd9;color:var(--primary-dark)}
-.btn-voltar i{font-size:19px}
+    .top-strip {
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--primary));
+      background-size: 200% 100%;
+      animation: shimmer 3s ease infinite;
+      flex-shrink: 0
+    }
 
-.wrap{max-width:820px;margin:0 auto;padding:24px 20px 70px;width:100%;flex:1}
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0
+      }
 
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-padding:28px;margin-bottom:18px;box-shadow:var(--card-shadow);
-transition:box-shadow .3s ease,border-color .3s ease;animation:fadeUp .5s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+      100% {
+        background-position: 200% 0
+      }
+    }
 
-.header-image{width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin-bottom:18px}
+    .header-shell {
+      background: rgba(255, 255, 255, .9);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      box-shadow: 0 1px 0 rgba(24, 30, 42, .02), 0 8px 24px -12px rgba(24, 30, 42, .1)
+    }
 
-h1{margin:0 0 8px;font-size:26px;font-weight:700;color:var(--text);letter-spacing:-.4px}
-h2{color:var(--text);font-weight:700;margin:0 0 8px}
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 22px;
+      max-width: 820px;
+      margin: 0 auto;
+      width: 100%
+    }
 
-.desc,.qdesc{white-space:pre-wrap;line-height:1.6;color:var(--muted);font-size:14px}
+    .brand-bar .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0
+    }
 
-.qtitle{display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:7px;
-font-size:15.5px;color:var(--text)}
-.qtitle .qnum{display:inline-flex;align-items:center;justify-content:center;
-width:24px;height:24px;border-radius:7px;background:rgba(255,31,61,.1);
-color:var(--primary);font-size:12px;font-weight:700;flex-shrink:0}
-.req{color:var(--danger);margin-left:1px}
+    .brand-bar img {
+      height: 38px;
+      width: auto;
+      flex-shrink: 0
+    }
 
-input[type=text],textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);
-padding:12px 14px;font:inherit;font-size:15px;background:#fff;color:var(--text);
-transition:var(--transition-fast);outline:none}
-input[type=text]:hover,textarea:hover{border-color:#c8cdd9}
-input[type=text]:focus,textarea:focus{border-color:var(--primary);box-shadow:var(--focus-ring)}
-textarea{min-height:120px;resize:vertical}
+    .brand-bar .brand-title {
+      display: flex;
+      flex-direction: column;
+      min-width: 0
+    }
 
-.choice{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);
-transition:var(--transition-fast);cursor:pointer}
-.choice:hover{background:var(--surface-2)}
-.choice input[type=radio]{width:17px;height:17px;accent-color:var(--primary);flex-shrink:0;cursor:pointer}
-.choice label{cursor:pointer;font-size:14.5px}
+    .brand-bar .brand-title span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.6px;
+      color: var(--muted);
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
 
-.filebox{position:relative;border:2px dashed var(--border);border-radius:var(--radius-sm);padding:26px 20px;
-text-align:center;cursor:pointer;color:var(--muted);transition:var(--transition-fast);background:var(--surface-2);overflow:hidden}
-.filebox:hover{border-color:var(--primary);color:var(--primary-dark);background:rgba(255,31,61,.04)}
-.filebox.dragover{border-color:var(--primary);background:rgba(255,31,61,.07);border-style:solid}
-.filebox.dragover .filebox-content{opacity:.12}
-.filebox i{font-size:26px;color:var(--primary);display:block;margin-bottom:8px}
-.filebox strong{color:var(--text);font-size:14.5px;display:block}
-.filebox-or{font-size:12px;color:var(--muted);margin:8px 0;text-transform:uppercase;letter-spacing:.5px}
-.filebox-select{position:relative;z-index:1}
-.filebox-hint{font-size:13px;margin-top:8px}
-.filebox-dragmsg{display:none;position:absolute;inset:0;align-items:center;justify-content:center;gap:8px;
-background:rgba(255,31,61,.95);color:#fff;font-weight:700;font-size:15px;border-radius:inherit}
-.filebox.dragover .filebox-dragmsg{display:flex}
+    .brand-bar .brand-title strong {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 700
+    }
 
-.filelist{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-.fileitem{display:flex;align-items:center;justify-content:space-between;gap:12px;
-background:var(--surface-2);border:1px solid var(--border);padding:11px 13px;border-radius:var(--radius-sm);
-font-size:13.5px;animation:fadeUp .25s ease both}
-.fileitem .fname{display:flex;align-items:center;gap:9px;min-width:0;overflow:hidden}
-.fileitem .fname i{color:var(--primary);flex-shrink:0;font-size:16px}
-.fileitem .fname span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rm{cursor:pointer;color:var(--danger);font-weight:700;flex-shrink:0;
-display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;
-border-radius:50%;transition:var(--transition-fast)}
-.rm:hover{background:var(--danger-bg)}
+    /* botão voltar removido — apenas mantido como referência visual, mas sem função de navegação */
+    .btn-voltar {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      padding: 9px 15px 9px 11px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13.5px;
+      transition: var(--transition-fast)
+    }
 
-.err,.global-error{display:none;background:var(--danger-bg);color:var(--danger);
-padding:12px 14px;border-radius:var(--radius-sm);margin-top:10px;font-size:13.5px;font-weight:500;
-align-items:center;gap:8px}
-.err.show,.global-error.show{display:flex}
-.global-error ul{margin:6px 0 0;padding-left:18px}
+    .btn-voltar:hover {
+      background: var(--surface-3);
+      border-color: #c8cdd9;
+      color: var(--primary-dark)
+    }
 
-.submit{width:100%;border:0;border-radius:var(--radius-sm);
-background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;
-padding:15px;font-size:16px;font-weight:700;font-family:'Sora',sans-serif;cursor:pointer;
-box-shadow:var(--shadow-primary);transition:var(--transition-fast);
-display:flex;align-items:center;justify-content:center;gap:8px}
-.submit:hover:not(:disabled){background:linear-gradient(135deg,var(--primary-light) 0%,var(--primary) 100%);
-transform:translateY(-2px);box-shadow:var(--shadow-primary-hover)}
-.submit:disabled{opacity:.65;cursor:not-allowed;transform:none}
+    .btn-voltar i {
+      font-size: 19px
+    }
 
-.small-btn{border:1.5px solid var(--border);background:#fff;border-radius:var(--radius-sm);
-padding:10px 15px;cursor:pointer;font:inherit;font-weight:600;font-size:13.5px;color:var(--text);
-transition:var(--transition-fast)}
-.small-btn:hover{background:var(--surface-3);border-color:#c8cdd9}
+    .wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 20px 70px;
+      width: 100%;
+      flex: 1
+    }
 
-.banner{text-align:center;padding:70px 25px}
-.banner .banner-icon{font-size:40px;color:var(--primary);margin-bottom:14px}
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 18px;
+      box-shadow: var(--card-shadow);
+      transition: box-shadow .3s ease, border-color .3s ease;
+      animation: fadeUp .5s ease both
+    }
 
-.draft{background:#fff8e6;border:1px solid #ecd79d;border-radius:var(--radius);padding:16px;margin-bottom:18px;
-display:flex;gap:12px}
-.draft-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-.draft > i{color:#c98a12;font-size:20px;flex-shrink:0}
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
 
-.success{text-align:center;padding:60px 25px}
-.success-icon{font-size:56px;color:var(--success);margin-bottom:8px}
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
 
-.spinner{display:inline-block;width:16px;height:16px;border:2.5px solid #fff;
-border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+    .header-image {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 18px
+    }
 
-@media(max-width:600px){
-  .wrap{padding:16px 14px 50px}
-  .card{padding:20px;border-radius:var(--radius-sm)}
-  h1{font-size:22px}
-  .brand-bar{padding:12px 14px}
-  .brand-bar img{height:30px}
-  .brand-bar .brand-title span{display:none}
-  .brand-bar .brand-title strong{font-size:12.5px}
-  .btn-voltar span{display:none}
-  .btn-voltar{padding:8px 10px}
-}
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
-}
-</style>
+    h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -.4px
+    }
+
+    h2 {
+      color: var(--text);
+      font-weight: 700;
+      margin: 0 0 8px
+    }
+
+    .desc,
+    .qdesc {
+      white-space: pre-wrap;
+      line-height: 1.6;
+      color: var(--muted);
+      font-size: 14px
+    }
+
+    .qtitle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      margin-bottom: 7px;
+      font-size: 15.5px;
+      color: var(--text)
+    }
+
+    .qtitle .qnum {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      background: rgba(255, 31, 61, .1);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0
+    }
+
+    .req {
+      color: var(--danger);
+      margin-left: 1px
+    }
+
+    input[type=text],
+    textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font: inherit;
+      font-size: 15px;
+      background: #fff;
+      color: var(--text);
+      transition: var(--transition-fast);
+      outline: none
+    }
+
+    input[type=text]:hover,
+    textarea:hover {
+      border-color: #c8cdd9
+    }
+
+    input[type=text]:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: var(--focus-ring)
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical
+    }
+
+    .choice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      transition: var(--transition-fast);
+      cursor: pointer
+    }
+
+    .choice:hover {
+      background: var(--surface-2)
+    }
+
+    .choice input[type=radio] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--primary);
+      flex-shrink: 0;
+      cursor: pointer
+    }
+
+    .choice label {
+      cursor: pointer;
+      font-size: 14.5px
+    }
+
+    .filebox {
+      position: relative;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 26px 20px;
+      text-align: center;
+      cursor: pointer;
+      color: var(--muted);
+      transition: var(--transition-fast);
+      background: var(--surface-2);
+      overflow: hidden
+    }
+
+    .filebox:hover {
+      border-color: var(--primary);
+      color: var(--primary-dark);
+      background: rgba(255, 31, 61, .04)
+    }
+
+    .filebox.dragover {
+      border-color: var(--primary);
+      background: rgba(255, 31, 61, .07);
+      border-style: solid
+    }
+
+    .filebox.dragover .filebox-content {
+      opacity: .12
+    }
+
+    .filebox i {
+      font-size: 26px;
+      color: var(--primary);
+      display: block;
+      margin-bottom: 8px
+    }
+
+    .filebox strong {
+      color: var(--text);
+      font-size: 14.5px;
+      display: block
+    }
+
+    .filebox-or {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 8px 0;
+      text-transform: uppercase;
+      letter-spacing: .5px
+    }
+
+    .filebox-select {
+      position: relative;
+      z-index: 1
+    }
+
+    .filebox-hint {
+      font-size: 13px;
+      margin-top: 8px
+    }
+
+    .filebox-dragmsg {
+      display: none;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: rgba(255, 31, 61, .95);
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      border-radius: inherit
+    }
+
+    .filebox.dragover .filebox-dragmsg {
+      display: flex
+    }
+
+    .filelist {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px
+    }
+
+    .fileitem {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 11px 13px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      animation: fadeUp .25s ease both
+    }
+
+    .fileitem .fname {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      overflow: hidden
+    }
+
+    .fileitem .fname i {
+      color: var(--primary);
+      flex-shrink: 0;
+      font-size: 16px
+    }
+
+    .fileitem .fname span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .rm {
+      cursor: pointer;
+      color: var(--danger);
+      font-weight: 700;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      transition: var(--transition-fast)
+    }
+
+    .rm:hover {
+      background: var(--danger-bg)
+    }
+
+    .err,
+    .global-error {
+      display: none;
+      background: var(--danger-bg);
+      color: var(--danger);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      margin-top: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      align-items: center;
+      gap: 8px
+    }
+
+    .err.show,
+    .global-error.show {
+      display: flex
+    }
+
+    .global-error ul {
+      margin: 6px 0 0;
+      padding-left: 18px
+    }
+
+    .submit {
+      width: 100%;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Sora', sans-serif;
+      cursor: pointer;
+      box-shadow: var(--shadow-primary);
+      transition: var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px
+    }
+
+    .submit:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-primary-hover)
+    }
+
+    .submit:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+      transform: none
+    }
+
+    .small-btn {
+      border: 1.5px solid var(--border);
+      background: #fff;
+      border-radius: var(--radius-sm);
+      padding: 10px 15px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--text);
+      transition: var(--transition-fast)
+    }
+
+    .small-btn:hover {
+      background: var(--surface-3);
+      border-color: #c8cdd9
+    }
+
+    .banner {
+      text-align: center;
+      padding: 70px 25px
+    }
+
+    .banner .banner-icon {
+      font-size: 40px;
+      color: var(--primary);
+      margin-bottom: 14px
+    }
+
+    .draft {
+      background: #fff8e6;
+      border: 1px solid #ecd79d;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 18px;
+      display: flex;
+      gap: 12px
+    }
+
+    .draft-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap
+    }
+
+    .draft>i {
+      color: #c98a12;
+      font-size: 20px;
+      flex-shrink: 0
+    }
+
+    .success {
+      text-align: center;
+      padding: 60px 25px
+    }
+
+    .success-icon {
+      font-size: 56px;
+      color: var(--success);
+      margin-bottom: 8px
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2.5px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin .7s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    @media(max-width:600px) {
+      .wrap {
+        padding: 16px 14px 50px
+      }
+
+      .card {
+        padding: 20px;
+        border-radius: var(--radius-sm)
+      }
+
+      h1 {
+        font-size: 22px
+      }
+
+      .brand-bar {
+        padding: 12px 14px
+      }
+
+      .brand-bar img {
+        height: 30px
+      }
+
+      .brand-bar .brand-title span {
+        display: none
+      }
+
+      .brand-bar .brand-title strong {
+        font-size: 12.5px
+      }
+
+      /* .btn-voltar span{display:none} */
+      /* removido para manter consistência, mas botão não existe mais */
+      /* .btn-voltar{padding:8px 10px} */
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .001ms !important;
+        transition-duration: .001ms !important
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="page-shell">
-  <div class="top-strip"></div>
-  <div class="header-shell">
-    <div class="brand-bar">
-      <div class="brand-left">
-        <img src="../logu.svg" alt="Logo" onerror="this.style.display='none'">
-        <div class="brand-title">
-          <span>Sistema de Inscrições</span>
-          <strong>Formulário Institucional</strong>
+  <div class="page-shell">
+    <div class="top-strip"></div>
+    <div class="header-shell">
+      <div class="brand-bar">
+        <div class="brand-left">
+          <img src="../logu-black.svg" alt="Logo" onerror="this.style.display='none'">
+          <div class="brand-title">
+            <span>Sistema de Inscrições</span>
+            <strong>Formulário Institucional</strong>
+          </div>
         </div>
+        <!-- Botão "Voltar" removido permanentemente -->
       </div>
-      <a href="../home.html" class="btn-voltar" id="btnVoltar" aria-label="Voltar para a página inicial">
-        <i class="bi bi-arrow-left-short"></i> <span>Voltar</span>
-      </a>
+    </div>
+    <div class="wrap" id="app">
+      <div class="card banner"><i class="bi bi-hourglass-split banner-icon"></i>
+        <h2>Carregando formulário…</h2>
+      </div>
     </div>
   </div>
-  <div class="wrap" id="app">
-    <div class="card banner"><i class="bi bi-hourglass-split banner-icon"></i><h2>Carregando formulário…</h2></div>
-  </div>
-</div>
 
-<script>
-(() => {
-  const API_BASE = "https://banco.pythonanywhere.com";
+  <script>
+    (() => {
+      const API_BASE = "https://banco.pythonanywhere.com";
 
-  function getToken(){
-    const match = location.pathname.match(/\/form\/([^/?#]+)/);
-    if(match) return decodeURIComponent(match[1]);
-    return new URLSearchParams(location.search).get("token") || "";
-  }
+      function getToken() {
+        const match = location.pathname.match(/\/form\/([^/?#]+)/);
+        if (match) return decodeURIComponent(match[1]);
+        return new URLSearchParams(location.search).get("token") || "";
+      }
 
-  const TOKEN = getToken();
-  const APP = document.getElementById("app");
-  const DRAFT_KEY = "form_draft_" + TOKEN;
+      const TOKEN = getToken();
+      const APP = document.getElementById("app");
+      const DRAFT_KEY = "form_draft_" + TOKEN;
 
-  let formData = null;
-  let answers = {};
-  let selectedFiles = {};
+      let formData = null;
+      let answers = {};
+      let selectedFiles = {};
 
-  // Evita que o navegador abra o arquivo quando ele é solto fora de um campo de upload
-  window.addEventListener("dragover",e=>{if(!e.target.closest("[data-filebox]"))e.preventDefault()});
-  window.addEventListener("drop",e=>{if(!e.target.closest("[data-filebox]"))e.preventDefault()});
+      // Evita que o navegador abra o arquivo quando ele é solto fora de um campo de upload
+      window.addEventListener("dragover", e => { if (!e.target.closest("[data-filebox]")) e.preventDefault() });
+      window.addEventListener("drop", e => { if (!e.target.closest("[data-filebox]")) e.preventDefault() });
 
-  const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
+      const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
 
-  function saveDraft(){
-    const files = {};
-    Object.keys(selectedFiles).forEach(id => {
-      files[id] = selectedFiles[id].map(f => ({
-        name:f.name,size:f.size
-      }));
-    });
-    localStorage.setItem(DRAFT_KEY,JSON.stringify({answers,files}));
-  }
+      function saveDraft() {
+        const files = {};
+        Object.keys(selectedFiles).forEach(id => {
+          files[id] = selectedFiles[id].map(f => ({
+            name: f.name, size: f.size
+          }));
+        });
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({ answers, files }));
+      }
 
-  function loadDraft(){
-    try{return JSON.parse(localStorage.getItem(DRAFT_KEY)||"null")}
-    catch{return null}
-  }
+      function loadDraft() {
+        try { return JSON.parse(localStorage.getItem(DRAFT_KEY) || "null") }
+        catch { return null }
+      }
 
-  function clearDraft(){localStorage.removeItem(DRAFT_KEY)}
+      function clearDraft() { localStorage.removeItem(DRAFT_KEY) }
 
-  function banner(title,text){
-    APP.innerHTML=`<div class="card banner"><i class="bi bi-exclamation-circle banner-icon"></i><h2>${esc(title)}</h2><p class="desc">${esc(text||"")}</p></div>`;
-  }
+      function banner(title, text) {
+        APP.innerHTML = `<div class="card banner"><i class="bi bi-exclamation-circle banner-icon"></i><h2>${esc(title)}</h2><p class="desc">${esc(text || "")}</p></div>`;
+      }
 
-  async function init(){
-    if(!TOKEN){
-      banner("Link inválido","O link deste formulário não contém um identificador válido.");
-      return;
-    }
-    try{
-      const r=await fetch(`${API_BASE}/api/public/forms/${encodeURIComponent(TOKEN)}`,{cache:"no-store"});
-      if(r.status===404){banner("Formulário não encontrado","Verifique o link.");return}
-      if(r.status===410){banner("Formulário desativado","Este formulário não está mais disponível.");return}
-      if(!r.ok){banner("Erro ao carregar","Tente novamente em instantes.");return}
-      formData=await r.json();
+      async function init() {
+        if (!TOKEN) {
+          banner("Link inválido", "O link deste formulário não contém um identificador válido.");
+          return;
+        }
+        try {
+          const r = await fetch(`${API_BASE}/api/public/forms/${encodeURIComponent(TOKEN)}`, { cache: "no-store" });
+          if (r.status === 404) { banner("Formulário não encontrado", "Verifique o link."); return }
+          if (r.status === 410) { banner("Formulário desativado", "Este formulário não está mais disponível."); return }
+          if (!r.ok) { banner("Erro ao carregar", "Tente novamente em instantes."); return }
+          formData = await r.json();
 
-      const draft=loadDraft();
-      if(draft && (Object.keys(draft.answers||{}).length || Object.keys(draft.files||{}).length)){
-        answers=draft.answers||{};
-        renderDraftPrompt(draft);
-      }else renderForm();
-    }catch(e){
-      banner("Erro de conexão","Não foi possível conversar com a API.");
-    }
-  }
+          const draft = loadDraft();
+          if (draft && (Object.keys(draft.answers || {}).length || Object.keys(draft.files || {}).length)) {
+            answers = draft.answers || {};
+            renderDraftPrompt(draft);
+          } else renderForm();
+        } catch (e) {
+          banner("Erro de conexão", "Não foi possível conversar com a API.");
+        }
+      }
 
-  function renderDraftPrompt(draft){
-    APP.innerHTML=`
+      function renderDraftPrompt(draft) {
+        APP.innerHTML = `
       <div class="draft">
         <i class="bi bi-clock-history"></i>
         <div>
@@ -272,247 +732,247 @@ border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinit
           </div>
         </div>
       </div>`;
-    document.getElementById("continue").onclick=renderForm;
-    document.getElementById("clear").onclick=()=>{
-      clearDraft();answers={};selectedFiles={};renderForm();
-    };
-  }
-
-  function renderForm(){
-    let html=`<div class="card">`;
-    if(formData.image_data) html+=`<img class="header-image" src="${formData.image_data}" alt="">`;
-    html+=`<h1>${esc(formData.title)}</h1>`;
-    if(formData.description) html+=`<p class="desc">${esc(formData.description)}</p>`;
-    html+=`</div>`;
-
-    let qNum = 0;
-    formData.questions.forEach(q=>{
-      if(q.type==="text_block"){
-        html+=`<div class="card"><div class="desc">${esc(q.title)}</div></div>`;
-        return;
+        document.getElementById("continue").onclick = renderForm;
+        document.getElementById("clear").onclick = () => {
+          clearDraft(); answers = {}; selectedFiles = {}; renderForm();
+        };
       }
-      qNum++;
 
-      html+=`<div class="card" data-q="${q.id}">
-        <label class="qtitle"><span class="qnum">${qNum}</span> ${esc(q.title)}${q.required?'<span class="req">*</span>':''}</label>
-        ${q.description?`<div class="qdesc">${esc(q.description)}</div>`:""}`;
+      function renderForm() {
+        let html = `<div class="card">`;
+        if (formData.image_data) html += `<img class="header-image" src="${formData.image_data}" alt="">`;
+        html += `<h1>${esc(formData.title)}</h1>`;
+        if (formData.description) html += `<p class="desc">${esc(formData.description)}</p>`;
+        html += `</div>`;
 
-      if(q.type==="short_text"){
-        html+=`<input type="text" data-answer="${q.id}" value="${esc(answers[q.id]||"")}">`;
-      }else if(q.type==="long_text"){
-        html+=`<textarea data-answer="${q.id}">${esc(answers[q.id]||"")}</textarea>`;
-      }else if(q.type==="multiple_choice"){
-        (q.options||[]).forEach((o,i)=>{
-          html+=`<div class="choice">
+        let qNum = 0;
+        formData.questions.forEach(q => {
+          if (q.type === "text_block") {
+            html += `<div class="card"><div class="desc">${esc(q.title)}</div></div>`;
+            return;
+          }
+          qNum++;
+
+          html += `<div class="card" data-q="${q.id}">
+        <label class="qtitle"><span class="qnum">${qNum}</span> ${esc(q.title)}${q.required ? '<span class="req">*</span>' : ''}</label>
+        ${q.description ? `<div class="qdesc">${esc(q.description)}</div>` : ""}`;
+
+          if (q.type === "short_text") {
+            html += `<input type="text" data-answer="${q.id}" value="${esc(answers[q.id] || "")}">`;
+          } else if (q.type === "long_text") {
+            html += `<textarea data-answer="${q.id}">${esc(answers[q.id] || "")}</textarea>`;
+          } else if (q.type === "multiple_choice") {
+            (q.options || []).forEach((o, i) => {
+              html += `<div class="choice">
             <input type="radio" id="mc_${q.id}_${i}" name="mc_${q.id}"
-              value="${esc(o)}" ${answers[q.id]===o?"checked":""}
+              value="${esc(o)}" ${answers[q.id] === o ? "checked" : ""}
               data-radio="${q.id}">
             <label for="mc_${q.id}_${i}">${esc(o)}</label>
           </div>`;
-        });
-      }else if(q.type==="pdf_file"){
-        html+=`
+            });
+          } else if (q.type === "pdf_file") {
+            html += `
           <div class="filebox" data-filebox="${q.id}">
             <div class="filebox-content">
               <i class="bi bi-cloud-arrow-up"></i>
               <strong>Arraste o arquivo aqui</strong>
               <div class="filebox-or">ou</div>
               <button type="button" class="small-btn filebox-select" data-select="${q.id}">
-                <i class="bi bi-folder2-open"></i> Selecionar arquivo${q.allow_multiple_files?"s":""}
+                <i class="bi bi-folder2-open"></i> Selecionar arquivo${q.allow_multiple_files ? "s" : ""}
               </button>
               <div class="filebox-hint">
-                ${q.allow_multiple_files?"Você pode selecionar vários PDFs.":"Selecione um PDF."}
+                ${q.allow_multiple_files ? "Você pode selecionar vários PDFs." : "Selecione um PDF."}
               </div>
             </div>
             <div class="filebox-dragmsg"><i class="bi bi-cloud-arrow-up-fill"></i> Solte o arquivo aqui</div>
             <input hidden type="file" accept=".pdf,application/pdf"
-              ${q.allow_multiple_files?"multiple":""} data-file="${q.id}">
+              ${q.allow_multiple_files ? "multiple" : ""} data-file="${q.id}">
           </div>
           <div class="filelist" data-list="${q.id}"></div>`;
-      }
+          }
 
-      html+=`<div class="err" data-error="${q.id}"><i class="bi bi-exclamation-triangle"></i><span></span></div></div>`;
-    });
+          html += `<div class="err" data-error="${q.id}"><i class="bi bi-exclamation-triangle"></i><span></span></div></div>`;
+        });
 
-    html+=`<div class="global-error" id="globalError"></div>
+        html += `<div class="global-error" id="globalError"></div>
            <button class="submit" id="send"><i class="bi bi-send-fill"></i> Enviar formulário</button>`;
-    APP.innerHTML=html;
+        APP.innerHTML = html;
 
-    APP.querySelectorAll("[data-answer]").forEach(el=>{
-      el.oninput=()=>{answers[el.dataset.answer]=el.value;saveDraft()};
-    });
-    APP.querySelectorAll("[data-radio]").forEach(el=>{
-      el.onchange=()=>{if(el.checked){answers[el.dataset.radio]=el.value;saveDraft()}};
-    });
+        APP.querySelectorAll("[data-answer]").forEach(el => {
+          el.oninput = () => { answers[el.dataset.answer] = el.value; saveDraft() };
+        });
+        APP.querySelectorAll("[data-radio]").forEach(el => {
+          el.onchange = () => { if (el.checked) { answers[el.dataset.radio] = el.value; saveDraft() } };
+        });
 
-    APP.querySelectorAll("[data-filebox]").forEach(box=>{
-      const id=box.dataset.filebox;
-      const input=box.querySelector("[data-file]");
-      const selectBtn=box.querySelector("[data-select]");
+        APP.querySelectorAll("[data-filebox]").forEach(box => {
+          const id = box.dataset.filebox;
+          const input = box.querySelector("[data-file]");
+          const selectBtn = box.querySelector("[data-select]");
 
-      // Clique na área (exceto no botão remover / botão selecionar, que têm sua própria ação)
-      box.onclick=e=>{
-        if(e.target.closest(".rm"))return;
-        if(e.target.closest("[data-select]"))return;
-        input.click();
-      };
+          // Clique na área (exceto no botão remover / botão selecionar, que têm sua própria ação)
+          box.onclick = e => {
+            if (e.target.closest(".rm")) return;
+            if (e.target.closest("[data-select]")) return;
+            input.click();
+          };
 
-      if(selectBtn){
-        selectBtn.onclick=e=>{
-          e.stopPropagation();
-          input.click();
-        };
+          if (selectBtn) {
+            selectBtn.onclick = e => {
+              e.stopPropagation();
+              input.click();
+            };
+          }
+
+          input.onchange = () => {
+            const files = Array.from(input.files || []);
+            input.value = "";
+            handleIncomingFiles(id, files);
+          };
+
+          // ---- Drag & Drop ----
+          let dragCounter = 0;
+          box.addEventListener("dragover", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            box.classList.add("dragover");
+          });
+          box.addEventListener("dragenter", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter++;
+            box.classList.add("dragover");
+          });
+          box.addEventListener("dragleave", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter = Math.max(0, dragCounter - 1);
+            if (dragCounter === 0) box.classList.remove("dragover");
+          });
+          box.addEventListener("drop", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter = 0;
+            box.classList.remove("dragover");
+            const dt = e.dataTransfer;
+            if (!dt || !dt.files || !dt.files.length) return;
+            handleIncomingFiles(id, Array.from(dt.files));
+          });
+
+          renderFiles(id);
+        });
+
+        document.getElementById("send").onclick = submit;
       }
 
-      input.onchange=()=>{
-        const files=Array.from(input.files||[]);
-        input.value="";
-        handleIncomingFiles(id,files);
-      };
+      function handleIncomingFiles(id, files) {
+        const q = formData.questions.find(x => String(x.id) === String(id));
+        if (!q) return;
+        let list = files.slice();
+        if (!q.allow_multiple_files) list = list.slice(0, 1);
+        selectedFiles[id] = selectedFiles[id] || [];
+        if (!q.allow_multiple_files) selectedFiles[id] = [];
 
-      // ---- Drag & Drop ----
-      let dragCounter=0;
-      box.addEventListener("dragover",e=>{
-        e.preventDefault();
-        e.stopPropagation();
-        box.classList.add("dragover");
-      });
-      box.addEventListener("dragenter",e=>{
-        e.preventDefault();
-        e.stopPropagation();
-        dragCounter++;
-        box.classList.add("dragover");
-      });
-      box.addEventListener("dragleave",e=>{
-        e.preventDefault();
-        e.stopPropagation();
-        dragCounter=Math.max(0,dragCounter-1);
-        if(dragCounter===0) box.classList.remove("dragover");
-      });
-      box.addEventListener("drop",e=>{
-        e.preventDefault();
-        e.stopPropagation();
-        dragCounter=0;
-        box.classList.remove("dragover");
-        const dt=e.dataTransfer;
-        if(!dt||!dt.files||!dt.files.length)return;
-        handleIncomingFiles(id,Array.from(dt.files));
-      });
-
-      renderFiles(id);
-    });
-
-    document.getElementById("send").onclick=submit;
-  }
-
-  function handleIncomingFiles(id,files){
-    const q=formData.questions.find(x=>String(x.id)===String(id));
-    if(!q)return;
-    let list=files.slice();
-    if(!q.allow_multiple_files) list=list.slice(0,1);
-    selectedFiles[id]=selectedFiles[id]||[];
-    if(!q.allow_multiple_files) selectedFiles[id]=[];
-
-    for(const file of list){
-      if(!file.name.toLowerCase().endsWith(".pdf")){
-        showError(id,"Apenas PDF é permitido.");continue;
+        for (const file of list) {
+          if (!file.name.toLowerCase().endsWith(".pdf")) {
+            showError(id, "Apenas PDF é permitido."); continue;
+          }
+          selectedFiles[id].push(file);
+        }
+        renderFiles(id);
+        saveDraft();
       }
-      selectedFiles[id].push(file);
-    }
-    renderFiles(id);
-    saveDraft();
-  }
 
-  function renderFiles(id){
-    const list=APP.querySelector(`[data-list="${id}"]`);
-    if(!list)return;
-    list.innerHTML=(selectedFiles[id]||[]).map((f,i)=>`
+      function renderFiles(id) {
+        const list = APP.querySelector(`[data-list="${id}"]`);
+        if (!list) return;
+        list.innerHTML = (selectedFiles[id] || []).map((f, i) => `
       <div class="fileitem">
-        <span class="fname"><i class="bi bi-file-earmark-pdf-fill"></i><span>${esc(f.name)} — ${(f.size/1024/1024).toFixed(2)} MB</span></span>
+        <span class="fname"><i class="bi bi-file-earmark-pdf-fill"></i><span>${esc(f.name)} — ${(f.size / 1024 / 1024).toFixed(2)} MB</span></span>
         <span class="rm" data-remove="${id}" data-index="${i}"><i class="bi bi-x-lg"></i></span>
       </div>`).join("");
-    list.querySelectorAll("[data-remove]").forEach(el=>{
-      el.onclick=e=>{
-        e.stopPropagation();
-        const id=el.dataset.remove;
-        selectedFiles[id].splice(Number(el.dataset.index),1);
-        renderFiles(id);saveDraft();
-      };
-    });
-  }
-
-  function showError(id,msg){
-    const el=APP.querySelector(`[data-error="${id}"]`);
-    if(el){
-      const span=el.querySelector("span");
-      if(span) span.textContent=msg; else el.textContent=msg;
-      el.classList.add("show");
-    }
-  }
-
-  function clearErrors(){
-    APP.querySelectorAll(".err").forEach(x=>{
-      const span=x.querySelector("span");
-      if(span) span.textContent=""; else x.textContent="";
-      x.classList.remove("show");
-    });
-    const g=document.getElementById("globalError");
-    if(g){g.textContent="";g.classList.remove("show")}
-  }
-
-  async function submit(){
-    clearErrors();
-    const button=document.getElementById("send");
-    button.disabled=true;
-    button.innerHTML='<span class="spinner"></span>Enviando…';
-
-    const fd=new FormData();
-    fd.append("answers",JSON.stringify(answers));
-
-    formData.questions.forEach(q=>{
-      if(q.type==="pdf_file"){
-        (selectedFiles[q.id]||[]).forEach(file=>{
-          fd.append(`file_${q.id}`,file,file.name);
+        list.querySelectorAll("[data-remove]").forEach(el => {
+          el.onclick = e => {
+            e.stopPropagation();
+            const id = el.dataset.remove;
+            selectedFiles[id].splice(Number(el.dataset.index), 1);
+            renderFiles(id); saveDraft();
+          };
         });
       }
-    });
 
-    try{
-      const r=await fetch(`${API_BASE}/api/public/forms/${encodeURIComponent(TOKEN)}/submit`,{
-        method:"POST",body:fd,cache:"no-store"
-      });
-      const data=await r.json().catch(()=>({}));
-
-      if(!r.ok){
-        const g=document.getElementById("globalError");
-        g.innerHTML=`<i class="bi bi-exclamation-triangle"></i><div>${esc(data.error||"Não foi possível concluir o envio.")}`+
-          (data.details?.length?`<ul>${data.details.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:"")+`</div>`;
-        g.classList.add("show");
-        button.disabled=false;
-        button.innerHTML='<i class="bi bi-send-fill"></i> Enviar formulário';
-        // Keep local draft intentionally.
-        return;
+      function showError(id, msg) {
+        const el = APP.querySelector(`[data-error="${id}"]`);
+        if (el) {
+          const span = el.querySelector("span");
+          if (span) span.textContent = msg; else el.textContent = msg;
+          el.classList.add("show");
+        }
       }
 
-      clearDraft();
-      const backBtn=document.getElementById("btnVoltar");
-      if(backBtn) backBtn.style.display="none";
-      APP.innerHTML=`<div class="card success">
+      function clearErrors() {
+        APP.querySelectorAll(".err").forEach(x => {
+          const span = x.querySelector("span");
+          if (span) span.textContent = ""; else x.textContent = "";
+          x.classList.remove("show");
+        });
+        const g = document.getElementById("globalError");
+        if (g) { g.textContent = ""; g.classList.remove("show") }
+      }
+
+      async function submit() {
+        clearErrors();
+        const button = document.getElementById("send");
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner"></span>Enviando…';
+
+        const fd = new FormData();
+        fd.append("answers", JSON.stringify(answers));
+
+        formData.questions.forEach(q => {
+          if (q.type === "pdf_file") {
+            (selectedFiles[q.id] || []).forEach(file => {
+              fd.append(`file_${q.id}`, file, file.name);
+            });
+          }
+        });
+
+        try {
+          const r = await fetch(`${API_BASE}/api/public/forms/${encodeURIComponent(TOKEN)}/submit`, {
+            method: "POST", body: fd, cache: "no-store"
+          });
+          const data = await r.json().catch(() => ({}));
+
+          if (!r.ok) {
+            const g = document.getElementById("globalError");
+            g.innerHTML = `<i class="bi bi-exclamation-triangle"></i><div>${esc(data.error || "Não foi possível concluir o envio.")}` +
+              (data.details?.length ? `<ul>${data.details.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "") + `</div>`;
+            g.classList.add("show");
+            button.disabled = false;
+            button.innerHTML = '<i class="bi bi-send-fill"></i> Enviar formulário';
+            // Keep local draft intentionally.
+            return;
+          }
+
+          clearDraft();
+          // não há botão de voltar para esconder
+          APP.innerHTML = `<div class="card success">
         <div class="success-icon"><i class="bi bi-check-circle-fill"></i></div>
         <h2>Formulário enviado com sucesso!</h2>
         <p class="desc">Sua resposta e seus documentos foram registrados.</p>
       </div>`;
-    }catch(e){
-      const g=document.getElementById("globalError");
-      g.innerHTML='<i class="bi bi-exclamation-triangle"></i><div>Erro de conexão. O rascunho foi preservado. Tente novamente.</div>';
-      g.classList.add("show");
-      button.disabled=false;
-      button.innerHTML='<i class="bi bi-send-fill"></i> Enviar formulário';
-    }
-  }
+        } catch (e) {
+          const g = document.getElementById("globalError");
+          g.innerHTML = '<i class="bi bi-exclamation-triangle"></i><div>Erro de conexão. O rascunho foi preservado. Tente novamente.</div>';
+          g.classList.add("show");
+          button.disabled = false;
+          button.innerHTML = '<i class="bi bi-send-fill"></i> Enviar formulário';
+        }
+      }
 
-  init();
-})();
-</script>
+      init();
+    })();
+  </script>
 </body>
+
 </html>

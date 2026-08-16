@@ -828,21 +828,86 @@
   }
 
   .add-q-row .btn:hover{
-    background:var(--surface-3);
+    background:rgba(255,31,61,.08);
+    border-color:var(--primary-light);
     color:var(--primary-dark);
+    transform:translateY(-1px);
+  }
+
+  .add-q-row .btn i{
+    color:var(--primary);
+  }
+
+  .questions-count-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:.72rem;
+    font-weight:700;
+    color:var(--muted);
+    background:var(--surface-3);
+    padding:4px 10px;
+    border-radius:20px;
+    margin-left:8px;
+    text-transform:none;
+    letter-spacing:0;
+    vertical-align:middle;
+  }
+
+  .field-hint-box{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    padding:11px 13px;
+    margin-top:2px;
+  }
+
+  .field-hint-box i{
+    color:var(--primary);
+    font-size:15px;
+    margin-top:1px;
+    flex-shrink:0;
+  }
+
+  .field-hint-box p{
+    margin:0;
+    color:var(--muted);
+    font-size:.82rem;
+    font-weight:400;
+    text-transform:none;
+    letter-spacing:normal;
+    line-height:1.5;
+  }
+
+  .field-hint-box strong{
+    color:var(--text);
   }
 
   .qcard{
     border:1px solid var(--border);
+    border-left:4px solid var(--border);
     border-radius:var(--radius-sm);
     padding:16px;
-    margin-bottom:12px;
-    background:var(--surface-2);
+    margin-bottom:14px;
+    background:var(--card);
+    box-shadow:var(--card-shadow);
     transition:var(--transition-fast);
+    position:relative;
   }
 
   .qcard:hover{
     border-color:#d8dded;
+    border-left-color:var(--primary);
+    box-shadow:var(--card-shadow-hover);
+    transform:translateY(-1px);
+  }
+
+  .qcard.is-folder-source{
+    border-left-color:var(--warning);
+    background:linear-gradient(180deg, rgba(245,158,11,.06) 0%, var(--card) 90px);
   }
 
   .qcard-head{
@@ -850,7 +915,49 @@
     justify-content:space-between;
     align-items:center;
     gap:10px;
-    margin-bottom:10px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+
+  .qcard-head-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    min-width:0;
+  }
+
+  .qcard-head-right{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .qnum-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:26px;
+    height:26px;
+    border-radius:8px;
+    background:var(--surface-3);
+    color:var(--muted);
+    font-size:.72rem;
+    font-weight:700;
+    flex-shrink:0;
+  }
+
+  .qtype-icon{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:30px;
+    height:30px;
+    border-radius:9px;
+    background:rgba(255,31,61,.1);
+    color:var(--primary-dark);
+    font-size:14px;
+    flex-shrink:0;
   }
 
   .qtype-tag{
@@ -861,23 +968,71 @@
     border-radius:20px;
     font-weight:700;
     letter-spacing:.3px;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    white-space:nowrap;
+  }
+
+  .folder-name-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:.7rem;
+    background:#fff3d9;
+    color:#92650a;
+    padding:3px 10px;
+    border-radius:20px;
+    font-weight:700;
+    letter-spacing:.2px;
+    white-space:nowrap;
   }
 
   .qopts{
     display:flex;
     flex-wrap:wrap;
-    gap:12px;
-    margin-top:10px;
+    gap:10px;
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px dashed var(--border);
     font-size:.83rem;
   }
 
   .qopts label{
     display:flex;
     align-items:center;
-    gap:5px;
+    gap:6px;
     font-weight:500;
     text-transform:none;
     letter-spacing:0;
+    background:var(--surface-2);
+    padding:6px 11px;
+    border-radius:20px;
+    border:1px solid var(--border);
+    transition:var(--transition-fast);
+    cursor:pointer;
+  }
+
+  .qopts label:hover{
+    border-color:#c8cdd9;
+    background:var(--surface-3);
+  }
+
+  .qopts label.opt-folder{
+    border-color:#f1d9a8;
+  }
+
+  .qopts label.opt-folder:has(input:checked){
+    background:#fff3d9;
+    border-color:#f0c96a;
+    color:#92650a;
+  }
+
+  .qopts input[type="checkbox"]{
+    width:15px;
+    height:15px;
+    accent-color:var(--primary);
+    cursor:pointer;
   }
 
   .choice-row{
@@ -1332,7 +1487,7 @@
 
       <div>
         <h2 id="editorTitle">
-          Novo formulário
+          <i class="bi bi-ui-checks-grid" style="color:var(--primary);margin-right:8px;"></i>Novo formulário
         </h2>
         <p class="modal-subtitle">Configure o título, a descrição e as perguntas do formulário.</p>
       </div>
@@ -1360,7 +1515,7 @@
         <div class="field">
 
           <label for="fTitle">
-            Título
+            <i class="bi bi-type" style="color:var(--primary);margin-right:6px;"></i>Título
           </label>
 
           <input
@@ -1375,7 +1530,7 @@
         <div class="field">
 
           <label for="fDescription">
-            Descrição
+            <i class="bi bi-justify-left" style="color:var(--primary);margin-right:6px;"></i>Descrição
           </label>
 
           <textarea
@@ -1389,7 +1544,7 @@
         <div class="field">
 
           <label for="fImage">
-            Imagem do cabeçalho
+            <i class="bi bi-image-fill" style="color:var(--primary);margin-right:6px;"></i>Imagem do cabeçalho
           </label>
 
           <input
@@ -1404,21 +1559,29 @@
         <div class="field">
 
           <label>
-            Perguntas
+            <i class="bi bi-patch-question-fill" style="color:var(--primary);margin-right:6px;"></i>Perguntas
+            <span class="questions-count-badge" id="questionsCountBadge">
+              <i class="bi bi-list-ol"></i> 0 pergunta(s)
+            </span>
           </label>
 
-          <p style="margin:0;color:var(--muted);font-size:.82rem;font-weight:400;text-transform:none;letter-spacing:normal;">
-            Clique em um dos tipos abaixo para adicionar uma nova pergunta ao final do formulário.
-            Cada pergunta pode ser editada diretamente no card (título, descrição e opções) e removida
-            pelo botão "Remover".
-          </p>
+          <div class="field-hint-box">
+            <i class="bi bi-info-circle-fill"></i>
+            <p>
+              Clique em um dos tipos abaixo para adicionar uma nova pergunta ao final do formulário.
+              Cada pergunta pode ser editada diretamente no card (título, descrição e opções) e removida
+              pelo botão "Remover". <strong>Apenas uma pergunta de texto pode ser marcada como
+              "Nome da pasta"</strong> se você marcar em outra pergunta enquanto uma já estiver
+              definida, o sistema avisa antes de trocar, evitando inconsistência ao salvar no SharePoint.
+            </p>
+          </div>
 
         </div>
 
 
         <div class="add-q-toolbar" id="addQToolbar">
 
-          <span class="add-q-label">Adicionar pergunta ao formulário</span>
+          <span class="add-q-label"><i class="bi bi-plus-circle-fill" style="color:var(--primary);margin-right:5px;"></i>Adicionar pergunta ao formulário</span>
 
           <div class="add-q-row">
 
@@ -1427,7 +1590,7 @@
               onclick="addQuestion('short_text')"
               title="Adicionar pergunta de texto curto (resposta em uma linha)"
             >
-              <i class="bi bi-plus-lg"></i> Texto curto
+              <i class="bi bi-fonts"></i> Texto curto
             </button>
 
             <button
@@ -1435,7 +1598,7 @@
               onclick="addQuestion('long_text')"
               title="Adicionar pergunta de texto longo (resposta em parágrafo)"
             >
-              <i class="bi bi-plus-lg"></i> Texto longo
+              <i class="bi bi-text-paragraph"></i> Texto longo
             </button>
 
             <button
@@ -1443,7 +1606,7 @@
               onclick="addQuestion('multiple_choice')"
               title="Adicionar pergunta de múltipla escolha"
             >
-              <i class="bi bi-plus-lg"></i> Múltipla escolha
+              <i class="bi bi-ui-radios"></i> Múltipla escolha
             </button>
 
             <button
@@ -1451,7 +1614,7 @@
               onclick="addQuestion('pdf_file')"
               title="Adicionar campo para upload de arquivo PDF"
             >
-              <i class="bi bi-plus-lg"></i> Upload de arquivo
+              <i class="bi bi-file-earmark-arrow-up-fill"></i> Upload de arquivo
             </button>
 
             <button
@@ -1459,7 +1622,7 @@
               onclick="addQuestion('text_block')"
               title="Adicionar bloco de texto informativo (sem resposta)"
             >
-              <i class="bi bi-plus-lg"></i> Bloco de texto
+              <i class="bi bi-card-text"></i> Bloco de texto
             </button>
 
           </div>
@@ -1482,7 +1645,7 @@
           class="preview-pane"
           id="previewPane"
         >
-          <h4>Preview</h4>
+          <h4><i class="bi bi-eye-fill" style="color:var(--primary);margin-right:6px;"></i>Preview</h4>
 
           <p style="color:var(--muted);">
             A pré-visualização aparecerá aqui.
@@ -2575,10 +2738,13 @@ async function openEditor(id){
 
   document.getElementById(
     "editorTitle"
-  ).textContent =
-    id
-      ? "Editar formulário"
-      : "Novo formulário";
+  ).innerHTML =
+    `<i class="bi ${id ? "bi-pencil-square" : "bi-ui-checks-grid"}" style="color:var(--primary);margin-right:8px;"></i>` +
+    (
+      id
+        ? "Editar formulário"
+        : "Novo formulário"
+    );
 
 
   if(id){
@@ -2636,6 +2802,15 @@ async function openEditor(id){
               }
             )
         );
+
+
+      /*
+       * Formulários criados antes desta correção podem ter
+       * vindo com mais de uma pergunta marcada como nome da
+       * pasta. Mantemos apenas a primeira para evitar
+       * inconsistência ao salvar novamente.
+       */
+      enforceSingleFolderQuestion();
 
     }catch(error){
 
@@ -2827,16 +3002,152 @@ const TYPE_LABELS = {
 };
 
 
+const TYPE_ICONS = {
+
+  short_text:
+    "bi-fonts",
+
+  long_text:
+    "bi-text-paragraph",
+
+  multiple_choice:
+    "bi-ui-radios",
+
+  pdf_file:
+    "bi-file-earmark-pdf-fill",
+
+  text_block:
+    "bi-card-text"
+
+};
+
+
+/*
+ * Retorna o id da pergunta (texto curto ou longo) que está
+ * atualmente marcada para nomear a pasta da resposta,
+ * ou null caso nenhuma esteja marcada.
+ */
+function getFolderNameQuestionId(){
+
+  const question =
+    editorQuestions.find(
+      q => q.use_as_folder_name
+    );
+
+  return question
+    ? question.id
+    : null;
+
+}
+
+
+/*
+ * Garante, de forma centralizada e definitiva, que no máximo
+ * UMA pergunta do formulário esteja marcada como "nome da
+ * pasta". É chamada sempre que a lista é renderizada e antes
+ * de salvar, então mesmo que algum evento de UI falhe ou
+ * dispare fora de ordem, o estado em memória nunca fica com
+ * mais de uma pergunta marcada.
+ *
+ * Se preferredId for informado, essa pergunta (se estiver
+ * marcada) tem prioridade e todas as outras são desmarcadas.
+ * Caso contrário, mantém apenas a primeira encontrada na
+ * ordem do array e desmarca as demais.
+ */
+function enforceSingleFolderQuestion(preferredId){
+
+  if(preferredId){
+
+    const preferred =
+      editorQuestions.find(
+        q => q.id === preferredId
+      );
+
+    if(
+      preferred &&
+      preferred.use_as_folder_name
+    ){
+
+      editorQuestions.forEach(
+        q => {
+
+          if(
+            q.id !== preferredId &&
+            q.use_as_folder_name
+          ){
+
+            q.use_as_folder_name =
+              false;
+
+          }
+
+        }
+      );
+
+      return;
+
+    }
+
+  }
+
+  let alreadyKept =
+    false;
+
+  editorQuestions.forEach(
+    q => {
+
+      if(q.use_as_folder_name){
+
+        if(alreadyKept){
+
+          q.use_as_folder_name =
+            false;
+
+        }else{
+
+          alreadyKept =
+            true;
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
 /* ============================================================
    EDITOR DE PERGUNTAS
    ============================================================ */
 
 function renderQuestionsEditor(){
 
+  /*
+   * Rede de segurança: antes de desenhar os cards,
+   * garante que só existe uma pergunta marcada como
+   * nome da pasta, não importa como o estado chegou aqui.
+   */
+  enforceSingleFolderQuestion();
+
   const element =
     document.getElementById(
       "questionsList"
     );
+
+
+  const countBadge =
+    document.getElementById(
+      "questionsCountBadge"
+    );
+
+  if(countBadge){
+
+    countBadge.innerHTML =
+      `<i class="bi bi-list-ol"></i> ${editorQuestions.length} pergunta(s)`;
+
+  }
 
 
   if(
@@ -2846,8 +3157,9 @@ function renderQuestionsEditor(){
     element.innerHTML = `
 
       <p
-        style="color:var(--muted);"
+        style="color:var(--muted);text-align:center;padding:24px 12px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);background:var(--surface-2);"
       >
+        <i class="bi bi-inbox" style="font-size:22px;display:block;margin-bottom:8px;opacity:.6"></i>
         Nenhuma pergunta ainda.
         Use os botões acima
         para adicionar.
@@ -2865,32 +3177,58 @@ function renderQuestionsEditor(){
       .map(
         (q,index) => `
 
-          <div class="qcard" data-qid="${q.id}">
+          <div class="qcard${q.use_as_folder_name ? " is-folder-source" : ""}" data-qid="${q.id}">
 
             <div
               class="qcard-head"
             >
 
-              <span
-                class="qtype-tag"
-                title="Tipo de campo: ${TYPE_LABELS[q.type] || q.type}"
-              >
-                ${
-                  TYPE_LABELS[
+              <div class="qcard-head-left">
+
+                <span class="qnum-badge" title="Posição desta pergunta no formulário">
+                  ${index + 1}
+                </span>
+
+                <span class="qtype-icon">
+                  <i class="bi ${TYPE_ICONS[q.type] || "bi-question-circle"}"></i>
+                </span>
+
+                <span
+                  class="qtype-tag"
+                  title="Tipo de campo: ${TYPE_LABELS[q.type] || q.type}"
+                >
+                  ${
+                    TYPE_LABELS[
+                      q.type
+                    ] ||
                     q.type
-                  ] ||
-                  q.type
+                  }
+                </span>
+
+                ${
+                  q.use_as_folder_name
+                    ? `
+                      <span class="folder-name-badge" title="A resposta desta pergunta nomeia a pasta no SharePoint">
+                        <i class="bi bi-folder2-open"></i> Nome da pasta
+                      </span>
+                    `
+                    : ""
                 }
-              </span>
+
+              </div>
 
 
-              <button
-                class="btn btn-sm btn-danger"
-                onclick="removeQuestion('${q.id}')"
-                title="Remover esta pergunta do formulário"
-              >
-                <i class="bi bi-trash3-fill"></i> Remover
-              </button>
+              <div class="qcard-head-right">
+
+                <button
+                  class="btn btn-sm btn-danger"
+                  onclick="removeQuestion('${q.id}')"
+                  title="Remover esta pergunta do formulário"
+                >
+                  <i class="bi bi-trash3-fill"></i> Remover
+                </button>
+
+              </div>
 
             </div>
 
@@ -2898,6 +3236,8 @@ function renderQuestionsEditor(){
             <div class="field">
 
               <label>
+
+                <i class="bi bi-pencil-fill" style="color:var(--primary);margin-right:5px;font-size:.75rem;"></i>
 
                 ${
                   q.type ===
@@ -2930,6 +3270,7 @@ function renderQuestionsEditor(){
                   <div class="field">
 
                     <label>
+                      <i class="bi bi-chat-left-text-fill" style="color:var(--primary);margin-right:5px;font-size:.75rem;"></i>
                       Descrição
                       (opcional)
                     </label>
@@ -2968,6 +3309,10 @@ function renderQuestionsEditor(){
                               class="choice-row"
                             >
 
+                              <span style="display:flex;align-items:center;color:var(--muted);font-size:13px;">
+                                <i class="bi bi-circle"></i>
+                              </span>
+
                               <input
                                 type="text"
                                 value="${escapeHtml(option)}"
@@ -2977,8 +3322,9 @@ function renderQuestionsEditor(){
                               <button
                                 class="btn btn-sm btn-danger"
                                 onclick="removeOption('${q.id}',${i})"
+                                title="Remover esta opção"
                               >
-                                ✕
+                                <i class="bi bi-x-lg"></i>
                               </button>
 
                             </div>
@@ -2995,7 +3341,7 @@ function renderQuestionsEditor(){
                     class="btn btn-sm"
                     onclick="addOption('${q.id}')"
                   >
-                    + Opção
+                    <i class="bi bi-plus-lg"></i> Opção
                   </button>
 
                 `
@@ -3024,6 +3370,7 @@ function renderQuestionsEditor(){
                         onchange="updateQ('${q.id}','required',this.checked)"
                       >
 
+                      <i class="bi bi-asterisk" style="font-size:10px;"></i>
                       Obrigatória
 
                     </label>
@@ -3052,6 +3399,7 @@ function renderQuestionsEditor(){
                         onchange="updateQ('${q.id}','allow_multiple_files',this.checked)"
                       >
 
+                      <i class="bi bi-files"></i>
                       Aceitar vários arquivos
 
                     </label>
@@ -3072,20 +3420,23 @@ function renderQuestionsEditor(){
 
                   ? `
 
-                    <label title="A resposta desta pergunta será usada para nomear a pasta da resposta no SharePoint">
+                    <label
+                      class="opt-folder"
+                      title="Apenas uma pergunta do formulário pode ser usada como nome da pasta."
+                    >
 
                       <input
                         type="checkbox"
+                        class="folder-checkbox"
                         ${
                           q.use_as_folder_name
                             ? "checked"
                             : ""
                         }
-                        onchange="updateQ('${q.id}','use_as_folder_name',this.checked)"
                       >
 
-                      Usar resposta
-                      como nome da pasta
+                      <i class="bi bi-folder2-open"></i>
+                      Usar como nome da pasta
 
                     </label>
 
@@ -3132,6 +3483,156 @@ function updateQ(
   renderPreview();
 
 }
+
+
+/*
+ * Controla o toggle "Usar como nome da pasta".
+ * Regra: apenas UMA pergunta do formulário pode estar
+ * marcada. Se o usuário marcar uma pergunta enquanto outra
+ * já está definida como nome da pasta, avisamos antes de
+ * trocar — só desmarcamos a anterior se ele confirmar.
+ */
+function toggleFolderNameQuestion(
+  qid,
+  checked,
+  checkboxEl
+){
+
+  const question =
+    editorQuestions.find(
+      q =>
+        q.id ===
+        qid
+    );
+
+  if(!question){
+    return;
+  }
+
+  if(checked){
+
+    const previous =
+      editorQuestions.find(
+        q =>
+          q.id !== qid &&
+          q.use_as_folder_name
+      );
+
+    if(previous){
+
+      const confirmed =
+        confirm(
+          `A pergunta "${previous.title || "sem título"}" está definida como nome da pasta.\n\n` +
+          `Apenas uma pergunta pode ter essa opção. Ao continuar, ela será desmarcada e ` +
+          `esta pergunta passará a ser usada como nome da pasta.\n\n` +
+          `Deseja continuar?`
+        );
+
+      if(!confirmed){
+
+        /*
+         * Usuário cancelou: reverte o checkbox na tela
+         * e mantém a pergunta anterior como nome da pasta.
+         */
+        if(checkboxEl){
+
+          checkboxEl.checked =
+            false;
+
+        }
+
+        return;
+
+      }
+
+    }
+
+    question.use_as_folder_name =
+      true;
+
+    /*
+     * Trava definitiva: independente de qualquer outra
+     * lógica, garante que nenhuma outra pergunta continue
+     * marcada além desta.
+     */
+    enforceSingleFolderQuestion(
+      qid
+    );
+
+  }else{
+
+    question.use_as_folder_name =
+      false;
+
+  }
+
+  renderQuestionsEditor();
+
+  renderPreview();
+
+  const updatedCard =
+    document.querySelector(
+      `.qcard[data-qid="${qid}"]`
+    );
+
+  if(updatedCard){
+
+    updatedCard.scrollIntoView({
+      behavior:"smooth",
+      block:"nearest"
+    });
+
+  }
+
+}
+
+
+/*
+ * Delegação de evento: o container #questionsList existe
+ * desde o carregamento da página (só o conteúdo interno é
+ * re-renderizado), então um único listener aqui cobre todos
+ * os checkboxes "Usar como nome da pasta" criados a qualquer
+ * momento, sem depender de atributos inline onchange.
+ */
+document
+  .getElementById(
+    "questionsList"
+  )
+  .addEventListener(
+    "change",
+    event => {
+
+      const checkbox =
+        event.target.closest(
+          ".folder-checkbox"
+        );
+
+      if(!checkbox){
+        return;
+      }
+
+      const card =
+        checkbox.closest(
+          ".qcard"
+        );
+
+      const qid =
+        card
+          ? card.dataset.qid
+          : null;
+
+      if(!qid){
+        return;
+      }
+
+      toggleFolderNameQuestion(
+        qid,
+        checkbox.checked,
+        checkbox
+      );
+
+    }
+  );
 
 
 function addOption(qid){
@@ -3298,7 +3799,7 @@ function renderPreview(){
 
   let html = `
     <h4>
-      Pré-visualização
+      <i class="bi bi-eye-fill" style="color:var(--primary);margin-right:6px;"></i>Pré-visualização
     </h4>
   `;
 
@@ -3401,6 +3902,8 @@ function renderPreview(){
 
             <label>
 
+              <i class="bi ${TYPE_ICONS[question.type] || "bi-question-circle"}" style="color:var(--primary);margin-right:6px;"></i>
+
               ${escapeHtml(
                 question.title ||
                 "(sem título)"
@@ -3409,6 +3912,12 @@ function renderPreview(){
               ${
                 question.required
                   ? " *"
+                  : ""
+              }
+
+              ${
+                question.use_as_folder_name
+                  ? ' <span class="folder-name-badge" style="margin-left:6px;"><i class="bi bi-folder2-open"></i> Nome da pasta</span>'
                   : ""
               }
 
@@ -3573,6 +4082,15 @@ async function saveForm(){
     return;
 
   }
+
+
+  /*
+   * Trava final antes de salvar: garante que o payload
+   * enviado ao servidor nunca contenha mais de uma pergunta
+   * marcada como nome da pasta, não importa o que tenha
+   * acontecido na interface.
+   */
+  enforceSingleFolderQuestion();
 
 
   const payload = {
