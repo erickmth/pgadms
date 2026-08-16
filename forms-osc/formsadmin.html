@@ -6,9 +6,6 @@
 <title>Inscrição OSC — Painel Admin</title>
 <link rel="shortcut icon" type="image/x-icon" href="../favicon.png">
 <script>
-  // Guarda de acesso: bloqueia a renderização da página sem token de sessão.
-  // A validação real do token e da permissão de admin global acontece em
-  // verifyGlobalAdmin() no carregamento (chamada ao backend principal).
   (function () {
     var token = sessionStorage.getItem('adminToken');
     if (!token) {
@@ -19,13 +16,19 @@
 <link
   href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
   rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
 <style>
   :root{
     --primary:#ff1f3d;
     --primary-dark:#b8102b;
+    --primary-light:#ff5c5c;
+    --primary-glow:rgba(255,31,61,.28);
+    --primary-glow-strong:rgba(255,31,61,.45);
     --bg:#f4f6fb;
     --card:#ffffff;
+    --surface-2:#f4f6fb;
+    --surface-3:#edf0f7;
     --border:#e5e9f2;
     --text:#1a1d2e;
     --muted:#6b7280;
@@ -33,8 +36,19 @@
     --danger-bg:#fdecea;
     --success:#10b981;
     --success-bg:#e8f6ee;
-    --radius:12px;
-    --sidebar-w:220px;
+    --info:#3b82f6;
+    --warning:#f59e0b;
+    --radius:16px;
+    --radius-sm:10px;
+    --radius-lg:20px;
+    --sidebar-w:240px;
+    --card-shadow:0 1px 2px rgba(24,30,42,.04), 0 4px 24px rgba(24,30,42,.07);
+    --card-shadow-hover:0 4px 8px rgba(24,30,42,.06), 0 12px 44px rgba(24,30,42,.14);
+    --shadow-primary:0 10px 30px rgba(255,31,61,.35);
+    --shadow-primary-hover:0 16px 44px rgba(255,31,61,.48);
+    --focus-ring:0 0 0 3px var(--primary-glow-strong);
+    --transition:all .25s cubic-bezier(.4,0,.2,1);
+    --transition-fast:all .15s cubic-bezier(.4,0,.2,1);
   }
 
   *{
@@ -46,17 +60,11 @@
     margin:0;
     width:100%;
     min-height:100%;
-    font-family:
-      'Sora',
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      Roboto,
-      Helvetica,
-      Arial,
-      sans-serif;
+    font-family:'Sora',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg);
     color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
   }
 
   body{
@@ -78,6 +86,14 @@
     display:none !important;
   }
 
+  a:focus-visible,
+  button:focus-visible,
+  .btn:focus-visible,
+  .nav-item:focus-visible{
+    outline:2px solid var(--primary);
+    outline-offset:2px;
+  }
+
   /* =========================================================
      LOGIN
      ========================================================= */
@@ -89,68 +105,94 @@
     align-items:center;
     justify-content:center;
     padding:24px;
+    background:radial-gradient(circle at 50% 0%, rgba(255,31,61,.08) 0%, transparent 55%), var(--bg);
   }
 
   .login-box{
     background:var(--card);
-    padding:36px;
-    border-radius:var(--radius);
+    padding:38px 36px;
+    border-radius:var(--radius-lg);
     border:1px solid var(--border);
-    width:min(380px,100%);
-    box-shadow:0 12px 40px rgba(0,0,0,.08);
+    width:min(400px,100%);
+    box-shadow:var(--card-shadow-hover);
+    text-align:center;
+    animation:fadeUp .5s ease both;
   }
 
   .login-box h2{
     margin:0 0 8px;
-    color:var(--primary-dark);
+    color:var(--text);
+    font-size:1.3rem;
+    font-weight:700;
+    letter-spacing:-.3px;
   }
 
   .login-box p{
     margin:0 0 24px;
     color:var(--muted);
+    font-size:.92rem;
+    line-height:1.55;
   }
 
   .login-box input{
     width:100%;
-    padding:12px 13px;
-    border:1px solid var(--border);
-    border-radius:8px;
+    padding:12px 14px;
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-sm);
     margin-bottom:12px;
     font-size:1rem;
     outline:none;
+    transition:var(--transition-fast);
+    text-align:left;
+  }
+
+  .login-box input:hover{
+    border-color:#c8cdd9;
   }
 
   .login-box input:focus{
     border-color:var(--primary);
-    box-shadow:0 0 0 3px rgba(47,93,80,.10);
+    box-shadow:var(--focus-ring);
   }
 
   .login-box button{
     width:100%;
     padding:12px;
-    background:var(--primary);
+    background:linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color:#fff;
     border:none;
-    border-radius:8px;
-    font-weight:600;
+    border-radius:var(--radius-sm);
+    font-weight:700;
+    font-size:.95rem;
+    box-shadow:var(--shadow-primary);
+    transition:var(--transition-fast);
   }
 
   .login-box button:hover{
-    background:var(--primary-dark);
+    background:linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+    transform:translateY(-2px);
+    box-shadow:var(--shadow-primary-hover);
   }
 
   .login-error{
     display:none;
     background:var(--danger-bg);
     color:var(--danger);
-    border-radius:8px;
-    padding:10px 12px;
+    border-radius:var(--radius-sm);
+    padding:11px 13px;
     margin-top:12px;
-    font-size:.9rem;
+    font-size:.87rem;
+    font-weight:500;
+    text-align:left;
+  }
+
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
   }
 
   /* =========================================================
-     APP
+     APP SHELL
      ========================================================= */
 
   #app-screen{
@@ -167,91 +209,138 @@
   .sidebar{
     width:var(--sidebar-w);
     min-height:100vh;
-    background:var(--primary-dark);
+    background:linear-gradient(180deg, #0c0f16 0%, #000000 100%);
     color:#fff;
     flex-shrink:0;
-    padding:22px 0;
+    padding:0 0 18px;
     display:flex;
     flex-direction:column;
+    position:relative;
+    box-shadow:4px 0 24px rgba(0,0,0,.12);
   }
 
-  .sidebar-back-link{
+  .sidebar::before{
+    content:'';
+    position:absolute;
+    top:0; left:0; right:0;
+    height:4px;
+    background:linear-gradient(90deg, var(--primary), var(--primary-light), var(--primary));
+    background-size:200% 100%;
+    animation:shimmer 3s ease infinite;
+    box-shadow:0 0 16px var(--primary-glow-strong);
+  }
+
+  @keyframes shimmer{
+    0%{background-position:-200% 0;}
+    100%{background-position:200% 0;}
+  }
+
+  .sidebar-logo-wrap{
     display:flex;
     align-items:center;
-    gap:9px;
-    padding:16px 20px 14px;
-    color:rgba(255,255,255,.75);
-    text-decoration:none;
-    font-size:.82rem;
-    font-weight:500;
+    justify-content:center;
+    padding:26px 20px 18px;
   }
 
-  .sidebar-back-link:hover{
-    color:#fff;
-  }
-
-  .sidebar-back-logo{
-    height:22px;
+  .sidebar-logo-wrap img{
+    height:64px;
     width:auto;
+    max-width:100%;
   }
 
   .sidebar h1{
-    font-size:1.05rem;
+    font-size:1rem;
+    font-weight:700;
     padding:0 20px 18px;
     margin:0;
-    border-bottom:1px solid rgba(255,255,255,.15);
+    border-bottom:1px solid rgba(255,255,255,.08);
+    letter-spacing:-.2px;
   }
 
   .nav{
-    margin-top:12px;
+    margin-top:14px;
+    padding:0 10px;
   }
 
   .nav-item{
-    display:block;
+    display:flex;
+    align-items:center;
     width:100%;
-    padding:12px 20px;
+    padding:11px 14px;
     cursor:pointer;
-    opacity:.8;
-    font-size:.95rem;
-    color:#fff;
+    opacity:.85;
+    font-size:.88rem;
+    font-weight:500;
+    color:rgba(255,255,255,.7);
     background:none;
     border:0;
+    border-radius:var(--radius-sm);
     text-align:left;
+    margin-bottom:3px;
+    transition:var(--transition);
+    min-height:44px;
   }
 
   .nav-item:hover{
     opacity:1;
-    background:rgba(255,255,255,.06);
+    color:#fff;
+    background:rgba(255,255,255,.08);
   }
 
   .nav-item.active{
     opacity:1;
-    background:rgba(255,255,255,.12);
-    border-left:3px solid #fff;
+    color:#fff;
+    background:linear-gradient(90deg, rgba(255,31,61,.32), rgba(255,31,61,.1));
+    box-shadow:inset 0 0 0 1px rgba(255,31,61,.3), 0 0 20px -4px var(--primary-glow-strong);
+  }
+
+  .nav-item .icon{
+    margin-right:11px;
+    display:inline-flex;
+    width:16px;
+    text-align:center;
+    font-size:15px;
   }
 
   .logout{
     margin-top:auto;
-    padding:16px;
+    padding:16px 12px 4px;
+    border-top:1px solid rgba(255,255,255,.08);
   }
 
-  .logout button{
+  .logout button,
+  .sidebar-voltar-btn{
+    display:flex;
+    align-items:center;
     width:100%;
     padding:10px;
     background:rgba(255,255,255,.08);
     color:#fff;
     border:1px solid rgba(255,255,255,.12);
-    border-radius:8px;
+    border-radius:var(--radius-sm);
+    font-weight:600;
+    font-size:.85rem;
+    min-height:42px;
+    transition:var(--transition);
+    text-decoration:none;
+    justify-content:center;
   }
 
-  .logout button:hover{
+  .logout button:hover,
+  .sidebar-voltar-btn:hover{
     background:rgba(255,255,255,.15);
+    color:#fff;
+  }
+
+  .sidebar-voltar-btn .icon{
+    font-size:19px;
+    margin-right:6px;
   }
 
   .main{
     flex:1;
     min-width:0;
-    padding:28px 32px;
+    padding:30px 34px 60px;
     overflow-x:auto;
   }
 
@@ -260,13 +349,20 @@
     justify-content:space-between;
     align-items:center;
     gap:16px;
-    margin-bottom:22px;
+    margin-bottom:24px;
     flex-wrap:wrap;
   }
 
-  .topbar h2{
+  .topbar h2,
+  .topbar h3{
     margin:0;
-    color:var(--primary-dark);
+    color:var(--text);
+    font-weight:700;
+    letter-spacing:-.4px;
+  }
+
+  .topbar h2{
+    font-size:1.3rem;
   }
 
   /* =========================================================
@@ -275,41 +371,59 @@
 
   .btn{
     padding:9px 16px;
-    border-radius:8px;
-    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    border:1.5px solid var(--border);
     background:#fff;
     color:var(--text);
     cursor:pointer;
-    font-size:.9rem;
-    font-weight:500;
+    font-size:.85rem;
+    font-weight:600;
+    font-family:'Sora',sans-serif;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    min-height:38px;
+    transition:var(--transition-fast);
+    letter-spacing:.1px;
   }
 
   .btn:hover{
-    background:#f7f7f4;
+    background:var(--surface-3);
+    border-color:#c8cdd9;
+  }
+
+  .btn:active{
+    transform:translateY(0) scale(.98);
   }
 
   .btn-primary{
-    background:var(--primary);
+    background:linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color:#fff;
-    border-color:var(--primary);
+    border-color:transparent;
+    box-shadow:0 4px 14px rgba(255,31,61,.3);
   }
 
   .btn-primary:hover{
-    background:var(--primary-dark);
+    background:linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+    transform:translateY(-2px);
+    box-shadow:var(--shadow-primary-hover);
   }
 
   .btn-danger{
     color:var(--danger);
     border-color:#eccfcb;
+    background:#fff;
   }
 
   .btn-danger:hover{
     background:var(--danger-bg);
+    border-color:var(--danger);
   }
 
   .btn-sm{
-    padding:6px 10px;
-    font-size:.82rem;
+    padding:6px 11px;
+    font-size:.78rem;
+    min-height:32px;
   }
 
   /* =========================================================
@@ -318,8 +432,8 @@
 
   .cards-row{
     display:flex;
-    gap:16px;
-    margin-bottom:22px;
+    gap:18px;
+    margin-bottom:24px;
     flex-wrap:wrap;
   }
 
@@ -327,22 +441,74 @@
     background:var(--card);
     border:1px solid var(--border);
     border-radius:var(--radius);
-    padding:18px 22px;
+    padding:22px 24px;
     min-width:190px;
     flex:1;
-    box-shadow:0 2px 8px rgba(0,0,0,.03);
+    box-shadow:var(--card-shadow);
+    transition:var(--transition);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .stat-card:hover{
+    transform:translateY(-3px);
+    box-shadow:var(--card-shadow-hover);
   }
 
   .stat-card .num{
-    font-size:1.8rem;
+    font-size:1.9rem;
     font-weight:700;
     color:var(--primary-dark);
+    letter-spacing:-.5px;
+  }
+
+  .stat-card-top{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    background:rgba(255,31,61,.1);
+    color:var(--primary);
+    font-size:18px;
+    margin-bottom:12px;
   }
 
   .stat-card .label{
     color:var(--muted);
-    font-size:.85rem;
-    margin-top:4px;
+    font-size:.82rem;
+    font-weight:600;
+    margin-top:5px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+  }
+
+  /* =========================================================
+     CARDS GERAIS
+     ========================================================= */
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--card-shadow);
+    margin-bottom:20px;
+    overflow:hidden;
+  }
+
+  .card-header{
+    padding:16px 20px;
+    border-bottom:1px solid var(--border);
+    font-weight:700;
+    font-size:.9rem;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .card-body{
+    padding:20px;
   }
 
   /* =========================================================
@@ -366,19 +532,27 @@
   th,
   td{
     text-align:left;
-    padding:12px 14px;
+    padding:13px 16px;
     border-bottom:1px solid var(--border);
-    font-size:.92rem;
+    font-size:.87rem;
     vertical-align:middle;
   }
 
   th{
-    background:#f7f6f2;
+    background:var(--surface-2);
     color:var(--muted);
-    font-weight:600;
-    font-size:.8rem;
+    font-weight:700;
+    font-size:.72rem;
     text-transform:uppercase;
-    letter-spacing:.03em;
+    letter-spacing:.7px;
+  }
+
+  tbody tr{
+    transition:background .15s ease;
+  }
+
+  tbody tr:hover td{
+    background:var(--surface-3);
   }
 
   tr:last-child td{
@@ -387,10 +561,11 @@
 
   .badge{
     display:inline-block;
-    padding:3px 10px;
+    padding:4px 12px;
     border-radius:20px;
-    font-size:.78rem;
-    font-weight:600;
+    font-size:.74rem;
+    font-weight:700;
+    letter-spacing:.3px;
   }
 
   .badge-active{
@@ -399,20 +574,21 @@
   }
 
   .badge-inactive{
-    background:#eee;
+    background:#eef0f4;
     color:var(--muted);
   }
 
   .actions-cell{
     display:flex;
-    gap:6px;
+    gap:7px;
     flex-wrap:wrap;
   }
 
   .empty{
     text-align:center;
-    padding:35px;
+    padding:44px 20px;
     color:var(--muted);
+    font-size:.92rem;
   }
 
   /* =========================================================
@@ -420,34 +596,45 @@
      ========================================================= */
 
   .field{
-    margin-bottom:16px;
+    margin-bottom:18px;
   }
 
   .field label{
     display:block;
-    font-weight:600;
-    margin-bottom:6px;
-    font-size:.9rem;
+    font-weight:700;
+    margin-bottom:7px;
+    font-size:.82rem;
+    color:var(--text);
+    text-transform:uppercase;
+    letter-spacing:.5px;
   }
 
   .field input[type="text"],
+  .field input[type="file"],
   .field textarea,
   .field select{
     width:100%;
-    padding:10px 12px;
-    border:1px solid var(--border);
-    border-radius:8px;
+    padding:11px 13px;
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-sm);
     font-family:inherit;
     font-size:.95rem;
     outline:none;
     background:#fff;
+    transition:var(--transition-fast);
+  }
+
+  .field input[type="text"]:hover,
+  .field textarea:hover,
+  .field select:hover{
+    border-color:#c8cdd9;
   }
 
   .field input[type="text"]:focus,
   .field textarea:focus,
   .field select:focus{
     border-color:var(--primary);
-    box-shadow:0 0 0 3px rgba(47,93,80,.08);
+    box-shadow:var(--focus-ring);
   }
 
   .field textarea{
@@ -457,7 +644,7 @@
 
   /* =========================================================
      MODAIS
-     
+
      IMPORTANTE:
      O modal agora é controlado por viewport.
      Não usa align-items:flex-start.
@@ -477,9 +664,9 @@
 
     padding:24px !important;
 
-    background:rgba(20,30,24,.62);
-
-    backdrop-filter:blur(5px);
+    background:rgba(10,12,22,.68);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
 
     overflow:hidden !important;
 
@@ -488,6 +675,12 @@
 
   .modal-bg.show{
     display:flex !important;
+    animation:overlayFade .2s ease-out;
+  }
+
+  @keyframes overlayFade{
+    from{opacity:0;}
+    to{opacity:1;}
   }
 
   .modal{
@@ -505,24 +698,21 @@
 
     background:var(--card);
 
-    border-radius:16px;
+    border-radius:var(--radius-lg);
 
-    box-shadow:
-      0 30px 80px rgba(0,0,0,.25),
-      0 10px 30px rgba(0,0,0,.12);
+    box-shadow:0 30px 80px rgba(0,0,0,.28), 0 10px 30px rgba(0,0,0,.14);
 
     overflow-y:auto !important;
     overflow-x:hidden !important;
 
-    animation:modalIn .18s ease-out;
+    animation:modalIn .22s cubic-bezier(.4,0,.2,1);
   }
 
   @keyframes modalIn{
     from{
       opacity:0;
-      transform:translateY(8px) scale(.985);
+      transform:translateY(14px) scale(.98);
     }
-
     to{
       opacity:1;
       transform:translateY(0) scale(1);
@@ -531,7 +721,38 @@
 
   .modal h3{
     margin:0;
-    color:var(--primary-dark);
+    color:var(--text);
+    font-weight:700;
+  }
+
+  .modal-subtitle{
+    margin:4px 0 0;
+    font-size:.82rem;
+    color:var(--muted);
+    font-weight:400;
+  }
+
+  .modal-x{
+    width:36px;
+    height:36px;
+    flex-shrink:0;
+    border-radius:50%;
+    border:1.5px solid var(--border);
+    background:#fff;
+    color:var(--muted);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-size:15px;
+    cursor:pointer;
+    transition:var(--transition-fast);
+  }
+
+  .modal-x:hover{
+    background:var(--danger-bg);
+    border-color:#eccfcb;
+    color:var(--danger);
+    transform:rotate(90deg);
   }
 
   /* =========================================================
@@ -545,22 +766,18 @@
 
   #editorModal .editor-header{
     flex-shrink:0;
+    padding-bottom:16px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:6px;
   }
 
   .editor-grid{
     display:grid;
-
-    grid-template-columns:
-      minmax(0, 1.15fr)
-      minmax(380px, .85fr);
-
+    grid-template-columns:minmax(0,1.15fr) minmax(380px,.85fr);
     gap:28px;
-
     width:100%;
     min-height:0;
-
     flex:1;
-
     margin-top:6px;
   }
 
@@ -583,19 +800,26 @@
   }
 
   .add-q-row .btn{
-    background:#f7f8f6;
+    background:var(--surface-2);
+    border-color:var(--border);
   }
 
   .add-q-row .btn:hover{
-    background:#eef2ee;
+    background:var(--surface-3);
+    color:var(--primary-dark);
   }
 
   .qcard{
     border:1px solid var(--border);
-    border-radius:10px;
-    padding:15px;
+    border-radius:var(--radius-sm);
+    padding:16px;
     margin-bottom:12px;
-    background:#fbfaf7;
+    background:var(--surface-2);
+    transition:var(--transition-fast);
+  }
+
+  .qcard:hover{
+    border-color:#d8dded;
   }
 
   .qcard-head{
@@ -607,12 +831,13 @@
   }
 
   .qtype-tag{
-    font-size:.75rem;
-    background:#e6e3da;
+    font-size:.72rem;
+    background:rgba(255,31,61,.1);
     color:var(--primary-dark);
-    padding:3px 9px;
-    border-radius:10px;
-    font-weight:600;
+    padding:3px 10px;
+    border-radius:20px;
+    font-weight:700;
+    letter-spacing:.3px;
   }
 
   .qopts{
@@ -620,14 +845,16 @@
     flex-wrap:wrap;
     gap:12px;
     margin-top:10px;
-    font-size:.85rem;
+    font-size:.83rem;
   }
 
   .qopts label{
     display:flex;
     align-items:center;
     gap:5px;
-    font-weight:400;
+    font-weight:500;
+    text-transform:none;
+    letter-spacing:0;
   }
 
   .choice-row{
@@ -639,15 +866,22 @@
   .choice-row input{
     flex:1;
     min-width:0;
-    padding:9px 10px;
-    border:1px solid var(--border);
+    padding:9px 11px;
+    border:1.5px solid var(--border);
     border-radius:8px;
+    transition:var(--transition-fast);
+  }
+
+  .choice-row input:focus{
+    border-color:var(--primary);
+    box-shadow:var(--focus-ring);
+    outline:none;
   }
 
   .preview-pane{
-    background:#fdfdfb;
+    background:var(--surface-2);
     border:1px solid var(--border);
-    border-radius:12px;
+    border-radius:var(--radius);
     padding:22px;
 
     width:100%;
@@ -664,20 +898,22 @@
 
   .preview-pane h4{
     margin:0 0 16px;
-    color:var(--primary-dark);
+    color:var(--text);
+    font-weight:700;
   }
 
   .preview-q{
     background:#fff;
     border:1px solid var(--border);
-    border-radius:10px;
+    border-radius:var(--radius-sm);
     padding:15px;
     margin:14px 0;
+    box-shadow:var(--card-shadow);
   }
 
   .preview-q label{
     display:block;
-    font-weight:600;
+    font-weight:700;
     margin-bottom:8px;
   }
 
@@ -685,13 +921,14 @@
     color:var(--muted);
     margin-bottom:8px;
     white-space:pre-wrap;
+    font-size:.88rem;
   }
 
   .preview-q input,
   .preview-q textarea{
     width:100%;
-    padding:9px 10px;
-    border:1px solid var(--border);
+    padding:9px 11px;
+    border:1.5px solid var(--border);
     border-radius:8px;
   }
 
@@ -734,11 +971,12 @@
     margin-top:6px;
     color:var(--primary);
     text-decoration:none;
-    font-weight:600;
+    font-weight:700;
   }
 
   .file-download:hover{
     text-decoration:underline;
+    color:var(--primary-dark);
   }
 
   /* =========================================================
@@ -750,12 +988,12 @@
     right:24px;
     bottom:24px;
 
-    background:#1f2a24;
+    background:var(--text);
     color:#fff;
 
     padding:14px 20px;
 
-    border-radius:10px;
+    border-radius:var(--radius-sm);
 
     display:none;
 
@@ -763,14 +1001,15 @@
 
     max-width:420px;
 
-    font-weight:500;
+    font-weight:600;
+    font-size:.88rem;
 
-    box-shadow:0 8px 24px rgba(0,0,0,.15);
+    box-shadow:0 12px 34px rgba(0,0,0,.25);
   }
 
   .toast.show{
     display:block;
-    animation:toastIn .2s ease-out;
+    animation:toastIn .25s cubic-bezier(.4,0,.2,1);
   }
 
   .toast.error{
@@ -780,13 +1019,38 @@
   @keyframes toastIn{
     from{
       opacity:0;
-      transform:translateY(8px);
+      transform:translateY(10px);
     }
-
     to{
       opacity:1;
       transform:translateY(0);
     }
+  }
+
+  /* =========================================================
+     RODAPÉ / VOLTAR
+     ========================================================= */
+
+  .back-home-footer{
+    margin-top:28px;
+    padding-top:20px;
+    border-top:1px solid var(--border);
+    text-align:center;
+  }
+
+  .back-home-footer a{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:var(--muted);
+    text-decoration:none;
+    font-size:.85rem;
+    font-weight:600;
+    transition:var(--transition-fast);
+  }
+
+  .back-home-footer a:hover{
+    color:var(--primary);
   }
 
   /* =========================================================
@@ -821,7 +1085,15 @@
     .sidebar{
       width:100%;
       min-height:auto;
-      padding:12px 0;
+      padding:0 0 10px;
+    }
+
+    .sidebar-logo-wrap{
+      padding:16px 16px 10px;
+    }
+
+    .sidebar-logo-wrap img{
+      height:48px;
     }
 
     .sidebar h1{
@@ -832,6 +1104,7 @@
       display:flex;
       flex-wrap:wrap;
       margin-top:8px;
+      padding:0 10px;
     }
 
     .nav-item{
@@ -841,6 +1114,7 @@
 
     .logout{
       padding:8px 14px;
+      border-top:none;
     }
 
     .main{
@@ -871,7 +1145,7 @@
       height:calc(100vh - 20px) !important;
       max-height:calc(100vh - 20px) !important;
       padding:18px !important;
-      border-radius:12px;
+      border-radius:var(--radius);
     }
 
     #responseModal .modal{
@@ -912,6 +1186,14 @@
       max-width:none;
     }
   }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:.001ms !important;
+      transition-duration:.001ms !important;
+    }
+  }
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
@@ -939,7 +1221,7 @@
     </div>
 
     <a href="../home.html" class="btn btn-primary" id="gateBackBtn" style="display:none;text-decoration:none;text-align:center;">
-      Voltar ao painel
+      <i class="bi bi-arrow-left-short"></i> Voltar ao painel
     </a>
 
   </div>
@@ -957,13 +1239,12 @@
 
     <aside class="sidebar">
 
-      <a href="../home.html" class="sidebar-back-link" title="Voltar ao painel administrativo">
-        <img src="../logu.svg" alt="Logo" class="sidebar-back-logo" onerror="this.style.display='none'">
-        <span>Painel Admin</span>
-      </a>
+      <div class="sidebar-logo-wrap">
+        <img src="../logu.svg" alt="Logo" onerror="this.style.display='none'">
+      </div>
 
       <h1>
-        Inscrição OSC
+        <i class="bi bi-clipboard2-check-fill me-1" style="color:var(--primary)"></i> Inscrição OSC
       </h1>
 
       <div class="nav">
@@ -972,30 +1253,30 @@
           class="nav-item active"
           data-view="dashboard"
         >
-          Dashboard
+          <span class="icon"><i class="bi bi-speedometer2"></i></span> Dashboard
         </button>
 
         <button
           class="nav-item"
           data-view="forms"
         >
-          Formulários
+          <span class="icon"><i class="bi bi-ui-checks-grid"></i></span> Formulários
         </button>
 
         <button
           class="nav-item"
           data-view="responses"
         >
-          Respostas
+          <span class="icon"><i class="bi bi-inbox-fill"></i></span> Respostas
         </button>
 
       </div>
 
       <div class="logout">
 
-        <button onclick="logout()">
-          Sair
-        </button>
+        <a href="../home.html" class="sidebar-voltar-btn">
+          <span class="icon"><i class="bi bi-arrow-left-short"></i></span> Voltar
+        </a>
 
       </div>
 
@@ -1026,15 +1307,20 @@
 
     <div class="topbar editor-header">
 
-      <h2 id="editorTitle">
-        Novo formulário
-      </h2>
+      <div>
+        <h2 id="editorTitle">
+          Novo formulário
+        </h2>
+        <p class="modal-subtitle">Configure o título, a descrição e as perguntas do formulário.</p>
+      </div>
 
       <button
-        class="btn"
+        class="modal-x"
         onclick="closeEditor()"
+        aria-label="Fechar editor de formulário"
+        title="Fechar"
       >
-        Fechar
+        <i class="bi bi-x-lg"></i>
       </button>
 
     </div>
@@ -1107,35 +1393,35 @@
             class="btn btn-sm"
             onclick="addQuestion('short_text')"
           >
-            + Texto curto
+            <i class="bi bi-plus-lg"></i> Texto curto
           </button>
 
           <button
             class="btn btn-sm"
             onclick="addQuestion('long_text')"
           >
-            + Texto longo
+            <i class="bi bi-plus-lg"></i> Texto longo
           </button>
 
           <button
             class="btn btn-sm"
             onclick="addQuestion('multiple_choice')"
           >
-            + Múltipla escolha
+            <i class="bi bi-plus-lg"></i> Múltipla escolha
           </button>
 
           <button
             class="btn btn-sm"
             onclick="addQuestion('pdf_file')"
           >
-            + Arquivo PDF
+            <i class="bi bi-plus-lg"></i> Arquivo PDF
           </button>
 
           <button
             class="btn btn-sm"
             onclick="addQuestion('text_block')"
           >
-            + Bloco de texto
+            <i class="bi bi-plus-lg"></i> Bloco de texto
           </button>
 
         </div>
@@ -1175,14 +1461,14 @@
         class="btn"
         onclick="closeEditor()"
       >
-        Cancelar
+        <i class="bi bi-x-lg"></i> Cancelar
       </button>
 
       <button
         class="btn btn-primary"
         onclick="saveForm()"
       >
-        Salvar formulário
+        <i class="bi bi-check-lg"></i> Salvar formulário
       </button>
 
     </div>
@@ -1209,28 +1495,30 @@
         Resposta
       </h3>
 
-      <div style="display:flex;gap:8px">
+      <div style="display:flex;gap:8px;align-items:center">
 
         <button
           class="btn"
           id="downloadAllBtn"
           onclick="downloadAllFilesAsZip()"
         >
-          Baixar tudo (ZIP)
+          <i class="bi bi-file-earmark-zip"></i> Baixar tudo (ZIP)
         </button>
 
         <button
           class="btn btn-danger"
           onclick="deleteResponse()"
         >
-          Excluir resposta
+          <i class="bi bi-trash3-fill"></i> Excluir resposta
         </button>
 
         <button
-          class="btn"
+          class="modal-x"
           onclick="closeResponseModal()"
+          aria-label="Fechar detalhes da resposta"
+          title="Fechar"
         >
-          Fechar
+          <i class="bi bi-x-lg"></i>
         </button>
 
       </div>
@@ -1266,8 +1554,6 @@ const API_BASE =
 const FORM_FRONTEND_URL =
   "https://adminescala.vercel.app/forms-osc/forms.html";
 
-// Backend principal (mesmo usado pelo home.html) — usado apenas para
-// validar o JWT e a permissão de admin global no carregamento da página.
 const MAIN_SYSTEM_API_URL =
   "https://erickmth.pythonanywhere.com";
 
@@ -1324,8 +1610,6 @@ function api(path, opts){
     opts
   ).then(response => {
     if (response.status === 401) {
-      // Sessão expirada ou inválida: volta para o painel principal,
-      // onde o login é feito.
       sessionStorage.removeItem("adminToken");
       sessionStorage.removeItem("adminName");
       window.location.replace("../index.html");
@@ -1393,12 +1677,7 @@ function escapeHtml(s){
 
 
 /* ============================================================
-   AUTENTICAÇÃO — JWT DO PAINEL PRINCIPAL
-   Não existe login próprio nesta página. O token já deve estar em
-   sessionStorage.adminToken (colocado lá pelo login em index.html).
-   Aqui só verificamos, junto ao backend principal, se esse token é
-   válido e se pertence a um administrador global. Sem essa
-   confirmação do servidor, o painel não é liberado.
+   AUTENTICAÇÃO
    ============================================================ */
 
 function showGate(title, message, showBackBtn){
@@ -1442,7 +1721,6 @@ async function verifyGlobalAdmin(){
       );
 
     if (response.status === 401) {
-      // Token ausente/expirado/inválido: volta para o login do painel principal.
       sessionStorage.removeItem("adminToken");
       sessionStorage.removeItem("adminName");
       window.location.replace("../index.html");
@@ -1470,7 +1748,6 @@ async function verifyGlobalAdmin(){
       return;
     }
 
-    // Autorizado: libera o painel.
     document
       .getElementById("login-screen")
       .style.display = "none";
@@ -1550,34 +1827,26 @@ function navigate(view){
       }
     );
 
-
   if(
     view ===
     "dashboard"
   ){
-
     renderDashboard();
-
   }
 
   if(
     view ===
     "forms"
   ){
-
     renderFormsList();
-
   }
 
   if(
     view ===
     "responses"
   ){
-
     renderResponsesList();
-
   }
-
 }
 
 
@@ -1594,7 +1863,10 @@ async function renderDashboard(){
 
   main.innerHTML = `
     <div class="topbar">
-      <h2>Dashboard</h2>
+      <h2><i class="bi bi-speedometer2" style="color:var(--primary);margin-right:6px"></i>Dashboard</h2>
+      <button class="btn btn-primary" onclick="window.open('https://inrbb.sharepoint.com/:u:/s/ApoioOscs/IQCb5rgkm1C2RbcexEhSKvf_Aaljt7HmW52ACRP4tpotCKc?e=HM7y4i', '_blank')" aria-label="Abrir pasta de documentos das OSCs no SharePoint">
+        <i class="bi bi-folder2-open"></i> Pasta OSC
+      </button>
     </div>
 
     <div
@@ -1602,7 +1874,6 @@ async function renderDashboard(){
       id="statCards"
     ></div>
   `;
-
 
   try{
 
@@ -1629,6 +1900,8 @@ async function renderDashboard(){
 
       <div class="stat-card">
 
+        <div class="stat-card-top"><i class="bi bi-ui-checks-grid"></i></div>
+
         <div class="num">
           ${data.total_forms ?? 0}
         </div>
@@ -1641,6 +1914,8 @@ async function renderDashboard(){
 
 
       <div class="stat-card">
+
+        <div class="stat-card-top"><i class="bi bi-broadcast"></i></div>
 
         <div class="num">
           ${
@@ -1669,6 +1944,8 @@ async function renderDashboard(){
 
 
       <div class="stat-card">
+
+        <div class="stat-card-top"><i class="bi bi-inbox-fill"></i></div>
 
         <div class="num">
           ${data.total_responses ?? 0}
@@ -1710,14 +1987,14 @@ async function renderFormsList(){
     <div class="topbar">
 
       <h2>
-        Formulários
+        <i class="bi bi-ui-checks-grid" style="color:var(--primary);margin-right:6px"></i>Formulários
       </h2>
 
       <button
         class="btn btn-primary"
         onclick="openEditor()"
       >
-        + Novo formulário
+        <i class="bi bi-plus-lg"></i> Novo formulário
       </button>
 
     </div>
@@ -1759,6 +2036,7 @@ async function renderFormsList(){
               colspan="4"
               class="empty"
             >
+              <i class="bi bi-hourglass-split" style="font-size:20px;display:block;margin-bottom:6px"></i>
               Carregando…
             </td>
 
@@ -1809,6 +2087,7 @@ async function renderFormsList(){
             colspan="4"
             class="empty"
           >
+            <i class="bi bi-inbox" style="font-size:26px;display:block;margin-bottom:8px;opacity:.6"></i>
             Nenhum formulário
             cadastrado ainda.
           </td>
@@ -1844,7 +2123,7 @@ async function renderFormsList(){
                     <span
                       class="badge badge-active"
                     >
-                      Ativo
+                      <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Ativo
                     </span>
                   `
 
@@ -1852,7 +2131,7 @@ async function renderFormsList(){
                     <span
                       class="badge badge-inactive"
                     >
-                      Inativo
+                      <i class="bi bi-pause-circle" aria-hidden="true"></i> Inativo
                     </span>
                   `
               }
@@ -1879,24 +2158,30 @@ async function renderFormsList(){
                 <button
                   class="btn btn-sm"
                   onclick="openEditor('${form.id}')"
+                  aria-label="Editar formulário ${escapeHtml(form.title)}"
+                  title="Editar"
                 >
-                  Editar
+                  <i class="bi bi-pencil-fill"></i> Editar
                 </button>
 
 
                 <button
                   class="btn btn-sm"
                   onclick="viewFormLink('${form.public_token}')"
+                  aria-label="Copiar link público do formulário ${escapeHtml(form.title)}"
+                  title="Copiar link"
                 >
-                  Copiar link
+                  <i class="bi bi-link-45deg"></i> Copiar link
                 </button>
 
 
                 <button
                   class="btn btn-sm"
                   onclick="duplicateForm('${form.id}')"
+                  aria-label="Duplicar formulário ${escapeHtml(form.title)}"
+                  title="Duplicar"
                 >
-                  Duplicar
+                  <i class="bi bi-copy"></i> Duplicar
                 </button>
 
 
@@ -1908,8 +2193,10 @@ async function renderFormsList(){
                       <button
                         class="btn btn-sm"
                         onclick="deactivateForm('${form.id}')"
+                        aria-label="Desativar formulário ${escapeHtml(form.title)}"
+                        title="Desativar"
                       >
-                        Desativar
+                        <i class="bi bi-pause-fill"></i> Desativar
                       </button>
                     `
 
@@ -1917,8 +2204,10 @@ async function renderFormsList(){
                       <button
                         class="btn btn-sm btn-primary"
                         onclick="activateForm('${form.id}')"
+                        aria-label="Ativar formulário ${escapeHtml(form.title)}"
+                        title="Ativar"
                       >
-                        Ativar
+                        <i class="bi bi-play-fill"></i> Ativar
                       </button>
                     `
                 }
@@ -1927,8 +2216,10 @@ async function renderFormsList(){
                 <button
                   class="btn btn-sm btn-danger"
                   onclick="deleteForm('${form.id}', '${escapeHtml(form.title).replace(/'/g,"\\'")}')"
+                  aria-label="Excluir formulário ${escapeHtml(form.title)}"
+                  title="Excluir"
                 >
-                  Excluir
+                  <i class="bi bi-trash3-fill"></i> Excluir
                 </button>
 
               </div>
@@ -3295,7 +3586,7 @@ async function renderResponsesList(){
     <div class="topbar">
 
       <h2>
-        Respostas
+        <i class="bi bi-inbox-fill" style="color:var(--primary);margin-right:6px"></i>Respostas
       </h2>
 
     </div>
@@ -3338,6 +3629,7 @@ async function renderResponsesList(){
               colspan="4"
               class="empty"
             >
+              <i class="bi bi-hourglass-split" style="font-size:20px;display:block;margin-bottom:6px"></i>
               Carregando…
             </td>
 
@@ -3389,6 +3681,7 @@ async function renderResponsesList(){
             colspan="4"
             class="empty"
           >
+            <i class="bi bi-inbox" style="font-size:26px;display:block;margin-bottom:8px;opacity:.6"></i>
             Nenhuma resposta
             recebida ainda.
           </td>
@@ -3441,8 +3734,9 @@ async function renderResponsesList(){
                 <button
                   class="btn btn-sm"
                   onclick="openResponse('${response.id}')"
+                  aria-label="Ver resposta de ${escapeHtml(response.folder_name || response.form_title)}"
                 >
-                  Ver resposta
+                  <i class="bi bi-eye-fill"></i> Ver resposta
                 </button>
 
               </td>
@@ -4174,7 +4468,7 @@ document.addEventListener(
 
 
 /* ============================================================
-   INICIALIZAÇÃO — verifica JWT + admin global ao carregar a página
+   INICIALIZAÇÃO
    ============================================================ */
 
 verifyGlobalAdmin();
