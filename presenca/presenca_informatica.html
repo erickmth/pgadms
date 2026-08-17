@@ -325,8 +325,8 @@
             display: inline-flex; align-items: center; gap: 8px;
             white-space: nowrap;
         }
-        .day-info.weekend-day { background: var(--danger-light); color: var(--danger); }
-        .day-info.weekday { background: var(--success-light); color: var(--success); }
+        .day-info.weekend-day { background: var(--success-light); color: var(--success); }
+        .day-info.weekday { background: var(--danger-light); color: var(--danger); }
         .quick-btn {
             padding: 11px 20px; background: var(--success); color: white;
             border: none; border-radius: var(--radius-md);
@@ -684,7 +684,7 @@
                     <span id="dayNameText">-</span>
                 </div>
                 <div id="weekendWarning" class="weekend-warning" style="display: none;">
-                    <i class="fas fa-exclamation-triangle"></i> ⚠️ SÁBADOS E DOMINGOS NÃO SÃO PERMITIDOS!
+                    <i class="fas fa-exclamation-triangle"></i> ⚠️ APENAS SÁBADOS SÃO PERMITIDOS!
                 </div>
                 <button class="quick-btn" id="markAllPresent">
                     <i class="fas fa-check-double"></i> Marcar Todos Presente
@@ -749,8 +749,8 @@
                 <button class="modal-close" id="closeWeekendModal">&times;</button>
             </div>
             <div class="modal-body" id="weekendModalBody">
-                <strong>Sábados e domingos não são permitidos!</strong><br><br>
-                A data selecionada será alterada para o próximo dia útil.
+                <strong>Apenas sábados são permitidos!</strong><br><br>
+                A data selecionada será alterada para o próximo sábado.
             </div>
             <div class="modal-footer">
                 <button class="modal-btn modal-btn-primary" id="confirmWeekendModal">OK</button>
@@ -849,12 +849,13 @@
             return `${year}-${month}-${day}`;
         }
         
+        // MODIFICADO: Agora bloqueia TODOS os dias que NÃO são sábado
         function isWeekend(dateStr) {
             if (!dateStr) return false;
             const date = parseDateToBrasilia(dateStr);
             if (!date) return false;
             const dayOfWeek = date.getUTCDay();
-             return dayOfWeek !== 6; 
+            return dayOfWeek !== 6; // Bloqueia todos os dias que NÃO são sábado
         }
         
         function getDayName(dateStr) {
@@ -865,26 +866,28 @@
             return days[date.getUTCDay()];
         }
         
+        // MODIFICADO: Avança para o PRÓXIMO SÁBADO
         function getNextWeekday(dateStr) {
             const [year, month, day] = dateStr.split('-').map(Number);
             let date = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
-            while (date.getUTCDay() === 0 || date.getUTCDay() === 6) {
+            while (date.getUTCDay() !== 6) { // Enquanto NÃO for sábado
                 date.setUTCDate(date.getUTCDate() + 1);
             }
             return formatDateUTC(date);
         }
         
+        // MODIFICADO: Inverteu a lógica - agora sábado é permitido, outros são bloqueados
         function updateDayInfo(dateStr) {
             if (!dateStr) return;
             const dayName = getDayName(dateStr);
-            const isWeekendDay = isWeekend(dateStr);
+            const isSaturday = dateStr ? parseDateToBrasilia(dateStr).getUTCDay() === 6 : false;
             dayNameText.textContent = dayName;
-            if (isWeekendDay) {
+            if (isSaturday) {
                 dayInfo.className = 'day-info weekend-day';
-                dayInfo.innerHTML = `<i class="fas fa-ban"></i><span>${dayName} - BLOQUEADO!</span>`;
+                dayInfo.innerHTML = `<i class="fas fa-check-circle"></i><span>${dayName} - SÁBADO PERMITIDO ✅</span>`;
             } else {
                 dayInfo.className = 'day-info weekday';
-                dayInfo.innerHTML = `<i class="fas fa-calendar-check"></i><span>${dayName} - Liberado</span>`;
+                dayInfo.innerHTML = `<i class="fas fa-ban"></i><span>${dayName} - BLOQUEADO! ❌</span>`;
             }
         }
         
@@ -894,6 +897,7 @@
             return `${day}/${month}/${year}`;
         }
         
+        // MODIFICADO: Mensagem para sábados
         function showWeekendModal(originalDate, newDate) {
             const originalDayName = getDayName(originalDate);
             const newDayName = getDayName(newDate);
@@ -902,10 +906,10 @@
             weekendModalBody.innerHTML = `
                 <div style="text-align: center;">
                     <i class="fas fa-calendar-times" style="font-size: 48px; color: var(--warning); margin-bottom: 16px; display: block;"></i>
-                    <strong style="font-size: 1.1rem;">${originalDayName.toUpperCase()} não é permitido!</strong><br><br>
+                    <strong style="font-size: 1.1rem;">APENAS SÁBADOS SÃO PERMITIDOS!</strong><br><br>
                     <span style="color: var(--danger);">📅 Data selecionada: ${originalDateFormatted} (${originalDayName})</span><br><br>
-                    ⚠️ Sábados e domingos não são permitidos para registro de chamada.<br><br>
-                    <span style="color: var(--success);">✅ A data será alterada para: <strong>${newDateFormatted} (${newDayName})</strong></span>
+                    ⚠️ Este sistema permite apenas registros em SÁBADOS.<br><br>
+                    <span style="color: var(--success);">✅ A data será alterada para o próximo sábado: <strong>${newDateFormatted} (${newDayName})</strong></span>
                 </div>
             `;
             weekendModal.classList.add('active');
@@ -981,7 +985,7 @@
             }
             if (isWeekend(selectedDate)) {
                 const dayName = getDayName(selectedDate);
-                showNotification(`❌ ${dayName.toUpperCase()} NÃO É PERMITIDO! Apenas dias úteis.`, 'error');
+                showNotification(`❌ ${dayName.toUpperCase()} NÃO É PERMITIDO! Apenas SÁBADOS são permitidos.`, 'error');
                 validateDateWithModal();
                 return false;
             }
@@ -1216,7 +1220,7 @@
             }
             if (isWeekend(currentDate)) {
                 const dayName = getDayName(currentDate);
-                showNotification(`❌ ${actionName ? actionName + ': ' : ''}${dayName.toUpperCase()} NÃO É PERMITIDO! Apenas dias úteis (segunda a sexta).`, 'error');
+                showNotification(`❌ ${actionName ? actionName + ': ' : ''}${dayName.toUpperCase()} NÃO É PERMITIDO! Apenas SÁBADOS são permitidos.`, 'error');
                 validateDateWithModal();
                 return null;
             }
@@ -1282,7 +1286,7 @@
             }
             if (isWeekend(selectedDate)) {
                 const dayName = getDayName(selectedDate);
-                showNotification(`❌ NÃO É PERMITIDO MARCAR PRESENÇA EM ${dayName.toUpperCase()}!`, 'error');
+                showNotification(`❌ NÃO É PERMITIDO MARCAR PRESENÇA EM ${dayName.toUpperCase()}! Apenas SÁBADOS são permitidos.`, 'error');
                 validateDateWithModal();
                 return;
             }
@@ -1336,7 +1340,7 @@
                 attendanceList.innerHTML = '<div class="empty-message">📭 Nenhum aluno cadastrado nesta turma.</div>';
                 return;
             }
-            const isWeekendDate = isWeekend(selectedDate);
+            const isBlocked = isWeekend(selectedDate);
             const statusMap = currentAttendance[selectedDate] || {};
             attendanceList.innerHTML = students.map((student, idx) => {
                 const currentStatus = statusMap[student.edv] || '';
@@ -1346,13 +1350,13 @@
                         <span class="student-num">${num}</span>
                         <div class="person-name">${escapeHtml(student.nome)}</div>
                         <div class="status-group">
-                            <button class="status-btn btn-present ${currentStatus === 'PRESENTE' ? 'active' : ''}" data-status="PRESENTE" data-edv="${student.edv}" ${isWeekendDate ? 'disabled' : ''}>
+                            <button class="status-btn btn-present ${currentStatus === 'PRESENTE' ? 'active' : ''}" data-status="PRESENTE" data-edv="${student.edv}" ${isBlocked ? 'disabled' : ''}>
                                 <i class="fas fa-check"></i>
                             </button>
-                            <button class="status-btn btn-absent ${currentStatus === 'AUSENTE' ? 'active' : ''}" data-status="AUSENTE" data-edv="${student.edv}" ${isWeekendDate ? 'disabled' : ''}>
+                            <button class="status-btn btn-absent ${currentStatus === 'AUSENTE' ? 'active' : ''}" data-status="AUSENTE" data-edv="${student.edv}" ${isBlocked ? 'disabled' : ''}>
                                 <i class="fas fa-times"></i>
                             </button>
-                            <button class="status-btn btn-certificate ${currentStatus === 'ATESTADO' ? 'active' : ''}" data-status="ATESTADO" data-edv="${student.edv}" ${isWeekendDate ? 'disabled' : ''}>
+                            <button class="status-btn btn-certificate ${currentStatus === 'ATESTADO' ? 'active' : ''}" data-status="ATESTADO" data-edv="${student.edv}" ${isBlocked ? 'disabled' : ''}>
                                 <i class="fas fa-file-medical"></i>
                             </button>
                         </div>
@@ -1430,7 +1434,7 @@
             }
             if (isWeekend(selectedDate)) {
                 const dayName = getDayName(selectedDate);
-                showNotification(`❌ NÃO É PERMITIDO SALVAR CHAMADA EM ${dayName.toUpperCase()}!`, 'error');
+                showNotification(`❌ NÃO É PERMITIDO SALVAR CHAMADA EM ${dayName.toUpperCase()}! Apenas SÁBADOS são permitidos.`, 'error');
                 validateDateWithModal();
                 return;
             }
