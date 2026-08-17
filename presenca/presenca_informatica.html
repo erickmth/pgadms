@@ -854,7 +854,7 @@
             const date = parseDateToBrasilia(dateStr);
             if (!date) return false;
             const dayOfWeek = date.getUTCDay();
-            return dayOfWeek === 0 || dayOfWeek === 6;
+             return dayOfWeek !== 6; 
         }
         
         function getDayName(dateStr) {
