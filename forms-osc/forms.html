@@ -664,6 +664,24 @@
       const APP = document.getElementById("app");
       const DRAFT_KEY = "form_draft_" + TOKEN;
 
+      // Extensões aceitas nos campos de upload (mantidas em sincronia com
+      // FORM_UPLOAD_EXTENSIONS no backend). Documentos PDF e imagens comuns.
+      const ACCEPTED_EXTENSIONS = ["pdf", "png", "jpg", "jpeg", "webp", "gif", "bmp"];
+      const ACCEPTED_FILE_ACCEPT = ".pdf,.png,.jpg,.jpeg,.webp,.gif,.bmp,application/pdf,image/*";
+      const IMAGE_EXTENSIONS = new Set(["png", "jpg", "jpeg", "webp", "gif", "bmp"]);
+
+      function fileExt(name) {
+        const parts = String(name || "").toLowerCase().split(".");
+        return parts.length > 1 ? parts.pop() : "";
+      }
+
+      function fileIconClass(name) {
+        const ext = fileExt(name);
+        if (ext === "pdf") return "bi-file-earmark-pdf-fill";
+        if (IMAGE_EXTENSIONS.has(ext)) return "bi-file-earmark-image-fill";
+        return "bi-file-earmark-fill";
+      }
+
       let formData = null;
       let answers = {};
       let selectedFiles = {};
@@ -725,7 +743,7 @@
         <i class="bi bi-clock-history"></i>
         <div>
           <h2 style="font-size:17px">Encontramos um rascunho</h2>
-          <p class="desc" style="margin:4px 0 0">Você pode continuar de onde parou. PDFs não são armazenados no navegador e precisarão ser selecionados novamente.</p>
+          <p class="desc" style="margin:4px 0 0">Você pode continuar de onde parou. Os arquivos não são armazenados no navegador e precisarão ser selecionados novamente.</p>
           <div class="draft-actions">
             <button class="submit" style="width:auto;padding:11px 20px" id="continue"><i class="bi bi-arrow-right-circle"></i> Continuar</button>
             <button class="small-btn" id="clear"><i class="bi bi-arrow-counterclockwise"></i> Começar novamente</button>
@@ -781,11 +799,11 @@
                 <i class="bi bi-folder2-open"></i> Selecionar arquivo${q.allow_multiple_files ? "s" : ""}
               </button>
               <div class="filebox-hint">
-                ${q.allow_multiple_files ? "Você pode selecionar vários PDFs." : "Selecione um PDF."}
+                ${q.allow_multiple_files ? "Você pode selecionar vários arquivos (PDF ou imagem)." : "Selecione um arquivo (PDF ou imagem)."}
               </div>
             </div>
             <div class="filebox-dragmsg"><i class="bi bi-cloud-arrow-up-fill"></i> Solte o arquivo aqui</div>
-            <input hidden type="file" accept=".pdf,application/pdf"
+            <input hidden type="file" accept="${ACCEPTED_FILE_ACCEPT}"
               ${q.allow_multiple_files ? "multiple" : ""} data-file="${q.id}">
           </div>
           <div class="filelist" data-list="${q.id}"></div>`;
@@ -874,8 +892,10 @@
         if (!q.allow_multiple_files) selectedFiles[id] = [];
 
         for (const file of list) {
-          if (!file.name.toLowerCase().endsWith(".pdf")) {
-            showError(id, "Apenas PDF é permitido."); continue;
+          const ext = fileExt(file.name);
+          if (!ACCEPTED_EXTENSIONS.includes(ext)) {
+            showError(id, "Formato não suportado. Envie PDF, PNG, JPG, JPEG, WEBP, GIF ou BMP.");
+            continue;
           }
           selectedFiles[id].push(file);
         }
@@ -888,7 +908,7 @@
         if (!list) return;
         list.innerHTML = (selectedFiles[id] || []).map((f, i) => `
       <div class="fileitem">
-        <span class="fname"><i class="bi bi-file-earmark-pdf-fill"></i><span>${esc(f.name)} — ${(f.size / 1024 / 1024).toFixed(2)} MB</span></span>
+        <span class="fname"><i class="bi ${fileIconClass(f.name)}"></i><span>${esc(f.name)} — ${(f.size / 1024 / 1024).toFixed(2)} MB</span></span>
         <span class="rm" data-remove="${id}" data-index="${i}"><i class="bi bi-x-lg"></i></span>
       </div>`).join("");
         list.querySelectorAll("[data-remove]").forEach(el => {
