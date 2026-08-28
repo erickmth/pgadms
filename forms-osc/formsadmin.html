@@ -1365,6 +1365,447 @@
     }
   }
 
+  /* =========================================================
+     CENTRAL DE AJUDA
+     ========================================================= */
+
+  .help-hero{
+    background:linear-gradient(135deg, rgba(255,31,61,.07) 0%, rgba(255,31,61,0) 60%), var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    padding:32px 30px;
+    margin-bottom:24px;
+    box-shadow:var(--card-shadow);
+  }
+
+  .help-hero h2{
+    margin:0 0 6px;
+    font-size:1.5rem;
+    font-weight:700;
+    letter-spacing:-.4px;
+    color:var(--text);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .help-hero p{
+    margin:0 0 20px;
+    color:var(--muted);
+    font-size:.94rem;
+    line-height:1.55;
+    max-width:560px;
+  }
+
+  .help-search{
+    position:relative;
+    max-width:520px;
+  }
+
+  .help-search input{
+    width:100%;
+    padding:13px 16px 13px 44px;
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-sm);
+    font-family:inherit;
+    font-size:.95rem;
+    outline:none;
+    background:#fff;
+    transition:var(--transition-fast);
+  }
+
+  .help-search input:hover{
+    border-color:#c8cdd9;
+  }
+
+  .help-search input:focus{
+    border-color:var(--primary);
+    box-shadow:var(--focus-ring);
+  }
+
+  .help-search i{
+    position:absolute;
+    left:15px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--muted);
+    font-size:1rem;
+  }
+
+  .help-breadcrumb{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:none;
+    border:0;
+    color:var(--primary-dark);
+    font-weight:700;
+    font-size:.85rem;
+    cursor:pointer;
+    padding:8px 2px;
+    margin-bottom:14px;
+    transition:var(--transition-fast);
+  }
+
+  .help-breadcrumb:hover{
+    color:var(--primary);
+    transform:translateX(-2px);
+  }
+
+  .help-categories{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));
+    gap:16px;
+    margin-bottom:8px;
+  }
+
+  .help-cat-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    text-align:left;
+    cursor:pointer;
+    box-shadow:var(--card-shadow);
+    transition:var(--transition);
+    font-family:inherit;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .help-cat-card:hover{
+    transform:translateY(-3px);
+    box-shadow:var(--card-shadow-hover);
+    border-color:#dfe3ee;
+  }
+
+  .help-cat-card .help-cat-icon{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    background:rgba(255,31,61,.1);
+    color:var(--primary);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-size:19px;
+  }
+
+  .help-cat-card h4{
+    margin:0;
+    font-size:.98rem;
+    font-weight:700;
+    color:var(--text);
+    letter-spacing:-.2px;
+  }
+
+  .help-cat-card p{
+    margin:0;
+    color:var(--muted);
+    font-size:.8rem;
+    line-height:1.5;
+  }
+
+  .help-cat-card .help-cat-count{
+    margin-top:auto;
+    font-size:.74rem;
+    font-weight:700;
+    color:var(--primary-dark);
+    text-transform:uppercase;
+    letter-spacing:.4px;
+  }
+
+  .help-article-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .help-accordion{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--card-shadow);
+  }
+
+  .help-accordion summary{
+    list-style:none;
+    cursor:pointer;
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    font-weight:700;
+    font-size:.92rem;
+    color:var(--text);
+    transition:var(--transition-fast);
+  }
+
+  .help-accordion summary::-webkit-details-marker{
+    display:none;
+  }
+
+  .help-accordion summary:hover{
+    background:var(--surface-2);
+  }
+
+  .help-accordion summary .help-chevron{
+    color:var(--muted);
+    transition:transform .2s ease;
+    flex-shrink:0;
+  }
+
+  .help-accordion[open] summary .help-chevron{
+    transform:rotate(180deg);
+    color:var(--primary);
+  }
+
+  .help-accordion-body{
+    padding:0 20px 20px;
+    color:var(--text);
+    font-size:.9rem;
+    line-height:1.65;
+    border-top:1px solid var(--border);
+    padding-top:16px;
+  }
+
+  .help-accordion-body p{
+    margin:0 0 12px;
+  }
+
+  .help-accordion-body p:last-child{
+    margin-bottom:0;
+  }
+
+  .help-steps{
+    list-style:none;
+    margin:0 0 14px;
+    padding:0;
+    counter-reset:help-step;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .help-steps li{
+    counter-increment:help-step;
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+
+  .help-steps li::before{
+    content:counter(help-step);
+    flex-shrink:0;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    background:var(--primary);
+    color:#fff;
+    font-size:.76rem;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-top:1px;
+  }
+
+  .help-steps li span{
+    padding-top:3px;
+  }
+
+  .help-box{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding:14px 16px;
+    border-radius:var(--radius-sm);
+    font-size:.86rem;
+    line-height:1.55;
+    margin-bottom:14px;
+    border:1px solid transparent;
+  }
+
+  .help-box:last-child{
+    margin-bottom:0;
+  }
+
+  .help-box i{
+    font-size:1.05rem;
+    flex-shrink:0;
+    margin-top:1px;
+  }
+
+  .help-box strong{
+    display:block;
+    margin-bottom:2px;
+  }
+
+  .help-box-dica{
+    background:#eef7ff;
+    border-color:#cfe6fb;
+    color:#0d4f8b;
+  }
+
+  .help-box-info{
+    background:var(--card);
+    border-color:var(--border);
+    color:var(--text);
+  }
+
+  .help-box-atencao{
+    background:#fff8e6;
+    border-color:#fbe8b8;
+    color:#8a5a00;
+  }
+
+  .help-box-importante{
+    background:var(--danger-bg);
+    border-color:#f3cdc7;
+    color:var(--danger);
+  }
+
+  .help-flow{
+    display:flex;
+    flex-direction:column;
+    gap:0;
+  }
+
+  .help-flow-step{
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+    position:relative;
+    padding-bottom:22px;
+  }
+
+  .help-flow-step:last-child{
+    padding-bottom:0;
+  }
+
+  .help-flow-step::before{
+    content:'';
+    position:absolute;
+    left:15px;
+    top:32px;
+    bottom:0;
+    width:2px;
+    background:var(--border);
+  }
+
+  .help-flow-step:last-child::before{
+    display:none;
+  }
+
+  .help-flow-num{
+    flex-shrink:0;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color:#fff;
+    font-weight:700;
+    font-size:.82rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 3px 10px rgba(255,31,61,.3);
+    z-index:1;
+  }
+
+  .help-flow-text{
+    padding-top:5px;
+  }
+
+  .help-flow-text strong{
+    display:block;
+    font-size:.9rem;
+    color:var(--text);
+    margin-bottom:2px;
+  }
+
+  .help-flow-text span{
+    color:var(--muted);
+    font-size:.82rem;
+  }
+
+  .help-faq-item{
+    border-bottom:1px solid var(--border);
+  }
+
+  .help-faq-item:last-child{
+    border-bottom:none;
+  }
+
+  .help-faq-item summary{
+    padding:15px 4px;
+    cursor:pointer;
+    list-style:none;
+    font-weight:600;
+    font-size:.88rem;
+    color:var(--text);
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:center;
+  }
+
+  .help-faq-item summary::-webkit-details-marker{
+    display:none;
+  }
+
+  .help-faq-item .help-chevron{
+    color:var(--muted);
+    transition:transform .2s ease;
+    flex-shrink:0;
+  }
+
+  .help-faq-item[open] .help-chevron{
+    transform:rotate(180deg);
+    color:var(--primary);
+  }
+
+  .help-faq-item p{
+    margin:0;
+    padding:0 4px 16px;
+    color:var(--muted);
+    font-size:.85rem;
+    line-height:1.6;
+  }
+
+  .help-search-results-info{
+    color:var(--muted);
+    font-size:.84rem;
+    margin-bottom:16px;
+  }
+
+  .help-search-results-info mark{
+    background:none;
+    color:var(--primary-dark);
+    font-weight:700;
+  }
+
+  mark.help-hl{
+    background:rgba(255,31,61,.16);
+    color:inherit;
+    border-radius:3px;
+    padding:0 2px;
+  }
+
+  @media(max-width:850px){
+
+    .help-hero{
+      padding:24px 20px;
+    }
+
+    .help-categories{
+      grid-template-columns:1fr;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce){
     *, *::before, *::after{
       animation-duration:.001ms !important;
@@ -1446,6 +1887,13 @@
           data-view="responses"
         >
           <span class="icon"><i class="bi bi-inbox-fill"></i></span> Respostas
+        </button>
+
+        <button
+          class="nav-item"
+          data-view="ajuda"
+        >
+          <span class="icon"><i class="bi bi-question-circle-fill"></i></span> Ajuda
         </button>
 
       </div>
@@ -2049,6 +2497,13 @@ function navigate(view){
     "responses"
   ){
     renderResponsesList();
+  }
+
+  if(
+    view ===
+    "ajuda"
+  ){
+    renderHelp();
   }
 }
 
@@ -5024,6 +5479,895 @@ function closeResponseModal(){
   currentResponseFiles =
     [];
 
+}
+
+
+/* ============================================================
+   CENTRAL DE AJUDA
+   ============================================================ */
+
+let helpState = {
+  screen: "home",
+  categoryId: null,
+  query: ""
+};
+
+
+function hSteps(items){
+
+  return `<ol class="help-steps">${
+    items.map(i => `<li><span>${i}</span></li>`).join("")
+  }</ol>`;
+}
+
+
+function hBox(type, title, text){
+
+  const icons = {
+    dica: "bi-lightbulb-fill",
+    info: "bi-info-circle-fill",
+    atencao: "bi-exclamation-triangle-fill",
+    importante: "bi-exclamation-octagon-fill"
+  };
+
+  const labels = {
+    dica: "Dica",
+    info: "Informação",
+    atencao: "Atenção",
+    importante: "Importante"
+  };
+
+  return `
+    <div class="help-box help-box-${type}">
+      <i class="bi ${icons[type]}"></i>
+      <div><strong>${title || labels[type]}</strong>${text}</div>
+    </div>
+  `;
+}
+
+
+const HELP_CATEGORIES = [
+
+  {
+    id: "primeiros-passos",
+    icon: "bi-rocket-takeoff-fill",
+    title: "Primeiros passos",
+    desc: "Conheça a estrutura do sistema e como navegar por ele.",
+    articles: [
+      {
+        id: "conhecendo-sistema",
+        title: "Conhecendo o sistema",
+        body: `
+          <p>O Sistema de Formulários OSC permite que Administradores Globais e Administradores de Formulário criem, gerenciem e acompanhem formulários de inscrição destinados às Organizações da Sociedade Civil (OSCs).</p>
+          <p>Com ele você pode criar formulários dinâmicos, adicionar diferentes tipos de perguntas, permitir o envio de arquivos, armazenar respostas, organizar documentos e integrar o armazenamento ao SharePoint.</p>
+          ${hBox("info", null, "<p>Todo o conteúdo desta Central reflete exatamente o funcionamento atual do sistema.</p>")}
+        `
+      },
+      {
+        id: "navegacao",
+        title: "Navegação pelo sistema",
+        body: `
+          <p>O menu lateral concentra o acesso às principais áreas do sistema:</p>
+          ${hSteps([
+            "<strong>Dashboard</strong> — visão geral com números de formulários, formulário ativo e respostas recebidas.",
+            "<strong>Formulários</strong> — criação, edição e gerenciamento dos formulários.",
+            "<strong>Respostas</strong> — consulta das respostas enviadas pelas OSCs.",
+            "<strong>Ajuda</strong> — esta Central de Ajuda."
+          ])}
+          <p>Basta clicar em qualquer item do menu para alternar entre as áreas.</p>
+        `
+      },
+      {
+        id: "painel-admin",
+        title: "Painel de Administração",
+        body: `
+          <p>O Dashboard é a tela inicial após o login. Nele você acompanha rapidamente:</p>
+          ${hSteps([
+            "Quantidade total de formulários cadastrados;",
+            "Qual formulário está ativo no momento;",
+            "Quantidade total de respostas recebidas."
+          ])}
+          <p>Também é possível acessar diretamente a pasta de documentos das OSCs no SharePoint pelo botão disponível no topo do Dashboard.</p>
+        `
+      },
+      {
+        id: "como-comecar",
+        title: "Como começar",
+        body: `
+          <p>Se esta é a sua primeira vez no sistema, siga este caminho:</p>
+          ${hSteps([
+            "Acesse <strong>Formulários</strong> no menu lateral;",
+            "Crie o seu primeiro formulário em <strong>Novo formulário</strong>;",
+            "Configure título, descrição e perguntas;",
+            "Utilize a pré-visualização para conferir tudo;",
+            "Salve, revise e depois ative o formulário quando estiver pronto."
+          ])}
+          ${hBox("dica", null, "<p>Explore as demais categorias desta Central para entender cada etapa em detalhes.</p>")}
+        `
+      }
+    ]
+  },
+
+  {
+    id: "formularios",
+    icon: "bi-ui-checks-grid",
+    title: "Formulários",
+    desc: "Criar, editar, ativar, duplicar e excluir formulários.",
+    articles: [
+      {
+        id: "criar-formulario",
+        title: "Criar formulário",
+        body: `
+          ${hSteps([
+            "Acesse <strong>Formulários</strong> no menu lateral;",
+            "Clique em <strong>Novo formulário</strong>;",
+            "O editor será aberto;",
+            "Configure as informações básicas (título, descrição e imagem do cabeçalho);",
+            "Adicione as perguntas desejadas;",
+            "Utilize a pré-visualização para conferir o resultado;",
+            "Clique em <strong>Salvar formulário</strong>."
+          ])}
+          ${hBox("info", null, "<p>Após salvo, o formulário é criado inicialmente como <strong>Inativo</strong> — ele só recebe respostas depois de ativado.</p>")}
+        `
+      },
+      {
+        id: "editar-formulario",
+        title: "Editar formulário",
+        body: `
+          <p>Localize o formulário na listagem e clique em <strong>Editar</strong> para reabrir o editor com as informações já preenchidas.</p>
+          <p>Você pode alterar título, descrição, imagem do cabeçalho e as perguntas normalmente, seguindo os mesmos passos usados na criação.</p>
+          ${hBox("dica", null, "<p>Sempre revise a pré-visualização depois de editar, antes de salvar as alterações.</p>")}
+        `
+      },
+      {
+        id: "ativar-formulario",
+        title: "Ativar formulário",
+        body: `
+          <p>Um formulário ativo está disponível para receber respostas das OSCs.</p>
+          ${hSteps([
+            "Acesse <strong>Formulários</strong>;",
+            "Localize o formulário desejado;",
+            "Clique em <strong>Ativar</strong>."
+          ])}
+          ${hBox("importante", null, "<p>Somente um formulário pode estar ativo por vez. Ao ativar um formulário, os demais são automaticamente desativados.</p>")}
+        `
+      },
+      {
+        id: "desativar-formulario",
+        title: "Desativar formulário",
+        body: `
+          <p>Um formulário inativo deixa de aceitar novas respostas, mas as respostas já recebidas continuam disponíveis.</p>
+          ${hSteps([
+            "Localize o formulário na listagem;",
+            "Clique em <strong>Desativar</strong>."
+          ])}
+        `
+      },
+      {
+        id: "duplicar-formulario",
+        title: "Duplicar formulário",
+        body: `
+          <p>A função <strong>Duplicar</strong> cria uma cópia completa de um formulário existente, útil quando você quer reaproveitar perguntas e configurações.</p>
+          <p>A cópia:</p>
+          ${hSteps([
+            "Mantém todas as perguntas;",
+            "Mantém as configurações;",
+            "É criada como <strong>Inativa</strong>;",
+            "Recebe o sufixo \u201c(Cópia)\u201d no título."
+          ])}
+        `
+      },
+      {
+        id: "excluir-formulario",
+        title: "Excluir formulário",
+        body: `
+          ${hBox("importante", "Atenção", "<p>A exclusão de um formulário não pode ser desfeita.</p>")}
+          <p>As respostas já existentes são preservadas no SharePoint e no banco de dados, porém deixam de estar acessíveis pela interface do formulário excluído.</p>
+          ${hSteps([
+            "Localize o formulário;",
+            "Clique em <strong>Excluir</strong>;",
+            "Confirme a operação."
+          ])}
+        `
+      },
+      {
+        id: "copiar-link",
+        title: "Copiar link do formulário",
+        body: `
+          <p>Todo formulário possui um link público que deve ser compartilhado com as OSCs para que elas o preencham.</p>
+          ${hSteps([
+            "Localize o formulário na listagem;",
+            "Clique em <strong>Copiar link</strong>;",
+            "O endereço é copiado automaticamente para a área de transferência;",
+            "Cole o link (Ctrl+V) onde quiser compartilhá-lo."
+          ])}
+        `
+      }
+    ]
+  },
+
+  {
+    id: "perguntas",
+    icon: "bi-list-check",
+    title: "Perguntas",
+    desc: "Tipos de pergunta disponíveis e suas configurações.",
+    articles: [
+      {
+        id: "texto-curto",
+        title: "Texto curto",
+        body: `<p>Utilizado para informações curtas e diretas, como <em>Nome da OSC</em> ou <em>CNPJ</em>.</p>`
+      },
+      {
+        id: "texto-longo",
+        title: "Texto longo",
+        body: `<p>Utilizado para respostas mais extensas, como <em>Descreva sua organização</em>.</p>`
+      },
+      {
+        id: "multipla-escolha",
+        title: "Múltipla escolha",
+        body: `<p>Permite que a OSC selecione uma opção entre alternativas predefinidas por você ao configurar a pergunta.</p>`
+      },
+      {
+        id: "upload-arquivo",
+        title: "Upload de arquivo",
+        body: `
+          <p>Permite que a OSC envie documentos diretamente pelo formulário. Os arquivos enviados ficam disponíveis na visualização da resposta e são armazenados no SharePoint.</p>
+        `
+      },
+      {
+        id: "bloco-texto",
+        title: "Bloco de texto",
+        body: `<p>Permite inserir informações ou instruções dentro do formulário sem exigir nenhuma resposta da OSC — ideal para orientações e avisos.</p>`
+      },
+      {
+        id: "perguntas-obrigatorias",
+        title: "Perguntas obrigatórias",
+        body: `<p>Quando a opção <strong>Obrigatória</strong> é ativada em uma pergunta, a OSC precisa respondê-la antes de conseguir enviar o formulário.</p>`
+      },
+      {
+        id: "varios-arquivos",
+        title: "Aceitar vários arquivos",
+        body: `<p>Disponível apenas para perguntas do tipo upload. Quando habilitada, permite que a OSC envie mais de um arquivo no mesmo campo.</p>`
+      },
+      {
+        id: "nome-pasta",
+        title: "Usar como nome da pasta",
+        body: `
+          <p>Define qual resposta será utilizada como nome da pasta criada no SharePoint para aquela inscrição.</p>
+          ${hBox("importante", null, "<p>Somente uma pergunta pode ser definida como nome da pasta por formulário. Ao marcar outra pergunta com essa opção, a anterior é automaticamente desmarcada.</p>")}
+        `
+      },
+      {
+        id: "nome-arquivo",
+        title: "Nome do arquivo a ser salvo",
+        body: `
+          <p>Disponível para perguntas de upload. Define o nome base utilizado ao salvar o documento no SharePoint.</p>
+          <p>O sistema pode combinar essa informação com o nome da pasta e a extensão original do arquivo, por exemplo:</p>
+          ${hBox("info", "Exemplo", "<p>CNPJ - Nome da OSC.pdf</p>")}
+        `
+      }
+    ]
+  },
+
+  {
+    id: "respostas",
+    icon: "bi-inbox-fill",
+    title: "Respostas",
+    desc: "Visualize, baixe e gerencie as respostas recebidas.",
+    articles: [
+      {
+        id: "visualizar-respostas",
+        title: "Visualizar respostas",
+        body: `
+          <p>Acesse <strong>Respostas</strong> no menu lateral para ver a lista de respostas recebidas, com formulário, pasta/organização, data e ações disponíveis.</p>
+          <p>Clique em <strong>Ver resposta</strong> para abrir os detalhes de uma inscrição, incluindo respostas textuais e arquivos anexados.</p>
+        `
+      },
+      {
+        id: "consultar-informacoes",
+        title: "Consultar informações",
+        body: `<p>Na tela de uma resposta você encontra todas as informações enviadas pela OSC, organizadas por pergunta, além dos arquivos anexados a cada campo de upload.</p>`
+      },
+      {
+        id: "baixar-documentos",
+        title: "Baixar documentos",
+        body: `
+          ${hSteps([
+            "Abra a resposta desejada em <strong>Ver resposta</strong>;",
+            "Localize o documento na lista de arquivos;",
+            "Clique em <strong>Baixar PDF</strong> (ou no arquivo correspondente)."
+          ])}
+        `
+      },
+      {
+        id: "baixar-zip",
+        title: "Baixar tudo em ZIP",
+        body: `<p>Na visualização da resposta, use a opção <strong>Baixar tudo (ZIP)</strong> para reunir todos os documentos daquela resposta em um único arquivo compactado.</p>`
+      },
+      {
+        id: "excluir-resposta",
+        title: "Excluir resposta",
+        body: `
+          ${hBox("importante", "Exclusão permanente", "<p>A exclusão da resposta remove permanentemente o registro, a pasta correspondente e os documentos armazenados no SharePoint.</p>")}
+          <p>Ao excluir uma resposta:</p>
+          ${hSteps([
+            "O registro é removido do banco de dados;",
+            "A pasta correspondente é removida do SharePoint;",
+            "Os documentos armazenados dentro dela também são excluídos;",
+            "A operação não pode ser desfeita."
+          ])}
+        `
+      }
+    ]
+  },
+
+  {
+    id: "sharepoint",
+    icon: "bi-cloud-fill",
+    title: "SharePoint",
+    desc: "Como os documentos das OSCs são organizados e armazenados.",
+    articles: [
+      {
+        id: "organizacao-pastas",
+        title: "Organização das pastas",
+        body: `<p>Cada resposta que contém arquivos gera uma pasta própria no SharePoint. O nome dessa pasta é definido pela pergunta marcada como <strong>Usar como nome da pasta</strong> na configuração do formulário.</p>`
+      },
+      {
+        id: "armazenamento-documentos",
+        title: "Armazenamento dos documentos",
+        body: `
+          <p>Quando uma OSC envia uma resposta com arquivos, o fluxo é o seguinte:</p>
+          ${hSteps([
+            "A resposta é registrada no sistema;",
+            "Os documentos são enviados e armazenados no SharePoint;",
+            "Os arquivos ficam organizados dentro da estrutura correspondente à resposta/organização;",
+            "O administrador pode acessar os documentos diretamente pela interface do sistema."
+          ])}
+        `
+      },
+      {
+        id: "relacao-respostas-pastas",
+        title: "Relação entre respostas e pastas",
+        body: `<p>Cada resposta recebida corresponde a uma pasta no SharePoint. As configurações do formulário — como a pergunta definida como nome da pasta e o nome de arquivo configurado nos uploads — influenciam diretamente como essa estrutura é organizada.</p>`
+      },
+      {
+        id: "cuidados-exclusoes",
+        title: "Cuidados com exclusões",
+        body: `
+          ${hBox("atencao", null, "<p>Excluir uma resposta remove também a pasta e os documentos correspondentes no SharePoint — de forma permanente.</p>")}
+          <p>Já a exclusão de um <strong>formulário</strong> não apaga os documentos já armazenados: eles permanecem no SharePoint e no banco de dados, apenas deixam de ser acessíveis pela interface daquele formulário.</p>
+        `
+      }
+    ]
+  },
+
+  {
+    id: "fluxo",
+    icon: "bi-arrow-repeat",
+    title: "Fluxo completo",
+    desc: "Do primeiro rascunho até o encerramento do formulário.",
+    articles: [
+      {
+        id: "como-funciona-processo",
+        title: "Como funciona o processo?",
+        body: `
+          <div class="help-flow">
+            ${[
+              ["Criar formulário", "Comece um novo formulário em Formulários → Novo formulário."],
+              ["Configurar perguntas", "Adicione e configure os tipos de pergunta necessários."],
+              ["Revisar pré-visualização", "Confira como o formulário aparecerá publicamente."],
+              ["Salvar", "O formulário é salvo como Inativo."],
+              ["Ativar", "Torne o formulário disponível para receber respostas."],
+              ["Copiar link", "Obtenha o endereço público do formulário."],
+              ["Divulgar para as OSCs", "Compartilhe o link com as organizações."],
+              ["Receber respostas", "As respostas chegam na aba Respostas."],
+              ["Visualizar respostas", "Acompanhe as inscrições recebidas."],
+              ["Baixar documentos", "Baixe arquivos individualmente ou em ZIP."],
+              ["Desativar formulário ao finalizar", "Encerre o período de inscrições desativando o formulário."]
+            ].map(([t, d], idx) => `
+              <div class="help-flow-step">
+                <div class="help-flow-num">${idx + 1}</div>
+                <div class="help-flow-text"><strong>${t}</strong><span>${d}</span></div>
+              </div>
+            `).join("")}
+          </div>
+        `
+      }
+    ]
+  },
+
+  {
+    id: "cuidados",
+    icon: "bi-exclamation-triangle-fill",
+    title: "Cuidados importantes",
+    desc: "Regras e avisos essenciais antes de agir.",
+    articles: [
+      {
+        id: "cuidado-exclusao-formulario",
+        title: "Exclusão de formulário",
+        body: hBox("importante", "Atenção", "<p>A exclusão de um formulário é permanente e não pode ser desfeita. As respostas já recebidas permanecem no banco de dados e no SharePoint, mas deixam de ser acessíveis pela interface do formulário excluído.</p>")
+      },
+      {
+        id: "cuidado-exclusao-respostas",
+        title: "Exclusão de respostas",
+        body: hBox("importante", "Exclusão permanente", "<p>Excluir uma resposta remove o registro, a pasta correspondente e todos os documentos armazenados no SharePoint. Essa ação não pode ser desfeita.</p>")
+      },
+      {
+        id: "cuidado-formularios-ativos",
+        title: "Formulários ativos",
+        body: hBox("atencao", null, "<p>Somente um formulário pode estar ativo por vez. Ativar um novo formulário desativa automaticamente o que estava ativo anteriormente.</p>")
+      },
+      {
+        id: "cuidado-documentos",
+        title: "Documentos",
+        body: hBox("info", null, "<p>Os documentos enviados pelas OSCs ficam armazenados no SharePoint. Baixe os arquivos importantes antes de excluir formulários ou respostas relacionadas.</p>")
+      },
+      {
+        id: "cuidado-nomeacao-pastas",
+        title: "Nomeação de pastas",
+        body: hBox("atencao", null, "<p>Apenas uma pergunta por formulário pode ser usada como nome da pasta no SharePoint. Alterar essa configuração depois que já existem respostas pode gerar inconsistência na organização de pastas futuras.</p>")
+      }
+    ]
+  }
+
+];
+
+
+const HELP_FAQ = [
+  {
+    id: "faq-um-ativo",
+    q: "Posso ter mais de um formulário ativo?",
+    a: "Não. O sistema permite apenas um formulário ativo por vez."
+  },
+  {
+    id: "faq-desfazer-exclusao",
+    q: "Posso desfazer a exclusão de uma resposta?",
+    a: "Não. A exclusão de uma resposta é permanente."
+  },
+  {
+    id: "faq-onde-documentos",
+    q: "Onde ficam os documentos enviados?",
+    a: "Os documentos são armazenados no SharePoint, organizados em pastas por resposta."
+  },
+  {
+    id: "faq-varios-arquivos",
+    q: "Posso enviar vários arquivos?",
+    a: "Sim, quando a opção \u201cAceitar vários arquivos\u201d estiver habilitada no campo de upload."
+  },
+  {
+    id: "faq-duplicar",
+    q: "Posso copiar um formulário existente?",
+    a: "Sim. Utilize a função \u201cDuplicar\u201d na listagem de formulários."
+  },
+  {
+    id: "faq-comeca-ativo",
+    q: "O formulário começa ativo após ser criado?",
+    a: "Não. O formulário é criado como Inativo e precisa ser ativado manualmente."
+  },
+  {
+    id: "faq-nome-pasta",
+    q: "Para que serve \u201cUsar como nome da pasta\u201d?",
+    a: "Essa opção define qual pergunta será utilizada para determinar o nome da pasta correspondente no SharePoint."
+  }
+];
+
+
+function helpStripTags(html){
+
+  return html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+
+function buildHelpIndex(){
+
+  const index = [];
+
+  HELP_CATEGORIES.forEach(cat => {
+
+    cat.articles.forEach(art => {
+
+      index.push({
+        type: "article",
+        catId: cat.id,
+        catTitle: cat.title,
+        catIcon: cat.icon,
+        articleId: art.id,
+        title: art.title,
+        text: helpStripTags(art.body)
+      });
+
+    });
+
+  });
+
+  HELP_FAQ.forEach(item => {
+
+    index.push({
+      type: "faq",
+      faqId: item.id,
+      title: item.q,
+      text: item.a
+    });
+
+  });
+
+  return index;
+}
+
+
+const HELP_INDEX = buildHelpIndex();
+
+
+function helpEscapeRegex(s){
+
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+
+function helpHighlight(text, term){
+
+  const escaped = escapeHtml(text);
+
+  if(!term){
+    return escaped;
+  }
+
+  try{
+
+    const re = new RegExp(
+      "(" + helpEscapeRegex(escapeHtml(term)) + ")",
+      "ig"
+    );
+
+    return escaped.replace(re, "<mark class=\"help-hl\">$1</mark>");
+
+  }catch(e){
+
+    return escaped;
+  }
+}
+
+
+function renderHelp(){
+
+  helpState = {
+    screen: "home",
+    categoryId: null,
+    query: ""
+  };
+
+  const main =
+    document.getElementById(
+      "mainContent"
+    );
+
+  main.innerHTML = `
+
+    <div class="help-hero">
+
+      <h2><i class="bi bi-question-circle-fill" style="color:var(--primary)"></i> Central de Ajuda</h2>
+      <p>Aprenda a utilizar todos os recursos do Sistema de Formulários OSC.</p>
+
+      <div class="help-search">
+        <i class="bi bi-search"></i>
+        <input
+          type="text"
+          id="helpSearchInput"
+          placeholder="Pesquise por uma função, formulário, resposta, arquivo..."
+          oninput="onHelpSearchInput(this.value)"
+          autocomplete="off"
+        >
+      </div>
+
+    </div>
+
+    <div id="helpBody"></div>
+  `;
+
+  renderHelpBody();
+}
+
+
+function renderHelpBody(){
+
+  const body =
+    document.getElementById(
+      "helpBody"
+    );
+
+  if(!body){
+    return;
+  }
+
+  if(helpState.screen === "search"){
+    body.innerHTML = renderHelpSearchResults();
+    return;
+  }
+
+  if(helpState.screen === "category"){
+    body.innerHTML = renderHelpCategoryScreen();
+    return;
+  }
+
+  body.innerHTML = renderHelpHomeScreen();
+}
+
+
+function renderHelpHomeScreen(){
+
+  const cards = HELP_CATEGORIES.map(cat => `
+    <button class="help-cat-card" onclick="openHelpCategory('${cat.id}')">
+      <span class="help-cat-icon"><i class="bi ${cat.icon}"></i></span>
+      <h4>${escapeHtml(cat.title)}</h4>
+      <p>${escapeHtml(cat.desc)}</p>
+      <span class="help-cat-count">${cat.articles.length} artigo${cat.articles.length !== 1 ? "s" : ""}</span>
+    </button>
+  `).join("");
+
+  const faq = HELP_FAQ.map(item => `
+    <details class="help-faq-item" id="help-faq-${item.id}">
+      <summary>${escapeHtml(item.q)} <i class="bi bi-chevron-down help-chevron"></i></summary>
+      <p>${escapeHtml(item.a)}</p>
+    </details>
+  `).join("");
+
+  return `
+
+    <div class="help-categories">
+      ${cards}
+    </div>
+
+    <div class="card" style="margin-top:26px;">
+      <div class="card-header">
+        <i class="bi bi-patch-question-fill" style="color:var(--primary)"></i>
+        Perguntas frequentes
+      </div>
+      <div class="card-body" style="padding-top:4px;">
+        ${faq}
+      </div>
+    </div>
+  `;
+}
+
+
+function renderHelpCategoryScreen(){
+
+  const cat = HELP_CATEGORIES.find(
+    c => c.id === helpState.categoryId
+  );
+
+  if(!cat){
+    helpState.screen = "home";
+    return renderHelpHomeScreen();
+  }
+
+  const articles = cat.articles.map((art, idx) => `
+    <details class="help-accordion" id="help-art-${art.id}" ${idx === 0 ? "open" : ""}>
+      <summary>
+        ${escapeHtml(art.title)}
+        <i class="bi bi-chevron-down help-chevron"></i>
+      </summary>
+      <div class="help-accordion-body">
+        ${art.body}
+      </div>
+    </details>
+  `).join("");
+
+  return `
+
+    <button class="help-breadcrumb" onclick="backToHelpHome()">
+      <i class="bi bi-arrow-left"></i> Voltar para Ajuda
+    </button>
+
+    <div class="topbar" style="margin-bottom:16px;">
+      <h3>
+        <i class="bi ${cat.icon}" style="color:var(--primary);margin-right:6px"></i>
+        ${escapeHtml(cat.title)}
+      </h3>
+    </div>
+
+    <div class="help-article-list">
+      ${articles}
+    </div>
+  `;
+}
+
+
+function renderHelpSearchResults(){
+
+  const term = helpState.query.trim();
+
+  const results = HELP_INDEX.filter(item => {
+
+    const haystack = (
+      item.title + " " +
+      (item.catTitle || "") + " " +
+      item.text
+    ).toLowerCase();
+
+    return haystack.includes(term.toLowerCase());
+
+  });
+
+  const header = `
+    <button class="help-breadcrumb" onclick="backToHelpHome()">
+      <i class="bi bi-arrow-left"></i> Voltar para Ajuda
+    </button>
+  `;
+
+  if(results.length === 0){
+
+    return `
+      ${header}
+      <div class="card">
+        <div class="empty">
+          <i class="bi bi-search" style="font-size:1.8rem;display:block;margin-bottom:10px;color:var(--muted)"></i>
+          <strong>Nenhum resultado encontrado.</strong>
+          <p style="margin-top:6px;">Tente utilizar termos diferentes ou consulte uma das categorias abaixo.</p>
+        </div>
+      </div>
+      <div class="help-categories" style="margin-top:18px;">
+        ${HELP_CATEGORIES.map(cat => `
+          <button class="help-cat-card" onclick="openHelpCategory('${cat.id}')">
+            <span class="help-cat-icon"><i class="bi ${cat.icon}"></i></span>
+            <h4>${escapeHtml(cat.title)}</h4>
+            <p>${escapeHtml(cat.desc)}</p>
+          </button>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  const items = results.map(item => {
+
+    const snippet = item.text.length > 130
+      ? item.text.slice(0, 130) + "…"
+      : item.text;
+
+    if(item.type === "faq"){
+
+      return `
+        <div class="help-accordion" style="cursor:pointer;" onclick="goToFaq('${item.faqId}')">
+          <summary style="cursor:pointer;">
+            <span>
+              <span class="badge badge-inactive" style="margin-right:8px;">FAQ</span>
+              ${helpHighlight(item.title, term)}
+            </span>
+            <i class="bi bi-chevron-right"></i>
+          </summary>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="help-accordion" style="cursor:pointer;" onclick="goToArticle('${item.catId}','${item.articleId}')">
+        <summary style="cursor:pointer;">
+          <span>
+            <span class="badge badge-inactive" style="margin-right:8px;"><i class="bi ${item.catIcon}"></i> ${escapeHtml(item.catTitle)}</span>
+            ${helpHighlight(item.title, term)}
+          </span>
+          <i class="bi bi-chevron-right"></i>
+        </summary>
+        <div class="help-accordion-body" style="padding-top:0;border-top:none;">
+          <p style="color:var(--muted);">${helpHighlight(snippet, term)}</p>
+        </div>
+      </div>
+    `;
+
+  }).join("");
+
+  return `
+    ${header}
+    <p class="help-search-results-info">${results.length} resultado${results.length !== 1 ? "s" : ""} para \u201c${escapeHtml(term)}\u201d</p>
+    <div class="help-article-list">
+      ${items}
+    </div>
+  `;
+}
+
+
+function onHelpSearchInput(value){
+
+  helpState.query = value;
+
+  helpState.screen =
+    value.trim().length >= 2
+      ? "search"
+      : "home";
+
+  renderHelpBody();
+}
+
+
+function openHelpCategory(id){
+
+  helpState.screen = "category";
+  helpState.categoryId = id;
+  helpState.query = "";
+
+  const input = document.getElementById("helpSearchInput");
+
+  if(input){
+    input.value = "";
+  }
+
+  renderHelpBody();
+}
+
+
+function backToHelpHome(){
+
+  helpState.screen = "home";
+  helpState.categoryId = null;
+  helpState.query = "";
+
+  const input = document.getElementById("helpSearchInput");
+
+  if(input){
+    input.value = "";
+  }
+
+  renderHelpBody();
+}
+
+
+function goToArticle(catId, articleId){
+
+  helpState.screen = "category";
+  helpState.categoryId = catId;
+  helpState.query = "";
+
+  const input = document.getElementById("helpSearchInput");
+
+  if(input){
+    input.value = "";
+  }
+
+  renderHelpBody();
+
+  setTimeout(() => {
+
+    const el = document.getElementById(
+      "help-art-" + articleId
+    );
+
+    if(el){
+      el.open = true;
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+  }, 30);
+}
+
+
+function goToFaq(faqId){
+
+  helpState.screen = "home";
+  helpState.query = "";
+
+  const input = document.getElementById("helpSearchInput");
+
+  if(input){
+    input.value = "";
+  }
+
+  renderHelpBody();
+
+  setTimeout(() => {
+
+    const el = document.getElementById(
+      "help-faq-" + faqId
+    );
+
+    if(el){
+      el.open = true;
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+  }, 30);
 }
 
 
