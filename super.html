@@ -909,6 +909,148 @@
         .text-white {
             color: var(--text) !important;
         }
+
+        .history-panel {
+            display: grid;
+            grid-template-columns: minmax(230px, 0.8fr) minmax(0, 2fr);
+            gap: 16px;
+            align-items: start;
+        }
+
+        .history-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .history-card-header {
+            padding: 14px 18px;
+            background: var(--surface-2);
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            font-family: var(--font-head);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+        }
+
+        .history-card-body {
+            padding: 16px;
+        }
+
+        .history-version-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .history-version-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-left: 3px solid transparent;
+            border-radius: var(--radius-sm);
+            background: var(--surface-2);
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: background .2s, border-color .2s, transform .2s;
+        }
+
+        .history-version-item:hover,
+        .history-version-item.active {
+            background: var(--accent-dim);
+            border-color: var(--border-accent);
+            border-left-color: var(--accent);
+            color: var(--text);
+            transform: translateX(2px);
+        }
+
+        .history-version-item h6 {
+            margin: 0 0 3px;
+            color: inherit;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .history-version-item span {
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        .history-version-item > span {
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .history-schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--text-sub);
+        }
+
+        .history-schedule-table th,
+        .history-schedule-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .history-schedule-table th {
+            color: var(--text-muted);
+            font-family: var(--font-head);
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .history-schedule-table td:first-child {
+            width: 110px;
+            color: var(--accent);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .history-schedule-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .history-note {
+            margin-top: 16px;
+            padding: 12px 14px;
+            border-left: 3px solid var(--warning);
+            background: rgba(255, 201, 71, .08);
+            color: var(--text-sub);
+            font-size: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .history-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .history-version-item {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .history-schedule-table th,
+            .history-schedule-table td {
+                padding: 10px 6px;
+            }
+
+            .history-schedule-table td:first-child {
+                width: 82px;
+            }
+        }
+
         p,
         span,
         div {
@@ -1007,6 +1149,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-tab="blocked-ips">
                         <i class="bi bi-shield-lock-fill"></i> IPs Bloqueados
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-tab="historico-escalas">
+                        <i class="bi bi-clock-history"></i> Histórico de Escalas
                     </a>
                 </li>
             </ul>
@@ -1461,6 +1608,42 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HISTÓRICO DE ESCALAS -->
+            <div class="tab-pane fade" id="historico-escalas">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-clock-history"></i>Histórico de Escalas</h1>
+                        <div class="breadcrumb-text">Navegue entre turmas e todas as versões geradas.</div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="bi bi-building"></i> Seleção de Turma</h5>
+                    </div>
+                    <div class="card-body">
+                        <label class="form-label" for="historyTurmaSelect">Turma</label>
+                        <select id="historyTurmaSelect" class="form-select"></select>
+                    </div>
+                </div>
+
+                <div class="history-panel">
+                    <div class="history-card">
+                        <div class="history-card-header">Versões de Escala</div>
+                        <div class="history-card-body">
+                            <div id="historyVersions" class="history-version-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="history-card">
+                        <div class="history-card-header">Visão Completa da Escala</div>
+                        <div class="history-card-body" id="historyScheduleContainer">
+                            <div class="text-muted">Selecione uma turma acima para carregar versões de escala.</div>
                         </div>
                     </div>
                 </div>
@@ -3269,6 +3452,7 @@
                     if (tabId === 'database') loadDbStats();
                     if (tabId === 'site-notice') loadSiteNotice();
                     if (tabId === 'aichats') loadAIChatSection();
+                    if (tabId === 'historico-escalas') loadHistoricoEscalas();
                 });
             });
 
@@ -3318,6 +3502,258 @@
             applyBtn.addEventListener('click', async () => {
                 await setMaintenanceMode(toggle.checked, document.getElementById('maintenanceMessage').value);
             });
+        }
+
+        let historicoEscalasData = {};
+
+        function formatarDataHistorico(data) {
+            if (!data) return 'Data não informada';
+            const parsed = new Date(data.replace(' ', 'T') + (data.endsWith('Z') ? '' : 'Z'));
+            return Number.isNaN(parsed.getTime()) ? data : parsed.toLocaleString('pt-BR');
+        }
+
+        function normalizarHistorico(historico) {
+            const turmas = {};
+            historico.forEach((item) => {
+                const turmaKey = String(item.turma_id);
+                if (!turmas[turmaKey]) {
+                    turmas[turmaKey] = { label: item.turma_nome, versions: [] };
+                }
+
+                if (!item.id) return;
+
+                turmas[turmaKey].versions.push({
+                    id: item.id,
+                    label: `Escala ${turmas[turmaKey].versions.length + 1} - ${formatarDataHistorico(item.gerado_em)}`,
+                    created: formatarDataHistorico(item.gerado_em),
+                    weeks: (item.semanas || []).map((semana) => ({
+                        week: `Semana ${semana.semana_numero}`,
+                        pairs: [{
+                            left: semana.dupla?.[0] || 'Não informado',
+                            right: semana.dupla?.[1] || 'Não informado'
+                        }]
+                    }))
+                });
+            });
+            return turmas;
+        }
+
+        async function loadHistoricoEscalas() {
+            const turmaSelect = document.getElementById('historyTurmaSelect');
+            const versionsList = document.getElementById('historyVersions');
+            const scheduleContainer = document.getElementById('historyScheduleContainer');
+            turmaSelect.innerHTML = '<option>Carregando turmas...</option>';
+            versionsList.innerHTML = '<div class="text-muted">Carregando histórico...</div>';
+            scheduleContainer.innerHTML = '<div class="text-muted">Carregando histórico...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/api/super/escalas-historico`, {
+                    headers: getAuthHeader()
+                });
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || 'Não foi possível carregar o histórico');
+                }
+
+                historicoEscalasData = normalizarHistorico(data.historico || []);
+                turmaSelect.innerHTML = '';
+                Object.entries(historicoEscalasData).forEach(([key, turma]) => {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = turma.label;
+                    turmaSelect.appendChild(option);
+                });
+
+                if (!turmaSelect.options.length) {
+                    turmaSelect.innerHTML = '<option>Nenhuma turma com histórico</option>';
+                    versionsList.innerHTML = '<div class="text-muted">Nenhuma versão histórica encontrada.</div>';
+                    scheduleContainer.innerHTML = '<div class="text-muted">Nenhuma escala histórica encontrada.</div>';
+                    return;
+                }
+
+                turmaSelect.onchange = () => renderVersionList(turmaSelect.value);
+                renderVersionList(turmaSelect.value);
+            } catch (error) {
+                turmaSelect.innerHTML = '<option>Erro ao carregar turmas</option>';
+                versionsList.innerHTML = `<div class="text-muted">${escapeHtml(error.message)}</div>`;
+                scheduleContainer.innerHTML = '<div class="text-muted">Verifique a conexão com a API.</div>';
+            }
+        }
+
+        /* Dados de exemplo removidos: o histórico agora vem da API protegida. */
+        const historicoEscalasDataExemplo = {
+            'formare': {
+                label: 'Formare 2026',
+                versions: [
+                    {
+                        id: 'formare-1',
+                        label: 'Escala 1 - 2026-06-08',
+                        created: '08/06/2026',
+                        weeks: [
+                            { week: 'Semana 1', pairs: [{left: 'Ana Silva', right: 'Bruno Costa'}, {left: 'Carla Moreno', right: 'Diego Rocha'}, {left: 'Elisa Maia', right: 'Felipe Lima'}] },
+                            { week: 'Semana 2', pairs: [{left: 'Guilherme Alves', right: 'Helena Prado'}, {left: 'Isabela Neves', right: 'Jonas Freitas'}, {left: 'Karina Dias', right: 'Lucas Pinto'}] },
+                            { week: 'Semana 3', pairs: [{left: 'Mariana Faria', right: 'Nando Sousa'}, {left: 'Olivia Rosa', right: 'Paulo Duarte'}, {left: 'Quênia Lima', right: 'Renan Castro'}] },
+                            { week: 'Semana 4', pairs: [{left: 'Sara Vieira', right: 'Tiago Amorim'}, {left: 'Vanessa Campos', right: 'Wagner Melo'}, {left: 'Yuri Costa', right: 'Zara Lima'}] },
+                            { week: 'Semana 5', pairs: [{left: 'Ana Silva', right: 'Carla Moreno'}, {left: 'Diego Rocha', right: 'Elisa Maia'}, {left: 'Felipe Lima', right: 'Guilherme Alves'}] },
+                            { week: 'Semana 6', pairs: [{left: 'Helena Prado', right: 'Isabela Neves'}, {left: 'Jonas Freitas', right: 'Karina Dias'}, {left: 'Lucas Pinto', right: 'Mariana Faria'}] },
+                            { week: 'Semana 7', pairs: [{left: 'Nando Sousa', right: 'Olivia Rosa'}, {left: 'Paulo Duarte', right: 'Quênia Lima'}, {left: 'Renan Castro', right: 'Sara Vieira'}] },
+                            { week: 'Semana 8', pairs: [{left: 'Tiago Amorim', right: 'Vanessa Campos'}, {left: 'Wagner Melo', right: 'Yuri Costa'}, {left: 'Zara Lima', right: 'Ana Silva'}] },
+                            { week: 'Semana 9', pairs: [{left: 'Bruno Costa', right: 'Carla Moreno'}, {left: 'Diego Rocha', right: 'Elisa Maia'}, {left: 'Felipe Lima', right: 'Guilherme Alves'}] }
+                        ],
+                        notes: 'Versão inicial com 9 semanas completas.'
+                    },
+                    {
+                        id: 'formare-2',
+                        label: 'Escala 2 - 2026-06-06',
+                        created: '06/06/2026',
+                        weeks: [
+                            { week: 'Semana 1', pairs: [{left: 'Ana Silva', right: 'Carla Moreno'}, {left: 'Bruno Costa', right: 'Diego Rocha'}, {left: 'Elisa Maia', right: 'Felipe Lima'}] },
+                            { week: 'Semana 2', pairs: [{left: 'Guilherme Alves', right: 'Helena Prado'}, {left: 'Isabela Neves', right: 'Jonas Freitas'}, {left: 'Karina Dias', right: 'Lucas Pinto'}] },
+                            { week: 'Semana 3', pairs: [{left: 'Mariana Faria', right: 'Nando Sousa'}, {left: 'Olivia Rosa', right: 'Paulo Duarte'}, {left: 'Quênia Lima', right: 'Renan Castro'}] },
+                            { week: 'Semana 4', pairs: [{left: 'Sara Vieira', right: 'Tiago Amorim'}, {left: 'Vanessa Campos', right: 'Wagner Melo'}, {left: 'Yuri Costa', right: 'Zara Lima'}] },
+                            { week: 'Semana 5', pairs: [{left: 'Ana Silva', right: 'Diego Rocha'}, {left: 'Carla Moreno', right: 'Elisa Maia'}, {left: 'Felipe Lima', right: 'Guilherme Alves'}] },
+                            { week: 'Semana 6', pairs: [{left: 'Helena Prado', right: 'Isabela Neves'}, {left: 'Jonas Freitas', right: 'Karina Dias'}, {left: 'Lucas Pinto', right: 'Mariana Faria'}] },
+                            { week: 'Semana 7', pairs: [{left: 'Nando Sousa', right: 'Olivia Rosa'}, {left: 'Paulo Duarte', right: 'Quênia Lima'}, {left: 'Renan Castro', right: 'Sara Vieira'}] },
+                            { week: 'Semana 8', pairs: [{left: 'Tiago Amorim', right: 'Vanessa Campos'}, {left: 'Wagner Melo', right: 'Yuri Costa'}, {left: 'Zara Lima', right: 'Ana Silva'}] },
+                            { week: 'Semana 9', pairs: [{left: 'Bruno Costa', right: 'Carla Moreno'}, {left: 'Diego Rocha', right: 'Elisa Maia'}, {left: 'Felipe Lima', right: 'Guilherme Alves'}] }
+                        ],
+                        notes: 'Ajustes na distribuição dos pares e rotação de duplas.'
+                    },
+                    {
+                        id: 'formare-3',
+                        label: 'Escala 3 - 2026-05-25',
+                        created: '25/05/2026',
+                        weeks: [
+                            { week: 'Semana 1', pairs: [{left: 'Ana Silva', right: 'Diego Rocha'}, {left: 'Carla Moreno', right: 'Elisa Maia'}, {left: 'Felipe Lima', right: 'Guilherme Alves'}] },
+                            { week: 'Semana 2', pairs: [{left: 'Helena Prado', right: 'Isabela Neves'}, {left: 'Jonas Freitas', right: 'Karina Dias'}, {left: 'Lucas Pinto', right: 'Mariana Faria'}] },
+                            { week: 'Semana 3', pairs: [{left: 'Nando Sousa', right: 'Olivia Rosa'}, {left: 'Paulo Duarte', right: 'Quênia Lima'}, {left: 'Renan Castro', right: 'Sara Vieira'}] },
+                            { week: 'Semana 4', pairs: [{left: 'Tiago Amorim', right: 'Vanessa Campos'}, {left: 'Wagner Melo', right: 'Yuri Costa'}, {left: 'Zara Lima', right: 'Ana Silva'}] },
+                            { week: 'Semana 5', pairs: [{left: 'Bruno Costa', right: 'Carla Moreno'}, {left: 'Diego Rocha', right: 'Elisa Maia'}, {left: 'Felipe Lima', right: 'Guilherme Alves'}] },
+                            { week: 'Semana 6', pairs: [{left: 'Helena Prado', right: 'Isabela Neves'}, {left: 'Jonas Freitas', right: 'Karina Dias'}, {left: 'Lucas Pinto', right: 'Mariana Faria'}] },
+                            { week: 'Semana 7', pairs: [{left: 'Nando Sousa', right: 'Olivia Rosa'}, {left: 'Paulo Duarte', right: 'Quênia Lima'}, {left: 'Renan Castro', right: 'Sara Vieira'}] },
+                            { week: 'Semana 8', pairs: [{left: 'Tiago Amorim', right: 'Vanessa Campos'}, {left: 'Wagner Melo', right: 'Yuri Costa'}, {left: 'Zara Lima', right: 'Ana Silva'}] },
+                            { week: 'Semana 9', pairs: [{left: 'Bruno Costa', right: 'Carla Moreno'}, {left: 'Diego Rocha', right: 'Elisa Maia'}, {left: 'Felipe Lima', right: 'Guilherme Alves'}] }
+                        ],
+                        notes: 'Versão de referência com escala anterior e estrutura completa.'
+                    }
+                ]
+            },
+            'aprender': {
+                label: 'Aprender A+',
+                versions: [
+                    {
+                        id: 'aprender-1',
+                        label: 'Escala 1 - 2026-06-03',
+                        created: '03/06/2026',
+                        weeks: [
+                            { week: 'Semana 1', pairs: [{left: 'Bruno Santos', right: 'Camila Moura'}, {left: 'Danilo Reis', right: 'Evelyn Paz'}] },
+                            { week: 'Semana 2', pairs: [{left: 'Fabiana Luz', right: 'Gustavo Melo'}, {left: 'Hugo Lima', right: 'Isadora Nunes'}] },
+                            { week: 'Semana 3', pairs: [{left: 'Julia Souza', right: 'Kauê Barros'}, {left: 'Luna Costa', right: 'Marcelo Dias'}] }
+                        ],
+                        notes: 'Primeira escala para a turma Aprender A+.'
+                    },
+                    {
+                        id: 'aprender-2',
+                        label: 'Escala 2 - 2026-05-29',
+                        created: '29/05/2026',
+                        weeks: [
+                            { week: 'Semana 1', pairs: [{left: 'Bruno Santos', right: 'Danilo Reis'}, {left: 'Camila Moura', right: 'Evelyn Paz'}] },
+                            { week: 'Semana 2', pairs: [{left: 'Fabiana Luz', right: 'Hugo Lima'}, {left: 'Gustavo Melo', right: 'Isadora Nunes'}] },
+                            { week: 'Semana 3', pairs: [{left: 'Julia Souza', right: 'Luna Costa'}, {left: 'Kauê Barros', right: 'Marcelo Dias'}] }
+                        ],
+                        notes: 'Alteração de pares para o segundo ciclo.'
+                    }
+                ]
+            },
+            'informatica': {
+                label: 'Informática Básica',
+                versions: [
+                    {
+                        id: 'informatica-1',
+                        label: 'Escala 1 - 2026-06-01',
+                        created: '01/06/2026',
+                        weeks: [
+                            { week: 'Semana 1', pairs: [{left: 'Nina Melo', right: 'Otávio Silva'}, {left: 'Patrícia Rocha', right: 'Rafael Nunes'}] },
+                            { week: 'Semana 2', pairs: [{left: 'Samara Pinto', right: 'Thiago Alves'}] }
+                        ],
+                        notes: 'Versão compacta com foco em duplas fixas.'
+                    }
+                ]
+            }
+        };
+
+        function loadHistoricoEscalasLegacy() {
+            const turmaSelect = document.getElementById('historyTurmaSelect');
+            turmaSelect.innerHTML = '';
+            Object.entries(historicoEscalasData).forEach(([key, turma]) => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = turma.label;
+                turmaSelect.appendChild(option);
+            });
+            turmaSelect.onchange = () => renderVersionList(turmaSelect.value);
+            if (turmaSelect.options.length) {
+                turmaSelect.value = turmaSelect.options[0].value;
+                renderVersionList(turmaSelect.value);
+            }
+        }
+
+        function renderVersionList(turmaKey) {
+            const versionsList = document.getElementById('historyVersions');
+            const scheduleContainer = document.getElementById('historyScheduleContainer');
+            const turmaData = historicoEscalasData[turmaKey];
+            versionsList.innerHTML = '';
+            scheduleContainer.innerHTML = '<div class="text-muted">Selecione uma versão para visualizar a escala.</div>';
+            if (!turmaData || turmaData.versions.length === 0) {
+                versionsList.innerHTML = '<div class="text-muted">Nenhuma versão de escala encontrada para esta turma.</div>';
+                return;
+            }
+            turmaData.versions.forEach((version, index) => {
+                const item = document.createElement('div');
+                item.className = 'history-version-item';
+                item.innerHTML = `<div><h6>${version.label}</h6><span>${turmaData.label}</span></div><span>${version.created}</span>`;
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.history-version-item').forEach(el => el.classList.remove('active'));
+                    item.classList.add('active');
+                    renderSchedule(version);
+                });
+                versionsList.appendChild(item);
+                if (index === 0) item.click();
+            });
+        }
+
+        function renderSchedule(version) {
+            const scheduleContainer = document.getElementById('historyScheduleContainer');
+            const rows = version.weeks.map(week => {
+                const pairsHtml = week.pairs.map(pair => `
+                    <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+                        <span>${pair.left}</span>
+                        <span>${pair.right}</span>
+                    </div>`).join('');
+                return `
+                    <tr>
+                        <td>${week.week}</td>
+                        <td>${pairsHtml}</td>
+                    </tr>`;
+            }).join('');
+
+            scheduleContainer.innerHTML = `
+                <div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:18px;">
+                    <div><strong>Data de geração</strong><div style="color:var(--text);">${version.created}</div></div>
+                    <div><strong>Total de semanas</strong><div style="color:var(--text);">${version.weeks.length}</div></div>
+                </div>
+                <div class="table-responsive">
+                    <table class="history-schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Semana</th>
+                                <th>Duplas</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+                ${version.notes ? `<div class="history-note">${version.notes}</div>` : ''}`;
         }
 
         // ==================== CHECK SESSION ====================
