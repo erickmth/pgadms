@@ -777,6 +777,8 @@
         // ==================== CONFIGURAÇÕES ====================
         const API_BASE = 'https://erickmth.pythonanywhere.com/api';
         const TURMA_NOME = 'Informática Básica (Joinville)';
+        const ALLOWED_DAY_NAME = 'Sábado';
+        const ALLOWED_WEEKDAY_INDEX = 6;
         
         let students = [];
         let currentAttendance = {};
@@ -854,7 +856,7 @@
             const date = parseDateToBrasilia(dateStr);
             if (!date) return false;
             const dayOfWeek = date.getUTCDay();
-            return dayOfWeek === 0 || dayOfWeek === 6;
+            return dayOfWeek !== ALLOWED_WEEKDAY_INDEX;
         }
         
         function getDayName(dateStr) {
@@ -868,7 +870,7 @@
         function getNextWeekday(dateStr) {
             const [year, month, day] = dateStr.split('-').map(Number);
             let date = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
-            while (date.getUTCDay() === 0 || date.getUTCDay() === 6) {
+            while (date.getUTCDay() !== ALLOWED_WEEKDAY_INDEX) {
                 date.setUTCDate(date.getUTCDate() + 1);
             }
             return formatDateUTC(date);
@@ -881,7 +883,7 @@
             dayNameText.textContent = dayName;
             if (isWeekendDay) {
                 dayInfo.className = 'day-info weekend-day';
-                dayInfo.innerHTML = `<i class="fas fa-ban"></i><span>${dayName} - BLOQUEADO!</span>`;
+                dayInfo.innerHTML = `<i class="fas fa-ban"></i><span>${dayName} - BLOQUEADO! Apenas ${ALLOWED_DAY_NAME} é permitido.</span>`;
             } else {
                 dayInfo.className = 'day-info weekday';
                 dayInfo.innerHTML = `<i class="fas fa-calendar-check"></i><span>${dayName} - Liberado</span>`;
@@ -904,7 +906,7 @@
                     <i class="fas fa-calendar-times" style="font-size: 48px; color: var(--warning); margin-bottom: 16px; display: block;"></i>
                     <strong style="font-size: 1.1rem;">${originalDayName.toUpperCase()} não é permitido!</strong><br><br>
                     <span style="color: var(--danger);">📅 Data selecionada: ${originalDateFormatted} (${originalDayName})</span><br><br>
-                    ⚠️ Sábados e domingos não são permitidos para registro de chamada.<br><br>
+                    ⚠️ Apenas ${ALLOWED_DAY_NAME} é permitido para registro de chamada.<br><br>
                     <span style="color: var(--success);">✅ A data será alterada para: <strong>${newDateFormatted} (${newDayName})</strong></span>
                 </div>
             `;
