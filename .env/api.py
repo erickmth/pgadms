@@ -113,15 +113,14 @@ CORS(app, resources={
 })
 
 # Configuração do chat AI
-GROQ_API_KEY = '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'
+GROQ_API_KEY = 'sk-6d6823f57be64c33afe651655e91d204'
 GROQ_MODELS = [
-    "openai/gpt-oss-20b",
-    "openai/gpt-oss-120b",
+    "deepseek-chat",
 ]
 OPENROUTER_API_KEY = GROQ_API_KEY
 OPENROUTER_MODELS = GROQ_MODELS
 OPENROUTER_CURRENT_MODEL = 0
-OPENROUTER_URL = 'https://api.groq.com/openai/v1/chat/completions'
+OPENROUTER_URL = 'https://api.deepseek.com/v1/chat/completions'
 AI_KNOWLEDGE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'AI Trainnig', 'inrb-ia.md')
 AI_MESSAGE_MAX_LENGTH = 2000
 AI_HISTORY_MAX_TURNS = 10
@@ -2436,12 +2435,12 @@ def build_ai_messages(username, history, user_message):
 
 def call_openrouter(messages):
     if not OPENROUTER_API_KEY or OPENROUTER_API_KEY == 'YOUR_OPENROUTER_API_KEY':
-        return False, 'Chave da API Groq não configurada no servidor.'
+        return False, 'Chave da API DeepSeek não configurada no servidor.'
 
     global OPENROUTER_CURRENT_MODEL
     total_models = len(OPENROUTER_MODELS)
     if total_models == 0:
-        return False, 'Nenhum modelo Groq configurado.'
+        return False, 'Nenhum modelo DeepSeek configurado.'
 
     model_index_file = os.path.join(os.path.dirname(__file__), 'ai_model_index.txt')
     last_error = None
@@ -2462,24 +2461,40 @@ def call_openrouter(messages):
         model_index = (start_index + attempt) % total_models
         model_name = OPENROUTER_MODELS[model_index]
 
+        payload = {
+            'model': model_name,
+            'messages': messages,
+            'max_tokens': AI_MAX_RESPONSE_TOKENS,
+            'temperature': 0.2,
+            'top_p': 0.9,
+            'stream': False
+        }
+
+        request = urllib.request.Request(
+            OPENROUTER_URL,
+            data=json.dumps(payload, ensure_ascii=False).encode('utf-8'),
+            headers={
+                'Authorization': f'Bearer {OPENROUTER_API_KEY}',
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            method='POST'
+        )
+
         try:
-            client = Groq(api_key=OPENROUTER_API_KEY)
-            completion = client.chat.completions.create(
-                model=model_name,
-                messages=messages,
-                max_tokens=AI_MAX_RESPONSE_TOKENS,
-                temperature=0.2,
-                top_p=0.9,
-                stream=False
-            )
+            with urllib.request.urlopen(request, timeout=120) as response:
+                result = json.loads(response.read().decode('utf-8'))
 
-            choices = getattr(completion, 'choices', None) or []
+            choices = result.get('choices') or []
             if not choices:
-                return False, 'Resposta vazia da Groq.'
+                return False, 'Resposta vazia da DeepSeek.'
 
-            answer = choices[0].message.content if getattr(choices[0], 'message', None) else ''
+            raw_answer = choices[0].get('message', {}).get('content', '') if isinstance(choices[0], dict) else ''
+            if isinstance(raw_answer, list):
+                raw_answer = ''.join(item.get('text', '') for item in raw_answer if isinstance(item, dict))
+            answer = str(raw_answer).strip()
             if not answer:
-                return False, 'Resposta inválida da Groq.'
+                return False, 'Resposta inválida da DeepSeek.'
 
             OPENROUTER_CURRENT_MODEL = model_index
             try:
@@ -2487,40 +2502,49 @@ def call_openrouter(messages):
                     f.write(str(model_index))
             except Exception:
                 pass
-            return True, answer.strip()
-        except RateLimitError:
+            return True, answer
+        except urllib.error.HTTPError as exc:
+            status_code = exc.code
+            error_body = exc.read().decode('utf-8', errors='ignore')
             try:
-                log_ai_query('system', 'groq_attempt', {'model': model_name, 'status': 429, 'error': 'rate limit'})
+                error_json = json.loads(error_body)
+                message = error_json.get('error', {}).get('message', error_body)
             except Exception:
-                pass
-            return False, 'Erro Groq: limite de requisições excedido (429). Tente novamente em alguns instantes.'
-        except APIStatusError as exc:
-            status_code = getattr(exc, 'status_code', None)
+                message = error_body or str(exc)
+
             if status_code == 429:
                 try:
-                    log_ai_query('system', 'groq_attempt', {'model': model_name, 'status': 429, 'error': str(exc)})
+                    log_ai_query('system', 'deepseek_attempt', {'model': model_name, 'status': 429, 'error': message})
                 except Exception:
                     pass
-                return False, 'Erro Groq: limite de requisições excedido (429). Tente novamente em alguns instantes.'
-            last_error = f'{status_code} - {exc}'
+                return False, 'Erro DeepSeek: limite de requisições excedido (429). Tente novamente em alguns instantes.'
+
+            if status_code == 401:
+                try:
+                    log_ai_query('system', 'deepseek_attempt', {'model': model_name, 'status': 401, 'error': message})
+                except Exception:
+                    pass
+                return False, 'Erro DeepSeek: chave inválida ou não autorizada.'
+
+            last_error = f'{status_code} - {message}'
             try:
-                log_ai_query('system', 'groq_attempt', {'model': model_name, 'status': status_code, 'error': str(exc)})
+                log_ai_query('system', 'deepseek_attempt', {'model': model_name, 'status': status_code, 'error': message})
             except Exception:
                 pass
-            return False, f'Erro Groq: {last_error}'
+            return False, f'Erro DeepSeek: {last_error}'
         except Exception as e:
             last_error = str(e)
             try:
-                log_ai_query('system', 'groq_attempt', {'model': model_name, 'exception': last_error})
+                log_ai_query('system', 'deepseek_attempt', {'model': model_name, 'exception': last_error})
             except Exception:
                 pass
             continue
 
     try:
-        log_ai_query('system', 'groq_final_failure', {'last_error': last_error})
+        log_ai_query('system', 'deepseek_final_failure', {'last_error': last_error})
     except Exception:
         pass
-    return False, f'Erro Groq: todas as tentativas falharam. Último erro: {last_error if last_error else "sem detalhes"}'
+    return False, f'Erro DeepSeek: todas as tentativas falharam. Último erro: {last_error if last_error else "sem detalhes"}'
 
 
 def sanitize_chat_message(message):
@@ -3943,6 +3967,10 @@ def save_attendance():
             conn.close()
             return jsonify({'error': 'Turma não encontrada'}), 404
 
+        cursor.execute('SELECT nome FROM alunos WHERE edv = ? ORDER BY id LIMIT 1', (request.user,))
+        aluno_responsavel = cursor.fetchone()
+        nome_responsavel = aluno_responsavel['nome'] if aluno_responsavel else request.user
+
         for registro in registros:
             if 'status' not in registro or registro['status'] not in ['PRESENTE', 'AUSENTE', 'ATESTADO']:
                 conn.close()
@@ -3980,6 +4008,21 @@ def save_attendance():
             result = cursor.fetchone()
             conn.close()
 
+            log_admin_action_db(
+                nome_responsavel,
+                'Atualizou lista de presença',
+                f'Turma: {turma_nome} | Data: {data_str}',
+                request.remote_addr,
+                request.user_agent.string
+            )
+            log_admin_action(
+                nome_responsavel,
+                'Atualizou lista de presença',
+                f'Lista de presença atualizada para {data_str}',
+                turma_nome,
+                data_str
+            )
+
             return jsonify({
                 'success': True,
                 'message': 'Chamada atualizada com sucesso',
@@ -4007,6 +4050,21 @@ def save_attendance():
             cursor.execute('SELECT created_by, updated_by, created_lat, created_lng, created_loc_accuracy, updated_lat, updated_lng, updated_loc_accuracy FROM presenca WHERE id = ?', (cursor.lastrowid,))
             result = cursor.fetchone()
             conn.close()
+
+            log_admin_action_db(
+                nome_responsavel,
+                'Enviou lista de presença',
+                f'Turma: {turma_nome} | Data: {data_str}',
+                request.remote_addr,
+                request.user_agent.string
+            )
+            log_admin_action(
+                nome_responsavel,
+                'Enviou lista de presença',
+                f'Lista de presença enviada para {data_str}',
+                turma_nome,
+                data_str
+            )
 
             return jsonify({
                 'success': True,
