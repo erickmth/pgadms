@@ -1647,6 +1647,34 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="card mt-4" id="scaleActivityCard">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="bi bi-calendar2-check"></i> Atividade recente nas escalas</h5>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="refreshScaleActivityBtn">
+                            <i class="bi bi-arrow-repeat me-1"></i>Atualizar
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Turma</th>
+                                        <th>Ação</th>
+                                        <th>Responsável</th>
+                                        <th>Resultado</th>
+                                        <th>Detalhes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="scaleActivityRows">
+                                    <tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">Carregando atividade...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- BANCO DE DADOS -->
@@ -3452,7 +3480,10 @@
                     if (tabId === 'database') loadDbStats();
                     if (tabId === 'site-notice') loadSiteNotice();
                     if (tabId === 'aichats') loadAIChatSection();
-                    if (tabId === 'historico-escalas') loadHistoricoEscalas();
+                    if (tabId === 'historico-escalas') {
+                        loadHistoricoEscalas();
+                        loadScaleActivity();
+                    }
                 });
             });
 
@@ -3466,6 +3497,7 @@
                 loadAllData();
             });
             document.getElementById('refreshDbStats').addEventListener('click', loadDbStats);
+            document.getElementById('refreshScaleActivityBtn').addEventListener('click', loadScaleActivity);
             document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
             document.getElementById('saveAdminBtn').addEventListener('click', createAdmin);
             document.getElementById('confirmBlockIpBtn').addEventListener('click', blockIp);
@@ -3577,6 +3609,64 @@
                 turmaSelect.innerHTML = '<option>Erro ao carregar turmas</option>';
                 versionsList.innerHTML = `<div class="text-muted">${escapeHtml(error.message)}</div>`;
                 scheduleContainer.innerHTML = '<div class="text-muted">Verifique a conexão com a API.</div>';
+            }
+        }
+
+        async function loadScaleActivity() {
+            const tbody = document.getElementById('scaleActivityRows');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">Carregando atividade...</td></tr>';
+
+            try {
+                const response = await fetch(
+                    `${API_URL}/api/admin/escalas/atividade?limit=30&offset=0`,
+                    { headers: getAuthHeader() }
+                );
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Não foi possível consultar a atividade das escalas.');
+                }
+
+                const items = data.items || [];
+                if (!items.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">Nenhuma alteração de escala registrada.</td></tr>';
+                    return;
+                }
+
+                const acoes = {
+                    geracao_automatica: 'Geração automática',
+                    geracao_manual: 'Geração manual',
+                    edicao_administrativa: 'Edição administrativa',
+                    restauracao_backup: 'Restauração de backup',
+                    limpeza_administrativa: 'Limpeza administrativa'
+                };
+                tbody.innerHTML = items.map(item => {
+                    const dataHora = item.data_hora
+                        ? new Date(item.data_hora).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })
+                        : '---';
+                    const resultado = item.status === 'sucesso' ? 'Concluída' : 'Falha';
+                    const classeResultado = item.status === 'sucesso' ? 'bg-success' : 'bg-danger';
+                    let detalhes = item.detalhes || '---';
+                    try {
+                        const metricas = JSON.parse(detalhes);
+                        if (metricas.semanas !== undefined) {
+                            detalhes = `${metricas.semanas} semanas; ${metricas.duplas_novas ?? 0} duplas inéditas; ${metricas.duplas_repetidas ?? 0} repetidas`;
+                        }
+                    } catch (error) {
+                        if (typeof detalhes !== 'string') detalhes = String(detalhes);
+                    }
+                    return `<tr>
+                        <td><small>${escapeHtml(dataHora)}</small></td>
+                        <td>${escapeHtml(item.nome_turma || '---')}</td>
+                        <td>${escapeHtml(acoes[item.tipo_acao] || item.tipo_acao || '---')}</td>
+                        <td>${escapeHtml(item.nome_administrador || 'Sistema (automático)')}</td>
+                        <td><span class="badge ${classeResultado}">${resultado}</span></td>
+                        <td><small>${escapeHtml(detalhes)}</small></td>
+                    </tr>`;
+                }).join('');
+            } catch (error) {
+                console.error('Erro ao carregar atividade das escalas:', error);
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">${escapeHtml(error.message || 'Erro ao carregar atividade das escalas.')}</td></tr>`;
             }
         }
 

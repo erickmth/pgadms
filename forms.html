@@ -4,24 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Mentoria — Formulário de Avaliação</title>
+    <title>Mentoria: Formulário de Avaliação</title>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
+    <script>
+        document.documentElement.dataset.theme = localStorage.getItem('homeTheme') || 'light';
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/styles/style.css">
     <style>
         :root {
-            --primary: #ec3333;
-            --primary-dark: #c82333;
-            --primary-light: rgba(236, 51, 51, 0.08);
+            --primary: #ff1f3d;
+            --primary-dark: #b8102b;
+            --primary-light: rgba(255, 31, 61, 0.08);
             --surface: #ffffff;
-            --surface-2: #f8f9fc;
-            --surface-3: #f0f2f8;
+            --surface-2: #f4f6fb;
+            --surface-3: #edf0f7;
             --text: #1a1d2e;
             --text-muted: #6b7280;
             --text-light: #9ca3af;
             --border: #e5e9f2;
-            --border-focus: rgba(236, 51, 51, 0.35);
+            --border-focus: rgba(255, 31, 61, 0.35);
             --success: #10b981;
             --warning: #f59e0b;
             --info: #3b82f6;
@@ -34,11 +40,23 @@
             --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
         }
 
+        :root[data-theme="dark"] {
+            --surface: #111827;
+            --surface-2: #0b1220;
+            --surface-3: #1f2937;
+            --text: #e5e7eb;
+            --text-muted: #9ca3af;
+            --text-light: #9ca3af;
+            --border: #293548;
+            --border-focus: rgba(255, 31, 61, 0.45);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Sora', sans-serif;
-            background: #f0f2f8;
+            background: var(--surface-2);
+            color: var(--text);
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
@@ -50,8 +68,8 @@
             position: fixed;
             inset: 0;
             background:
-                radial-gradient(ellipse 80% 60% at 20% -10%, rgba(236,51,51,0.13) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 50% at 85% 110%, rgba(200,35,51,0.10) 0%, transparent 55%);
+                radial-gradient(ellipse 80% 60% at 20% -10%, rgba(255,31,61,0.13) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 85% 110%, rgba(184,16,43,0.10) 0%, transparent 55%);
             pointer-events: none;
             z-index: 0;
         }
@@ -138,9 +156,9 @@
             font-weight: 400;
         }
 
-        .header-login     { background: linear-gradient(135deg, #c82333 0%, #ec3333 100%); }
-        .header-dashboard { background: linear-gradient(135deg, #1a2340 0%, #2a3a6e 100%); }
-        .header-form      { background: linear-gradient(135deg, #0a7c6a 0%, #15b89e 100%); }
+        .header-login     { background: linear-gradient(135deg, #b8102b 0%, #ff1f3d 100%); }
+        .header-dashboard { background: linear-gradient(135deg, #0c0f16 0%, #293548 100%); }
+        .header-form      { background: linear-gradient(135deg, #b8102b 0%, #ff1f3d 100%); }
 
         .header-badge {
             display: inline-flex;
@@ -216,12 +234,12 @@
             justify-content: center;
             gap: 8px;
             letter-spacing: 0.2px;
-            box-shadow: 0 4px 14px rgba(236,51,51,0.3);
+            box-shadow: 0 4px 14px rgba(255,31,61,0.3);
         }
 
         .btn-primary-full:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(236,51,51,0.38);
+            box-shadow: 0 8px 20px rgba(255,31,61,0.38);
         }
 
         .btn-primary-full:active:not(:disabled) {
@@ -269,13 +287,13 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 2px 8px rgba(236,51,51,0.2);
+            box-shadow: 0 2px 8px rgba(255,31,61,0.2);
         }
 
         .btn-action:hover {
             background: var(--primary-dark);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(236,51,51,0.3);
+            box-shadow: 0 4px 12px rgba(255,31,61,0.3);
         }
 
         .btn-action:disabled {
@@ -311,8 +329,8 @@
         }
 
         .alert-danger {
-            background: rgba(236,51,51,0.07);
-            border: 1px solid rgba(236,51,51,0.22);
+            background: rgba(255,31,61,0.07);
+            border: 1px solid rgba(255,31,61,0.22);
             color: var(--primary-dark);
         }
 
@@ -331,7 +349,7 @@
         /* ─── Ciclo info ─── */
         .ciclo-card {
             background: linear-gradient(135deg, var(--primary-light), rgba(200,35,51,0.04));
-            border: 1px solid rgba(236,51,51,0.18);
+            border: 1px solid rgba(255,31,61,0.18);
             border-radius: var(--radius-sm);
             padding: 18px 20px;
             margin-bottom: 24px;
@@ -390,7 +408,7 @@
 
         .aluno-avatar {
             width: 42px; height: 42px;
-            background: linear-gradient(135deg, #ec3333, #c82333);
+            background: linear-gradient(135deg, #ff1f3d, #b8102b);
             border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
             color: white;
@@ -440,7 +458,7 @@
         }
 
         .question-item:focus-within {
-            border-color: rgba(236,51,51,0.3);
+            border-color: rgba(255,31,61,0.3);
         }
 
         .question-num {
@@ -607,10 +625,26 @@
     <div class="mentor-container">
         <div class="mentor-card" id="app">
 
+            <div id="linkUnavailableScreen">
+                <div class="card-header header-login">
+                    <div class="card-header-inner">
+                        <div class="card-header-icon"><i class="bi bi-link-45deg"></i></div>
+                        <h2>Link indisponível</h2>
+                        <p id="linkUnavailableMessage">Acesse esta página pelo link ativo do ciclo de mentoria.</p>
+                    </div>
+                </div>
+                <div class="login-area">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <span>O acesso ao login é liberado somente por um link de ciclo ativo e dentro do período.</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- ══════════════════════════════════
                  TELA DE LOGIN
             ══════════════════════════════════ -->
-            <div id="loginScreen">
+            <div id="loginScreen" style="display:none;">
                 <div class="card-header header-login">
                     <div class="card-header-inner">
                         <div class="card-header-icon"><i class="bi bi-chat-dots-fill"></i></div>
@@ -655,7 +689,7 @@
                     <div class="card-header-inner">
                         <div class="card-header-icon"><i class="bi bi-person-badge"></i></div>
                         <h2>Bem-vindo, <span id="mentorNome"></span></h2>
-                        <p>Selecione um aluno para preencher o formulário de avaliação</p>
+                        <p>Logado como <strong id="mentorIdentificacao"></strong> · selecione um aluno para responder</p>
                     </div>
                 </div>
 
@@ -674,7 +708,7 @@
 
                     <div id="noCicloWarning" class="alert alert-warning" style="display:none;">
                         <i class="bi bi-exclamation-triangle-fill"></i>
-                        <span>Nenhum ciclo de avaliação ativo no momento. Aguarde até que um ciclo seja iniciado.</span>
+                        <span>Acesse pelo link exclusivo do ciclo. O ciclo precisa estar ativo e dentro do período.</span>
                     </div>
 
                     <div class="alunos-section-title"><i class="bi bi-people"></i> Seus alunos</div>
@@ -709,6 +743,7 @@
                 </div>
 
                 <div class="formulario-area">
+                    <div id="rascunhoStatus" class="alert alert-info" role="status" aria-live="polite" style="display:none;"></div>
                     <div id="formularioPerguntas"></div>
 
                     <div id="formularioError" class="alert alert-danger" style="display:none;">
@@ -746,7 +781,13 @@
         let currentAlunoSelecionado = null;
         let currentFormulario = null;
         let currentCiclo = null;
+        let currentDraftKey = null;
         let timerInterval = null;
+        const cycleLinkToken = new URLSearchParams(window.location.search).get('ciclo');
+
+        function cicloQueryString() {
+            return cycleLinkToken ? `?ciclo=${encodeURIComponent(cycleLinkToken)}` : '';
+        }
 
         // ══════════════════════════════════
         // UTILITÁRIOS
@@ -832,6 +873,40 @@
             return nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
         }
 
+        function mostrarTelaLinkIndisponivel(mensagem) {
+            document.getElementById('linkUnavailableMessage').textContent = mensagem;
+            document.getElementById('linkUnavailableScreen').style.display = 'block';
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardScreen').style.display = 'none';
+            document.getElementById('formularioScreen').style.display = 'none';
+        }
+
+        async function validarLinkCiclo() {
+            mostrarTelaLinkIndisponivel('Validando acesso ao ciclo...');
+            if (!cycleLinkToken) {
+                mostrarTelaLinkIndisponivel('Este formulário só pode ser acessado pelo link exclusivo de um ciclo ativo.');
+                return false;
+            }
+
+            try {
+                const response = await fetch(
+                    `${API_URL}/api/mentoria/ciclos/link/${encodeURIComponent(cycleLinkToken)}`
+                );
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    mostrarTelaLinkIndisponivel(
+                        data.message || 'Este link não está ativo ou o período do ciclo terminou.'
+                    );
+                    return false;
+                }
+                document.getElementById('linkUnavailableScreen').style.display = 'none';
+                return true;
+            } catch (error) {
+                mostrarTelaLinkIndisponivel('Não foi possível validar o link. Verifique sua conexão e tente novamente.');
+                return false;
+            }
+        }
+
         // ══════════════════════════════════
         // LOGIN
         // ══════════════════════════════════
@@ -855,7 +930,7 @@
                 const resp = await fetch(`${API_URL}/api/mentoria/mentor/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ edv, senha })
+                    body: JSON.stringify({ edv, senha, ciclo: cycleLinkToken })
                 });
                 const data = await resp.json();
 
@@ -867,8 +942,12 @@
                     iniciarTimer(2 * 60 * 60);
                     await carregarDashboard();
                 } else {
-                    errDiv.style.display = 'flex';
-                    errTxt.textContent = data.message || 'Credenciais inválidas. Tente novamente.';
+                    if (data.message?.includes('link')) {
+                        mostrarTelaLinkIndisponivel(data.message);
+                    } else {
+                        errDiv.style.display = 'flex';
+                        errTxt.textContent = data.message || 'Credenciais inválidas. Tente novamente.';
+                    }
                 }
             } catch {
                 errDiv.style.display = 'flex';
@@ -883,15 +962,22 @@
         // ══════════════════════════════════
         async function carregarDashboard() {
             try {
-                const data = await apiFetch(`${API_URL}/api/mentoria/mentor/me`);
+                const data = await apiFetch(`${API_URL}/api/mentoria/mentor/me${cicloQueryString()}`);
 
                 if (!data.success) {
+                    if (cycleLinkToken && data.message?.includes('link')) {
+                        logout();
+                        return;
+                    }
                     mostrarMensagem('Erro', data.message || 'Erro ao carregar dados.', 'error');
                     return;
                 }
 
                 currentAlunos = data.alunos;
+                currentMentor = data.mentor;
                 document.getElementById('mentorNome').textContent = data.mentor.nome;
+                document.getElementById('mentorIdentificacao').textContent =
+                    `${data.mentor.nome} (EDV ${data.mentor.edv})`;
 
                 const cicloInfoEl    = document.getElementById('cicloInfo');
                 const noCicloEl      = document.getElementById('noCicloWarning');
@@ -909,6 +995,9 @@
                     currentCiclo = null;
                     cicloInfoEl.style.display = 'none';
                     noCicloEl.style.display   = 'flex';
+                    noCicloEl.querySelector('span').textContent = cycleLinkToken
+                        ? 'Este link não está disponível: o ciclo está inativo ou fora do período.'
+                        : 'Acesse pelo link exclusivo do ciclo. O ciclo precisa estar ativo e dentro do período.';
                 }
 
                 if (!currentAlunos.length) {
@@ -966,7 +1055,10 @@
             currentAlunoSelecionado = { id: alunoId, nome: alunoNome };
 
             try {
-                const data = await apiFetch(`${API_URL}/api/mentoria/mentor/formulario?aluno_id=${alunoId}`);
+                const data = await apiFetch(
+                    `${API_URL}/api/mentoria/mentor/formulario?aluno_id=${alunoId}` +
+                    (cycleLinkToken ? `&ciclo=${encodeURIComponent(cycleLinkToken)}` : '')
+                );
 
                 if (!data.success) {
                     mostrarMensagem('Erro', data.message || 'Erro ao carregar formulário.', 'error');
@@ -975,11 +1067,15 @@
 
                 currentFormulario = data.formulario;
                 currentCiclo      = data.ciclo;
+                currentDraftKey = criarChaveRascunho(alunoId);
 
                 document.getElementById('alunoResponderNome').textContent = alunoNome;
 
                 const cont = document.getElementById('formularioPerguntas');
                 cont.innerHTML = '';
+                const statusRascunho = document.getElementById('rascunhoStatus');
+                statusRascunho.style.display = 'none';
+                statusRascunho.textContent = '';
 
                 if (data.formulario.perguntas && data.formulario.perguntas.length > 0) {
                     data.formulario.perguntas.forEach((p, idx) => {
@@ -1013,11 +1109,90 @@
                     </div>`;
                 }
 
+                restaurarRascunho();
                 mostrarTela('formulario');
             } catch (err) {
                 mostrarMensagem('Erro', err.message, 'error');
             }
         }
+
+        function criarChaveRascunho(alunoId) {
+            const mentorId = currentMentor?.edv || currentMentor?.id;
+            const cicloId = currentCiclo?.id || currentCiclo?.ciclo_id || cycleLinkToken;
+            if (!mentorId || !cicloId) return null;
+            return `mentoriaRascunho:${encodeURIComponent(mentorId)}:${encodeURIComponent(cicloId)}:${alunoId}`;
+        }
+
+        function coletarRespostasRascunho() {
+            const respostas = {};
+            document.querySelectorAll('.question-item').forEach(item => {
+                const perguntaId = item.dataset.perguntaId;
+                const radio = item.querySelector('input[type="radio"]:checked');
+                const texto = item.querySelector('textarea');
+                const resposta = radio ? radio.value : texto?.value.trim();
+                if (resposta) respostas[perguntaId] = resposta;
+            });
+            return respostas;
+        }
+
+        function atualizarStatusRascunho(mensagem, tipo = 'info') {
+            const status = document.getElementById('rascunhoStatus');
+            status.className = `alert alert-${tipo}`;
+            status.textContent = mensagem;
+            status.style.display = 'block';
+        }
+
+        function salvarRascunho() {
+            if (!currentDraftKey || !currentAlunoSelecionado || !currentFormulario) return;
+            try {
+                const respostas = coletarRespostasRascunho();
+                if (Object.keys(respostas).length) {
+                    localStorage.setItem(currentDraftKey, JSON.stringify(respostas));
+                    atualizarStatusRascunho('Rascunho salvo automaticamente neste dispositivo.');
+                } else {
+                    localStorage.removeItem(currentDraftKey);
+                    document.getElementById('rascunhoStatus').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Não foi possível salvar o rascunho da mentoria:', error);
+                atualizarStatusRascunho(
+                    'Não foi possível salvar o rascunho neste dispositivo. Mantenha esta página aberta para não perder as respostas.',
+                    'warning'
+                );
+            }
+        }
+
+        function restaurarRascunho() {
+            if (!currentDraftKey) return;
+            try {
+                const salvo = localStorage.getItem(currentDraftKey);
+                if (!salvo) return;
+                const respostas = JSON.parse(salvo);
+                if (!respostas || typeof respostas !== 'object' || Array.isArray(respostas)) {
+                    throw new Error('Formato de rascunho inválido.');
+                }
+
+                document.querySelectorAll('.question-item').forEach(item => {
+                    const resposta = respostas[item.dataset.perguntaId];
+                    if (typeof resposta !== 'string') return;
+                    const opcoes = item.querySelectorAll('input[type="radio"]');
+                    const radio = Array.from(opcoes).find(opcao => opcao.value === resposta);
+                    if (radio) radio.checked = true;
+                    const texto = item.querySelector('textarea');
+                    if (texto) texto.value = resposta;
+                });
+                atualizarStatusRascunho('Rascunho recuperado automaticamente neste dispositivo.');
+            } catch (error) {
+                console.error('Não foi possível recuperar o rascunho da mentoria:', error);
+                atualizarStatusRascunho(
+                    'Não foi possível recuperar o rascunho salvo. Suas respostas não foram preenchidas.',
+                    'warning'
+                );
+            }
+        }
+
+        document.getElementById('formularioPerguntas').addEventListener('input', salvarRascunho);
+        document.getElementById('formularioPerguntas').addEventListener('change', salvarRascunho);
 
         async function enviarRespostas() {
             if (!currentAlunoSelecionado || !currentFormulario) return;
@@ -1041,7 +1216,7 @@
 
                 if (obrig && !resposta) {
                     valido = false;
-                    item.style.borderColor = 'rgba(236,51,51,0.5)';
+                    item.style.borderColor = 'rgba(255,31,61,0.5)';
                     item.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else {
                     item.style.borderColor = '';
@@ -1060,12 +1235,22 @@
             setLoading(btn, true);
 
             try {
-                const data = await apiFetch(`${API_URL}/api/mentoria/mentor/responder`, {
+                const data = await apiFetch(
+                    `${API_URL}/api/mentoria/mentor/responder${cicloQueryString()}`,
+                    {
                     method: 'POST',
                     body: JSON.stringify({ aluno_id: currentAlunoSelecionado.id, respostas })
-                });
+                    }
+                );
 
                 if (data.success) {
+                    if (currentDraftKey) {
+                        try {
+                            localStorage.removeItem(currentDraftKey);
+                        } catch (error) {
+                            console.error('Não foi possível remover o rascunho enviado:', error);
+                        }
+                    }
                     mostrarMensagem('Enviado com sucesso!', data.message, 'success');
                     voltarDashboard();
                 } else {
@@ -1082,6 +1267,7 @@
         // NAVEGAÇÃO
         // ══════════════════════════════════
         function mostrarTela(tela) {
+            document.getElementById('linkUnavailableScreen').style.display = 'none';
             document.getElementById('loginScreen').style.display     = tela === 'login'      ? 'block' : 'none';
             document.getElementById('dashboardScreen').style.display = tela === 'dashboard'  ? 'block' : 'none';
             document.getElementById('formularioScreen').style.display= tela === 'formulario' ? 'block' : 'none';
@@ -1091,6 +1277,7 @@
             document.getElementById('formularioPerguntas').innerHTML = '';
             currentAlunoSelecionado = null;
             currentFormulario = null;
+            currentDraftKey = null;
             mostrarTela('dashboard');
             carregarDashboard();
         }
@@ -1099,12 +1286,16 @@
             pararTimer();
             authToken = tokenExpiry = currentMentor = currentCiclo = null;
             currentAlunos = []; currentAlunoSelecionado = null; currentFormulario = null;
+            currentDraftKey = null;
             sessionStorage.removeItem('mentorToken');
             sessionStorage.removeItem('mentorExpiry');
             document.getElementById('edv').value = '';
             document.getElementById('senha').value = '';
             document.getElementById('loginError').style.display = 'none';
-            mostrarTela('login');
+            mostrarTelaLinkIndisponivel('Validando acesso ao ciclo...');
+            validarLinkCiclo().then(valido => {
+                if (valido) mostrarTela('login');
+            });
         }
 
         // ══════════════════════════════════
@@ -1127,19 +1318,23 @@
         // ══════════════════════════════════
         // INIT
         // ══════════════════════════════════
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            const linkValido = await validarLinkCiclo();
+            if (!linkValido) return;
+
             const savedToken  = sessionStorage.getItem('mentorToken');
-            const savedExpiry = parseInt(sessionStorage.getItem('mentorExpiry'));
+            const savedExpiry = parseInt(sessionStorage.getItem('mentorExpiry'), 10);
 
             if (savedToken && savedExpiry && Date.now() < savedExpiry) {
                 authToken   = savedToken;
                 tokenExpiry = savedExpiry;
                 const segsRestantes = Math.floor((tokenExpiry - Date.now()) / 1000);
                 iniciarTimer(segsRestantes);
-                carregarDashboard();
+                await carregarDashboard();
             } else {
                 sessionStorage.removeItem('mentorToken');
                 sessionStorage.removeItem('mentorExpiry');
+                mostrarTela('login');
             }
         });
     </script>

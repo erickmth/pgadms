@@ -2257,16 +2257,21 @@ async function showNovidadeSeNecessario() {
                         const escala = await res.json();
                         if (elements.semanaAtual) elements.semanaAtual.value = escala.semana_atual || '';
                         if (elements.escalaItems) elements.escalaItems.innerHTML = '';
-                        if (escala.duplas?.length) escala.duplas.forEach(i => addEscalaItem(i.semana, i.dupla));
+                        if (escala.duplas?.length) escala.duplas.forEach(i => addEscalaItem(i.semana, i.dupla, i.participantes));
                     } catch (error) { showMessage('Erro', error.message, 'error'); }
                     finally { hideLoading(elements.carregarEscalaBtn, '<i class="bi bi-arrow-down-circle me-2"></i> Carregar Escala'); }
                 }
 
-                function addEscalaItem(semana = '', dupla = '') {
+                function addEscalaItem(semana = '', dupla = '', participantes = null) {
                     if (!elements.escalaItems) return;
+                    let nomes = Array.isArray(participantes) && participantes.length === 2
+                        ? participantes
+                        : (typeof dupla === 'string' && dupla.includes(' e ')
+                            ? [dupla.slice(0, dupla.lastIndexOf(' e ')), dupla.slice(dupla.lastIndexOf(' e ') + 3)]
+                            : ['', '']);
                     const div = document.createElement('div');
                     div.className = 'escala-item';
-                    div.innerHTML = `<div class="row g-3"><div class="col-md-5"><label class="form-label">Semana</label><input type="text" class="form-control semana-input" value="${semana.replace(/"/g, '&quot;')}" placeholder="Semana 01: 22/04 - 25/04"></div><div class="col-md-5"><label class="form-label">Dupla</label><input type="text" class="form-control dupla-input" value="${dupla.replace(/"/g, '&quot;')}" placeholder="Aluno 1 e Aluno 2"></div><div class="col-md-2 d-flex align-items-end"><button type="button" class="btn btn-sm btn-danger btn-remove-item w-100"><i class="bi bi-trash"></i></button></div></div>`;
+                    div.innerHTML = `<div class="row g-3"><div class="col-md-4"><label class="form-label">Semana</label><input type="text" class="form-control semana-input" value="${escapeHtml(semana)}" placeholder="Semana 01: 22/04 - 25/04"></div><div class="col-md-3"><label class="form-label">Participante 1</label><input type="text" class="form-control aluno1-input" value="${escapeHtml(nomes[0])}" placeholder="Nome livre"></div><div class="col-md-3"><label class="form-label">Participante 2</label><input type="text" class="form-control aluno2-input" value="${escapeHtml(nomes[1])}" placeholder="Nome livre"></div><div class="col-md-2 d-flex align-items-end"><button type="button" class="btn btn-sm btn-danger btn-remove-item w-100"><i class="bi bi-trash"></i></button></div></div>`;
                     div.querySelector('.btn-remove-item').onclick = () => div.remove();
                     elements.escalaItems.appendChild(div);
                 }
@@ -2280,26 +2285,18 @@ async function showNovidadeSeNecessario() {
 
                         document.querySelectorAll('.escala-item').forEach((item, idx) => {
                             const semana = item.querySelector('.semana-input')?.value || '';
-                            // Tenta encontrar nos dois formatos
-                            let dupla = '';
                             const aluno1Input = item.querySelector('.aluno1-input');
                             const aluno2Input = item.querySelector('.aluno2-input');
-
+                            let dupla;
                             if (aluno1Input && aluno2Input) {
-                                // Novo formato com campos separados
-                                const aluno1 = aluno1Input.value;
-                                const aluno2 = aluno2Input.value;
-                                if (aluno1 && aluno2) {
-                                    dupla = `${aluno1} e ${aluno2}`;
-                                }
+                                dupla = [aluno1Input.value.trim(), aluno2Input.value.trim()];
                             } else {
-                                // Formato antigo
                                 dupla = item.querySelector('.dupla-input')?.value || '';
                             }
 
                             console.log(`📝 Item ${idx + 1}: semana="${semana}", dupla="${dupla}"`);
 
-                            if (semana && dupla) {
+                            if (semana && (Array.isArray(dupla) ? dupla.every(Boolean) : dupla)) {
                                 duplas.push({ semana, dupla });
                             }
                         });

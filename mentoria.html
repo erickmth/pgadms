@@ -5,8 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mentoria - Admin Global</title>
+    <script>
+        document.documentElement.dataset.theme = localStorage.getItem('homeTheme') || 'light';
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/styles/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
         <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
@@ -18,11 +25,12 @@
         }
 
         :root {
-            --primary: #ec3333;
-            --primary-dark: #c82333;
-            --sidebar-bg: #181e2a;
+            --primary: #ff1f3d;
+            --primary-dark: #b8102b;
+            --sidebar-bg: #0c0f16;
             --surface: #fff;
             --surface-2: #f4f6fb;
+            --surface-3: #edf0f7;
             --text: #1a1d2e;
             --text-muted: #6b7280;
             --border: #e5e9f2;
@@ -32,9 +40,19 @@
             --radius: 12px;
         }
 
+        :root[data-theme="dark"] {
+            --surface: #111827;
+            --surface-2: #0b1220;
+            --surface-3: #1f2937;
+            --text: #e5e7eb;
+            --text-muted: #9ca3af;
+            --border: #293548;
+        }
+
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Sora', sans-serif;
             background: var(--surface-2);
+            color: var(--text);
         }
 
         /* SIDEBAR */
@@ -636,7 +654,7 @@
 
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <img src="logu-black.svg" alt="Logo" onerror="this.src='logu.svg'">
+            <img src="logu.svg" alt="Logo" onerror="this.src='logu.svg'">
             <div><strong>Mentoria</strong></div>
             <small>Admin Global</small>
         </div>
@@ -670,8 +688,12 @@
                     <h1>Dashboard de Mentoria</h1>
                     <div class="subtitle">Visão geral do programa</div>
                 </div>
-                <button class="btn btn-outline" id="refreshDashboard"><i class="bi bi-arrow-repeat"></i>
-                    Atualizar</button>
+                <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-primary" id="btnRelatorioGeral"><i class="bi bi-file-earmark-pdf"></i>
+                        Relatório geral PDF</button>
+                    <button class="btn btn-outline" id="refreshDashboard"><i class="bi bi-arrow-repeat"></i>
+                        Atualizar</button>
+                </div>
             </div>
             <div class="page-body">
                 <div class="row g-3 mb-4">
@@ -941,9 +963,41 @@
                     <div class="card-body">
                         <div class="alert alert-info">
                             <i class="bi bi-info-circle"></i>
-                            <strong>Formato Excel:</strong> Colunas obrigatórias: <code>turma_nome</code>,
-                            <code>aluno_nome</code>, <code>mentor_nome</code>, <code>mentor_edv</code>,
-                            <code>mentor_senha</code>
+                            <strong>Como preencher:</strong> use uma linha para cada aluno. As colunas
+                            <code>turma_nome</code>, <code>aluno_nome</code>, <code>mentor_nome</code> e
+                            <code>mentor_edv</code> são obrigatórias. Repita os dados do mentor em cada aluno
+                            vinculado a ele. Se <code>mentor_senha</code> ficar vazia, será usada a senha
+                            padrão <code>123456</code>.
+                        </div>
+                        <div class="table-responsive mb-3">
+                            <table class="table table-bordered table-striped align-middle">
+                                <caption class="caption-top">Exemplo: dois alunos vinculados ao mesmo mentor</caption>
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">turma_nome</th>
+                                        <th scope="col">aluno_nome</th>
+                                        <th scope="col">mentor_nome</th>
+                                        <th scope="col">mentor_edv</th>
+                                        <th scope="col">mentor_senha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Mentoria 2026</td>
+                                        <td>João Silva</td>
+                                        <td>Maria Oliveira</td>
+                                        <td>12345</td>
+                                        <td>senha_do_mentor</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mentoria 2026</td>
+                                        <td>Ana Souza</td>
+                                        <td>Maria Oliveira</td>
+                                        <td>12345</td>
+                                        <td>senha_do_mentor</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Arquivo Excel (.xlsx ou .xls)</label>
@@ -1293,6 +1347,39 @@
             window.location.href = `aluno_mentoria.html?id=${alunoId}`;
         }
 
+        async function baixarRelatorioAluno(alunoId, button) {
+            setLoading(button, true);
+            try {
+                const response = await fetch(
+                    `${API_URL}/api/mentoria/relatorio/aluno/${encodeURIComponent(alunoId)}`,
+                    { headers: getAuthHeaders() }
+                );
+                if (!response.ok) {
+                    let message = `Erro ${response.status} ao gerar o relatório do aluno.`;
+                    try {
+                        const data = await response.json();
+                        message = data.message || data.error || message;
+                    } catch (error) {
+                        console.error('Erro lendo resposta do relatório do aluno:', error);
+                    }
+                    throw new Error(message);
+                }
+                const pdf = await response.blob();
+                const downloadUrl = URL.createObjectURL(pdf);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = `relatorio_mentoria_aluno_${alunoId}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+            } catch (error) {
+                mostrarMensagem('Erro', error.message);
+            } finally {
+                setLoading(button, false);
+            }
+        }
+
         // ============================================================
         // DASHBOARD
         // ============================================================
@@ -1316,6 +1403,39 @@
                 }
                 await carregarCiclosRecentes();
             } catch (e) { console.error('Dashboard:', e); }
+        }
+
+        async function baixarRelatorioGeralMentoria() {
+            const button = document.getElementById('btnRelatorioGeral');
+            setLoading(button, true);
+            try {
+                const response = await fetch(`${API_URL}/api/mentoria/relatorio/geral.pdf`, {
+                    headers: getAuthHeaders()
+                });
+                if (!response.ok) {
+                    let message = 'Não foi possível gerar o relatório geral.';
+                    try {
+                        const data = await response.json();
+                        message = data.message || data.error || message;
+                    } catch (error) {
+                        console.error('Erro lendo resposta do relatório geral:', error);
+                    }
+                    throw new Error(message);
+                }
+                const pdf = await response.blob();
+                const downloadUrl = URL.createObjectURL(pdf);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = `relatorio_geral_mentoria_${new Date().toISOString().slice(0, 10)}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+            } catch (error) {
+                mostrarMensagem('Erro', error.message);
+            } finally {
+                setLoading(button, false);
+            }
         }
 
         function renderChartProgresso(enviaram, total) {
@@ -1363,16 +1483,29 @@
                     <td>${c.ativo ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-secondary">Inativo</span>'}</td>
                     <td>${c.total_respostas || 0}</td>
                     <td class="action-buttons">
+                        <button class="btn btn-sm btn-outline-primary btn-link-ciclo" data-token="${c.link_token}" title="Copiar link do ciclo"><i class="bi bi-link-45deg"></i></button>
                         <button class="btn btn-sm btn-primary btn-editar-ciclo" data-id="${c.id}"><i class="bi bi-pencil"></i></button>
                         <button class="btn btn-sm btn-danger btn-excluir-ciclo" data-id="${c.id}"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>`).join('');
+                    tbody.querySelectorAll('.btn-link-ciclo').forEach(b => b.onclick = () => copiarLinkCiclo(b.dataset.token));
                     tbody.querySelectorAll('.btn-editar-ciclo').forEach(b => b.onclick = () => editarCiclo(b.dataset.id));
                     tbody.querySelectorAll('.btn-excluir-ciclo').forEach(b => b.onclick = () => excluirCiclo(b.dataset.id));
                 } else {
                     tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="bi bi-inbox"></i> Nenhum ciclo cadastrado</td></tr>';
                 }
             } catch (e) { mostrarMensagem('Erro', e.message); }
+        }
+
+        async function copiarLinkCiclo(token) {
+            try {
+                const link = new URL('forms.html', window.location.href);
+                link.searchParams.set('ciclo', token);
+                await navigator.clipboard.writeText(link.href);
+                mostrarMensagem('Link copiado', 'O link abre este ciclo quando ele estiver ativo e dentro do período.');
+            } catch (e) {
+                mostrarMensagem('Erro', 'Não foi possível copiar o link. Verifique se o site está em uma conexão segura.');
+            }
         }
 
         async function carregarSelectFormularios() {
@@ -1589,11 +1722,13 @@
                     <td>${a.respondeu ? '<span class="badge badge-success">Respondido</span>' : '<span class="badge badge-warning">Pendente</span>'}</td>
                     <td class="action-buttons">
                         <button class="btn btn-sm btn-info ver-respostas" data-id="${a.id}" data-nome="${a.nome.replace(/"/g, '&quot;')}"><i class="bi bi-eye"></i> Ver</button>
+                        <button class="btn btn-sm btn-danger relatorio-pdf-aluno" data-id="${a.id}" title="Baixar relatório PDF do aluno" aria-label="Baixar relatório PDF de ${a.nome.replace(/"/g, '&quot;')}"><i class="bi bi-file-earmark-pdf"></i></button>
                         <button class="btn btn-sm btn-primary editar-aluno" data-id="${a.id}" data-nome="${a.nome.replace(/"/g, '&quot;')}" data-turma="${a.turma_id}"><i class="bi bi-pencil"></i></button>
                         <button class="btn btn-sm btn-danger excluir-aluno" data-id="${a.id}"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>`).join('');
                     tbody.querySelectorAll('.ver-respostas').forEach(b => b.onclick = () => navegarParaAluno(b.dataset.id, b.dataset.nome));
+                    tbody.querySelectorAll('.relatorio-pdf-aluno').forEach(b => b.onclick = () => baixarRelatorioAluno(b.dataset.id, b));
                     tbody.querySelectorAll('.editar-aluno').forEach(b => b.onclick = () => abrirEditarAluno(b.dataset.id, b.dataset.nome, b.dataset.turma));
                     tbody.querySelectorAll('.excluir-aluno').forEach(b => b.onclick = () => excluirAluno(b.dataset.id));
                 } else {
@@ -1945,6 +2080,7 @@
         // ============================================================
         function configurarEventos() {
             document.getElementById('refreshDashboard').onclick = () => { carregarDashboard(); };
+            document.getElementById('btnRelatorioGeral').onclick = baixarRelatorioGeralMentoria;
 
             document.getElementById('btnNovoCiclo').onclick = () => {
                 document.getElementById('cicloId').value = '';
