@@ -18,28 +18,13 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
         <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* ============================================================
+           Mentoria — usa o design system do style.css (igual ao home.html).
+           Aqui ficam só: tema escuro, toggle de tema e componentes
+           que existem apenas nesta página.
+           ============================================================ */
 
-        :root {
-            --primary: #ff1f3d;
-            --primary-dark: #b8102b;
-            --sidebar-bg: #0c0f16;
-            --surface: #fff;
-            --surface-2: #f4f6fb;
-            --surface-3: #edf0f7;
-            --text: #1a1d2e;
-            --text-muted: #6b7280;
-            --border: #e5e9f2;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --info: #3b82f6;
-            --radius: 12px;
-        }
-
+        /* ---------- Tema escuro (mesmo do home.html) ---------- */
         :root[data-theme="dark"] {
             --surface: #111827;
             --surface-2: #0b1220;
@@ -47,398 +32,125 @@
             --text: #e5e7eb;
             --text-muted: #9ca3af;
             --border: #293548;
+            --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.28);
+            --card-shadow-hover: 0 12px 36px rgba(0, 0, 0, 0.42);
+            --bs-body-bg: #0b1220;
+            --bs-body-color: #e5e7eb;
+            --bs-border-color: #293548;
         }
 
-        body {
-            font-family: 'Sora', sans-serif;
+        :root[data-theme="dark"] body {
             background: var(--surface-2);
+        }
+
+        :root[data-theme="dark"] .page-header {
+            background: rgba(17, 24, 39, 0.85);
+        }
+
+        :root[data-theme="dark"] .card:hover {
+            border-color: #3a4a63;
+        }
+
+        :root[data-theme="dark"] .table {
+            --bs-table-bg: transparent;
+            --bs-table-color: var(--text);
+            --bs-table-striped-bg: rgba(255, 255, 255, 0.03);
+            --bs-table-striped-color: var(--text);
+            --bs-table-border-color: var(--border);
             color: var(--text);
         }
 
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 260px;
-            height: 100vh;
-            background: var(--sidebar-bg);
-            color: white;
-            z-index: 1000;
-            transition: transform 0.3s;
-            display: flex;
-            flex-direction: column;
+        :root[data-theme="dark"] .table tbody tr:nth-child(even) td {
+            background: rgba(255, 255, 255, 0.025);
         }
 
-        .sidebar-header {
-            padding: 24px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            flex-shrink: 0;
-        }
-
-        .sidebar-header img {
-            width: 70px;
-            margin-bottom: 8px;
-        }
-
-        .sidebar-header small {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .sidebar-nav {
-            padding: 16px;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .nav-item {
-            margin-bottom: 2px;
-        }
-
-        .nav-link {
-            color: rgba(255, 255, 255, 0.7);
-            padding: 10px 14px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            transition: 0.2s;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-        }
-
-        .nav-link.active {
-            background: rgba(236, 51, 51, 0.2);
-            color: var(--primary);
-        }
-
-        .nav-link i {
-            width: 20px;
-            font-size: 16px;
-        }
-
-        .sidebar-footer {
-            padding: 16px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            flex-shrink: 0;
-        }
-
-        .btn-logout {
-            width: 100%;
-            background: rgba(236, 51, 51, 0.15);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: 0.2s;
-        }
-
-        .btn-logout:hover {
-            background: rgba(236, 51, 51, 0.3);
-        }
-
-        /* MAIN */
-        .main-content {
-            margin-left: 260px;
-            min-height: 100vh;
-        }
-
-        .page-header {
-            background: var(--surface);
-            padding: 20px 28px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .page-header h1 {
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .page-header .subtitle {
-            font-size: 13px;
+        :root[data-theme="dark"] .table thead.table-light th,
+        :root[data-theme="dark"] .table-light {
+            --bs-table-bg: var(--surface-2);
+            --bs-table-color: var(--text-muted);
+            background: var(--surface-2);
             color: var(--text-muted);
-            margin-top: 2px;
         }
 
-        .page-body {
-            padding: 24px;
+        :root[data-theme="dark"] .form-control,
+        :root[data-theme="dark"] .form-select,
+        :root[data-theme="dark"] pre {
+            background-color: var(--surface-3);
+            color: var(--text);
+            border-color: var(--border);
         }
 
-        /* STAT CARDS */
-        .stat-card {
+        :root[data-theme="dark"] .modal-content,
+        :root[data-theme="dark"] .dropdown-menu {
             background: var(--surface);
-            border-radius: var(--radius);
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            transition: 0.2s;
+            color: var(--text);
+            border-color: var(--border);
         }
 
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        :root[data-theme="dark"] .modal-footer {
+            background: var(--surface-3);
         }
 
-        .stat-card.blue {
-            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
-            color: white;
+        :root[data-theme="dark"] .alert-info {
+            color: #93c5fd;
         }
 
-        .stat-card.green {
-            background: linear-gradient(135deg, #059669, #10b981);
-            color: white;
+        :root[data-theme="dark"] .alert-warning {
+            color: #fcd34d;
         }
 
-        .stat-card.orange {
-            background: linear-gradient(135deg, #d97706, #f59e0b);
-            color: white;
+        :root[data-theme="dark"] .alert-success {
+            color: #6ee7b7;
         }
 
-        .stat-card.purple {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
+        :root[data-theme="dark"] .alert-danger {
+            color: #fda4af;
         }
 
-        .stat-card-value {
-            font-size: 30px;
-            font-weight: 700;
-        }
-
-        .stat-card-label {
-            font-size: 11px;
-            opacity: 0.85;
-            margin-top: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* CARDS */
-        .card {
-            background: var(--surface);
-            border-radius: var(--radius);
+        .theme-toggle {
+            width: 42px;
+            height: 42px;
+            padding: 0;
             border: 1px solid var(--border);
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .card-header {
-            padding: 14px 20px;
-            border-bottom: 1px solid var(--border);
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
+            border-radius: 50%;
             background: var(--surface);
-            font-size: 14px;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        /* BUTTONS */
-        .btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
+            box-shadow: var(--shadow-xs);
+            color: var(--text-muted);
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            transition: 0.2s;
-            font-size: 13px;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            flex-shrink: 0;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #059669;
-        }
-
-        .btn-danger {
-            background: #dc2626;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #b91c1c;
-        }
-
-        .btn-info {
-            background: var(--info);
-            color: white;
-        }
-
-        .btn-info:hover {
-            background: #2563eb;
-        }
-
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 4px 10px;
-            font-size: 12px;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
-
-        .btn-outline:hover {
-            background: var(--surface-2);
-        }
-
-        /* FORMS */
-        .form-control,
-        .form-select {
-            width: 100%;
-            padding: 9px 13px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            outline: none;
+        .theme-toggle:hover {
+            color: var(--primary);
             border-color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: var(--card-shadow-hover);
         }
 
-        .form-label {
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            display: block;
-            color: var(--text-muted);
+        .theme-toggle:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 3px;
         }
 
-        /* TABLE */
-        .table {
-            width: 100%;
-            border-collapse: collapse;
+        :root[data-theme="dark"] .theme-toggle {
+            background: var(--surface-3);
+            color: #fbbf24;
+            border-color: var(--border);
         }
 
-        .table th,
-        .table td {
-            padding: 11px 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-            font-size: 13px;
-        }
-
-        .table th {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            background: var(--surface-2);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .table tr:hover td {
-            background: #fafbfc;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        /* BADGES */
-        .badge {
-            padding: 3px 9px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .badge-success {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .badge-warning {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .badge-danger {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .badge-secondary {
-            background: #f3f4f6;
-            color: #374151;
-        }
-
-        .badge-info {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        /* ACTION BUTTONS */
-        .action-buttons {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        /* LOADING */
-        .loading {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        @media (max-width: 575px) {
+            .theme-toggle {
+                width: 40px;
+                height: 40px;
             }
         }
 
-        /* TABS */
+        /* ---------- Abas (troca por JS) ---------- */
         .tab-content {
             display: none;
         }
@@ -460,85 +172,132 @@
             }
         }
 
-        /* MOBILE */
-        .mobile-toggle {
-            display: none;
-            position: fixed;
-            top: 14px;
-            left: 14px;
-            z-index: 1100;
-            background: var(--sidebar-bg);
-            color: white;
-            border: none;
-            width: 42px;
-            height: 42px;
-            border-radius: 8px;
-            font-size: 22px;
-            cursor: pointer;
+        /* ---------- Cards de indicador (variações extras) ---------- */
+        .stat-card-green {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: #fff;
         }
 
-        .overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
+        .stat-card-orange {
+            background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+            color: #fff;
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.show {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .mobile-toggle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .page-header {
-                padding-left: 66px;
-            }
+        .stat-card-purple {
+            background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);
+            color: #fff;
         }
 
-        /* MODAL */
-        .modal-header {
-            background: var(--sidebar-bg);
-            color: white;
-            border: none;
+        /* ---------- Botões extras usados nas listas e modais ---------- */
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
         }
 
-        .modal-header .btn-close {
-            filter: invert(1);
+        .btn-outline:hover {
+            background: var(--surface-3);
+            border-color: #c8cdd9;
+            color: var(--text);
         }
 
-        .modal-content {
-            border-radius: 12px;
-            overflow: hidden;
+        .btn-outline-primary {
+            background: transparent;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
         }
 
-        /* FORMULÁRIO BUILDER */
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            color: #fff;
+        }
+
+        .btn-info:hover {
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--surface-3);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            color: var(--text);
+            transform: translateY(-1px);
+        }
+
+        /* ---------- Badges de status ---------- */
+        .badge-success {
+            background: rgba(16, 185, 129, 0.14);
+            color: #047857;
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.16);
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: rgba(255, 31, 61, 0.12);
+            color: var(--primary-dark);
+        }
+
+        .badge-secondary {
+            background: rgba(156, 163, 175, 0.18);
+            color: var(--text-muted);
+        }
+
+        .badge-info {
+            background: rgba(59, 130, 246, 0.14);
+            color: #1d4ed8;
+        }
+
+        :root[data-theme="dark"] .badge-success {
+            color: #6ee7b7;
+        }
+
+        :root[data-theme="dark"] .badge-warning {
+            color: #fcd34d;
+        }
+
+        :root[data-theme="dark"] .badge-danger {
+            color: #fda4af;
+        }
+
+        :root[data-theme="dark"] .badge-info {
+            color: #93c5fd;
+        }
+
+        /* ---------- Construtor de formulário ---------- */
         .pergunta-item {
             background: var(--surface-2);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 14px;
+            border-radius: var(--radius-sm);
+            padding: 16px;
             margin-bottom: 12px;
+            transition: var(--transition-fast);
+        }
+
+        .pergunta-item:focus-within {
+            border-color: var(--primary);
+            box-shadow: var(--focus-ring);
         }
 
         .opcoes-container {
             margin-top: 10px;
-            padding: 10px;
-            background: white;
-            border-radius: 8px;
+            padding: 12px;
+            background: var(--surface);
+            border-radius: var(--radius-sm);
             border: 1px solid var(--border);
         }
 
@@ -549,54 +308,43 @@
             align-items: center;
         }
 
-        /* FORMULÁRIO CARDS */
+        /* ---------- Cards de formulário ---------- */
         .formulario-card {
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            background: white;
-            transition: 0.2s;
+            border-radius: var(--radius);
+            padding: 20px;
+            background: var(--surface);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
             height: 100%;
         }
 
         .formulario-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transform: translateY(-3px);
+            border-color: rgba(255, 31, 61, 0.35);
+            box-shadow: var(--card-shadow-hover);
         }
 
         .formulario-card h6 {
             font-size: 14px;
             font-weight: 700;
             margin-bottom: 6px;
+            color: var(--text);
         }
 
         .formulario-card p {
             font-size: 12px;
         }
 
-        /* CHART */
         .chart-container {
-            background: white;
-            border-radius: 8px;
+            background: var(--surface);
+            border-radius: var(--radius-sm);
             padding: 16px;
             margin-bottom: 18px;
             border: 1px solid var(--border);
         }
 
-        /* STATUS */
-        .connection-status {
-            position: fixed;
-            bottom: 18px;
-            right: 18px;
-            background: #10b981;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            z-index: 1000;
-        }
-
-        /* EMPTY STATE */
+        /* ---------- Estado vazio ---------- */
         .empty-state {
             text-align: center;
             padding: 40px 20px;
@@ -607,73 +355,81 @@
             font-size: 40px;
             margin-bottom: 10px;
             display: block;
+            opacity: 0.55;
         }
 
         .empty-state p {
             font-size: 13px;
+            margin: 0;
         }
 
-        /* ALERT */
-        .alert {
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            margin-bottom: 16px;
+        /* ---------- Indicador de conexão ---------- */
+        .connection-status {
+            position: fixed;
+            bottom: 18px;
+            right: 18px;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+            z-index: 1000;
         }
 
-        .alert-info {
-            background: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #bfdbfe;
-        }
-
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-
-        .alert-warning {
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fde68a;
-        }
-
-        .alert-danger {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
+        .page-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
     </style>
 </head>
 
 <body>
-
-    <button class="mobile-toggle" id="mobileToggle"><i class="bi bi-list"></i></button>
-    <div class="overlay" id="overlay"></div>
+    <div class="sidebar-overlay" id="overlay"></div>
+    <button class="mobile-menu-toggle" id="mobileToggle" type="button" aria-label="Abrir menu">
+        <i class="bi bi-list icon-open"></i>
+        <i class="bi bi-arrow-left icon-close"></i>
+    </button>
 
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <img src="logu.svg" alt="Logo" onerror="this.src='logu.svg'">
-            <div><strong>Mentoria</strong></div>
-            <small>Admin Global</small>
+        <div class="sidebar-logo-area">
+            <a href="home.html"><img src="logu.svg" alt="Logo" class="logo"></a>
+            <div class="sidebar-label">Mentoria · Admin Global</div>
         </div>
-        <div class="sidebar-nav">
-            <div class="nav-item"><a class="nav-link active" data-tab="dashboard"><i class="bi bi-speedometer2"></i>
-                    Dashboard</a></div>
-            <div class="nav-item"><a class="nav-link" data-tab="ciclos"><i class="bi bi-calendar-event"></i> Ciclos</a>
-            </div>
-            <div class="nav-item"><a class="nav-link" data-tab="formularios"><i class="bi bi-file-text"></i>
-                    Formulários</a></div>
-            <div class="nav-item"><a class="nav-link" data-tab="alunos"><i class="bi bi-people"></i> Alunos</a></div>
-            <div class="nav-item"><a class="nav-link" data-tab="mentores"><i class="bi bi-person-badge"></i>
-                    Mentores</a></div>
-            <div class="nav-item"><a class="nav-link" data-tab="relacoes"><i class="bi bi-link"></i> Relacionamentos</a>
-            </div>
-            <div class="nav-item"><a class="nav-link" data-tab="turmas"><i class="bi bi-building"></i> Turmas</a></div>
-            <div class="nav-item"><a class="nav-link" data-tab="importacao"><i class="bi bi-cloud-upload"></i>
-                    Importação</a></div>
-        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Geral</div>
+            <ul class="nav flex-column mb-3">
+                <li class="nav-item"><a class="nav-link active" href="#" data-tab="dashboard"><i
+                            class="bi bi-speedometer2"></i> Dashboard</a></li>
+            </ul>
+            <div class="nav-section-label">Programa</div>
+            <ul class="nav flex-column mb-3">
+                <li class="nav-item"><a class="nav-link" href="#" data-tab="ciclos"><i
+                            class="bi bi-calendar-event"></i> Ciclos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-tab="formularios"><i
+                            class="bi bi-file-text"></i> Formulários</a></li>
+            </ul>
+            <div class="nav-section-label">Cadastros</div>
+            <ul class="nav flex-column mb-3">
+                <li class="nav-item"><a class="nav-link" href="#" data-tab="alunos"><i class="bi bi-people"></i>
+                        Alunos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-tab="mentores"><i
+                            class="bi bi-person-badge"></i> Mentores</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-tab="relacoes"><i class="bi bi-link"></i>
+                        Relacionamentos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-tab="turmas"><i class="bi bi-building"></i>
+                        Turmas</a></li>
+            </ul>
+            <div class="nav-section-label">Dados</div>
+            <ul class="nav flex-column mb-3">
+                <li class="nav-item"><a class="nav-link" href="#" data-tab="importacao"><i
+                            class="bi bi-cloud-upload"></i> Importação</a></li>
+            </ul>
+        </nav>
         <div class="sidebar-footer">
             <button class="btn-logout" id="btnVoltar"><i class="bi bi-arrow-left"></i> Voltar ao Painel</button>
         </div>
@@ -685,38 +441,45 @@
         <div id="tab-dashboard" class="tab-content active">
             <div class="page-header">
                 <div>
-                    <h1>Dashboard de Mentoria</h1>
-                    <div class="subtitle">Visão geral do programa</div>
+                    <h1><i class="bi bi-speedometer2 me-2" style="color:var(--primary)"></i>Dashboard de Mentoria</h1>
+                    <div class="breadcrumb-text">Visão geral do programa</div>
                 </div>
-                <div class="d-flex gap-2 flex-wrap">
+                <div class="page-header-actions">
+                    <div class="d-flex gap-2 flex-wrap">
                     <button class="btn btn-primary" id="btnRelatorioGeral"><i class="bi bi-file-earmark-pdf"></i>
                         Relatório geral PDF</button>
                     <button class="btn btn-outline" id="refreshDashboard"><i class="bi bi-arrow-repeat"></i>
                         Atualizar</button>
                 </div>
+                    <button class="theme-toggle" type="button" aria-label="Ativar modo escuro" title="Alternar tema"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button>
+                </div>
             </div>
             <div class="page-body">
                 <div class="row g-3 mb-4">
                     <div class="col-6 col-md-3">
-                        <div class="stat-card blue">
+                        <div class="stat-card stat-card-blue">
+                            <i class="bi bi-mortarboard stat-card-icon"></i>
                             <div class="stat-card-value" id="totalAlunos">–</div>
                             <div class="stat-card-label">Total Alunos</div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="stat-card green">
+                        <div class="stat-card stat-card-green">
+                            <i class="bi bi-person-check stat-card-icon"></i>
                             <div class="stat-card-value" id="alunosComMentor">–</div>
                             <div class="stat-card-label">Com Mentor</div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="stat-card orange">
+                        <div class="stat-card stat-card-orange">
+                            <i class="bi bi-hourglass-split stat-card-icon"></i>
                             <div class="stat-card-value" id="alunosSemMentor">–</div>
                             <div class="stat-card-label">Sem Mentor</div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="stat-card purple">
+                        <div class="stat-card stat-card-purple">
+                            <i class="bi bi-person-badge stat-card-icon"></i>
                             <div class="stat-card-value" id="totalMentores">–</div>
                             <div class="stat-card-label">Mentores</div>
                         </div>
@@ -725,7 +488,7 @@
                 <div class="row g-4">
                     <div class="col-md-5">
                         <div class="card">
-                            <div class="card-header">Progresso de Submissões</div>
+                            <div class="card-header"><h5><i class="bi bi-pie-chart"></i> Progresso de Submissões</h5></div>
                             <div class="card-body text-center">
                                 <canvas id="chartProgresso" style="max-height:220px;"></canvas>
                                 <div class="mt-3">
@@ -737,9 +500,9 @@
                     </div>
                     <div class="col-md-7">
                         <div class="card">
-                            <div class="card-header">Ciclos Recentes</div>
+                            <div class="card-header"><h5><i class="bi bi-clock-history"></i> Ciclos Recentes</h5></div>
                             <div class="card-body p-0">
-                                <table class="table">
+                                <div class="table-responsive"><table class="table">
                                     <thead>
                                         <tr>
                                             <th>Nome</th>
@@ -753,7 +516,8 @@
                                             <td colspan="4" class="empty-state"><i
                                                     class="bi bi-hourglass"></i>Carregando...</td>
                                         </tr>
-                                </table>
+                                </tbody>
+                                </table></div>
                             </div>
                         </div>
                     </div>
@@ -765,14 +529,17 @@
         <div id="tab-ciclos" class="tab-content">
             <div class="page-header">
                 <div>
-                    <h1>Gerenciar Ciclos</h1>
-                    <div class="subtitle">Criação e gerenciamento de ciclos</div>
+                    <h1><i class="bi bi-calendar-event me-2" style="color:var(--primary)"></i>Gerenciar Ciclos</h1>
+                    <div class="breadcrumb-text">Criação e gerenciamento de ciclos</div>
                 </div>
-                <button class="btn btn-primary" id="btnNovoCiclo"><i class="bi bi-plus"></i> Novo Ciclo</button>
+                <div class="page-header-actions">
+                    <button class="btn btn-primary" id="btnNovoCiclo"><i class="bi bi-plus"></i> Novo Ciclo</button>
+                    <button class="theme-toggle" type="button" aria-label="Ativar modo escuro" title="Alternar tema"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button>
+                </div>
             </div>
             <div class="page-body">
                 <div class="card">
-                    <div class="card-header">Todos os Ciclos</div>
+                    <div class="card-header"><h5><i class="bi bi-calendar-event"></i> Todos os Ciclos</h5></div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table">
@@ -798,11 +565,14 @@
         <div id="tab-formularios" class="tab-content">
             <div class="page-header">
                 <div>
-                    <h1>Gerenciar Formulários</h1>
-                    <div class="subtitle">Criação de formulários personalizados</div>
+                    <h1><i class="bi bi-file-text me-2" style="color:var(--primary)"></i>Gerenciar Formulários</h1>
+                    <div class="breadcrumb-text">Criação de formulários personalizados</div>
                 </div>
-                <button class="btn btn-primary" id="btnNovoFormulario"><i class="bi bi-plus"></i> Novo
+                <div class="page-header-actions">
+                    <button class="btn btn-primary" id="btnNovoFormulario"><i class="bi bi-plus"></i> Novo
                     Formulário</button>
+                    <button class="theme-toggle" type="button" aria-label="Ativar modo escuro" title="Alternar tema"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button>
+                </div>
             </div>
             <div class="page-body">
                 <div id="listaFormularios" class="row g-3">
@@ -819,15 +589,18 @@
         <div id="tab-alunos" class="tab-content">
             <div class="page-header">
                 <div>
-                    <h1>Gerenciar Alunos</h1>
-                    <div class="subtitle">Cadastro e acompanhamento</div>
+                    <h1><i class="bi bi-people me-2" style="color:var(--primary)"></i>Gerenciar Alunos</h1>
+                    <div class="breadcrumb-text">Cadastro e acompanhamento</div>
                 </div>
-                <button class="btn btn-success" id="btnNovoAluno"><i class="bi bi-plus"></i> Novo Aluno</button>
+                <div class="page-header-actions">
+                    <button class="btn btn-success" id="btnNovoAluno"><i class="bi bi-plus"></i> Novo Aluno</button>
+                    <button class="theme-toggle" type="button" aria-label="Ativar modo escuro" title="Alternar tema"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button>
+                </div>
             </div>
             <div class="page-body">
                 <div class="card">
                     <div class="card-header">
-                        <span>Lista de Alunos</span>
+                        <h5><i class="bi bi-people"></i> Lista de Alunos</h5>
                         <input type="text" class="form-control" id="buscarAluno" placeholder="Buscar aluno..."
                             style="width:200px">
                     </div>
@@ -855,15 +628,18 @@
         <div id="tab-mentores" class="tab-content">
             <div class="page-header">
                 <div>
-                    <h1>Gerenciar Mentores</h1>
-                    <div class="subtitle">Cadastro e gestão de mentores</div>
+                    <h1><i class="bi bi-person-badge me-2" style="color:var(--primary)"></i>Gerenciar Mentores</h1>
+                    <div class="breadcrumb-text">Cadastro e gestão de mentores</div>
                 </div>
-                <button class="btn btn-success" id="btnNovoMentor"><i class="bi bi-plus"></i> Novo Mentor</button>
+                <div class="page-header-actions">
+                    <button class="btn btn-success" id="btnNovoMentor"><i class="bi bi-plus"></i> Novo Mentor</button>
+                    <button class="theme-toggle" type="button" aria-label="Ativar modo escuro" title="Alternar tema"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button>
+                </div>
             </div>
             <div class="page-body">
                 <div class="card">
                     <div class="card-header">
-                        <span>Lista de Mentores</span>
+                        <h5><i class="bi bi-person-badge"></i> Lista de Mentores</h5>
                         <input type="text" class="form-control" id="buscarMentor" placeholder="Buscar mentor..."
                             style="width:200px">
                     </div>
@@ -891,14 +667,17 @@
         <div id="tab-relacoes" class="tab-content">
             <div class="page-header">
                 <div>
-                    <h1>Relacionamentos</h1>
-                    <div class="subtitle">Vínculos entre alunos e mentores</div>
+                    <h1><i class="bi bi-link me-2" style="color:var(--primary)"></i>Relacionamentos</h1>
+                    <div class="breadcrumb-text">Vínculos entre alunos e mentores</div>
                 </div>
-                <button class="btn btn-primary" id="btnNovaRelacao"><i class="bi bi-plus"></i> Vincular</button>
+                <div class="page-header-actions">
+                    <button class="btn btn-primary" id="btnNovaRelacao"><i class="bi bi-plus"></i> Vincular</button>
+                    <button class="theme-toggle" type="button" aria-label="Ativar modo escuro" title="Alternar tema"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button>
+                </div>
             </div>
             <div class="page-body">
                 <div class="card">
-                    <div class="card-header">Lista de Vínculos</div>
+                    <div class="card-header"><h5><i class="bi bi-link"></i> Lista de Vínculos</h5></div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table">
@@ -923,14 +702,17 @@
         <div id="tab-turmas" class="tab-content">
             <div class="page-header">
                 <div>
-                    <h1>Gerenciar Turmas</h1>
-                    <div class="subtitle">Cadastro de turmas do programa</div>
+                    <h1><i class="bi bi-building me-2" style="color:var(--primary)"></i>Gerenciar Turmas</h1>
+                    <div class="breadcrumb-text">Cadastro de turmas do programa</div>
                 </div>
-                <button class="btn btn-primary" id="btnNovaTurma"><i class="bi bi-plus"></i> Nova Turma</button>
+                <div class="page-header-actions">
+                    <button class="btn btn-primary" id="btnNovaTurma"><i class="bi bi-plus"></i> Nova Turma</button>
+                    <button class="theme-toggle" type="button" aria-label="Ativar modo escuro" title="Alternar tema"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button>
+                </div>
             </div>
             <div class="page-body">
                 <div class="card">
-                    <div class="card-header">Lista de Turmas</div>
+                    <div class="card-header"><h5><i class="bi bi-building"></i> Lista de Turmas</h5></div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table">
@@ -953,13 +735,16 @@
         <div id="tab-importacao" class="tab-content">
             <div class="page-header">
                 <div>
-                    <h1>Importação em Lote</h1>
-                    <div class="subtitle">Importe alunos, mentores e vínculos via Excel</div>
+                    <h1><i class="bi bi-cloud-upload me-2" style="color:var(--primary)"></i>Importação em Lote</h1>
+                    <div class="breadcrumb-text">Importe alunos, mentores e vínculos via Excel</div>
+                </div>
+                <div class="page-header-actions">
+                    <button class="theme-toggle" type="button" aria-label="Ativar modo escuro" title="Alternar tema"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i></button>
                 </div>
             </div>
             <div class="page-body">
                 <div class="card">
-                    <div class="card-header">Importar Dados</div>
+                    <div class="card-header"><h5><i class="bi bi-file-earmark-excel"></i> Importar Dados</h5></div>
                     <div class="card-body">
                         <div class="alert alert-info">
                             <i class="bi bi-info-circle"></i>
@@ -1025,11 +810,11 @@
 
     <!-- MODAL CICLO -->
     <div class="modal fade" id="modalCiclo" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="modalCicloTitulo">Novo Ciclo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="cicloId">
@@ -1047,7 +832,7 @@
                             class="form-check-label">Ativar este ciclo imediatamente</label></div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button class="btn btn-primary" id="salvarCicloBtn">Salvar</button>
                 </div>
             </div>
@@ -1056,11 +841,11 @@
 
     <!-- MODAL FORMULÁRIO -->
     <div class="modal fade" id="modalFormulario" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="modalFormularioTitulo">Novo Formulário</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="formularioId">
@@ -1077,7 +862,7 @@
                     <div id="perguntasContainer"></div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button class="btn btn-primary" id="salvarFormularioBtn">Salvar</button>
                 </div>
             </div>
@@ -1086,11 +871,11 @@
 
     <!-- MODAL ALUNO -->
     <div class="modal fade" id="modalAluno" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="modalAlunoTitulo">Novo Aluno</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="alunoId">
@@ -1102,7 +887,7 @@
                         </select></div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button class="btn btn-primary" id="salvarAlunoBtn">Salvar</button>
                 </div>
             </div>
@@ -1111,11 +896,11 @@
 
     <!-- MODAL MENTOR -->
     <div class="modal fade" id="modalMentor" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="modalMentorTitulo">Novo Mentor</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="mentorId">
@@ -1133,7 +918,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button class="btn btn-primary" id="salvarMentorBtn">Salvar</button>
                 </div>
             </div>
@@ -1142,11 +927,11 @@
 
     <!-- MODAL RELAÇÃO -->
     <div class="modal fade" id="modalRelacao" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">Vincular Aluno a Mentor</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3"><label class="form-label">Aluno</label><select class="form-select"
@@ -1159,7 +944,7 @@
                         </select></div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button class="btn btn-primary" id="salvarRelacaoBtn">Salvar</button>
                 </div>
             </div>
@@ -1168,11 +953,11 @@
 
     <!-- MODAL TURMA -->
     <div class="modal fade" id="modalTurma" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">Nova Turma</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="turmaId">
@@ -1180,7 +965,7 @@
                             class="form-control" id="turmaNome" placeholder="Ex: Turma A - 2026"></div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button class="btn btn-primary" id="salvarTurmaBtn">Salvar</button>
                 </div>
             </div>
@@ -1189,11 +974,11 @@
 
     <!-- MODAL MENSAGEM -->
     <div class="modal fade" id="modalMensagem" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="modalMensagemTitulo">Aviso</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="mensagemBody"></div>
                 <div class="modal-footer">
@@ -1315,7 +1100,7 @@
                     document.getElementById(`tab-${tabId}`).classList.add('active');
                     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
                     link.classList.add('active');
-                    if (window.innerWidth <= 768) toggleSidebar();
+                    if (window.innerWidth <= 991 && document.getElementById('sidebar').classList.contains('show')) toggleSidebar();
                     carregarTab(tabId);
                     salvarEstadoEstado();
                 });
@@ -1336,8 +1121,36 @@
         }
 
         function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('show');
-            document.getElementById('overlay').classList.toggle('show');
+            const sidebar = document.getElementById('sidebar');
+            const abrir = !sidebar.classList.contains('show');
+            sidebar.classList.toggle('show', abrir);
+            document.getElementById('overlay').classList.toggle('show', abrir);
+            document.getElementById('mobileToggle').classList.toggle('is-open', abrir);
+            document.body.style.overflow = abrir ? 'hidden' : '';
+        }
+
+        // ============================================================
+        // TEMA (claro/escuro) — compartilhado com o home.html
+        // ============================================================
+        function configurarTema() {
+            const root = document.documentElement;
+            const botoes = document.querySelectorAll('.theme-toggle');
+            const atualizar = () => {
+                const escuro = root.dataset.theme === 'dark';
+                const rotulo = escuro ? 'Ativar modo claro' : 'Ativar modo escuro';
+                botoes.forEach(btn => {
+                    btn.querySelector('i').className = escuro ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+                    btn.setAttribute('aria-label', rotulo);
+                    btn.setAttribute('title', rotulo);
+                });
+            };
+            atualizar();
+            botoes.forEach(btn => btn.addEventListener('click', () => {
+                const proximo = root.dataset.theme === 'dark' ? 'light' : 'dark';
+                root.dataset.theme = proximo;
+                localStorage.setItem('homeTheme', proximo);
+                atualizar();
+            }));
         }
 
         // NOVO: Navegação para página de detalhes do aluno
@@ -2156,6 +1969,7 @@
         // INIT
         // ============================================================
         async function init() {
+            configurarTema();
             const token = getToken();
             if (!token) {
                 mostrarMensagem('Acesso Negado', 'Faça login no painel admin primeiro.');
